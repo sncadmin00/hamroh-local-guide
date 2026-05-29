@@ -1,18 +1,20 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SocialEmbed } from "@/components/SocialEmbed";
+import { CityPicker } from "@/components/CityPicker";
 import { supabase } from "@/integrations/supabase/client";
-import { Calendar } from "lucide-react";
+import { nearestCityNames } from "@/data/cities";
+import { Calendar, Star, BadgeCheck } from "lucide-react";
 
 export const Route = createFileRoute("/explore")({
   head: () => ({
     meta: [
       { title: "Explore — Hamroh" },
-      { name: "description", content: "Travel articles and social highlights from across Uzbekistan." },
+      { name: "description", content: "Articles, guides and social highlights from across Uzbekistan." },
       { property: "og:title", content: "Explore — Hamroh" },
-      { property: "og:description", content: "Travel articles and social highlights from across Uzbekistan." },
+      { property: "og:description", content: "Articles, guides and social highlights from across Uzbekistan." },
     ],
   }),
   component: ExplorePage,
@@ -25,34 +27,114 @@ type Article = {
   excerpt: string;
   cover_url: string | null;
   published_at: string | null;
+  article_cities: { city_id: string }[];
 };
 
-type City = { id: string; name: string; slug: string };
+type City = { id: string; name: string; slug: string; lat: number; lng: number };
 
 type Embed = {
   id: string;
   platform: "instagram" | "tiktok" | "youtube" | "x";
   url: string;
   caption: string;
+  social_embed_cities: { city_id: string }[];
+};
+
+type Guide = {
+  id: string;
+  slug: string;
+  name: string;
+  city_id: string;
+  photo_url: string | null;
+  tagline: string;
+  rating: number;
+  reviews: number;
+  verified: boolean;
+  price_per_day: number;
 };
 
 function ExplorePage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [cities, setCities] = useState<City[]>([]);
   const [embeds, setEmbeds] = useState<Embed[]>([]);
+  const [guides, setGuides] = useState<Guide[]>([]);
+  const [city, setCity] = useState<"All" | string>("All");
+  const [autoPicked, setAutoPicked] = useState(false);
 
   useEffect(() => {
     (async () => {
-      const [a, c, e] = await Promise.all([
-        supabase.from("articles").select("id,title,slug,excerpt,cover_url,published_at").eq("published", true).order("sort_order").order("published_at", { ascending: false }),
-        supabase.from("cities").select("id,name,slug").order("sort_order"),
-        supabase.from("social_embeds").select("id,platform,url,caption").eq("visible", true).order("sort_order"),
+      const [a, c, e, g] = await Promise.all([
+        supabase
+          .from("articles")
+          .select("id,title,slug,excerpt,cover_url,published_at,article_cities(city_id)")
+          .eq("published", true)
+          .order("sort_order")
+          .order("published_at", { ascending: false }),
+        supabase.from("cities").select("id,name,slug,lat,lng").order("sort_order"),
+        supabase
+          .from("social_embeds")
+          .select("id,platform,url,caption,social_embed_cities(city_id)")
+          .eq("visible", true)
+          .order("sort_order"),
+        supabase
+          .from("guides")
+          .select("id,slug,name,city_id,photo_url,tagline,rating,reviews,verified,price_per_day")
+          .order("sort_order"),
       ]);
-      if (a.data) setArticles(a.data as Article[]);
+      if (a.data) setArticles(a.data as unknown as Article[]);
       if (c.data) setCities(c.data as City[]);
-      if (e.data) setEmbeds(e.data as Embed[]);
+      if (e.data) setEmbeds(e.data as unknown as Embed[]);
+      if (g.data) setGuides(g.data as unknown as Guide[]);
     })();
   }, []);
+
+  // Auto-pick nearest city once on first load
+  useEffect(() => {
+    if (autoPicked || cities.length === 0) return;
+    if (typeof navigator === "undefined" || !navigator.geolocation) {
+      setCity(cities[0].name);
+      setAutoPicked(true);
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const [nearest] = nearestCityNames(cities, pos.coords.latitude, pos.coords.longitude, 1);
+        setCity(nearest ?? cities[0].name);
+        setAutoPicked(true);
+      },
+      () => {
+        setCity(cities[0].name);
+        setAutoPicked(true);
+      },
+      { timeout: 5000, maximumAge: 1000 * 60 * 60 },
+    );
+  }, [cities, autoPicked]);
+
+  const selectedCityId = useMemo(
+    () => (city === "All" ? null : cities.find((c) => c.name === city)?.id ?? null),
+    [city, cities],
+  );
+
+  const filteredArticles = useMemo(() => {
+    if (city === "All") return articles;
+    return articles.filter(
+      (a) => a.article_cities.length === 0 || a.article_cities.some((ac) => ac.city_id === selectedCityId),
+    );
+  }, [articles, city, selectedCityId]);
+
+  const filteredEmbeds = useMemo(() => {
+    if (city === "All") return embeds;
+    return embeds.filter(
+      (e) => e.social_embed_cities.length === 0 || e.social_embed_cities.some((sc) => sc.city_id === selectedCityId),
+    );
+  }, [embeds, city, selectedCityId]);
+
+  const filteredGuides = useMemo(() => {
+    if (city === "All" || !selectedCityId) return [];
+    return guides.filter((g) => g.city_id === selectedCityId).slice(0, 6);
+  }, [guides, city, selectedCityId]);
+
+  const cityLabel = city === "All" ? "Uzbekistan" : city;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -60,19 +142,21 @@ function ExplorePage() {
       <main className="flex-1 container mx-auto px-4 py-12 md:py-16">
         <header className="max-w-2xl">
           <h1 className="font-display text-4xl md:text-5xl font-semibold">Explore</h1>
-          <p className="mt-3 text-muted-foreground">Stories, guides, and moments from across Uzbekistan.</p>
+          <p className="mt-3 text-muted-foreground">Stories, guides and moments from across Uzbekistan.</p>
         </header>
+
+        <div className="mt-8 sticky top-16 z-30 -mx-4 px-4 py-3 bg-background/80 backdrop-blur-md border-b border-border/60">
+          <CityPicker value={city} onChange={setCity} />
+        </div>
 
         {/* Articles */}
         <section className="mt-12">
-          <div className="flex items-end justify-between">
-            <h2 className="font-display text-2xl font-semibold">Latest articles</h2>
-          </div>
-          {articles.length === 0 ? (
-            <p className="mt-4 text-sm text-muted-foreground">No articles yet — check back soon.</p>
+          <h2 className="font-display text-2xl font-semibold">Articles · {cityLabel}</h2>
+          {filteredArticles.length === 0 ? (
+            <p className="mt-4 text-sm text-muted-foreground">No articles for {cityLabel} yet — check back soon.</p>
           ) : (
             <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {articles.map((a) => (
+              {filteredArticles.map((a) => (
                 <Link
                   key={a.id}
                   to="/explore/$slug"
@@ -102,37 +186,69 @@ function ExplorePage() {
           )}
         </section>
 
-
-        {/* Cities */}
-        {cities.length > 0 && (
+        {/* Guides (only when a specific city is selected) */}
+        {city !== "All" && (
           <section className="mt-16">
-            <h2 className="font-display text-2xl font-semibold">Destinations</h2>
-            <div className="mt-6 flex flex-wrap gap-2">
-              {cities.map((c) => (
-                <Link
-                  key={c.id}
-                  to="/guides"
-                  search={{ city: c.name }}
-                  className="px-4 h-10 inline-flex items-center rounded-full bg-card ring-1 ring-border/60 text-sm font-medium hover:bg-secondary/60"
-                >
-                  {c.name}
-                </Link>
-              ))}
+            <div className="flex items-end justify-between gap-4 flex-wrap">
+              <h2 className="font-display text-2xl font-semibold">Guides in {cityLabel}</h2>
+              <Link
+                to="/guides"
+                search={{ city }}
+                className="text-sm font-medium text-primary hover:underline"
+              >
+                See all →
+              </Link>
             </div>
+            {filteredGuides.length === 0 ? (
+              <p className="mt-4 text-sm text-muted-foreground">No guides in {cityLabel} yet.</p>
+            ) : (
+              <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {filteredGuides.map((g) => (
+                  <Link
+                    key={g.id}
+                    to="/guides/$guideId"
+                    params={{ guideId: g.slug }}
+                    className="group block rounded-2xl bg-card ring-1 ring-border/60 overflow-hidden hover:ring-border transition"
+                  >
+                    {g.photo_url && (
+                      <div className="aspect-[4/3] overflow-hidden bg-secondary">
+                        <img src={g.photo_url} alt={g.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                      </div>
+                    )}
+                    <div className="p-5">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-display text-lg font-semibold">{g.name}</h3>
+                        {g.verified && <BadgeCheck className="h-4 w-4 text-primary" />}
+                      </div>
+                      {g.tagline && <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{g.tagline}</p>}
+                      <div className="mt-3 flex items-center justify-between text-sm">
+                        <span className="inline-flex items-center gap-1">
+                          <Star className="h-4 w-4 fill-current text-amber-500" />
+                          {Number(g.rating).toFixed(1)} <span className="text-muted-foreground">({g.reviews})</span>
+                        </span>
+                        <span className="font-medium">${Number(g.price_per_day).toFixed(0)}/day</span>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
           </section>
         )}
 
         {/* Social */}
-        {embeds.length > 0 && (
-          <section className="mt-16">
-            <h2 className="font-display text-2xl font-semibold">From our socials</h2>
+        <section className="mt-16">
+          <h2 className="font-display text-2xl font-semibold">From our socials · {cityLabel}</h2>
+          {filteredEmbeds.length === 0 ? (
+            <p className="mt-4 text-sm text-muted-foreground">No social posts for {cityLabel} yet.</p>
+          ) : (
             <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {embeds.map((e) => (
+              {filteredEmbeds.map((e) => (
                 <SocialEmbed key={e.id} platform={e.platform} url={e.url} caption={e.caption} />
               ))}
             </div>
-          </section>
-        )}
+          )}
+        </section>
       </main>
       <SiteFooter />
     </div>
