@@ -7,6 +7,7 @@ type Dict = Record<string, { en: string; uz: string; ru: string }>;
 export const translations: Dict = {
   "nav.findGuide": { en: "Find a guide", uz: "Yo'lboshchi toping", ru: "Найти гида" },
   "nav.cities": { en: "Cities", uz: "Shaharlar", ru: "Города" },
+  "nav.explore": { en: "Explore", uz: "Kashf eting", ru: "Обзор" },
   "nav.howItWorks": { en: "How it works", uz: "Qanday ishlaydi", ru: "Как это работает" },
   "nav.becomeGuide": { en: "Become a guide", uz: "Yo'lboshchi bo'ling", ru: "Стать гидом" },
   "common.menu": { en: "Menu", uz: "Menyu", ru: "Меню" },
