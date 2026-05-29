@@ -6,6 +6,7 @@ const menuLinks = [
   { to: "/guides", label: "Find a guide" },
   { to: "/cities", label: "Cities" },
   { to: "/how-it-works", label: "How it works" },
+  { to: "/become-a-guide", label: "Become a guide" },
 ] as const;
 
 export function SiteHeader() {
