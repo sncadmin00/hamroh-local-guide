@@ -38,7 +38,6 @@ type Embed = {
 
 function ExplorePage() {
   const [articles, setArticles] = useState<Article[]>([]);
-  const [guides, setGuides] = useState<Guide[]>([]);
   const [cities, setCities] = useState<City[]>([]);
   const [embeds, setEmbeds] = useState<Embed[]>([]);
 
