@@ -5,7 +5,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { SocialEmbed } from "@/components/SocialEmbed";
 import { CityPicker } from "@/components/CityPicker";
 import { supabase } from "@/integrations/supabase/client";
-import { nearestCityNames } from "@/data/cities";
+
 import { Calendar, Star, BadgeCheck } from "lucide-react";
 
 export const Route = createFileRoute("/explore")({
