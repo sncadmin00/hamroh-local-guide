@@ -1,4 +1,4 @@
-import { Compass } from "lucide-react";
+import { Compass, Instagram, Youtube, Music2, Twitter } from "lucide-react";
 
 function WhatsAppIcon({ className }: { className?: string }) {
   return (
