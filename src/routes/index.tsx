@@ -10,7 +10,7 @@ import { createThread } from "@/lib/ai-threads.functions";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Hamroh — Find your local guide with AI" },
+      { title: "Hamroh — What's up? with AI" },
       { name: "description", content: "Chat with Hamroh AI to find a verified local guide. Tell us your trip, get matched in seconds." },
     ],
   }),
