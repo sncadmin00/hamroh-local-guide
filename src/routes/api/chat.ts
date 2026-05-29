@@ -2,19 +2,26 @@ import { createFileRoute } from "@tanstack/react-router";
 import { convertToModelMessages, streamText, type UIMessage } from "ai";
 import { createClient } from "@supabase/supabase-js";
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
-import { guides } from "@/data/guides";
 
 type ChatBody = { messages?: UIMessage[]; threadId?: string };
 
-function buildSystemPrompt() {
-  const catalog = guides
-    .map(
-      (g) =>
-        `- id: ${g.id} | ${g.name} | City: ${g.city} | Languages: ${g.languages.join(", ")} | Specialties: ${g.specialties.join(", ")} | $${g.pricePerDay}/day | Rating ${g.rating} (${g.reviews}) | ${g.instantBook ? "Instant book" : "Request to book"} | ${g.tagline}`,
+async function buildSystemPrompt(client: ReturnType<typeof createClient>) {
+  const { data } = await client
+    .from("guides")
+    .select("slug, name, tagline, languages, specialties, price_per_day, rating, reviews, instant_book, cities(name)")
+    .order("sort_order", { ascending: true });
+
+  const catalog = (data ?? [])
+    .map((g: {
+      slug: string; name: string; tagline: string; languages: string[]; specialties: string[];
+      price_per_day: number; rating: number; reviews: number; instant_book: boolean;
+      cities: { name: string } | null;
+    }) =>
+      `- id: ${g.slug} | ${g.name} | City: ${g.cities?.name ?? ""} | Languages: ${g.languages.join(", ")} | Specialties: ${g.specialties.join(", ")} | $${g.price_per_day}/day | Rating ${g.rating} (${g.reviews}) | ${g.instant_book ? "Instant book" : "Request to book"} | ${g.tagline}`,
     )
     .join("\n");
 
-  return `You are Hamroh AI, a friendly travel concierge helping tourists find the perfect local guide in Uzbekistan (Tashkent, Samarkand, Bukhara).
+  return `You are Hamroh AI, a friendly travel concierge helping tourists find the perfect local guide in Uzbekistan.
 
 You have access to the following verified guide catalog:
 
