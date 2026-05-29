@@ -60,10 +60,75 @@ export function SiteHeader() {
           </SheetTrigger>
           <SheetContent side="right" className="w-72">
             <SheetHeader>
-              <SheetTitle className="text-left">Menu</SheetTitle>
-            </SheetHeader>
-            <nav className="mt-6 flex flex-col">
-              {menuLinks.map((link) => (
+        <div className="flex items-center gap-2">
+          <a
+            href="https://t.me/yourtelegram"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Join Telegram"
+            className="hidden md:inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[#229ED9]/10 text-[#229ED9] hover:bg-[#229ED9]/20 transition-colors"
+          >
+            <TelegramIcon className="h-5 w-5" />
+          </a>
+          <a
+            href="https://wa.me/1234567890"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Chat on WhatsApp"
+            className="hidden md:inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20 transition-colors"
+          >
+            <WhatsAppIcon className="h-5 w-5" />
+          </a>
+
+          <Sheet>
+            <SheetTrigger asChild>
+              <button
+                aria-label="Open menu"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full ring-1 ring-border/60 text-foreground hover:bg-secondary/60"
+              >
+                <Menu className="h-5 w-5" />
+              </button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-72">
+              <SheetHeader>
+                <SheetTitle className="text-left">Menu</SheetTitle>
+              </SheetHeader>
+              <nav className="mt-6 flex flex-col">
+                {menuLinks.map((link) => (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    className="px-3 py-3 rounded-lg text-base font-medium text-foreground hover:bg-secondary/60"
+                    activeProps={{ className: "px-3 py-3 rounded-lg text-base font-medium bg-secondary text-foreground" }}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </nav>
+              <div className="mt-6 flex items-center gap-3 px-3">
+                <span className="text-sm text-muted-foreground">Contact us:</span>
+                <a
+                  href="https://t.me/yourtelegram"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Join Telegram"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[#229ED9]/10 text-[#229ED9] hover:bg-[#229ED9]/20 transition-colors"
+                >
+                  <TelegramIcon className="h-5 w-5" />
+                </a>
+                <a
+                  href="https://wa.me/1234567890"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Chat on WhatsApp"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20 transition-colors"
+                >
+                  <WhatsAppIcon className="h-5 w-5" />
+                </a>
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
                 <Link
                   key={link.to}
                   to={link.to}
