@@ -192,6 +192,27 @@ function Home() {
               Prefer to browse? Find a guide manually →
             </Link>
           </p>
+
+          <div className="mt-5 flex items-center justify-center gap-3">
+            <a
+              href="https://wa.me/1234567890"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Chat on WhatsApp"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20 transition-colors"
+            >
+              <WhatsAppIcon className="h-5 w-5" />
+            </a>
+            <a
+              href="https://t.me/yourtelegram"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Join Telegram"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#229ED9]/10 text-[#229ED9] hover:bg-[#229ED9]/20 transition-colors"
+            >
+              <TelegramIcon className="h-5 w-5" />
+            </a>
+          </div>
         </div>
       </main>
 
