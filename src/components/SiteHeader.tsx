@@ -1,5 +1,12 @@
 import { Link } from "@tanstack/react-router";
-import { Compass, Sparkles } from "lucide-react";
+import { Compass, Menu } from "lucide-react";
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+
+const menuLinks = [
+  { to: "/guides", label: "Find a guide" },
+  { to: "/cities", label: "Cities" },
+  { to: "/how-it-works", label: "How it works" },
+] as const;
 
 export function SiteHeader() {
   return (
@@ -11,27 +18,34 @@ export function SiteHeader() {
           </div>
           <span className="font-display text-xl font-semibold tracking-tight">Hamroh</span>
         </Link>
-        <nav className="hidden items-center gap-8 text-sm font-medium md:flex">
-          <Link to="/guides" className="text-muted-foreground transition-colors hover:text-foreground" activeProps={{ className: "text-foreground" }}>
-            Find a guide
-          </Link>
-          <a href="/#cities" className="text-muted-foreground transition-colors hover:text-foreground">Cities</a>
-          <a href="/#how" className="text-muted-foreground transition-colors hover:text-foreground">How it works</a>
-        </nav>
-        <div className="flex items-center gap-2">
-          <Link
-            to="/ai"
-            className="inline-flex h-10 items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-primary to-accent px-4 text-sm font-medium text-primary-foreground transition-transform hover:scale-[1.02]"
-          >
-            <Sparkles className="h-4 w-4" /> Ask AI
-          </Link>
-          <Link
-            to="/guides"
-            className="hidden sm:inline-flex h-10 items-center justify-center rounded-full bg-foreground px-5 text-sm font-medium text-background transition-opacity hover:opacity-90"
-          >
-            Explore
-          </Link>
-        </div>
+
+        <Sheet>
+          <SheetTrigger asChild>
+            <button
+              aria-label="Open menu"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full ring-1 ring-border/60 text-foreground hover:bg-secondary/60"
+            >
+              <Menu className="h-5 w-5" />
+            </button>
+          </SheetTrigger>
+          <SheetContent side="right" className="w-72">
+            <SheetHeader>
+              <SheetTitle className="text-left">Menu</SheetTitle>
+            </SheetHeader>
+            <nav className="mt-6 flex flex-col">
+              {menuLinks.map((link) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className="px-3 py-3 rounded-lg text-base font-medium text-foreground hover:bg-secondary/60"
+                  activeProps={{ className: "px-3 py-3 rounded-lg text-base font-medium bg-secondary text-foreground" }}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          </SheetContent>
+        </Sheet>
       </div>
     </header>
   );

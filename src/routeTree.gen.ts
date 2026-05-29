@@ -10,7 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as GuidesRouteImport } from './routes/guides'
+import { Route as CitiesRouteImport } from './routes/cities'
 import { Route as AiRouteImport } from './routes/ai'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as GuidesGuideIdRouteImport } from './routes/guides.$guideId'
@@ -23,9 +25,19 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HowItWorksRoute = HowItWorksRouteImport.update({
+  id: '/how-it-works',
+  path: '/how-it-works',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GuidesRoute = GuidesRouteImport.update({
   id: '/guides',
   path: '/guides',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CitiesRoute = CitiesRouteImport.update({
+  id: '/cities',
+  path: '/cities',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AiRoute = AiRouteImport.update({
@@ -62,7 +74,9 @@ const AiThreadIdRoute = AiThreadIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ai': typeof AiRouteWithChildren
+  '/cities': typeof CitiesRoute
   '/guides': typeof GuidesRouteWithChildren
+  '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
   '/ai/$threadId': typeof AiThreadIdRoute
   '/api/chat': typeof ApiChatRoute
@@ -72,7 +86,9 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ai': typeof AiRouteWithChildren
+  '/cities': typeof CitiesRoute
   '/guides': typeof GuidesRouteWithChildren
+  '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
   '/ai/$threadId': typeof AiThreadIdRoute
   '/api/chat': typeof ApiChatRoute
@@ -83,7 +99,9 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/ai': typeof AiRouteWithChildren
+  '/cities': typeof CitiesRoute
   '/guides': typeof GuidesRouteWithChildren
+  '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
   '/ai/$threadId': typeof AiThreadIdRoute
   '/api/chat': typeof ApiChatRoute
@@ -95,7 +113,9 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/ai'
+    | '/cities'
     | '/guides'
+    | '/how-it-works'
     | '/login'
     | '/ai/$threadId'
     | '/api/chat'
@@ -105,7 +125,9 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/ai'
+    | '/cities'
     | '/guides'
+    | '/how-it-works'
     | '/login'
     | '/ai/$threadId'
     | '/api/chat'
@@ -115,7 +137,9 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/ai'
+    | '/cities'
     | '/guides'
+    | '/how-it-works'
     | '/login'
     | '/ai/$threadId'
     | '/api/chat'
@@ -126,7 +150,9 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AiRoute: typeof AiRouteWithChildren
+  CitiesRoute: typeof CitiesRoute
   GuidesRoute: typeof GuidesRouteWithChildren
+  HowItWorksRoute: typeof HowItWorksRoute
   LoginRoute: typeof LoginRoute
   ApiChatRoute: typeof ApiChatRoute
   BookGuideIdRoute: typeof BookGuideIdRoute
@@ -141,11 +167,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/how-it-works': {
+      id: '/how-it-works'
+      path: '/how-it-works'
+      fullPath: '/how-it-works'
+      preLoaderRoute: typeof HowItWorksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/guides': {
       id: '/guides'
       path: '/guides'
       fullPath: '/guides'
       preLoaderRoute: typeof GuidesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cities': {
+      id: '/cities'
+      path: '/cities'
+      fullPath: '/cities'
+      preLoaderRoute: typeof CitiesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ai': {
@@ -217,7 +257,9 @@ const GuidesRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AiRoute: AiRouteWithChildren,
+  CitiesRoute: CitiesRoute,
   GuidesRoute: GuidesRouteWithChildren,
+  HowItWorksRoute: HowItWorksRoute,
   LoginRoute: LoginRoute,
   ApiChatRoute: ApiChatRoute,
   BookGuideIdRoute: BookGuideIdRoute,

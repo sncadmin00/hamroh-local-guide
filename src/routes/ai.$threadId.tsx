@@ -79,6 +79,17 @@ function ChatWindow({ threadId, initial, token }: { threadId: string; initial: {
   }, [threadId]);
 
   useEffect(() => {
+    const key = `initialPrompt:${threadId}`;
+    const pending = typeof window !== "undefined" ? sessionStorage.getItem(key) : null;
+    if (pending && initial.length === 0) {
+      sessionStorage.removeItem(key);
+      sendMessage({ text: pending });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [threadId]);
+
+
+  useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, status]);
 

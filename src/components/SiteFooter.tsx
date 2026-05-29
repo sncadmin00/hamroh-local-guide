@@ -11,8 +11,9 @@ export function SiteFooter() {
           <span className="font-display text-lg font-semibold">Hamroh</span>
         </div>
         <p className="text-sm text-muted-foreground">
-          © {new Date().getFullYear()} Hamroh · Trusted local guides in Uzbekistan
+          © {new Date().getFullYear()} Hamroh · Trusted local guides
         </p>
+
       </div>
     </footer>
   );
