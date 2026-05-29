@@ -125,6 +125,15 @@ export function SiteHeader() {
                     <Settings className="h-4 w-4" /> Account settings
                   </Link>
                 )}
+                {isAdmin && (
+                  <Link
+                    to="/admin"
+                    className="px-3 py-3 rounded-lg text-base font-medium text-foreground hover:bg-secondary/60 inline-flex items-center gap-2"
+                    activeProps={{ className: "px-3 py-3 rounded-lg text-base font-medium bg-secondary text-foreground inline-flex items-center gap-2" }}
+                  >
+                    <Shield className="h-4 w-4" /> Admin
+                  </Link>
+                )}
               </nav>
               <div className="mt-6 flex items-center gap-3 px-3">
                 <span className="text-sm text-muted-foreground">{t("common.contactUs")}</span>
