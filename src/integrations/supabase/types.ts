@@ -70,15 +70,181 @@ export type Database = {
         }
         Relationships: []
       }
+      cities: {
+        Row: {
+          created_at: string
+          id: string
+          lat: number
+          lng: number
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          lat: number
+          lng: number
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          lat?: number
+          lng?: number
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      guide_experiences: {
+        Row: {
+          created_at: string
+          duration: string
+          guide_id: string
+          id: string
+          price: number
+          sort_order: number
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          duration: string
+          guide_id: string
+          id?: string
+          price?: number
+          sort_order?: number
+          title: string
+        }
+        Update: {
+          created_at?: string
+          duration?: string
+          guide_id?: string
+          id?: string
+          price?: number
+          sort_order?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guide_experiences_guide_id_fkey"
+            columns: ["guide_id"]
+            isOneToOne: false
+            referencedRelation: "guides"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      guides: {
+        Row: {
+          bio: string
+          city_id: string
+          created_at: string
+          id: string
+          instant_book: boolean
+          languages: string[]
+          name: string
+          photo_url: string | null
+          price_per_day: number
+          rating: number
+          reviews: number
+          slug: string
+          sort_order: number
+          specialties: string[]
+          tagline: string
+          updated_at: string
+          verified: boolean
+        }
+        Insert: {
+          bio?: string
+          city_id: string
+          created_at?: string
+          id?: string
+          instant_book?: boolean
+          languages?: string[]
+          name: string
+          photo_url?: string | null
+          price_per_day?: number
+          rating?: number
+          reviews?: number
+          slug: string
+          sort_order?: number
+          specialties?: string[]
+          tagline?: string
+          updated_at?: string
+          verified?: boolean
+        }
+        Update: {
+          bio?: string
+          city_id?: string
+          created_at?: string
+          id?: string
+          instant_book?: boolean
+          languages?: string[]
+          name?: string
+          photo_url?: string | null
+          price_per_day?: number
+          rating?: number
+          reviews?: number
+          slug?: string
+          sort_order?: number
+          specialties?: string[]
+          tagline?: string
+          updated_at?: string
+          verified?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guides_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -205,6 +371,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin"],
+    },
   },
 } as const
