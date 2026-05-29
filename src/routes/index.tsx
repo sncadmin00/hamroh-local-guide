@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
-import { ArrowUp, Sparkles } from "lucide-react";
+import { ArrowUp, Mic, Sparkles } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { supabase } from "@/integrations/supabase/client";
@@ -29,7 +29,41 @@ function Home() {
   const create = useServerFn(createThread);
   const [input, setInput] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [listening, setListening] = useState(false);
   const taRef = useRef<HTMLTextAreaElement>(null);
+  const recognitionRef = useRef<any>(null);
+
+  const toggleMic = () => {
+    const SR: any =
+      (typeof window !== "undefined" &&
+        ((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition)) ||
+      null;
+    if (!SR) {
+      alert("Voice input is not supported in this browser.");
+      return;
+    }
+    if (listening) {
+      recognitionRef.current?.stop();
+      return;
+    }
+    const rec = new SR();
+    rec.lang = navigator.language || "en-US";
+    rec.interimResults = true;
+    rec.continuous = false;
+    let base = input ? input + " " : "";
+    rec.onresult = (e: any) => {
+      let transcript = "";
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        transcript += e.results[i][0].transcript;
+      }
+      setInput(base + transcript);
+    };
+    rec.onend = () => setListening(false);
+    rec.onerror = () => setListening(false);
+    recognitionRef.current = rec;
+    setListening(true);
+    rec.start();
+  };
 
   useEffect(() => {
     taRef.current?.focus();
@@ -103,6 +137,15 @@ function Home() {
                 className="flex-1 resize-none bg-transparent px-3 py-2 text-base outline-none max-h-48"
                 disabled={submitting}
               />
+              <button
+                type="button"
+                onClick={toggleMic}
+                disabled={submitting}
+                className={`h-10 w-10 shrink-0 inline-flex items-center justify-center rounded-xl ring-1 ring-border/60 hover:bg-secondary transition-colors ${listening ? "bg-destructive text-destructive-foreground animate-pulse" : "bg-background text-muted-foreground"}`}
+                aria-label={listening ? "Stop voice input" : "Start voice input"}
+              >
+                <Mic className="h-4 w-4" />
+              </button>
               <button
                 type="submit"
                 disabled={submitting || !input.trim()}
