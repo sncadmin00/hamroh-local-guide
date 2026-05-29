@@ -150,8 +150,8 @@ function AdminPage() {
 
         {tab === "cities" && <CitiesPanel cities={cities} reload={loadData} />}
         {tab === "guides" && <GuidesPanel guides={guides} cities={cities} reload={loadData} />}
-        {tab === "articles" && <ArticlesPanel articles={articles} reload={loadData} />}
-        {tab === "social" && <SocialPanel embeds={embeds} reload={loadData} />}
+        {tab === "articles" && <ArticlesPanel articles={articles} cities={cities} reload={loadData} />}
+        {tab === "social" && <SocialPanel embeds={embeds} cities={cities} reload={loadData} />}
       </div>
     </div>
   );
