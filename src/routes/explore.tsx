@@ -10,9 +10,9 @@ export const Route = createFileRoute("/explore")({
   head: () => ({
     meta: [
       { title: "Explore — Hamroh" },
-      { name: "description", content: "Travel articles, featured guides, and social highlights from across Uzbekistan." },
+      { name: "description", content: "Travel articles and social highlights from across Uzbekistan." },
       { property: "og:title", content: "Explore — Hamroh" },
-      { property: "og:description", content: "Travel articles, featured guides, and social highlights from across Uzbekistan." },
+      { property: "og:description", content: "Travel articles and social highlights from across Uzbekistan." },
     ],
   }),
   component: ExplorePage,
