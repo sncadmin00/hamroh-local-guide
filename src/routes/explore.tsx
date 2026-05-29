@@ -10,9 +10,9 @@ export const Route = createFileRoute("/explore")({
   head: () => ({
     meta: [
       { title: "Explore — Hamroh" },
-      { name: "description", content: "Travel articles, featured guides, and social highlights from across Uzbekistan." },
+      { name: "description", content: "Travel articles and social highlights from across Uzbekistan." },
       { property: "og:title", content: "Explore — Hamroh" },
-      { property: "og:description", content: "Travel articles, featured guides, and social highlights from across Uzbekistan." },
+      { property: "og:description", content: "Travel articles and social highlights from across Uzbekistan." },
     ],
   }),
   component: ExplorePage,
@@ -27,16 +27,6 @@ type Article = {
   published_at: string | null;
 };
 
-type Guide = {
-  id: string;
-  name: string;
-  slug: string;
-  tagline: string;
-  photo_url: string | null;
-  rating: number;
-  price_per_day: number;
-};
-
 type City = { id: string; name: string; slug: string };
 
 type Embed = {
@@ -48,20 +38,17 @@ type Embed = {
 
 function ExplorePage() {
   const [articles, setArticles] = useState<Article[]>([]);
-  const [guides, setGuides] = useState<Guide[]>([]);
   const [cities, setCities] = useState<City[]>([]);
   const [embeds, setEmbeds] = useState<Embed[]>([]);
 
   useEffect(() => {
     (async () => {
-      const [a, g, c, e] = await Promise.all([
+      const [a, c, e] = await Promise.all([
         supabase.from("articles").select("id,title,slug,excerpt,cover_url,published_at").eq("published", true).order("sort_order").order("published_at", { ascending: false }),
-        supabase.from("guides").select("id,name,slug,tagline,photo_url,rating,price_per_day").order("sort_order").limit(6),
         supabase.from("cities").select("id,name,slug").order("sort_order"),
         supabase.from("social_embeds").select("id,platform,url,caption").eq("visible", true).order("sort_order"),
       ]);
       if (a.data) setArticles(a.data as Article[]);
-      if (g.data) setGuides(g.data as Guide[]);
       if (c.data) setCities(c.data as City[]);
       if (e.data) setEmbeds(e.data as Embed[]);
     })();
@@ -115,36 +102,6 @@ function ExplorePage() {
           )}
         </section>
 
-        {/* Featured guides */}
-        {guides.length > 0 && (
-          <section className="mt-16">
-            <div className="flex items-end justify-between">
-              <h2 className="font-display text-2xl font-semibold">Featured guides</h2>
-              <Link to="/guides" className="text-sm font-medium text-primary hover:underline">See all</Link>
-            </div>
-            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {guides.map((g) => (
-                <Link
-                  key={g.id}
-                  to="/guides/$guideId"
-                  params={{ guideId: g.slug }}
-                  className="flex gap-4 items-center rounded-2xl bg-card p-4 ring-1 ring-border/60 hover:ring-border transition"
-                >
-                  <div className="h-16 w-16 rounded-full overflow-hidden bg-secondary shrink-0">
-                    {g.photo_url ? (
-                      <img src={g.photo_url} alt={g.name} className="h-full w-full object-cover" />
-                    ) : null}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="font-semibold truncate">{g.name}</p>
-                    <p className="text-xs text-muted-foreground truncate">{g.tagline}</p>
-                    <p className="mt-1 text-xs">★ {Number(g.rating).toFixed(1)} · ${Number(g.price_per_day).toFixed(0)}/day</p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </section>
-        )}
 
         {/* Cities */}
         {cities.length > 0 && (
