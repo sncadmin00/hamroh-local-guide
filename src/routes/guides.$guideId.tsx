@@ -33,7 +33,8 @@ export const Route = createFileRoute("/guides/$guideId")({
 });
 
 function GuidePage() {
-  const { guide } = Route.useLoaderData();
+  const { guide } = Route.useLoaderData() as { guide: Guide };
+
 
   return (
     <div className="min-h-screen">
