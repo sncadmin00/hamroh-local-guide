@@ -70,6 +70,48 @@ export type Database = {
         }
         Relationships: []
       }
+      articles: {
+        Row: {
+          body_md: string
+          cover_url: string | null
+          created_at: string
+          excerpt: string
+          id: string
+          published: boolean
+          published_at: string | null
+          slug: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body_md?: string
+          cover_url?: string | null
+          created_at?: string
+          excerpt?: string
+          id?: string
+          published?: boolean
+          published_at?: string | null
+          slug: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          body_md?: string
+          cover_url?: string | null
+          created_at?: string
+          excerpt?: string
+          id?: string
+          published?: boolean
+          published_at?: string | null
+          slug?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       cities: {
         Row: {
           created_at: string
@@ -208,6 +250,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      social_embeds: {
+        Row: {
+          caption: string
+          created_at: string
+          id: string
+          platform: string
+          sort_order: number
+          url: string
+          visible: boolean
+        }
+        Insert: {
+          caption?: string
+          created_at?: string
+          id?: string
+          platform: string
+          sort_order?: number
+          url: string
+          visible?: boolean
+        }
+        Update: {
+          caption?: string
+          created_at?: string
+          id?: string
+          platform?: string
+          sort_order?: number
+          url?: string
+          visible?: boolean
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {
