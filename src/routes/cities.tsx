@@ -11,9 +11,9 @@ export const Route = createFileRoute("/cities")({
   head: () => ({
     meta: [
       { title: "Cities — Hamroh" },
-      { name: "description", content: "Explore guides across Tashkent, Samarkand, and Bukhara." },
+      { name: "description", content: "Explore guides across Uzbekistan's cities." },
       { property: "og:title", content: "Cities — Hamroh" },
-      { property: "og:description", content: "Explore guides across Tashkent, Samarkand, and Bukhara." },
+      { property: "og:description", content: "Explore guides across Uzbekistan's cities." },
     ],
   }),
   component: CitiesPage,
@@ -26,15 +26,25 @@ const cities = [
 ];
 
 function CitiesPage() {
+  const navigate = useNavigate();
+  const [city, setCity] = useState<"All" | string>("All");
+
   return (
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
       <main className="flex-1 container mx-auto px-4 py-16 md:py-24">
-        <div className="max-w-2xl">
-          <h1 className="font-display text-4xl md:text-5xl font-semibold">Three cities, three worlds.</h1>
-          <p className="mt-3 text-muted-foreground">Pick a destination and meet the guides who know it inside out.</p>
+        <div className="flex items-center justify-between gap-4">
+          <CityPicker
+            value={city}
+            onChange={(v) => {
+              setCity(v);
+              if (v !== "All") {
+                navigate({ to: "/guides", search: { city: v } });
+              }
+            }}
+          />
         </div>
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
+        <div className="mt-10 grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {cities.map((c) => (
             <Link
               key={c.name}
