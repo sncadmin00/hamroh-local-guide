@@ -107,7 +107,7 @@ function ExplorePage() {
   }, [embeds, city, selectedCityId]);
 
   const filteredGuides = useMemo(() => {
-    if (city === "All" || !selectedCityId) return [];
+    if (city === "All") return guides.slice(0, 6);
     return guides.filter((g) => g.city_id === selectedCityId).slice(0, 6);
   }, [guides, city, selectedCityId]);
 
