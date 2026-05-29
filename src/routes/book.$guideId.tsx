@@ -18,6 +18,7 @@ export const Route = createFileRoute("/book/$guideId")({
   }),
   component: BookPage,
 });
+  const { guide } = Route.useLoaderData() as { guide: Guide };
 
 function BookPage() {
   const { guide } = Route.useLoaderData();
