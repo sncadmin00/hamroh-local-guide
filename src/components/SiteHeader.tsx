@@ -1,8 +1,10 @@
 import { Link } from "@tanstack/react-router";
-import { Compass, Menu } from "lucide-react";
+import { Compass, Menu, Settings } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useI18n } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { supabase } from "@/integrations/supabase/client";
 
 function WhatsAppIcon({ className }: { className?: string }) {
   return (
