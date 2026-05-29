@@ -9,11 +9,15 @@ export const Route = createFileRoute("/become-a-guide")({
     ],
   }),
   component: BecomeAGuidePage,
-});
-
 function BecomeAGuidePage() {
   return (
     <div className="container mx-auto px-4 py-12">
+      <div className="mb-6">
+        <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <ArrowLeft className="h-4 w-4" />
+          Back to home
+        </Link>
+      </div>
       <div className="mx-auto max-w-2xl text-center">
         <h1 className="font-display text-4xl font-bold tracking-tight sm:text-5xl">
           Become a Guide
