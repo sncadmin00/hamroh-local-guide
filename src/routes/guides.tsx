@@ -4,12 +4,11 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { GuideCard } from "@/components/GuideCard";
 import { CityPicker } from "@/components/CityPicker";
-import { guides, type City } from "@/data/guides";
-import { CITY_NAMES } from "@/data/cities";
+import { useGuides } from "@/lib/content-queries";
 import { z } from "zod";
 
 const searchSchema = z.object({
-  city: z.enum(CITY_NAMES).optional(),
+  city: z.string().optional(),
 });
 
 export const Route = createFileRoute("/guides")({
@@ -17,19 +16,18 @@ export const Route = createFileRoute("/guides")({
   head: () => ({
     meta: [
       { title: "All guides — Hamroh" },
-      { name: "description", content: "Browse verified local guides across Tashkent, Samarkand, and Bukhara." },
+      { name: "description", content: "Browse verified local guides across Uzbekistan." },
     ],
   }),
   component: GuidesPage,
 });
 
-
-
 function GuidesPage() {
   const { city: initialCity } = Route.useSearch();
-  const [city, setCity] = useState<"All" | City>(initialCity ?? "All");
+  const [city, setCity] = useState<"All" | string>(initialCity ?? "All");
   const [lang, setLang] = useState<string>("All");
   const [instant, setInstant] = useState(false);
+  const { data: guides = [], isLoading } = useGuides();
 
   const allLangs = Array.from(new Set(guides.flatMap((g) => g.languages))).sort();
 
@@ -47,7 +45,7 @@ function GuidesPage() {
         <div className="container mx-auto px-4 py-12 md:py-16">
           <h1 className="font-display text-4xl font-semibold md:text-5xl">Find your guide</h1>
           <p className="mt-3 max-w-xl text-muted-foreground">
-            {filtered.length} verified locals ready to show you Uzbekistan.
+            {isLoading ? "Loading guides…" : `${filtered.length} verified locals ready to show you Uzbekistan.`}
           </p>
         </div>
       </section>
@@ -72,7 +70,9 @@ function GuidesPage() {
           </div>
         </div>
 
-        {filtered.length === 0 ? (
+        {isLoading ? (
+          <div className="mt-16 text-center text-muted-foreground">Loading…</div>
+        ) : filtered.length === 0 ? (
           <div className="mt-16 text-center text-muted-foreground">No guides match your filters yet — try widening your search.</div>
         ) : (
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

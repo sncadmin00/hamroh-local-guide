@@ -10,10 +10,10 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command";
-import { CITIES, nearestCities } from "@/data/cities";
-import type { City } from "@/data/guides";
+import { nearestCityNames } from "@/data/cities";
+import { useCities } from "@/lib/content-queries";
 
-type Value = "All" | City;
+type Value = "All" | string;
 
 interface Props {
   value: Value;
@@ -22,16 +22,17 @@ interface Props {
 
 export function CityPicker({ value, onChange }: Props) {
   const [open, setOpen] = useState(false);
-  const [suggested, setSuggested] = useState<City[] | null>(null);
+  const [suggested, setSuggested] = useState<string[] | null>(null);
+  const { data: cities = [] } = useCities();
 
   useEffect(() => {
-    if (typeof navigator === "undefined" || !navigator.geolocation) return;
+    if (typeof navigator === "undefined" || !navigator.geolocation || cities.length === 0) return;
     navigator.geolocation.getCurrentPosition(
-      (pos) => setSuggested(nearestCities(pos.coords.latitude, pos.coords.longitude, 3)),
-      () => setSuggested(CITIES.slice(0, 3).map((c) => c.name)),
+      (pos) => setSuggested(nearestCityNames(cities, pos.coords.latitude, pos.coords.longitude, 3)),
+      () => setSuggested(cities.slice(0, 3).map((c) => c.name)),
       { timeout: 5000, maximumAge: 1000 * 60 * 60 },
     );
-  }, []);
+  }, [cities]);
 
   const select = (v: Value) => {
     onChange(v);
@@ -76,7 +77,7 @@ export function CityPicker({ value, onChange }: Props) {
                 All cities
                 {value === "All" && <Check className="ml-auto h-4 w-4" />}
               </CommandItem>
-              {CITIES.map((c) => (
+              {cities.map((c) => (
                 <CommandItem key={c.name} value={c.name} onSelect={() => select(c.name)}>
                   {c.name}
                   {value === c.name && <Check className="ml-auto h-4 w-4" />}
