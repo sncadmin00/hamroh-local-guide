@@ -218,6 +218,7 @@ function renderMarkdown(text: string) {
 }
 
 function MessageBubble({ message }: { message: UIMessage }) {
+  const { data: guides = [] } = useGuides();
   const text = message.parts
     .map((p) => (p.type === "text" ? (p as { type: "text"; text: string }).text : ""))
     .join("");
