@@ -11,14 +11,15 @@ async function buildSystemPrompt(client: ReturnType<typeof createClient<any, any
     .select("slug, name, tagline, languages, specialties, price_per_day, rating, reviews, instant_book, cities(name)")
     .order("sort_order", { ascending: true });
 
-  const catalog = (data ?? [])
-    .map((g: {
+  const catalog = ((data ?? []) as Array<{
       slug: string; name: string; tagline: string; languages: string[]; specialties: string[];
       price_per_day: number; rating: number; reviews: number; instant_book: boolean;
-      cities: { name: string } | null;
-    }) =>
-      `- id: ${g.slug} | ${g.name} | City: ${g.cities?.name ?? ""} | Languages: ${g.languages.join(", ")} | Specialties: ${g.specialties.join(", ")} | $${g.price_per_day}/day | Rating ${g.rating} (${g.reviews}) | ${g.instant_book ? "Instant book" : "Request to book"} | ${g.tagline}`,
-    )
+      cities: { name: string } | { name: string }[] | null;
+    }>)
+    .map((g) => {
+      const cityName = Array.isArray(g.cities) ? g.cities[0]?.name ?? "" : g.cities?.name ?? "";
+      return `- id: ${g.slug} | ${g.name} | City: ${cityName} | Languages: ${g.languages.join(", ")} | Specialties: ${g.specialties.join(", ")} | $${g.price_per_day}/day | Rating ${g.rating} (${g.reviews}) | ${g.instant_book ? "Instant book" : "Request to book"} | ${g.tagline}`;
+    })
     .join("\n");
 
   return `You are Hamroh AI, a friendly travel concierge helping tourists find the perfect local guide in Uzbekistan.
