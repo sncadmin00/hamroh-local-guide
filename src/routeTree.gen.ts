@@ -13,12 +13,14 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as GuidesRouteImport } from './routes/guides'
+import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as CitiesRouteImport } from './routes/cities'
 import { Route as BecomeAGuideRouteImport } from './routes/become-a-guide'
 import { Route as AiRouteImport } from './routes/ai'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as GuidesGuideIdRouteImport } from './routes/guides.$guideId'
+import { Route as ExploreSlugRouteImport } from './routes/explore.$slug'
 import { Route as BookGuideIdRouteImport } from './routes/book.$guideId'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AiThreadIdRouteImport } from './routes/ai.$threadId'
@@ -41,6 +43,11 @@ const HowItWorksRoute = HowItWorksRouteImport.update({
 const GuidesRoute = GuidesRouteImport.update({
   id: '/guides',
   path: '/guides',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExploreRoute = ExploreRouteImport.update({
+  id: '/explore',
+  path: '/explore',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CitiesRoute = CitiesRouteImport.update({
@@ -73,6 +80,11 @@ const GuidesGuideIdRoute = GuidesGuideIdRouteImport.update({
   path: '/$guideId',
   getParentRoute: () => GuidesRoute,
 } as any)
+const ExploreSlugRoute = ExploreSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => ExploreRoute,
+} as any)
 const BookGuideIdRoute = BookGuideIdRouteImport.update({
   id: '/book/$guideId',
   path: '/book/$guideId',
@@ -95,6 +107,7 @@ export interface FileRoutesByFullPath {
   '/ai': typeof AiRouteWithChildren
   '/become-a-guide': typeof BecomeAGuideRoute
   '/cities': typeof CitiesRoute
+  '/explore': typeof ExploreRouteWithChildren
   '/guides': typeof GuidesRouteWithChildren
   '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
@@ -102,6 +115,7 @@ export interface FileRoutesByFullPath {
   '/ai/$threadId': typeof AiThreadIdRoute
   '/api/chat': typeof ApiChatRoute
   '/book/$guideId': typeof BookGuideIdRoute
+  '/explore/$slug': typeof ExploreSlugRoute
   '/guides/$guideId': typeof GuidesGuideIdRoute
 }
 export interface FileRoutesByTo {
@@ -110,6 +124,7 @@ export interface FileRoutesByTo {
   '/ai': typeof AiRouteWithChildren
   '/become-a-guide': typeof BecomeAGuideRoute
   '/cities': typeof CitiesRoute
+  '/explore': typeof ExploreRouteWithChildren
   '/guides': typeof GuidesRouteWithChildren
   '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
@@ -117,6 +132,7 @@ export interface FileRoutesByTo {
   '/ai/$threadId': typeof AiThreadIdRoute
   '/api/chat': typeof ApiChatRoute
   '/book/$guideId': typeof BookGuideIdRoute
+  '/explore/$slug': typeof ExploreSlugRoute
   '/guides/$guideId': typeof GuidesGuideIdRoute
 }
 export interface FileRoutesById {
@@ -126,6 +142,7 @@ export interface FileRoutesById {
   '/ai': typeof AiRouteWithChildren
   '/become-a-guide': typeof BecomeAGuideRoute
   '/cities': typeof CitiesRoute
+  '/explore': typeof ExploreRouteWithChildren
   '/guides': typeof GuidesRouteWithChildren
   '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
@@ -133,6 +150,7 @@ export interface FileRoutesById {
   '/ai/$threadId': typeof AiThreadIdRoute
   '/api/chat': typeof ApiChatRoute
   '/book/$guideId': typeof BookGuideIdRoute
+  '/explore/$slug': typeof ExploreSlugRoute
   '/guides/$guideId': typeof GuidesGuideIdRoute
 }
 export interface FileRouteTypes {
@@ -143,6 +161,7 @@ export interface FileRouteTypes {
     | '/ai'
     | '/become-a-guide'
     | '/cities'
+    | '/explore'
     | '/guides'
     | '/how-it-works'
     | '/login'
@@ -150,6 +169,7 @@ export interface FileRouteTypes {
     | '/ai/$threadId'
     | '/api/chat'
     | '/book/$guideId'
+    | '/explore/$slug'
     | '/guides/$guideId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -158,6 +178,7 @@ export interface FileRouteTypes {
     | '/ai'
     | '/become-a-guide'
     | '/cities'
+    | '/explore'
     | '/guides'
     | '/how-it-works'
     | '/login'
@@ -165,6 +186,7 @@ export interface FileRouteTypes {
     | '/ai/$threadId'
     | '/api/chat'
     | '/book/$guideId'
+    | '/explore/$slug'
     | '/guides/$guideId'
   id:
     | '__root__'
@@ -173,6 +195,7 @@ export interface FileRouteTypes {
     | '/ai'
     | '/become-a-guide'
     | '/cities'
+    | '/explore'
     | '/guides'
     | '/how-it-works'
     | '/login'
@@ -180,6 +203,7 @@ export interface FileRouteTypes {
     | '/ai/$threadId'
     | '/api/chat'
     | '/book/$guideId'
+    | '/explore/$slug'
     | '/guides/$guideId'
   fileRoutesById: FileRoutesById
 }
@@ -189,6 +213,7 @@ export interface RootRouteChildren {
   AiRoute: typeof AiRouteWithChildren
   BecomeAGuideRoute: typeof BecomeAGuideRoute
   CitiesRoute: typeof CitiesRoute
+  ExploreRoute: typeof ExploreRouteWithChildren
   GuidesRoute: typeof GuidesRouteWithChildren
   HowItWorksRoute: typeof HowItWorksRoute
   LoginRoute: typeof LoginRoute
@@ -225,6 +250,13 @@ declare module '@tanstack/react-router' {
       path: '/guides'
       fullPath: '/guides'
       preLoaderRoute: typeof GuidesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/explore': {
+      id: '/explore'
+      path: '/explore'
+      fullPath: '/explore'
+      preLoaderRoute: typeof ExploreRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cities': {
@@ -269,6 +301,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuidesGuideIdRouteImport
       parentRoute: typeof GuidesRoute
     }
+    '/explore/$slug': {
+      id: '/explore/$slug'
+      path: '/$slug'
+      fullPath: '/explore/$slug'
+      preLoaderRoute: typeof ExploreSlugRouteImport
+      parentRoute: typeof ExploreRoute
+    }
     '/book/$guideId': {
       id: '/book/$guideId'
       path: '/book/$guideId'
@@ -303,6 +342,17 @@ const AiRouteChildren: AiRouteChildren = {
 
 const AiRouteWithChildren = AiRoute._addFileChildren(AiRouteChildren)
 
+interface ExploreRouteChildren {
+  ExploreSlugRoute: typeof ExploreSlugRoute
+}
+
+const ExploreRouteChildren: ExploreRouteChildren = {
+  ExploreSlugRoute: ExploreSlugRoute,
+}
+
+const ExploreRouteWithChildren =
+  ExploreRoute._addFileChildren(ExploreRouteChildren)
+
 interface GuidesRouteChildren {
   GuidesGuideIdRoute: typeof GuidesGuideIdRoute
 }
@@ -320,6 +370,7 @@ const rootRouteChildren: RootRouteChildren = {
   AiRoute: AiRouteWithChildren,
   BecomeAGuideRoute: BecomeAGuideRoute,
   CitiesRoute: CitiesRoute,
+  ExploreRoute: ExploreRouteWithChildren,
   GuidesRoute: GuidesRouteWithChildren,
   HowItWorksRoute: HowItWorksRoute,
   LoginRoute: LoginRoute,

@@ -35,20 +35,47 @@ type Guide = {
   languages: string[];
 };
 
+type Article = {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  cover_url: string | null;
+  body_md: string;
+  published: boolean;
+  published_at: string | null;
+  sort_order: number;
+};
+
+type Embed = {
+  id: string;
+  platform: "instagram" | "tiktok" | "youtube" | "x";
+  url: string;
+  caption: string;
+  sort_order: number;
+  visible: boolean;
+};
+
 function AdminPage() {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
-  const [tab, setTab] = useState<"cities" | "guides">("cities");
+  const [tab, setTab] = useState<"cities" | "guides" | "articles" | "social">("cities");
   const [cities, setCities] = useState<City[]>([]);
   const [guides, setGuides] = useState<Guide[]>([]);
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [embeds, setEmbeds] = useState<Embed[]>([]);
 
   const loadData = useCallback(async () => {
-    const [c, g] = await Promise.all([
+    const [c, g, a, e] = await Promise.all([
       supabase.from("cities").select("*").order("sort_order"),
       supabase.from("guides").select("*").order("sort_order"),
+      supabase.from("articles").select("*").order("sort_order").order("created_at", { ascending: false }),
+      supabase.from("social_embeds").select("*").order("sort_order"),
     ]);
     if (c.data) setCities(c.data as City[]);
     if (g.data) setGuides(g.data as Guide[]);
+    if (a.data) setArticles(a.data as Article[]);
+    if (e.data) setEmbeds(e.data as Embed[]);
   }, []);
 
   useEffect(() => {
@@ -92,9 +119,9 @@ function AdminPage() {
         </Link>
 
         <h1 className="font-display text-3xl font-semibold">Admin</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Manage cities and guides.</p>
+        <p className="mt-1 text-sm text-muted-foreground">Manage cities, guides, articles and social embeds.</p>
 
-        <div className="mt-6 inline-flex rounded-full bg-card p-1 ring-1 ring-border/60">
+        <div className="mt-6 inline-flex flex-wrap rounded-full bg-card p-1 ring-1 ring-border/60">
           <button
             onClick={() => setTab("cities")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "cities" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
@@ -107,13 +134,24 @@ function AdminPage() {
           >
             Guides ({guides.length})
           </button>
+          <button
+            onClick={() => setTab("articles")}
+            className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "articles" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+          >
+            Articles ({articles.length})
+          </button>
+          <button
+            onClick={() => setTab("social")}
+            className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "social" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+          >
+            Social ({embeds.length})
+          </button>
         </div>
 
-        {tab === "cities" ? (
-          <CitiesPanel cities={cities} reload={loadData} />
-        ) : (
-          <GuidesPanel guides={guides} cities={cities} reload={loadData} />
-        )}
+        {tab === "cities" && <CitiesPanel cities={cities} reload={loadData} />}
+        {tab === "guides" && <GuidesPanel guides={guides} cities={cities} reload={loadData} />}
+        {tab === "articles" && <ArticlesPanel articles={articles} reload={loadData} />}
+        {tab === "social" && <SocialPanel embeds={embeds} reload={loadData} />}
       </div>
     </div>
   );
@@ -420,6 +458,217 @@ function Field({
         placeholder={placeholder}
         className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
       />
+    </div>
+  );
+}
+
+function ArticlesPanel({ articles, reload }: { articles: Article[]; reload: () => Promise<void> }) {
+  const [title, setTitle] = useState("");
+  const [slug, setSlug] = useState("");
+  const [excerpt, setExcerpt] = useState("");
+  const [cover, setCover] = useState("");
+  const [body, setBody] = useState("");
+  const [published, setPublished] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  const add = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!title || !slug) {
+      toast.error("Title and slug required");
+      return;
+    }
+    setSaving(true);
+    const { error } = await supabase.from("articles").insert({
+      title,
+      slug,
+      excerpt,
+      cover_url: cover || null,
+      body_md: body,
+      published,
+      published_at: published ? new Date().toISOString() : null,
+      sort_order: articles.length,
+    });
+    setSaving(false);
+    if (error) { toast.error(error.message); return; }
+    toast.success("Article added");
+    setTitle(""); setSlug(""); setExcerpt(""); setCover(""); setBody("");
+    await reload();
+  };
+
+  const togglePublished = async (a: Article) => {
+    const next = !a.published;
+    const { error } = await supabase
+      .from("articles")
+      .update({ published: next, published_at: next ? new Date().toISOString() : null })
+      .eq("id", a.id);
+    if (error) toast.error(error.message);
+    else { toast.success(next ? "Published" : "Unpublished"); await reload(); }
+  };
+
+  const remove = async (id: string) => {
+    if (!confirm("Delete this article?")) return;
+    const { error } = await supabase.from("articles").delete().eq("id", id);
+    if (error) toast.error(error.message);
+    else { toast.success("Deleted"); await reload(); }
+  };
+
+  return (
+    <div className="mt-6 grid gap-6 lg:grid-cols-2">
+      <form onSubmit={add} className="rounded-3xl bg-card p-6 ring-1 ring-border/60 h-fit">
+        <h2 className="font-display text-lg font-semibold">Add an article</h2>
+        <div className="mt-4 space-y-3">
+          <Field label="Title" value={title} onChange={setTitle} placeholder="A weekend in Bukhara" />
+          <Field label="Slug" value={slug} onChange={setSlug} placeholder="weekend-in-bukhara" />
+          <Field label="Excerpt" value={excerpt} onChange={setExcerpt} placeholder="Short summary…" />
+          <Field label="Cover image URL" value={cover} onChange={setCover} placeholder="https://…" />
+          <div>
+            <label className="text-xs font-medium text-muted-foreground">Body (markdown)</label>
+            <textarea
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              rows={8}
+              className="mt-1 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+            />
+          </div>
+          <label className="inline-flex items-center gap-2 text-sm">
+            <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} />
+            Publish immediately
+          </label>
+        </div>
+        <button
+          type="submit"
+          disabled={saving}
+          className="mt-5 inline-flex items-center gap-2 h-11 px-6 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-60"
+        >
+          <Plus className="h-4 w-4" /> {saving ? "Saving…" : "Add article"}
+        </button>
+      </form>
+
+      <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
+        <h2 className="font-display text-lg font-semibold">Articles</h2>
+        <ul className="mt-4 divide-y divide-border/60">
+          {articles.length === 0 && <li className="py-4 text-sm text-muted-foreground">No articles yet.</li>}
+          {articles.map((a) => (
+            <li key={a.id} className="py-3 flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <p className="font-medium truncate">{a.title}</p>
+                <p className="text-xs text-muted-foreground truncate">/{a.slug} · {a.published ? "Published" : "Draft"}</p>
+              </div>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => togglePublished(a)}
+                  className="h-9 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-secondary/60"
+                >
+                  {a.published ? "Unpublish" : "Publish"}
+                </button>
+                <button
+                  onClick={() => remove(a.id)}
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                  aria-label="Delete"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function SocialPanel({ embeds, reload }: { embeds: Embed[]; reload: () => Promise<void> }) {
+  const [platform, setPlatform] = useState<Embed["platform"]>("instagram");
+  const [url, setUrl] = useState("");
+  const [caption, setCaption] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const add = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!url) { toast.error("URL required"); return; }
+    setSaving(true);
+    const { error } = await supabase.from("social_embeds").insert({
+      platform, url, caption, sort_order: embeds.length, visible: true,
+    });
+    setSaving(false);
+    if (error) { toast.error(error.message); return; }
+    toast.success("Embed added");
+    setUrl(""); setCaption("");
+    await reload();
+  };
+
+  const toggleVisible = async (em: Embed) => {
+    const { error } = await supabase.from("social_embeds").update({ visible: !em.visible }).eq("id", em.id);
+    if (error) toast.error(error.message);
+    else await reload();
+  };
+
+  const remove = async (id: string) => {
+    if (!confirm("Delete this embed?")) return;
+    const { error } = await supabase.from("social_embeds").delete().eq("id", id);
+    if (error) toast.error(error.message);
+    else { toast.success("Deleted"); await reload(); }
+  };
+
+  return (
+    <div className="mt-6 grid gap-6 lg:grid-cols-2">
+      <form onSubmit={add} className="rounded-3xl bg-card p-6 ring-1 ring-border/60 h-fit">
+        <h2 className="font-display text-lg font-semibold">Add a social embed</h2>
+        <div className="mt-4 space-y-3">
+          <div>
+            <label className="text-xs font-medium text-muted-foreground">Platform</label>
+            <select
+              value={platform}
+              onChange={(e) => setPlatform(e.target.value as Embed["platform"])}
+              className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+            >
+              <option value="instagram">Instagram</option>
+              <option value="tiktok">TikTok</option>
+              <option value="youtube">YouTube</option>
+              <option value="x">X (Twitter)</option>
+            </select>
+          </div>
+          <Field label="Post URL" value={url} onChange={setUrl} placeholder="https://…" />
+          <Field label="Caption (optional)" value={caption} onChange={setCaption} placeholder="Behind the scenes in Samarkand" />
+        </div>
+        <button
+          type="submit"
+          disabled={saving}
+          className="mt-5 inline-flex items-center gap-2 h-11 px-6 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-60"
+        >
+          <Plus className="h-4 w-4" /> {saving ? "Saving…" : "Add embed"}
+        </button>
+      </form>
+
+      <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
+        <h2 className="font-display text-lg font-semibold">Social embeds</h2>
+        <ul className="mt-4 divide-y divide-border/60">
+          {embeds.length === 0 && <li className="py-4 text-sm text-muted-foreground">No embeds yet.</li>}
+          {embeds.map((em) => (
+            <li key={em.id} className="py-3 flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <p className="font-medium truncate capitalize">{em.platform} · {em.visible ? "Visible" : "Hidden"}</p>
+                <p className="text-xs text-muted-foreground truncate">{em.url}</p>
+              </div>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => toggleVisible(em)}
+                  className="h-9 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-secondary/60"
+                >
+                  {em.visible ? "Hide" : "Show"}
+                </button>
+                <button
+                  onClick={() => remove(em.id)}
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                  aria-label="Delete"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
