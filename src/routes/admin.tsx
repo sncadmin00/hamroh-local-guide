@@ -119,9 +119,9 @@ function AdminPage() {
         </Link>
 
         <h1 className="font-display text-3xl font-semibold">Admin</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Manage cities and guides.</p>
+        <p className="mt-1 text-sm text-muted-foreground">Manage cities, guides, articles and social embeds.</p>
 
-        <div className="mt-6 inline-flex rounded-full bg-card p-1 ring-1 ring-border/60">
+        <div className="mt-6 inline-flex flex-wrap rounded-full bg-card p-1 ring-1 ring-border/60">
           <button
             onClick={() => setTab("cities")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "cities" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
@@ -134,13 +134,24 @@ function AdminPage() {
           >
             Guides ({guides.length})
           </button>
+          <button
+            onClick={() => setTab("articles")}
+            className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "articles" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+          >
+            Articles ({articles.length})
+          </button>
+          <button
+            onClick={() => setTab("social")}
+            className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "social" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+          >
+            Social ({embeds.length})
+          </button>
         </div>
 
-        {tab === "cities" ? (
-          <CitiesPanel cities={cities} reload={loadData} />
-        ) : (
-          <GuidesPanel guides={guides} cities={cities} reload={loadData} />
-        )}
+        {tab === "cities" && <CitiesPanel cities={cities} reload={loadData} />}
+        {tab === "guides" && <GuidesPanel guides={guides} cities={cities} reload={loadData} />}
+        {tab === "articles" && <ArticlesPanel articles={articles} reload={loadData} />}
+        {tab === "social" && <SocialPanel embeds={embeds} reload={loadData} />}
       </div>
     </div>
   );
