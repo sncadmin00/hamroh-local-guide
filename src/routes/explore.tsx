@@ -210,7 +210,6 @@ function ExplorePage() {
               </div>
             )}
           </section>
-        )}
 
         {/* Social */}
         <section className="mt-16">
