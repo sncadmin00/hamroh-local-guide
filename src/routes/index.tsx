@@ -4,7 +4,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { GuideCard } from "@/components/GuideCard";
 import { guides } from "@/data/guides";
-import hero from "@/assets/hero-samarkand.jpg";
+import hero from "@/assets/hero-bukhara.jpg";
 import tashkent from "@/assets/city-tashkent.jpg";
 import samarkand from "@/assets/city-samarkand.jpg";
 import bukhara from "@/assets/city-bukhara.jpg";
@@ -39,7 +39,7 @@ function Home() {
 
       {/* Hero */}
       <section className="relative overflow-hidden">
-        <img src={hero} alt="Registan Square at sunset" width={1920} height={1280} className="absolute inset-0 h-full w-full object-cover" />
+        <img src={hero} alt="Bukhara old town at golden hour with turquoise domes and minarets" width={1920} height={1280} className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-black/70" />
         <div className="relative container mx-auto px-4 pb-32 pt-28 md:pb-44 md:pt-40">
           <div className="max-w-3xl">
