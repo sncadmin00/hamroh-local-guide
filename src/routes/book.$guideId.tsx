@@ -1,6 +1,8 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import { Star, BadgeCheck, Zap, ArrowLeft, Check } from "lucide-react";
+import type { Guide } from "@/data/guides";
+
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { getGuide } from "@/data/guides";
@@ -16,6 +18,7 @@ export const Route = createFileRoute("/book/$guideId")({
   }),
   component: BookPage,
 });
+  const { guide } = Route.useLoaderData() as { guide: Guide };
 
 function BookPage() {
   const { guide } = Route.useLoaderData();
@@ -30,7 +33,8 @@ function BookPage() {
     notes: "",
   });
 
-  const selectedExperience = guide.experiences.find((e) => e.title === form.experience) ?? guide.experiences[0];
+  const selectedExperience = guide.experiences.find((e: Guide["experiences"][number]) => e.title === form.experience) ?? guide.experiences[0];
+
   const total = selectedExperience.price * form.guests;
   const fee = Math.round(total * 0.08);
 

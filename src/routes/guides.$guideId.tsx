@@ -2,7 +2,8 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Star, BadgeCheck, Zap, MapPin, Globe2, Clock, ArrowLeft } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { getGuide } from "@/data/guides";
+import { getGuide, type Guide } from "@/data/guides";
+
 
 export const Route = createFileRoute("/guides/$guideId")({
   loader: ({ params }) => {
@@ -32,7 +33,8 @@ export const Route = createFileRoute("/guides/$guideId")({
 });
 
 function GuidePage() {
-  const { guide } = Route.useLoaderData();
+  const { guide } = Route.useLoaderData() as { guide: Guide };
+
 
   return (
     <div className="min-h-screen">
