@@ -462,13 +462,61 @@ function Field({
   );
 }
 
-function ArticlesPanel({ articles, reload }: { articles: Article[]; reload: () => Promise<void> }) {
+function CityMultiSelect({
+  cities,
+  selected,
+  onChange,
+}: {
+  cities: City[];
+  selected: string[];
+  onChange: (ids: string[]) => void;
+}) {
+  if (cities.length === 0) return null;
+  const toggle = (id: string) => {
+    onChange(selected.includes(id) ? selected.filter((x) => x !== id) : [...selected, id]);
+  };
+  return (
+    <div>
+      <label className="text-xs font-medium text-muted-foreground">Cities (leave empty = show everywhere)</label>
+      <div className="mt-1 flex flex-wrap gap-2">
+        {cities.map((c) => {
+          const on = selected.includes(c.id);
+          return (
+            <button
+              key={c.id}
+              type="button"
+              onClick={() => toggle(c.id)}
+              className={`px-3 h-8 rounded-full text-xs font-medium ring-1 transition ${
+                on
+                  ? "bg-primary text-primary-foreground ring-primary"
+                  : "bg-card ring-border/60 text-muted-foreground hover:bg-secondary/60"
+              }`}
+            >
+              {c.name}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function ArticlesPanel({
+  articles,
+  cities,
+  reload,
+}: {
+  articles: Article[];
+  cities: City[];
+  reload: () => Promise<void>;
+}) {
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [excerpt, setExcerpt] = useState("");
   const [cover, setCover] = useState("");
   const [body, setBody] = useState("");
   const [published, setPublished] = useState(true);
+  const [cityIds, setCityIds] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
 
   const add = async (e: React.FormEvent) => {
@@ -478,20 +526,30 @@ function ArticlesPanel({ articles, reload }: { articles: Article[]; reload: () =
       return;
     }
     setSaving(true);
-    const { error } = await supabase.from("articles").insert({
-      title,
-      slug,
-      excerpt,
-      cover_url: cover || null,
-      body_md: body,
-      published,
-      published_at: published ? new Date().toISOString() : null,
-      sort_order: articles.length,
-    });
+    const { data, error } = await supabase
+      .from("articles")
+      .insert({
+        title,
+        slug,
+        excerpt,
+        cover_url: cover || null,
+        body_md: body,
+        published,
+        published_at: published ? new Date().toISOString() : null,
+        sort_order: articles.length,
+      })
+      .select("id")
+      .single();
+    if (error || !data) { setSaving(false); toast.error(error?.message ?? "Failed"); return; }
+    if (cityIds.length > 0) {
+      const { error: linkErr } = await supabase
+        .from("article_cities")
+        .insert(cityIds.map((city_id) => ({ article_id: data.id, city_id })));
+      if (linkErr) toast.error(linkErr.message);
+    }
     setSaving(false);
-    if (error) { toast.error(error.message); return; }
     toast.success("Article added");
-    setTitle(""); setSlug(""); setExcerpt(""); setCover(""); setBody("");
+    setTitle(""); setSlug(""); setExcerpt(""); setCover(""); setBody(""); setCityIds([]);
     await reload();
   };
 
