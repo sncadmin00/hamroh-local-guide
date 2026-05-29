@@ -49,17 +49,6 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <Sheet>
-          <SheetTrigger asChild>
-            <button
-              aria-label="Open menu"
-              className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-full ring-1 ring-border/60 text-foreground hover:bg-secondary/60"
-            >
-              <Menu className="h-5 w-5" />
-            </button>
-          </SheetTrigger>
-          <SheetContent side="right" className="w-72">
-            <SheetHeader>
         <div className="flex items-center gap-2">
           <a
             href="https://t.me/yourtelegram"
@@ -129,18 +118,6 @@ export function SiteHeader() {
             </SheetContent>
           </Sheet>
         </div>
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  className="px-3 py-3 rounded-lg text-base font-medium text-foreground hover:bg-secondary/60"
-                  activeProps={{ className: "px-3 py-3 rounded-lg text-base font-medium bg-secondary text-foreground" }}
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
-          </SheetContent>
-        </Sheet>
       </div>
     </header>
   );
