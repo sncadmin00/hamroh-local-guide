@@ -1,21 +1,40 @@
-## Add Admin Account Settings Page
+## Explore page + social links
 
-Create a `/settings` page (admin-only) where the logged-in admin can update their email and password.
-
-### Route
-- New file `src/routes/_authenticated/settings.tsx` (protected by existing auth layout)
-- Gate with admin role check; non-admins get redirected to `/`
-
-### UI
-Two simple cards using existing shadcn components:
-1. **Update email** — input for new email + "Save" button → `supabase.auth.updateUser({ email })`. Show toast that a confirmation link is sent to the new address.
-2. **Update password** — new password + confirm password → `supabase.auth.updateUser({ password })`. Min 8 chars, must match.
-
-Both forms use react-hook-form + zod for validation, with loading states and toast feedback (sonner).
+### New routes
+- `/explore` — main page with three sections:
+  1. **Featured articles** — list/grid of blog posts from new DB table
+  2. **Featured guides & cities** — pulls top guides + cities (existing tables)
+  3. **Social feed** — grid of admin-curated embeds (Instagram/TikTok/YouTube)
+- `/explore/$slug` — individual article page (SEO-friendly, own meta)
 
 ### Navigation
-Add a "Settings" link in the header (visible only when logged in as admin) pointing to `/settings`, plus a "Sign out" button.
+- Add "Explore" link to main header/nav
+- Add footer (new component) with placeholder social icon links (Instagram, TikTok, YouTube, X) — easy to swap URLs later
 
-### Files
-- create `src/routes/_authenticated/settings.tsx`
-- edit header component to show Settings/Sign out for admin
+### Admin
+Extend existing admin area with two new sections:
+- **Articles** — create/edit/delete: title, slug, cover image, excerpt, body (markdown), published flag
+- **Social embeds** — paste post URL, choose platform, sort order, visible flag
+
+### Database (new tables)
+- `articles` — title, slug, excerpt, cover_url, body_md, published, published_at, sort_order
+- `social_embeds` — platform (instagram|tiktok|youtube|x), url, caption, sort_order, visible
+- Public SELECT for published/visible rows; admin full access via `has_role`
+- Reuse existing `guide-photos` storage bucket (or add `article-covers`) for cover uploads
+
+### Data fetching
+- Public read via `createServerFn` + `supabaseAdmin` scoped to `published=true` / `visible=true` (loaders run during SSR with no auth token)
+- Admin CRUD via `createServerFn` + `requireSupabaseAuth` with `has_role` check
+
+### Social embeds rendering
+- Instagram/TikTok: official `<blockquote>` embed + their embed.js script
+- YouTube: native iframe
+- X/Twitter: `<blockquote>` + widgets.js
+
+### SEO
+- `/explore` head: title, description, og tags
+- `/explore/$slug` head: per-article title, description, og:image = cover_url
+
+### Out of scope (later)
+- Auto-fetching social posts via APIs
+- Real social URLs (placeholders shipped now)
