@@ -588,6 +588,7 @@ function ArticlesPanel({
               className="mt-1 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
             />
           </div>
+          <CityMultiSelect cities={cities} selected={cityIds} onChange={setCityIds} />
           <label className="inline-flex items-center gap-2 text-sm">
             <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} />
             Publish immediately
