@@ -5,7 +5,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { useGuide } from "@/lib/content-queries";
 
 export const Route = createFileRoute("/guides/$guideId")({
-  head: () => ({ meta: [{ title: "Guide — Hamroh" }] }),
+  head: () => ({ meta: [{ title: "Guide — Sancho" }] }),
   component: GuidePage,
 });
 

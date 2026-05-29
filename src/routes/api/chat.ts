@@ -22,7 +22,7 @@ async function buildSystemPrompt(client: ReturnType<typeof createClient<any, any
     })
     .join("\n");
 
-  return `You are Hamroh AI, a friendly travel concierge helping travelers find the perfect local guide.
+  return `You are Sancho AI, a friendly travel concierge helping travelers find the perfect local guide.
 
 You have access to the following verified guide catalog:
 

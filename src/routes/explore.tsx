@@ -10,9 +10,9 @@ import { Calendar, Star, BadgeCheck } from "lucide-react";
 export const Route = createFileRoute("/explore")({
   head: () => ({
     meta: [
-      { title: "Explore — Hamroh" },
+      { title: "Explore — Sancho" },
       { name: "description", content: "Articles, guides and social highlights from around the world." },
-      { property: "og:title", content: "Explore — Hamroh" },
+      { property: "og:title", content: "Explore — Sancho" },
       { property: "og:description", content: "Articles, guides and social highlights from around the world." },
     ],
   }),

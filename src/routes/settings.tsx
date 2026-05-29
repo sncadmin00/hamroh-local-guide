@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { Compass } from "lucide-react";
 
 export const Route = createFileRoute("/settings")({
-  head: () => ({ meta: [{ title: "Account settings — Hamroh" }] }),
+  head: () => ({ meta: [{ title: "Account settings — Sancho" }] }),
   component: SettingsPage,
 });
 
@@ -81,7 +81,7 @@ function SettingsPage() {
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
             <Compass className="h-5 w-5" />
           </div>
-          <span className="font-display text-xl font-semibold">Hamroh</span>
+          <span className="font-display text-xl font-semibold">Sancho</span>
         </Link>
 
         <h1 className="font-display text-3xl font-semibold">Account settings</h1>

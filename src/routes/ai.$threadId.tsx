@@ -178,7 +178,7 @@ function ChatWindow({ threadId, initial, token }: { threadId: string; initial: {
               <ArrowUp className="h-4 w-4" />
             </button>
           </div>
-          <p className="mt-2 text-xs text-muted-foreground text-center">Hamroh AI · Recommendations from our verified guide catalog</p>
+          <p className="mt-2 text-xs text-muted-foreground text-center">Sancho AI · Recommendations from our verified guide catalog</p>
         </form>
       </div>
     </div>

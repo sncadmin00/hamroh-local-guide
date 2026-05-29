@@ -1,37 +1,30 @@
-## Geo-Neutral Rebrand — Remove Uzbekistan References
+Rebrand from **Hamroh** to **Sancho** across the entire codebase.
 
-Remove all country-specific branding so the app reads as a generic local-guide platform ready for any city in the world.
+### Scope
+Replace every user-facing occurrence of "Hamroh" with "Sancho" in copy, meta tags, page titles, AI prompts, and translations. No layout, logic, or database changes.
 
-### Files to change
-
-1. **src/routes/__root.tsx**
-   - Title: `Trusted local guides in Uzbekistan` → `Trusted local guides, anywhere`
-   - Description / og:description: remove `Tashkent, Samarkand, and Bukhara` references; keep the rest.
-   - og:title: same as title.
-
-2. **src/routes/guides.tsx**
-   - Meta description: `across Uzbekistan` → remove phrase.
-   - Subtitle: `ready to show you Uzbekistan` → `ready to show you around`.
-
-3. **src/routes/explore.tsx**
-   - Meta + og descriptions: `from across Uzbekistan` → `from around the world`.
-   - Page subtitle: `from across Uzbekistan` → `from around the world`.
-   - `cityLabel` fallback: `Uzbekistan` → `All cities`.
-
-4. **src/routes/api/chat.ts**
-   - System prompt: remove `in Uzbekistan` from the AI persona description.
-   - Rules: `unrelated to Uzbekistan travel` → `unrelated to travel`.
-
-5. **src/routes/ai.$threadId.tsx**
-   - Update suggestion chips to remove city names:
-     - `in Tashkent` → generic phrasing or remove.
-     - `in Samarkand` → remove.
-     - `in Bukhara` → remove.
-
-6. **src/styles.css**
-   - Update comment `Uzbek turquoise — Samarkand tile blue` to a neutral description.
+### Files to update
+1. **src/routes/__root.tsx** — title, og:title
+2. **src/routes/index.tsx** — title, description
+3. **src/routes/guides.tsx** — title
+4. **src/routes/explore.tsx** — title, og:title
+5. **src/routes/explore.$slug.tsx** — title, description
+6. **src/routes/book.$guideId.tsx** — title
+7. **src/routes/guides.$guideId.tsx** — title
+8. **src/routes/how-it-works.tsx** — title, description, og:title
+9. **src/routes/become-a-guide.tsx** — title, description
+10. **src/routes/login.tsx** — title, logo text, subtitle, account prompt text
+11. **src/routes/settings.tsx** — title, logo text
+12. **src/routes/admin.tsx** — title, logo text
+13. **src/routes/ai.tsx** — title
+14. **src/routes/ai.$threadId.tsx** — footer attribution text
+15. **src/routes/api/chat.ts** — AI system prompt persona name
+16. **src/components/SiteHeader.tsx** — logo text
+17. **src/components/SiteFooter.tsx** — logo text, copyright line
+18. **src/lib/i18n.tsx** — "Hamroh AI" in hero.subtitle (en/uz/ru)
 
 ### Out of scope
-- No database migrations needed.
-- No UI layout changes.
-- City data in the database remains as-is; only user-facing copy changes.
+- No database migrations
+- No visual design changes
+- No functionality changes
+- File names and internal code references stay as-is
