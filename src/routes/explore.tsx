@@ -27,16 +27,6 @@ type Article = {
   published_at: string | null;
 };
 
-type Guide = {
-  id: string;
-  name: string;
-  slug: string;
-  tagline: string;
-  photo_url: string | null;
-  rating: number;
-  price_per_day: number;
-};
-
 type City = { id: string; name: string; slug: string };
 
 type Embed = {
