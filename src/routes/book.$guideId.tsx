@@ -18,7 +18,6 @@ export const Route = createFileRoute("/book/$guideId")({
   }),
   component: BookPage,
 });
-  const { guide } = Route.useLoaderData() as { guide: Guide };
 
 function BookPage() {
   const { guide } = Route.useLoaderData();
@@ -32,6 +31,20 @@ function BookPage() {
     email: "",
     notes: "",
   });
+
+  const handleFieldChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleGuestChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, guests: Math.max(1, Number(e.target.value) || 1) });
+  };
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setConfirmed(true);
+    window.scrollTo({ top: 0 });
+  };
 
   const selectedExperience = guide.experiences.find((e: Guide["experiences"][number]) => e.title === form.experience) ?? guide.experiences[0];
 
@@ -77,14 +90,15 @@ function BookPage() {
 
         <div className="mt-10 grid gap-8 lg:grid-cols-[1.4fr_1fr]">
           <form
-            onSubmit={(e: React.FormEvent) => { e.preventDefault(); setConfirmed(true); window.scrollTo({ top: 0 }); }}
+            onSubmit={handleSubmit}
             className="space-y-6 rounded-3xl bg-card p-6 ring-1 ring-border/60 md:p-8"
           >
             <div>
               <label className="text-sm font-medium">Experience</label>
               <select
                 value={form.experience}
-                onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setForm({ ...form, experience: e.target.value })}
+                onChange={handleFieldChange}
+                name="experience"
                 className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring"
               >
                 {guide.experiences.map((e: typeof guide.experiences[number]) => (
@@ -100,7 +114,8 @@ function BookPage() {
                   type="date"
                   required
                   value={form.date}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setForm({ ...form, date: e.target.value })}
+                  onChange={handleFieldChange}
+                  name="date"
                   className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring"
                 />
               </div>
@@ -111,7 +126,7 @@ function BookPage() {
                   min={1}
                   max={12}
                   value={form.guests}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setForm({ ...form, guests: Math.max(1, Number(e.target.value) || 1) })}
+                  onChange={handleGuestChange}
                   className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring"
                 />
               </div>
@@ -123,7 +138,8 @@ function BookPage() {
                 <input
                   required
                   value={form.name}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setForm({ ...form, name: e.target.value })}
+                  onChange={handleFieldChange}
+                  name="name"
                   className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring"
                   placeholder="Jane Doe"
                 />
@@ -134,7 +150,8 @@ function BookPage() {
                   type="email"
                   required
                   value={form.email}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setForm({ ...form, email: e.target.value })}
+                  onChange={handleFieldChange}
+                  name="email"
                   className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring"
                   placeholder="you@email.com"
                 />
@@ -145,7 +162,8 @@ function BookPage() {
               <label className="text-sm font-medium">Notes for your guide (optional)</label>
               <textarea
                 value={form.notes}
-                onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setForm({ ...form, notes: e.target.value })}
+                onChange={handleFieldChange}
+                name="notes"
                 rows={4}
                 className="mt-2 w-full rounded-xl border border-input bg-background p-4 text-sm outline-none focus:ring-2 focus:ring-ring"
                 placeholder="Anything specific you'd love to see or do…"
