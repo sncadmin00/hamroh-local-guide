@@ -45,6 +45,7 @@ export function SiteHeader() {
   const menuLinks = [
     { to: "/guides", label: t("nav.findGuide") },
     { to: "/cities", label: t("nav.cities") },
+    { to: "/explore", label: t("nav.explore") },
     { to: "/how-it-works", label: t("nav.howItWorks") },
     { to: "/become-a-guide", label: t("nav.becomeGuide") },
   ] as const;
