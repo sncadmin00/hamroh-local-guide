@@ -43,14 +43,12 @@ function ExplorePage() {
 
   useEffect(() => {
     (async () => {
-      const [a, g, c, e] = await Promise.all([
+      const [a, c, e] = await Promise.all([
         supabase.from("articles").select("id,title,slug,excerpt,cover_url,published_at").eq("published", true).order("sort_order").order("published_at", { ascending: false }),
-        supabase.from("guides").select("id,name,slug,tagline,photo_url,rating,price_per_day").order("sort_order").limit(6),
         supabase.from("cities").select("id,name,slug").order("sort_order"),
         supabase.from("social_embeds").select("id,platform,url,caption").eq("visible", true).order("sort_order"),
       ]);
       if (a.data) setArticles(a.data as Article[]);
-      if (g.data) setGuides(g.data as Guide[]);
       if (c.data) setCities(c.data as City[]);
       if (e.data) setEmbeds(e.data as Embed[]);
     })();
