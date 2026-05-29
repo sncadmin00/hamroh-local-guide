@@ -102,36 +102,6 @@ function ExplorePage() {
           )}
         </section>
 
-        {/* Featured guides */}
-        {guides.length > 0 && (
-          <section className="mt-16">
-            <div className="flex items-end justify-between">
-              <h2 className="font-display text-2xl font-semibold">Featured guides</h2>
-              <Link to="/guides" className="text-sm font-medium text-primary hover:underline">See all</Link>
-            </div>
-            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {guides.map((g) => (
-                <Link
-                  key={g.id}
-                  to="/guides/$guideId"
-                  params={{ guideId: g.slug }}
-                  className="flex gap-4 items-center rounded-2xl bg-card p-4 ring-1 ring-border/60 hover:ring-border transition"
-                >
-                  <div className="h-16 w-16 rounded-full overflow-hidden bg-secondary shrink-0">
-                    {g.photo_url ? (
-                      <img src={g.photo_url} alt={g.name} className="h-full w-full object-cover" />
-                    ) : null}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="font-semibold truncate">{g.name}</p>
-                    <p className="text-xs text-muted-foreground truncate">{g.tagline}</p>
-                    <p className="mt-1 text-xs">★ {Number(g.rating).toFixed(1)} · ${Number(g.price_per_day).toFixed(0)}/day</p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </section>
-        )}
 
         {/* Cities */}
         {cities.length > 0 && (
