@@ -56,14 +56,6 @@ function Home() {
 
 
 
-            <div className="mt-4">
-              <Link
-                to="/ai"
-                className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-white/15 px-5 text-sm font-medium text-white backdrop-blur ring-1 ring-white/30 hover:bg-white/25 transition-colors"
-              >
-                <Sparkles className="h-4 w-4" /> Or ask AI to find your perfect guide
-              </Link>
-            </div>
 
             <div className="mt-8 flex flex-wrap items-center gap-6 text-sm text-white/80">
               <span className="inline-flex items-center gap-2"><BadgeCheck className="h-4 w-4" /> 100% verified guides</span>
