@@ -1,6 +1,8 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import { Star, BadgeCheck, Zap, ArrowLeft, Check } from "lucide-react";
+import type { Guide } from "@/data/guides";
+
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { getGuide } from "@/data/guides";
