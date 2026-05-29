@@ -3,11 +3,13 @@ import { useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { GuideCard } from "@/components/GuideCard";
+import { CityPicker } from "@/components/CityPicker";
 import { guides, type City } from "@/data/guides";
+import { CITY_NAMES } from "@/data/cities";
 import { z } from "zod";
 
 const searchSchema = z.object({
-  city: z.enum(["Tashkent", "Samarkand", "Bukhara"]).optional(),
+  city: z.enum(CITY_NAMES).optional(),
 });
 
 export const Route = createFileRoute("/guides")({
@@ -21,7 +23,7 @@ export const Route = createFileRoute("/guides")({
   component: GuidesPage,
 });
 
-const cities: ("All" | City)[] = ["All", "Tashkent", "Samarkand", "Bukhara"];
+
 
 function GuidesPage() {
   const { city: initialCity } = Route.useSearch();
@@ -52,19 +54,8 @@ function GuidesPage() {
 
       <section className="container mx-auto px-4 py-10">
         <div className="flex flex-col gap-4 rounded-2xl bg-card p-4 ring-1 ring-border/60 shadow-[var(--shadow-card)] md:flex-row md:items-center md:p-5">
-          <div className="flex flex-wrap gap-2">
-            {cities.map((c) => (
-              <button
-                key={c}
-                onClick={() => setCity(c)}
-                className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-                  city === c ? "bg-foreground text-background" : "bg-secondary text-secondary-foreground hover:bg-secondary/70"
-                }`}
-              >
-                {c}
-              </button>
-            ))}
-          </div>
+          <CityPicker value={city} onChange={setCity} />
+
           <div className="md:ml-auto flex flex-wrap items-center gap-3">
             <select
               value={lang}
