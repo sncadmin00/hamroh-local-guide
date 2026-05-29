@@ -35,6 +35,27 @@ type Guide = {
   languages: string[];
 };
 
+type Article = {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  cover_url: string | null;
+  body_md: string;
+  published: boolean;
+  published_at: string | null;
+  sort_order: number;
+};
+
+type Embed = {
+  id: string;
+  platform: "instagram" | "tiktok" | "youtube" | "x";
+  url: string;
+  caption: string;
+  sort_order: number;
+  visible: boolean;
+};
+
 function AdminPage() {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
