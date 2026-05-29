@@ -12,7 +12,7 @@ export const Route = createFileRoute("/guides")({
   head: () => ({
     meta: [
       { title: "All guides — Hamroh" },
-      { name: "description", content: "Browse verified local guides across Uzbekistan." },
+      { name: "description", content: "Browse verified local guides in cities around the world." },
     ],
   }),
   component: GuidesPage,
@@ -41,7 +41,7 @@ function GuidesPage() {
         <div className="container mx-auto px-4 py-12 md:py-16">
           <h1 className="font-display text-4xl font-semibold md:text-5xl">Find your guide</h1>
           <p className="mt-3 max-w-xl text-muted-foreground">
-            {isLoading ? "Loading guides…" : `${filtered.length} verified locals ready to show you Uzbekistan.`}
+            {isLoading ? "Loading guides…" : `${filtered.length} verified locals ready to show you around.`}
           </p>
         </div>
       </section>

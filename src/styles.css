@@ -44,7 +44,7 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.22 0.04 250);
 
-  /* Uzbek turquoise — Samarkand tile blue */
+  /* Tile turquoise — warm, welcoming primary */
   --primary: oklch(0.62 0.13 215);
   --primary-foreground: oklch(0.99 0.005 80);
 
