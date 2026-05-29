@@ -9,38 +9,74 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as GuidesRouteImport } from './routes/guides'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as GuidesGuideIdRouteImport } from './routes/guides.$guideId'
+import { Route as BookGuideIdRouteImport } from './routes/book.$guideId'
 
+const GuidesRoute = GuidesRouteImport.update({
+  id: '/guides',
+  path: '/guides',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GuidesGuideIdRoute = GuidesGuideIdRouteImport.update({
+  id: '/$guideId',
+  path: '/$guideId',
+  getParentRoute: () => GuidesRoute,
+} as any)
+const BookGuideIdRoute = BookGuideIdRouteImport.update({
+  id: '/book/$guideId',
+  path: '/book/$guideId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/guides': typeof GuidesRouteWithChildren
+  '/book/$guideId': typeof BookGuideIdRoute
+  '/guides/$guideId': typeof GuidesGuideIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/guides': typeof GuidesRouteWithChildren
+  '/book/$guideId': typeof BookGuideIdRoute
+  '/guides/$guideId': typeof GuidesGuideIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/guides': typeof GuidesRouteWithChildren
+  '/book/$guideId': typeof BookGuideIdRoute
+  '/guides/$guideId': typeof GuidesGuideIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/guides' | '/book/$guideId' | '/guides/$guideId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/guides' | '/book/$guideId' | '/guides/$guideId'
+  id: '__root__' | '/' | '/guides' | '/book/$guideId' | '/guides/$guideId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  GuidesRoute: typeof GuidesRouteWithChildren
+  BookGuideIdRoute: typeof BookGuideIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/guides': {
+      id: '/guides'
+      path: '/guides'
+      fullPath: '/guides'
+      preLoaderRoute: typeof GuidesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +84,38 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/guides/$guideId': {
+      id: '/guides/$guideId'
+      path: '/$guideId'
+      fullPath: '/guides/$guideId'
+      preLoaderRoute: typeof GuidesGuideIdRouteImport
+      parentRoute: typeof GuidesRoute
+    }
+    '/book/$guideId': {
+      id: '/book/$guideId'
+      path: '/book/$guideId'
+      fullPath: '/book/$guideId'
+      preLoaderRoute: typeof BookGuideIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface GuidesRouteChildren {
+  GuidesGuideIdRoute: typeof GuidesGuideIdRoute
+}
+
+const GuidesRouteChildren: GuidesRouteChildren = {
+  GuidesGuideIdRoute: GuidesGuideIdRoute,
+}
+
+const GuidesRouteWithChildren =
+  GuidesRoute._addFileChildren(GuidesRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  GuidesRoute: GuidesRouteWithChildren,
+  BookGuideIdRoute: BookGuideIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
