@@ -59,7 +59,6 @@ function ExplorePage() {
   const [embeds, setEmbeds] = useState<Embed[]>([]);
   const [guides, setGuides] = useState<Guide[]>([]);
   const [city, setCity] = useState<"All" | string>("All");
-  const [autoPicked, setAutoPicked] = useState(false);
 
   useEffect(() => {
     (async () => {
