@@ -5,14 +5,10 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { GuideCard } from "@/components/GuideCard";
 import { CityPicker } from "@/components/CityPicker";
 import { useGuides } from "@/lib/content-queries";
-import { z } from "zod";
-
-const searchSchema = z.object({
-  city: z.string().optional(),
-});
-
 export const Route = createFileRoute("/guides")({
-  validateSearch: searchSchema,
+  validateSearch: (search: Record<string, unknown>): { city?: string } => ({
+    city: typeof search.city === "string" ? search.city : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "All guides — Hamroh" },
