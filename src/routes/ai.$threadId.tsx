@@ -6,7 +6,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getThreadMessages } from "@/lib/ai-threads.functions";
-import { guides, type Guide } from "@/data/guides";
+import { useGuides } from "@/lib/content-queries";
+import type { Guide } from "@/data/guides";
 import { Sparkles, ArrowUp, Star, BadgeCheck, Zap, MapPin } from "lucide-react";
 
 export const Route = createFileRoute("/ai/$threadId")({
@@ -217,6 +218,7 @@ function renderMarkdown(text: string) {
 }
 
 function MessageBubble({ message }: { message: UIMessage }) {
+  const { data: guides = [] } = useGuides();
   const text = message.parts
     .map((p) => (p.type === "text" ? (p as { type: "text"; text: string }).text : ""))
     .join("");

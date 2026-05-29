@@ -1,53 +1,55 @@
-import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { Star, BadgeCheck, Zap, ArrowLeft, Check } from "lucide-react";
-import type { Guide } from "@/data/guides";
-
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { getGuide } from "@/data/guides";
+import { useGuide } from "@/lib/content-queries";
 
 export const Route = createFileRoute("/book/$guideId")({
-  loader: ({ params }) => {
-    const guide = getGuide(params.guideId);
-    if (!guide) throw notFound();
-    return { guide };
-  },
-  head: ({ loaderData }) => ({
-    meta: loaderData ? [{ title: `Book ${loaderData.guide.name} — Hamroh` }] : [],
-  }),
+  head: () => ({ meta: [{ title: "Book a guide — Hamroh" }] }),
   component: BookPage,
 });
 
 function BookPage() {
-  const { guide } = Route.useLoaderData();
+  const { guideId } = Route.useParams();
+  const { data: guide, isLoading } = useGuide(guideId);
   const navigate = useNavigate();
   const [confirmed, setConfirmed] = useState(false);
   const [form, setForm] = useState({
     date: "",
     guests: 2,
-    experience: guide.experiences[0].title,
+    experience: "",
     name: "",
     email: "",
     notes: "",
   });
 
+  if (isLoading || !guide) {
+    return (
+      <div className="min-h-screen">
+        <SiteHeader />
+        <div className="container mx-auto px-4 py-24 text-center text-muted-foreground">Loading…</div>
+        <SiteFooter />
+      </div>
+    );
+  }
+
+  const experiences = guide.experiences.length > 0 ? guide.experiences : [{ title: "Full day with guide", duration: "8 hours", price: guide.pricePerDay }];
+  const currentExperience = form.experience || experiences[0].title;
+
   const handleFieldChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-
   const handleGuestChange = (e: ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, guests: Math.max(1, Number(e.target.value) || 1) });
   };
-
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setConfirmed(true);
     window.scrollTo({ top: 0 });
   };
 
-  const selectedExperience = guide.experiences.find((e: Guide["experiences"][number]) => e.title === form.experience) ?? guide.experiences[0];
-
+  const selectedExperience = experiences.find((e) => e.title === currentExperience) ?? experiences[0];
   const total = selectedExperience.price * form.guests;
   const fee = Math.round(total * 0.08);
 
@@ -89,19 +91,11 @@ function BookPage() {
         <p className="mt-2 text-muted-foreground">A few details and you're all set.</p>
 
         <div className="mt-10 grid gap-8 lg:grid-cols-[1.4fr_1fr]">
-          <form
-            onSubmit={handleSubmit}
-            className="space-y-6 rounded-3xl bg-card p-6 ring-1 ring-border/60 md:p-8"
-          >
+          <form onSubmit={handleSubmit} className="space-y-6 rounded-3xl bg-card p-6 ring-1 ring-border/60 md:p-8">
             <div>
               <label className="text-sm font-medium">Experience</label>
-              <select
-                value={form.experience}
-                onChange={handleFieldChange}
-                name="experience"
-                className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring"
-              >
-                {guide.experiences.map((e: typeof guide.experiences[number]) => (
+              <select value={currentExperience} onChange={handleFieldChange} name="experience" className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring">
+                {experiences.map((e) => (
                   <option key={e.title} value={e.title}>{e.title} — ${e.price} · {e.duration}</option>
                 ))}
               </select>
@@ -110,76 +104,36 @@ function BookPage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label className="text-sm font-medium">Date</label>
-                <input
-                  type="date"
-                  required
-                  value={form.date}
-                  onChange={handleFieldChange}
-                  name="date"
-                  className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring"
-                />
+                <input type="date" required value={form.date} onChange={handleFieldChange} name="date" className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring" />
               </div>
               <div>
                 <label className="text-sm font-medium">Guests</label>
-                <input
-                  type="number"
-                  min={1}
-                  max={12}
-                  value={form.guests}
-                  onChange={handleGuestChange}
-                  className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring"
-                />
+                <input type="number" min={1} max={12} value={form.guests} onChange={handleGuestChange} className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring" />
               </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label className="text-sm font-medium">Your name</label>
-                <input
-                  required
-                  value={form.name}
-                  onChange={handleFieldChange}
-                  name="name"
-                  className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring"
-                  placeholder="Jane Doe"
-                />
+                <input required value={form.name} onChange={handleFieldChange} name="name" className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring" placeholder="Jane Doe" />
               </div>
               <div>
                 <label className="text-sm font-medium">Email</label>
-                <input
-                  type="email"
-                  required
-                  value={form.email}
-                  onChange={handleFieldChange}
-                  name="email"
-                  className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring"
-                  placeholder="you@email.com"
-                />
+                <input type="email" required value={form.email} onChange={handleFieldChange} name="email" className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring" placeholder="you@email.com" />
               </div>
             </div>
 
             <div>
               <label className="text-sm font-medium">Notes for your guide (optional)</label>
-              <textarea
-                value={form.notes}
-                onChange={handleFieldChange}
-                name="notes"
-                rows={4}
-                className="mt-2 w-full rounded-xl border border-input bg-background p-4 text-sm outline-none focus:ring-2 focus:ring-ring"
-                placeholder="Anything specific you'd love to see or do…"
-              />
+              <textarea value={form.notes} onChange={handleFieldChange} name="notes" rows={4} className="mt-2 w-full rounded-xl border border-input bg-background p-4 text-sm outline-none focus:ring-2 focus:ring-ring" placeholder="Anything specific you'd love to see or do…" />
             </div>
 
-            <button
-              type="submit"
-              className="inline-flex h-12 w-full items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.01]"
-            >
+            <button type="submit" className="inline-flex h-12 w-full items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.01]">
               {guide.instantBook ? `Confirm & book — $${total + fee}` : `Request booking — $${total + fee}`}
             </button>
             <p className="text-center text-xs text-muted-foreground">You won't be charged until your guide confirms.</p>
           </form>
 
-          {/* Summary */}
           <aside className="lg:sticky lg:top-24 lg:self-start">
             <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60 shadow-[var(--shadow-card)]">
               <div className="flex gap-4">

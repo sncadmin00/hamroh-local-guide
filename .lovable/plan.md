@@ -1,8 +1,55 @@
-**Move WhatsApp & Telegram icons to hero section**
+## Goal
 
-Add the WhatsApp and Telegram contact icons directly below the "Prefer to browse? Find a guide manually →" link on the homepage hero section.
+Replace the hardcoded `src/data/cities.ts` and `src/data/guides.ts` with database-backed content, and add an admin panel where you can add/edit/delete cities and guides (with photo upload) through a friendly UI.
 
-- Import or inline the WhatsAppIcon and TelegramIcon SVG components into `src/routes/index.tsx`.
-- Add a centered row with both icons + labels (e.g., "Chat on WhatsApp" / "Join Telegram") underneath the existing `<p className="mt-8 text-center text-sm">` browse link.
-- Keep the same brand colors (#25D366 for WhatsApp, #229ED9 for Telegram) and hover states from the header/footer.
-- Remove or hide the icons from the header desktop nav and footer to avoid duplication, or leave them in place if the user only wants them *also* in the hero.
+## What gets built
+
+### 1. Database (Lovable Cloud)
+
+Three tables:
+
+- **`cities`** — name, lat, lng, slug, sort_order
+- **`guides`** — name, city_id (FK), tagline, bio, languages[], specialties[], price_per_day, rating, reviews, verified, instant_book, photo_url, slug
+- **`guide_experiences`** — guide_id, title, description, duration, price (one guide → many experiences)
+- **`user_roles`** — separate roles table with `admin` enum (per security best practice)
+
+Public read access (so the site works for everyone), admin-only write access via a `has_role()` security-definer function.
+
+A **storage bucket** `guide-photos` (public read, admin write) for uploaded guide photos.
+
+### 2. Authentication
+
+- Email + password login + Google sign-in (the standard Lovable Cloud defaults).
+- First user you sign up gets manually promoted to `admin` (one-time SQL insert I'll walk you through, or auto-promote the very first signup).
+- `/login` page.
+
+### 3. Admin panel (`/admin`, protected)
+
+- **`/admin/cities`** — table of cities, add/edit/delete dialog with name + map coordinate picker (or just lat/lng inputs).
+- **`/admin/guides`** — table of guides with search/filter, "Add guide" form with all fields, photo drag-and-drop upload to storage, multi-select for languages/specialties, repeater for experiences, edit and delete.
+- Sidebar layout, uses existing shadcn components for consistent look.
+
+### 4. Site reads from database
+
+- Replace `src/data/cities.ts` and `src/data/guides.ts` consumers with TanStack Query hooks that fetch from Supabase.
+- Keep the same shape so the existing Find a Guide / city pages keep working with no visual changes.
+- One-time seed migration copies your current 4 cities and existing guides into the database so nothing disappears.
+
+### 5. Header
+
+Small "Admin" link visible only when signed in as an admin.
+
+## Out of scope (can do later)
+
+- Translating guide content into UZ/RU (admin would enter one language; could add later as separate `guide_translations` table).
+- Bulk CSV import.
+- Image cropping/resizing in-browser (photos uploaded as-is).
+
+## Technical notes
+
+- Stack: TanStack Start server functions (`createServerFn` with `requireSupabaseAuth`) for all writes; public reads can go directly via the browser Supabase client since RLS allows anon SELECT.
+- Roles stored in `user_roles` table with `app_role` enum and `has_role(uuid, app_role)` security-definer function — never on profiles, to prevent privilege escalation.
+- Photo uploads go to `guide-photos` storage bucket; the public URL is stored on the guide row.
+- Existing `src/data/*.ts` files get deleted after seed migration runs.
+
+Confirm and I'll start with the migration + auth, then build the admin UI, then swap the site over to live data.
