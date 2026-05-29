@@ -53,19 +53,8 @@ function Home() {
               Hamroh connects you with verified local guides for unforgettable experiences across the Silk Road's greatest cities.
             </p>
 
-            {/* Search */}
-            <div className="mt-8 flex flex-col gap-3 rounded-2xl bg-background/95 p-3 shadow-[var(--shadow-elegant)] backdrop-blur sm:flex-row sm:items-center">
-              <div className="flex flex-1 items-center gap-3 px-3 py-2">
-                <Search className="h-5 w-5 text-muted-foreground" />
-                <div className="w-full text-base font-medium text-foreground">All cities</div>
-              </div>
-              <Link
-                to="/guides"
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.02]"
-              >
-                Find a guide <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
+
+
 
             <div className="mt-4">
               <Link
