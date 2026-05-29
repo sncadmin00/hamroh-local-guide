@@ -5,7 +5,6 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { SocialEmbed } from "@/components/SocialEmbed";
 import { CityPicker } from "@/components/CityPicker";
 import { supabase } from "@/integrations/supabase/client";
-import { nearestCityNames } from "@/data/cities";
 import { Calendar, Star, BadgeCheck } from "lucide-react";
 
 export const Route = createFileRoute("/explore")({
@@ -59,7 +58,6 @@ function ExplorePage() {
   const [embeds, setEmbeds] = useState<Embed[]>([]);
   const [guides, setGuides] = useState<Guide[]>([]);
   const [city, setCity] = useState<"All" | string>("All");
-  const [autoPicked, setAutoPicked] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -88,27 +86,6 @@ function ExplorePage() {
     })();
   }, []);
 
-  // Auto-pick nearest city once on first load
-  useEffect(() => {
-    if (autoPicked || cities.length === 0) return;
-    if (typeof navigator === "undefined" || !navigator.geolocation) {
-      setCity(cities[0].name);
-      setAutoPicked(true);
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const [nearest] = nearestCityNames(cities, pos.coords.latitude, pos.coords.longitude, 1);
-        setCity(nearest ?? cities[0].name);
-        setAutoPicked(true);
-      },
-      () => {
-        setCity(cities[0].name);
-        setAutoPicked(true);
-      },
-      { timeout: 5000, maximumAge: 1000 * 60 * 60 },
-    );
-  }, [cities, autoPicked]);
 
   const selectedCityId = useMemo(
     () => (city === "All" ? null : cities.find((c) => c.name === city)?.id ?? null),
@@ -130,7 +107,7 @@ function ExplorePage() {
   }, [embeds, city, selectedCityId]);
 
   const filteredGuides = useMemo(() => {
-    if (city === "All" || !selectedCityId) return [];
+    if (city === "All") return guides.slice(0, 6);
     return guides.filter((g) => g.city_id === selectedCityId).slice(0, 6);
   }, [guides, city, selectedCityId]);
 
@@ -186,22 +163,21 @@ function ExplorePage() {
           )}
         </section>
 
-        {/* Guides (only when a specific city is selected) */}
-        {city !== "All" && (
-          <section className="mt-16">
-            <div className="flex items-end justify-between gap-4 flex-wrap">
-              <h2 className="font-display text-2xl font-semibold">Guides in {cityLabel}</h2>
-              <Link
-                to="/guides"
-                search={{ city }}
-                className="text-sm font-medium text-primary hover:underline"
-              >
-                See all →
-              </Link>
-            </div>
-            {filteredGuides.length === 0 ? (
-              <p className="mt-4 text-sm text-muted-foreground">No guides in {cityLabel} yet.</p>
-            ) : (
+        {/* Guides */}
+        <section className="mt-16">
+          <div className="flex items-end justify-between gap-4 flex-wrap">
+            <h2 className="font-display text-2xl font-semibold">Guides · {cityLabel}</h2>
+            <Link
+              to="/guides"
+              search={{ city }}
+              className="text-sm font-medium text-primary hover:underline"
+            >
+              See all →
+            </Link>
+          </div>
+          {filteredGuides.length === 0 ? (
+            <p className="mt-4 text-sm text-muted-foreground">No guides for {cityLabel} yet.</p>
+          ) : (
               <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {filteredGuides.map((g) => (
                   <Link
@@ -234,7 +210,6 @@ function ExplorePage() {
               </div>
             )}
           </section>
-        )}
 
         {/* Social */}
         <section className="mt-16">
