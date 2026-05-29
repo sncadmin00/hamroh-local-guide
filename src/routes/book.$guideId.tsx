@@ -33,7 +33,8 @@ function BookPage() {
     notes: "",
   });
 
-  const selectedExperience = guide.experiences.find((e) => e.title === form.experience) ?? guide.experiences[0];
+  const selectedExperience = guide.experiences.find((e: Guide["experiences"][number]) => e.title === form.experience) ?? guide.experiences[0];
+
   const total = selectedExperience.price * form.guests;
   const fee = Math.round(total * 0.08);
 
