@@ -5,7 +5,7 @@ import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
 
 type ChatBody = { messages?: UIMessage[]; threadId?: string };
 
-async function buildSystemPrompt(client: ReturnType<typeof createClient>) {
+async function buildSystemPrompt(client: ReturnType<typeof createClient<any, any, any>>) {
   const { data } = await client
     .from("guides")
     .select("slug, name, tagline, languages, specialties, price_per_day, rating, reviews, instant_book, cities(name)")
