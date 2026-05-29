@@ -73,14 +73,14 @@ function BookPage() {
 
         <div className="mt-10 grid gap-8 lg:grid-cols-[1.4fr_1fr]">
           <form
-            onSubmit={(e) => { e.preventDefault(); setConfirmed(true); window.scrollTo({ top: 0 }); }}
+            onSubmit={(e: React.FormEvent) => { e.preventDefault(); setConfirmed(true); window.scrollTo({ top: 0 }); }}
             className="space-y-6 rounded-3xl bg-card p-6 ring-1 ring-border/60 md:p-8"
           >
             <div>
               <label className="text-sm font-medium">Experience</label>
               <select
                 value={form.experience}
-                onChange={(e) => setForm({ ...form, experience: e.target.value })}
+                onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setForm({ ...form, experience: e.target.value })}
                 className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring"
               >
                 {guide.experiences.map((e) => (
@@ -96,7 +96,7 @@ function BookPage() {
                   type="date"
                   required
                   value={form.date}
-                  onChange={(e) => setForm({ ...form, date: e.target.value })}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setForm({ ...form, date: e.target.value })}
                   className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring"
                 />
               </div>
@@ -107,7 +107,7 @@ function BookPage() {
                   min={1}
                   max={12}
                   value={form.guests}
-                  onChange={(e) => setForm({ ...form, guests: Math.max(1, Number(e.target.value) || 1) })}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setForm({ ...form, guests: Math.max(1, Number(e.target.value) || 1) })}
                   className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring"
                 />
               </div>
@@ -119,7 +119,7 @@ function BookPage() {
                 <input
                   required
                   value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setForm({ ...form, name: e.target.value })}
                   className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring"
                   placeholder="Jane Doe"
                 />
@@ -130,7 +130,7 @@ function BookPage() {
                   type="email"
                   required
                   value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setForm({ ...form, email: e.target.value })}
                   className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring"
                   placeholder="you@email.com"
                 />
@@ -141,7 +141,7 @@ function BookPage() {
               <label className="text-sm font-medium">Notes for your guide (optional)</label>
               <textarea
                 value={form.notes}
-                onChange={(e) => setForm({ ...form, notes: e.target.value })}
+                onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setForm({ ...form, notes: e.target.value })}
                 rows={4}
                 className="mt-2 w-full rounded-xl border border-input bg-background p-4 text-sm outline-none focus:ring-2 focus:ring-ring"
                 placeholder="Anything specific you'd love to see or do…"

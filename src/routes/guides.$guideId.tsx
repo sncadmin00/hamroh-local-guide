@@ -89,7 +89,7 @@ function GuidePage() {
                 <div>
                   <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Languages</h3>
                   <div className="mt-3 flex flex-wrap gap-2">
-                    {guide.languages.map((l) => (
+                    {guide.languages.map((l: string) => (
                       <span key={l} className="inline-flex items-center gap-1 rounded-full bg-secondary px-3 py-1 text-sm">
                         <Globe2 className="h-3.5 w-3.5" /> {l}
                       </span>
@@ -99,7 +99,7 @@ function GuidePage() {
                 <div>
                   <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Specialties</h3>
                   <div className="mt-3 flex flex-wrap gap-2">
-                    {guide.specialties.map((s) => (
+                    {guide.specialties.map((s: string) => (
                       <span key={s} className="rounded-full bg-secondary px-3 py-1 text-sm">{s}</span>
                     ))}
                   </div>
@@ -109,7 +109,7 @@ function GuidePage() {
               <div>
                 <h2 className="font-display text-2xl font-semibold">Experiences</h2>
                 <div className="mt-4 space-y-3">
-                  {guide.experiences.map((e) => (
+                  {guide.experiences.map((e: { title: string; duration: string; price: number }) => (
                     <div key={e.title} className="flex items-center justify-between gap-4 rounded-2xl bg-card p-5 ring-1 ring-border/60">
                       <div>
                         <h4 className="font-medium">{e.title}</h4>
