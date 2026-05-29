@@ -53,19 +53,8 @@ function Home() {
               Hamroh connects you with verified local guides for unforgettable experiences across the Silk Road's greatest cities.
             </p>
 
-            {/* Search */}
-            <div className="mt-8 flex flex-col gap-3 rounded-2xl bg-background/95 p-3 shadow-[var(--shadow-elegant)] backdrop-blur sm:flex-row sm:items-center">
-              <div className="flex flex-1 items-center gap-3 px-3 py-2">
-                <Search className="h-5 w-5 text-muted-foreground" />
-                <div className="w-full text-base font-medium text-foreground">All cities</div>
-              </div>
-              <Link
-                to="/guides"
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.02]"
-              >
-                Find a guide <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
+
+
 
             <div className="mt-4">
               <Link
@@ -85,7 +74,24 @@ function Home() {
         </div>
       </section>
 
+      {/* Search bar */}
+      <section className="container mx-auto px-4 relative z-10 -mt-8 md:-mt-10">
+        <div className="mx-auto flex max-w-3xl flex-col gap-3 rounded-2xl bg-background/95 p-3 shadow-[var(--shadow-elegant)] ring-1 ring-border/60 backdrop-blur sm:flex-row sm:items-center">
+          <div className="flex flex-1 items-center gap-3 px-3 py-2">
+            <Search className="h-5 w-5 text-muted-foreground" />
+            <div className="w-full text-base font-medium text-foreground">All cities</div>
+          </div>
+          <Link
+            to="/guides"
+            className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.02]"
+          >
+            Find a guide <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+      </section>
+
       {/* Features */}
+
       <section id="how" className="container mx-auto px-4 py-20 md:py-28">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="font-display text-4xl font-semibold md:text-5xl">Travel like a local, instantly.</h2>
