@@ -138,6 +138,15 @@ function Home() {
                 disabled={submitting}
               />
               <button
+                type="button"
+                onClick={toggleMic}
+                disabled={submitting}
+                className={`h-10 w-10 shrink-0 inline-flex items-center justify-center rounded-xl ring-1 ring-border/60 hover:bg-secondary transition-colors ${listening ? "bg-destructive text-destructive-foreground animate-pulse" : "bg-background text-muted-foreground"}`}
+                aria-label={listening ? "Stop voice input" : "Start voice input"}
+              >
+                <Mic className="h-4 w-4" />
+              </button>
+              <button
                 type="submit"
                 disabled={submitting || !input.trim()}
                 className="h-10 w-10 shrink-0 inline-flex items-center justify-center rounded-xl bg-primary text-primary-foreground disabled:opacity-40 hover:opacity-90"
