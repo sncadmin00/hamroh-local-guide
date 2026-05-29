@@ -1,6 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { CityPicker } from "@/components/CityPicker";
+import { useState } from "react";
 import tashkent from "@/assets/city-tashkent.jpg";
 import samarkand from "@/assets/city-samarkand.jpg";
 import bukhara from "@/assets/city-bukhara.jpg";
