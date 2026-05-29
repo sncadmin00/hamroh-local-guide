@@ -11,9 +11,9 @@ export const Route = createFileRoute("/explore")({
   head: () => ({
     meta: [
       { title: "Explore — Hamroh" },
-      { name: "description", content: "Articles, guides and social highlights from across Uzbekistan." },
+      { name: "description", content: "Articles, guides and social highlights from around the world." },
       { property: "og:title", content: "Explore — Hamroh" },
-      { property: "og:description", content: "Articles, guides and social highlights from across Uzbekistan." },
+      { property: "og:description", content: "Articles, guides and social highlights from around the world." },
     ],
   }),
   component: ExplorePage,
@@ -111,7 +111,7 @@ function ExplorePage() {
     return guides.filter((g) => g.city_id === selectedCityId).slice(0, 6);
   }, [guides, city, selectedCityId]);
 
-  const cityLabel = city === "All" ? "Uzbekistan" : city;
+  const cityLabel = city === "All" ? "All cities" : city;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -119,7 +119,7 @@ function ExplorePage() {
       <main className="flex-1 container mx-auto px-4 py-12 md:py-16">
         <header className="max-w-2xl">
           <h1 className="font-display text-4xl md:text-5xl font-semibold">Explore</h1>
-          <p className="mt-3 text-muted-foreground">Stories, guides and moments from across Uzbekistan.</p>
+          <p className="mt-3 text-muted-foreground">Stories, guides and moments — explore places with locals.</p>
         </header>
 
         <div className="mt-8 sticky top-16 z-30 -mx-4 px-4 py-3 bg-background/80 backdrop-blur-md border-b border-border/60">

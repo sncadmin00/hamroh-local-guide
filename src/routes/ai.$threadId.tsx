@@ -15,9 +15,9 @@ export const Route = createFileRoute("/ai/$threadId")({
 });
 
 const SUGGESTIONS = [
-  "Korean-speaking guide in Tashkent for food tours",
-  "Photography tour in Samarkand at sunset",
-  "Family-friendly history guide in Bukhara",
+  "Korean-speaking guide for food tours",
+  "Sunset photography tour with a local",
+  "Family-friendly history walking guide",
   "Half-day artisan workshop with English-speaking guide",
 ];
 
