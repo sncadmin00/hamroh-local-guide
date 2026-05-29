@@ -86,27 +86,6 @@ function ExplorePage() {
     })();
   }, []);
 
-  // Auto-pick nearest city once on first load
-  useEffect(() => {
-    if (autoPicked || cities.length === 0) return;
-    if (typeof navigator === "undefined" || !navigator.geolocation) {
-      setCity(cities[0].name);
-      setAutoPicked(true);
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const [nearest] = nearestCityNames(cities, pos.coords.latitude, pos.coords.longitude, 1);
-        setCity(nearest ?? cities[0].name);
-        setAutoPicked(true);
-      },
-      () => {
-        setCity(cities[0].name);
-        setAutoPicked(true);
-      },
-      { timeout: 5000, maximumAge: 1000 * 60 * 60 },
-    );
-  }, [cities, autoPicked]);
 
   const selectedCityId = useMemo(
     () => (city === "All" ? null : cities.find((c) => c.name === city)?.id ?? null),
