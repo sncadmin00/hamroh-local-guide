@@ -55,7 +55,7 @@ export function SiteHeader() {
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
             <Compass className="h-5 w-5" />
           </div>
-          <span className="font-display text-xl font-semibold tracking-tight">Hamroh</span>
+          <span className="font-display text-xl font-semibold tracking-tight">Sancho</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-1">

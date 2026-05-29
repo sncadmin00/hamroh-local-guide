@@ -28,8 +28,8 @@ function TelegramIcon({ className }: { className?: string }) {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Hamroh — What's up? with AI" },
-      { name: "description", content: "Chat with Hamroh AI to find a verified local guide. Tell us your trip, get matched in seconds." },
+      { title: "Sancho — What's up? with AI" },
+      { name: "description", content: "Chat with Sancho AI to find a verified local guide. Tell us your trip, get matched in seconds." },
     ],
   }),
   component: Home,

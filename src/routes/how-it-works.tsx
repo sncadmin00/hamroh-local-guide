@@ -6,9 +6,9 @@ import { SiteFooter } from "@/components/SiteFooter";
 export const Route = createFileRoute("/how-it-works")({
   head: () => ({
     meta: [
-      { title: "How it works — Hamroh" },
-      { name: "description", content: "Verified guides, multiple languages, instant booking. Here's how Hamroh works." },
-      { property: "og:title", content: "How it works — Hamroh" },
+      { title: "How it works — Sancho" },
+      { name: "description", content: "Verified guides, multiple languages, instant booking. Here's how Sancho works." },
+      { property: "og:title", content: "How it works — Sancho" },
       { property: "og:description", content: "Verified guides, multiple languages, instant booking." },
     ],
   }),

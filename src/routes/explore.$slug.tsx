@@ -8,8 +8,8 @@ import { ArrowLeft, Calendar } from "lucide-react";
 export const Route = createFileRoute("/explore/$slug")({
   head: () => ({
     meta: [
-      { title: "Article — Hamroh" },
-      { name: "description", content: "Read a travel story from Hamroh." },
+      { title: "Article — Sancho" },
+      { name: "description", content: "Read a travel story from Sancho." },
     ],
   }),
   component: ArticlePage,

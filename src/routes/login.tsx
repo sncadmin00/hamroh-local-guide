@@ -5,7 +5,7 @@ import { lovable } from "@/integrations/lovable/index";
 import { Compass, Apple } from "lucide-react";
 
 export const Route = createFileRoute("/login")({
-  head: () => ({ meta: [{ title: "Sign in — Hamroh" }] }),
+  head: () => ({ meta: [{ title: "Sign in — Sancho" }] }),
   component: LoginPage,
 });
 
@@ -104,11 +104,11 @@ function LoginPage() {
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
             <Compass className="h-5 w-5" />
           </div>
-          <span className="font-display text-xl font-semibold">Hamroh</span>
+          <span className="font-display text-xl font-semibold">Sancho</span>
         </Link>
         <div className="rounded-3xl bg-card p-8 ring-1 ring-border/60 shadow-[var(--shadow-elegant)]">
           <h1 className="font-display text-2xl font-semibold">{mode === "signin" ? "Welcome back" : "Create account"}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Sign in to ask Hamroh AI about guides.</p>
+          <p className="mt-1 text-sm text-muted-foreground">Sign in to ask Sancho AI about guides.</p>
 
           <div className="mt-6 space-y-2">
             <button
@@ -178,7 +178,7 @@ function LoginPage() {
                 {loading ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}
               </button>
               <p className="text-center text-sm text-muted-foreground">
-                {mode === "signin" ? "New to Hamroh? " : "Already have an account? "}
+                {mode === "signin" ? "New to Sancho? " : "Already have an account? "}
                 <button type="button" onClick={() => setMode(mode === "signin" ? "signup" : "signin")} className="text-primary font-medium hover:underline">
                   {mode === "signin" ? "Create one" : "Sign in"}
                 </button>

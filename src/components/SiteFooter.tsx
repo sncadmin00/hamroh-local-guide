@@ -24,10 +24,10 @@ export function SiteFooter() {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <Compass className="h-4 w-4" />
           </div>
-          <span className="font-display text-lg font-semibold">Hamroh</span>
+          <span className="font-display text-lg font-semibold">Sancho</span>
         </div>
         <p className="text-sm text-muted-foreground">
-          © {new Date().getFullYear()} Hamroh · Trusted local guides
+          © {new Date().getFullYear()} Sancho · Trusted local guides
         </p>
         <div className="flex items-center gap-2">
           <a
