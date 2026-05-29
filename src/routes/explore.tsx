@@ -163,22 +163,21 @@ function ExplorePage() {
           )}
         </section>
 
-        {/* Guides (only when a specific city is selected) */}
-        {city !== "All" && (
-          <section className="mt-16">
-            <div className="flex items-end justify-between gap-4 flex-wrap">
-              <h2 className="font-display text-2xl font-semibold">Guides in {cityLabel}</h2>
-              <Link
-                to="/guides"
-                search={{ city }}
-                className="text-sm font-medium text-primary hover:underline"
-              >
-                See all →
-              </Link>
-            </div>
-            {filteredGuides.length === 0 ? (
-              <p className="mt-4 text-sm text-muted-foreground">No guides in {cityLabel} yet.</p>
-            ) : (
+        {/* Guides */}
+        <section className="mt-16">
+          <div className="flex items-end justify-between gap-4 flex-wrap">
+            <h2 className="font-display text-2xl font-semibold">Guides · {cityLabel}</h2>
+            <Link
+              to="/guides"
+              search={{ city }}
+              className="text-sm font-medium text-primary hover:underline"
+            >
+              See all →
+            </Link>
+          </div>
+          {filteredGuides.length === 0 ? (
+            <p className="mt-4 text-sm text-muted-foreground">No guides for {cityLabel} yet.</p>
+          ) : (
               <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {filteredGuides.map((g) => (
                   <Link
