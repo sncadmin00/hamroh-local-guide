@@ -636,23 +636,40 @@ function ArticlesPanel({
   );
 }
 
-function SocialPanel({ embeds, reload }: { embeds: Embed[]; reload: () => Promise<void> }) {
+function SocialPanel({
+  embeds,
+  cities,
+  reload,
+}: {
+  embeds: Embed[];
+  cities: City[];
+  reload: () => Promise<void>;
+}) {
   const [platform, setPlatform] = useState<Embed["platform"]>("instagram");
   const [url, setUrl] = useState("");
   const [caption, setCaption] = useState("");
+  const [cityIds, setCityIds] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
 
   const add = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!url) { toast.error("URL required"); return; }
     setSaving(true);
-    const { error } = await supabase.from("social_embeds").insert({
-      platform, url, caption, sort_order: embeds.length, visible: true,
-    });
+    const { data, error } = await supabase
+      .from("social_embeds")
+      .insert({ platform, url, caption, sort_order: embeds.length, visible: true })
+      .select("id")
+      .single();
+    if (error || !data) { setSaving(false); toast.error(error?.message ?? "Failed"); return; }
+    if (cityIds.length > 0) {
+      const { error: linkErr } = await supabase
+        .from("social_embed_cities")
+        .insert(cityIds.map((city_id) => ({ embed_id: data.id, city_id })));
+      if (linkErr) toast.error(linkErr.message);
+    }
     setSaving(false);
-    if (error) { toast.error(error.message); return; }
     toast.success("Embed added");
-    setUrl(""); setCaption("");
+    setUrl(""); setCaption(""); setCityIds([]);
     await reload();
   };
 
@@ -689,6 +706,7 @@ function SocialPanel({ embeds, reload }: { embeds: Embed[]; reload: () => Promis
           </div>
           <Field label="Post URL" value={url} onChange={setUrl} placeholder="https://…" />
           <Field label="Caption (optional)" value={caption} onChange={setCaption} placeholder="Behind the scenes in Samarkand" />
+          <CityMultiSelect cities={cities} selected={cityIds} onChange={setCityIds} />
         </div>
         <button
           type="submit"
