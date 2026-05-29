@@ -13,6 +13,7 @@ import { Route as GuidesRouteImport } from './routes/guides'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as GuidesGuideIdRouteImport } from './routes/guides.$guideId'
 import { Route as BookGuideIdRouteImport } from './routes/book.$guideId'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
 
 const GuidesRoute = GuidesRouteImport.update({
   id: '/guides',
@@ -34,16 +35,23 @@ const BookGuideIdRoute = BookGuideIdRouteImport.update({
   path: '/book/$guideId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/guides': typeof GuidesRouteWithChildren
+  '/api/chat': typeof ApiChatRoute
   '/book/$guideId': typeof BookGuideIdRoute
   '/guides/$guideId': typeof GuidesGuideIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/guides': typeof GuidesRouteWithChildren
+  '/api/chat': typeof ApiChatRoute
   '/book/$guideId': typeof BookGuideIdRoute
   '/guides/$guideId': typeof GuidesGuideIdRoute
 }
@@ -51,20 +59,33 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/guides': typeof GuidesRouteWithChildren
+  '/api/chat': typeof ApiChatRoute
   '/book/$guideId': typeof BookGuideIdRoute
   '/guides/$guideId': typeof GuidesGuideIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/guides' | '/book/$guideId' | '/guides/$guideId'
+  fullPaths:
+    | '/'
+    | '/guides'
+    | '/api/chat'
+    | '/book/$guideId'
+    | '/guides/$guideId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/guides' | '/book/$guideId' | '/guides/$guideId'
-  id: '__root__' | '/' | '/guides' | '/book/$guideId' | '/guides/$guideId'
+  to: '/' | '/guides' | '/api/chat' | '/book/$guideId' | '/guides/$guideId'
+  id:
+    | '__root__'
+    | '/'
+    | '/guides'
+    | '/api/chat'
+    | '/book/$guideId'
+    | '/guides/$guideId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   GuidesRoute: typeof GuidesRouteWithChildren
+  ApiChatRoute: typeof ApiChatRoute
   BookGuideIdRoute: typeof BookGuideIdRoute
 }
 
@@ -98,6 +119,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BookGuideIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -115,8 +143,19 @@ const GuidesRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   GuidesRoute: GuidesRouteWithChildren,
+  ApiChatRoute: ApiChatRoute,
   BookGuideIdRoute: BookGuideIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
