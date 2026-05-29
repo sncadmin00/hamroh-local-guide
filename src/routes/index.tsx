@@ -42,22 +42,24 @@ function Home() {
         <img src={hero} alt="Bukhara old town at golden hour with turquoise domes and minarets" width={1920} height={1280} className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-black/70" />
         <div className="relative container mx-auto px-4 pb-32 pt-28 md:pb-44 md:pt-40">
-          <div className="max-w-3xl">
-            <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-medium text-white backdrop-blur">
-              <Sparkles className="h-3.5 w-3.5" /> Now in Tashkent · Samarkand · Bukhara
-            </span>
-            <h1 className="mt-5 font-display text-5xl font-semibold leading-[1.05] text-white md:text-7xl">
-              Uzbekistan, with someone who calls it home.
+          <div className="max-w-3xl ml-auto">
+            <div className="flex justify-end">
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-medium text-white backdrop-blur">
+                <Sparkles className="h-3.5 w-3.5" /> Now in Tashkent · Samarkand · Bukhara
+              </span>
+            </div>
+            <h1 className="mt-5 font-display text-5xl font-semibold leading-[1.05] text-white md:text-7xl text-right">
+              ​
             </h1>
-            <p className="mt-5 max-w-xl text-lg text-white/85">
-              Hamroh connects you with verified local guides for unforgettable experiences across the Silk Road's greatest cities.
+            <p className="mt-5 max-w-xl text-lg text-white/85 text-right ml-auto">
+              Find your local guide 
             </p>
 
 
 
 
 
-            <div className="mt-8 flex flex-wrap items-center gap-6 text-sm text-white/80">
+            <div className="mt-8 flex flex-wrap items-center justify-end gap-6 text-sm text-white/80">
               <span className="inline-flex items-center gap-2"><BadgeCheck className="h-4 w-4" /> 100% verified guides</span>
               <span className="inline-flex items-center gap-2">★ 4.9 average rating</span>
               <span className="inline-flex items-center gap-2"><Zap className="h-4 w-4" /> Free cancellation</span>
