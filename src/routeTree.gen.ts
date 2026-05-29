@@ -14,7 +14,6 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as GuidesRouteImport } from './routes/guides'
 import { Route as ExploreRouteImport } from './routes/explore'
-import { Route as CitiesRouteImport } from './routes/cities'
 import { Route as BecomeAGuideRouteImport } from './routes/become-a-guide'
 import { Route as AiRouteImport } from './routes/ai'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -48,11 +47,6 @@ const GuidesRoute = GuidesRouteImport.update({
 const ExploreRoute = ExploreRouteImport.update({
   id: '/explore',
   path: '/explore',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CitiesRoute = CitiesRouteImport.update({
-  id: '/cities',
-  path: '/cities',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BecomeAGuideRoute = BecomeAGuideRouteImport.update({
@@ -106,7 +100,6 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/ai': typeof AiRouteWithChildren
   '/become-a-guide': typeof BecomeAGuideRoute
-  '/cities': typeof CitiesRoute
   '/explore': typeof ExploreRouteWithChildren
   '/guides': typeof GuidesRouteWithChildren
   '/how-it-works': typeof HowItWorksRoute
@@ -123,7 +116,6 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/ai': typeof AiRouteWithChildren
   '/become-a-guide': typeof BecomeAGuideRoute
-  '/cities': typeof CitiesRoute
   '/explore': typeof ExploreRouteWithChildren
   '/guides': typeof GuidesRouteWithChildren
   '/how-it-works': typeof HowItWorksRoute
@@ -141,7 +133,6 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/ai': typeof AiRouteWithChildren
   '/become-a-guide': typeof BecomeAGuideRoute
-  '/cities': typeof CitiesRoute
   '/explore': typeof ExploreRouteWithChildren
   '/guides': typeof GuidesRouteWithChildren
   '/how-it-works': typeof HowItWorksRoute
@@ -160,7 +151,6 @@ export interface FileRouteTypes {
     | '/admin'
     | '/ai'
     | '/become-a-guide'
-    | '/cities'
     | '/explore'
     | '/guides'
     | '/how-it-works'
@@ -177,7 +167,6 @@ export interface FileRouteTypes {
     | '/admin'
     | '/ai'
     | '/become-a-guide'
-    | '/cities'
     | '/explore'
     | '/guides'
     | '/how-it-works'
@@ -194,7 +183,6 @@ export interface FileRouteTypes {
     | '/admin'
     | '/ai'
     | '/become-a-guide'
-    | '/cities'
     | '/explore'
     | '/guides'
     | '/how-it-works'
@@ -212,7 +200,6 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   AiRoute: typeof AiRouteWithChildren
   BecomeAGuideRoute: typeof BecomeAGuideRoute
-  CitiesRoute: typeof CitiesRoute
   ExploreRoute: typeof ExploreRouteWithChildren
   GuidesRoute: typeof GuidesRouteWithChildren
   HowItWorksRoute: typeof HowItWorksRoute
@@ -257,13 +244,6 @@ declare module '@tanstack/react-router' {
       path: '/explore'
       fullPath: '/explore'
       preLoaderRoute: typeof ExploreRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cities': {
-      id: '/cities'
-      path: '/cities'
-      fullPath: '/cities'
-      preLoaderRoute: typeof CitiesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/become-a-guide': {
@@ -369,7 +349,6 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   AiRoute: AiRouteWithChildren,
   BecomeAGuideRoute: BecomeAGuideRoute,
-  CitiesRoute: CitiesRoute,
   ExploreRoute: ExploreRouteWithChildren,
   GuidesRoute: GuidesRouteWithChildren,
   HowItWorksRoute: HowItWorksRoute,
@@ -381,13 +360,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

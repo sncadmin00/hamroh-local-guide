@@ -70,6 +70,36 @@ export type Database = {
         }
         Relationships: []
       }
+      article_cities: {
+        Row: {
+          article_id: string
+          city_id: string
+        }
+        Insert: {
+          article_id: string
+          city_id: string
+        }
+        Update: {
+          article_id?: string
+          city_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_cities_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "article_cities_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       articles: {
         Row: {
           body_md: string
@@ -247,6 +277,36 @@ export type Database = {
             columns: ["city_id"]
             isOneToOne: false
             referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      social_embed_cities: {
+        Row: {
+          city_id: string
+          embed_id: string
+        }
+        Insert: {
+          city_id: string
+          embed_id: string
+        }
+        Update: {
+          city_id?: string
+          embed_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_embed_cities_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "social_embed_cities_embed_id_fkey"
+            columns: ["embed_id"]
+            isOneToOne: false
+            referencedRelation: "social_embeds"
             referencedColumns: ["id"]
           },
         ]

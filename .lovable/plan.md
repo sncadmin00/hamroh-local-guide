@@ -1,40 +1,51 @@
-## Explore page + social links
+# Merge Cities → Explore
 
-### New routes
-- `/explore` — main page with three sections:
-  1. **Featured articles** — list/grid of blog posts from new DB table
-  2. **Featured guides & cities** — pulls top guides + cities (existing tables)
-  3. **Social feed** — grid of admin-curated embeds (Instagram/TikTok/YouTube)
-- `/explore/$slug` — individual article page (SEO-friendly, own meta)
+Turn `/explore` into the single discovery hub. A city dropdown at the top filters articles, guide recommendations, and social embeds for the selected city. Default selection auto-picks the nearest city via geolocation.
 
-### Navigation
-- Add "Explore" link to main header/nav
-- Add footer (new component) with placeholder social icon links (Instagram, TikTok, YouTube, X) — easy to swap URLs later
+## Database changes
 
-### Admin
-Extend existing admin area with two new sections:
-- **Articles** — create/edit/delete: title, slug, cover image, excerpt, body (markdown), published flag
-- **Social embeds** — paste post URL, choose platform, sort order, visible flag
+Add many-to-many tagging so articles and social embeds can be tied to multiple cities.
 
-### Database (new tables)
-- `articles` — title, slug, excerpt, cover_url, body_md, published, published_at, sort_order
-- `social_embeds` — platform (instagram|tiktok|youtube|x), url, caption, sort_order, visible
-- Public SELECT for published/visible rows; admin full access via `has_role`
-- Reuse existing `guide-photos` storage bucket (or add `article-covers`) for cover uploads
+- New table `article_cities` (`article_id`, `city_id`, PK on both, FKs cascade).
+- New table `social_embed_cities` (`embed_id`, `city_id`, PK on both, FKs cascade).
+- RLS: public `SELECT`; admins manage. GRANTs for `anon`, `authenticated`, `service_role`.
+- No changes to existing `articles` / `social_embeds` / `guides` columns (guides already have `city_id`).
 
-### Data fetching
-- Public read via `createServerFn` + `supabaseAdmin` scoped to `published=true` / `visible=true` (loaders run during SSR with no auth token)
-- Admin CRUD via `createServerFn` + `requireSupabaseAuth` with `has_role` check
+Articles/embeds with **no** city tags are treated as global and shown for every city.
 
-### Social embeds rendering
-- Instagram/TikTok: official `<blockquote>` embed + their embed.js script
-- YouTube: native iframe
-- X/Twitter: `<blockquote>` + widgets.js
+## Frontend changes
 
-### SEO
-- `/explore` head: title, description, og tags
-- `/explore/$slug` head: per-article title, description, og:image = cover_url
+### `/explore` (rewrite)
+- Sticky city `<CityPicker>` at the top (reuse existing component).
+- Default value: nearest city via geolocation (already implemented in CityPicker); fallback to first city if denied.
+- City stored in URL search param `?city=<name>` via TanStack search params (zod-validated, shareable, survives refresh).
+- Sections, each filtered by selected city:
+  1. **Latest articles** — joined with `article_cities`; include rows with no city tags as global.
+  2. **Guides in {city}** — query `guides` where `cities.name = <selected>`; link to existing `/guides/$guideId` and a "See all guides in {city}" link to `/guides?city=…`.
+  3. **From our socials** — joined with `social_embed_cities`; include untagged as global.
+- Empty states per section ("No articles for {city} yet").
 
-### Out of scope (later)
-- Auto-fetching social posts via APIs
-- Real social URLs (placeholders shipped now)
+### Header / nav
+- Remove the **Cities** link from `SiteHeader` (EN/UZ/RU strings stay but unused entry removed from nav array).
+- Keep the **Explore** link.
+
+### `/cities` route
+- Delete `src/routes/cities.tsx`. The route tree regenerates automatically.
+- Any in-app `<Link to="/cities">` is replaced with `<Link to="/explore">`.
+
+### Admin (`/admin`)
+- **Articles** tab: add a multi-select of cities (checkboxes) when creating/editing an article — writes to `article_cities`.
+- **Social** tab: same multi-select for embeds — writes to `social_embed_cities`.
+- "No cities selected" = global (shown everywhere).
+
+## Out of scope
+- No changes to guide data model (already city-scoped).
+- No new article fields beyond city tags.
+- Translations stay as-is; the removed "Cities" nav entry is simply not rendered.
+
+## Files touched
+- New: `supabase/migrations/<timestamp>_article_social_cities.sql`
+- New helpers in `src/lib/content-queries.ts` (article+city, embed+city joins)
+- Rewrite: `src/routes/explore.tsx`
+- Edit: `src/components/SiteHeader.tsx`, `src/routes/admin.tsx`
+- Delete: `src/routes/cities.tsx`
