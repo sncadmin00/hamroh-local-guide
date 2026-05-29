@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { Compass, Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { useI18n } from "@/lib/i18n";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 function WhatsAppIcon({ className }: { className?: string }) {
   return (
@@ -18,14 +20,14 @@ function TelegramIcon({ className }: { className?: string }) {
   );
 }
 
-const menuLinks = [
-  { to: "/guides", label: "Find a guide" },
-  { to: "/cities", label: "Cities" },
-  { to: "/how-it-works", label: "How it works" },
-  { to: "/become-a-guide", label: "Become a guide" },
-] as const;
-
 export function SiteHeader() {
+  const { t } = useI18n();
+  const menuLinks = [
+    { to: "/guides", label: t("nav.findGuide") },
+    { to: "/cities", label: t("nav.cities") },
+    { to: "/how-it-works", label: t("nav.howItWorks") },
+    { to: "/become-a-guide", label: t("nav.becomeGuide") },
+  ] as const;
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-md">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
@@ -50,6 +52,7 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <LanguageSwitcher />
           <a
             href="https://t.me/yourtelegram"
             target="_blank"
@@ -80,7 +83,7 @@ export function SiteHeader() {
             </SheetTrigger>
             <SheetContent side="right" className="w-72">
               <SheetHeader>
-                <SheetTitle className="text-left">Menu</SheetTitle>
+                <SheetTitle className="text-left">{t("common.menu")}</SheetTitle>
               </SheetHeader>
               <nav className="mt-6 flex flex-col">
                 {menuLinks.map((link) => (
@@ -95,7 +98,7 @@ export function SiteHeader() {
                 ))}
               </nav>
               <div className="mt-6 flex items-center gap-3 px-3">
-                <span className="text-sm text-muted-foreground">Contact us:</span>
+                <span className="text-sm text-muted-foreground">{t("common.contactUs")}</span>
                 <a
                   href="https://t.me/yourtelegram"
                   target="_blank"

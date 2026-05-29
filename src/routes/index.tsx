@@ -6,6 +6,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { supabase } from "@/integrations/supabase/client";
 import { createThread } from "@/lib/ai-threads.functions";
+import { useI18n } from "@/lib/i18n";
 
 function WhatsAppIcon({ className }: { className?: string }) {
   return (
@@ -44,6 +45,7 @@ const SUGGESTIONS = [
 function Home() {
   const navigate = useNavigate();
   const create = useServerFn(createThread);
+  const { t } = useI18n();
   const [input, setInput] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [listening, setListening] = useState(false);
@@ -124,10 +126,10 @@ function Home() {
               <Sparkles className="h-7 w-7" />
             </div>
             <h1 className="font-display text-4xl md:text-5xl font-semibold leading-tight">
-              What's up?
+              {t("hero.title")}
             </h1>
             <p className="mt-3 text-muted-foreground text-base md:text-lg">
-              Describe the trip you want. Hamroh AI matches you with a verified local guide.
+              {t("hero.subtitle")}
             </p>
           </div>
 
@@ -189,12 +191,12 @@ function Home() {
 
           <p className="mt-8 text-center text-sm">
             <Link to="/guides" className="text-muted-foreground hover:text-foreground underline underline-offset-4">
-              Prefer to browse? Find a guide manually →
+              {t("hero.browse")}
             </Link>
           </p>
 
           <div className="mt-5 flex flex-col items-center justify-center gap-2">
-            <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Find us:</span>
+            <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{t("common.findUs")}</span>
             <div className="flex items-center gap-3">
               <a
                 href="https://wa.me/1234567890"
