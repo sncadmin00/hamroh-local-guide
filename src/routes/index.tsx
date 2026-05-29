@@ -152,7 +152,7 @@ function Home() {
       <section className="container mx-auto px-4 pb-24">
         <div className="relative overflow-hidden rounded-3xl p-10 md:p-16" style={{ background: "var(--gradient-hero)" }}>
           <div className="relative max-w-2xl text-primary-foreground">
-            <h2 className="font-display text-4xl font-semibold md:text-5xl">Your Uzbekistan adventure starts here.</h2>
+            <h2 className="font-display text-4xl font-semibold md:text-5xl">Your adventure starts here.</h2>
             <p className="mt-4 text-lg opacity-90">Browse guides, read reviews, book in seconds.</p>
             <Link to="/guides" className="mt-8 inline-flex h-12 items-center justify-center gap-2 rounded-full bg-background px-7 text-sm font-semibold text-foreground transition-transform hover:scale-[1.02]">
               Explore all guides <ArrowRight className="h-4 w-4" />
