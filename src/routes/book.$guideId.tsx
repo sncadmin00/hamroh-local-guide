@@ -83,7 +83,7 @@ function BookPage() {
                 onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setForm({ ...form, experience: e.target.value })}
                 className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring"
               >
-                {guide.experiences.map((e) => (
+                {guide.experiences.map((e: typeof guide.experiences[number]) => (
                   <option key={e.title} value={e.title}>{e.title} — ${e.price} · {e.duration}</option>
                 ))}
               </select>
