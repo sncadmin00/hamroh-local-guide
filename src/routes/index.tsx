@@ -34,9 +34,15 @@ function Home() {
   useEffect(() => {
     taRef.current?.focus();
   }, []);
+  useEffect(() => {
+    taRef.current?.focus();
+    const pending = sessionStorage.getItem("pendingAiPrompt");
+    if (pending) {
+      sessionStorage.removeItem("pendingAiPrompt");
+      setInput(pending);
+    }
+  }, []);
 
-  const submit = async (text: string) => {
-    const t = text.trim();
     if (!t || submitting) return;
     setSubmitting(true);
     try {
