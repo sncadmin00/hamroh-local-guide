@@ -1,8 +1,10 @@
 import { Link } from "@tanstack/react-router";
-import { Compass, Menu } from "lucide-react";
+import { Compass, Menu, Settings } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useI18n } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { supabase } from "@/integrations/supabase/client";
 
 function WhatsAppIcon({ className }: { className?: string }) {
   return (
@@ -22,6 +24,12 @@ function TelegramIcon({ className }: { className?: string }) {
 
 export function SiteHeader() {
   const { t } = useI18n();
+  const [signedIn, setSignedIn] = useState(false);
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setSignedIn(!!data.session));
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => setSignedIn(!!session));
+    return () => sub.subscription.unsubscribe();
+  }, []);
   const menuLinks = [
     { to: "/guides", label: t("nav.findGuide") },
     { to: "/cities", label: t("nav.cities") },
@@ -96,6 +104,15 @@ export function SiteHeader() {
                     {link.label}
                   </Link>
                 ))}
+                {signedIn && (
+                  <Link
+                    to="/settings"
+                    className="px-3 py-3 rounded-lg text-base font-medium text-foreground hover:bg-secondary/60 inline-flex items-center gap-2"
+                    activeProps={{ className: "px-3 py-3 rounded-lg text-base font-medium bg-secondary text-foreground inline-flex items-center gap-2" }}
+                  >
+                    <Settings className="h-4 w-4" /> Account settings
+                  </Link>
+                )}
               </nav>
               <div className="mt-6 flex items-center gap-3 px-3">
                 <span className="text-sm text-muted-foreground">{t("common.contactUs")}</span>

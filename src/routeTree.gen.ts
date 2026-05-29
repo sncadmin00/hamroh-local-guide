@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as GuidesRouteImport } from './routes/guides'
@@ -21,6 +22,11 @@ import { Route as BookGuideIdRouteImport } from './routes/book.$guideId'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AiThreadIdRouteImport } from './routes/ai.$threadId'
 
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -85,6 +91,7 @@ export interface FileRoutesByFullPath {
   '/guides': typeof GuidesRouteWithChildren
   '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
+  '/settings': typeof SettingsRoute
   '/ai/$threadId': typeof AiThreadIdRoute
   '/api/chat': typeof ApiChatRoute
   '/book/$guideId': typeof BookGuideIdRoute
@@ -98,6 +105,7 @@ export interface FileRoutesByTo {
   '/guides': typeof GuidesRouteWithChildren
   '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
+  '/settings': typeof SettingsRoute
   '/ai/$threadId': typeof AiThreadIdRoute
   '/api/chat': typeof ApiChatRoute
   '/book/$guideId': typeof BookGuideIdRoute
@@ -112,6 +120,7 @@ export interface FileRoutesById {
   '/guides': typeof GuidesRouteWithChildren
   '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
+  '/settings': typeof SettingsRoute
   '/ai/$threadId': typeof AiThreadIdRoute
   '/api/chat': typeof ApiChatRoute
   '/book/$guideId': typeof BookGuideIdRoute
@@ -127,6 +136,7 @@ export interface FileRouteTypes {
     | '/guides'
     | '/how-it-works'
     | '/login'
+    | '/settings'
     | '/ai/$threadId'
     | '/api/chat'
     | '/book/$guideId'
@@ -140,6 +150,7 @@ export interface FileRouteTypes {
     | '/guides'
     | '/how-it-works'
     | '/login'
+    | '/settings'
     | '/ai/$threadId'
     | '/api/chat'
     | '/book/$guideId'
@@ -153,6 +164,7 @@ export interface FileRouteTypes {
     | '/guides'
     | '/how-it-works'
     | '/login'
+    | '/settings'
     | '/ai/$threadId'
     | '/api/chat'
     | '/book/$guideId'
@@ -167,12 +179,20 @@ export interface RootRouteChildren {
   GuidesRoute: typeof GuidesRouteWithChildren
   HowItWorksRoute: typeof HowItWorksRoute
   LoginRoute: typeof LoginRoute
+  SettingsRoute: typeof SettingsRoute
   ApiChatRoute: typeof ApiChatRoute
   BookGuideIdRoute: typeof BookGuideIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -282,6 +302,7 @@ const rootRouteChildren: RootRouteChildren = {
   GuidesRoute: GuidesRouteWithChildren,
   HowItWorksRoute: HowItWorksRoute,
   LoginRoute: LoginRoute,
+  SettingsRoute: SettingsRoute,
   ApiChatRoute: ApiChatRoute,
   BookGuideIdRoute: BookGuideIdRoute,
 }
