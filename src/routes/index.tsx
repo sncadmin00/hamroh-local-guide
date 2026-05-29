@@ -10,7 +10,7 @@ import { createThread } from "@/lib/ai-threads.functions";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Hamroh — Find your local guide with AI" },
+      { title: "Hamroh — What's up? with AI" },
       { name: "description", content: "Chat with Hamroh AI to find a verified local guide. Tell us your trip, get matched in seconds." },
     ],
   }),
@@ -107,7 +107,7 @@ function Home() {
               <Sparkles className="h-7 w-7" />
             </div>
             <h1 className="font-display text-4xl md:text-5xl font-semibold leading-tight">
-              Find your local guide
+              What's up?
             </h1>
             <p className="mt-3 text-muted-foreground text-base md:text-lg">
               Describe the trip you want. Hamroh AI matches you with a verified local guide.
