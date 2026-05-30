@@ -142,6 +142,12 @@ function AdminPage() {
 
         <div className="mt-6 inline-flex flex-wrap rounded-full bg-card p-1 ring-1 ring-border/60">
           <button
+            onClick={() => setTab("bookings")}
+            className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "bookings" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+          >
+            Orders ({bookings.length})
+          </button>
+          <button
             onClick={() => setTab("cities")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "cities" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
@@ -167,6 +173,7 @@ function AdminPage() {
           </button>
         </div>
 
+        {tab === "bookings" && <BookingsPanel bookings={bookings} reload={loadData} />}
         {tab === "cities" && <CitiesPanel cities={cities} reload={loadData} />}
         {tab === "guides" && <GuidesPanel guides={guides} cities={cities} reload={loadData} />}
         {tab === "articles" && <ArticlesPanel articles={articles} cities={cities} reload={loadData} />}
