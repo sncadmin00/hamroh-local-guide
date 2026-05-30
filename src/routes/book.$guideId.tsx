@@ -46,8 +46,28 @@ function BookPage() {
   const handleGuestChange = (e: ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, guests: Math.max(1, Number(e.target.value) || 1) });
   };
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (submitting) return;
+    setSubmitting(true);
+    const { data: userData } = await supabase.auth.getUser();
+    const { error } = await supabase.from("bookings").insert({
+      guide_id: guide.id,
+      user_id: userData.user?.id ?? null,
+      experience: currentExperience,
+      date: form.date,
+      guests: form.guests,
+      customer_name: form.name,
+      customer_email: form.email,
+      notes: form.notes,
+      total: total + fee,
+      status: "pending",
+    });
+    setSubmitting(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     setConfirmed(true);
     window.scrollTo({ top: 0 });
   };
