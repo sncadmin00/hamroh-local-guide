@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { Compass, Menu, Settings, Shield } from "lucide-react";
+import { Menu, Settings, Shield } from "lucide-react";
+import sanchoLogo from "@/assets/sancho-logo.png";
 import { useEffect, useState } from "react";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useI18n } from "@/lib/i18n";
