@@ -23,7 +23,6 @@ export function SiteFooter() {
       <div className="container mx-auto flex flex-col items-center justify-between gap-4 px-4 py-10 md:flex-row">
         <div className="flex items-center gap-2">
           <img src={sanchoLogo} alt="Sancho" className="h-8 w-8 rounded-lg object-contain" />
-          <span className="font-display text-lg font-semibold">Sancho</span>
         </div>
         <p className="text-sm text-muted-foreground">
           © {new Date().getFullYear()} Sancho · Trusted local guides
