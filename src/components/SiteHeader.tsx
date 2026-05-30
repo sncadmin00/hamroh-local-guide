@@ -54,7 +54,6 @@ export function SiteHeader() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link to="/" className="flex items-center gap-2">
           <img src={sanchoLogo} alt="Sancho" className="h-9 w-9 rounded-xl object-contain" />
-          <span className="font-display text-xl font-semibold tracking-tight">Sancho</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-1">
