@@ -53,7 +53,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-md">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link to="/" className="flex items-center gap-2">
-          <img src={sanchoLogo} alt="Sancho" className="h-9 w-9 rounded-xl object-contain" />
+          <img src={sanchoLogo} alt="Sancho" className="h-12 w-12 rounded-xl object-contain" />
         </Link>
 
         <nav className="hidden md:flex items-center gap-1">
