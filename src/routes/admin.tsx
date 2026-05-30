@@ -56,6 +56,22 @@ type Embed = {
   visible: boolean;
 };
 
+type Booking = {
+  id: string;
+  guide_id: string;
+  user_id: string | null;
+  experience: string;
+  date: string;
+  guests: number;
+  customer_name: string;
+  customer_email: string;
+  notes: string;
+  total: number;
+  status: string;
+  created_at: string;
+  guides?: { name: string; slug: string } | null;
+};
+
 function AdminPage() {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
