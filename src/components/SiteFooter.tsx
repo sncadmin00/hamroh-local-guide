@@ -1,4 +1,5 @@
-import { Compass, Instagram, Youtube, Music2, Twitter } from "lucide-react";
+import { Instagram, Youtube, Music2, Twitter } from "lucide-react";
+import sanchoLogo from "@/assets/sancho-logo.png";
 
 function WhatsAppIcon({ className }: { className?: string }) {
   return (
