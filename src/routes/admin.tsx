@@ -775,3 +775,117 @@ function SocialPanel({
     </div>
   );
 }
+
+function BookingsPanel({ bookings, reload }: { bookings: Booking[]; reload: () => Promise<void> }) {
+  const [filter, setFilter] = useState<"all" | "pending" | "confirmed" | "cancelled">("all");
+
+  const filtered = filter === "all" ? bookings : bookings.filter((b) => b.status === filter);
+
+  const setStatus = async (id: string, status: string) => {
+    const { error } = await supabase.from("bookings").update({ status }).eq("id", id);
+    if (error) toast.error(error.message);
+    else {
+      toast.success("Status updated");
+      await reload();
+    }
+  };
+
+  const remove = async (id: string) => {
+    if (!confirm("Delete this booking?")) return;
+    const { error } = await supabase.from("bookings").delete().eq("id", id);
+    if (error) toast.error(error.message);
+    else {
+      toast.success("Deleted");
+      await reload();
+    }
+  };
+
+  const statusBadge = (status: string) => {
+    const base = "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium";
+    if (status === "confirmed") return `${base} bg-primary/10 text-primary`;
+    if (status === "cancelled") return `${base} bg-destructive/10 text-destructive`;
+    return `${base} bg-accent/15 text-accent-foreground`;
+  };
+
+  return (
+    <div className="mt-6 rounded-3xl bg-card p-6 ring-1 ring-border/60">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="font-display text-lg font-semibold">Orders</h2>
+        <div className="inline-flex rounded-full bg-secondary/60 p-1">
+          {(["all", "pending", "confirmed", "cancelled"] as const).map((s) => (
+            <button
+              key={s}
+              onClick={() => setFilter(s)}
+              className={`px-3 h-8 rounded-full text-xs font-medium capitalize ${filter === s ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {filtered.length === 0 ? (
+        <p className="mt-6 text-sm text-muted-foreground">No orders yet.</p>
+      ) : (
+        <div className="mt-4 overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="text-left text-xs uppercase text-muted-foreground">
+              <tr className="border-b border-border/60">
+                <th className="py-2 pr-3">Created</th>
+                <th className="py-2 pr-3">Date</th>
+                <th className="py-2 pr-3">Guide</th>
+                <th className="py-2 pr-3">Customer</th>
+                <th className="py-2 pr-3">Guests</th>
+                <th className="py-2 pr-3">Total</th>
+                <th className="py-2 pr-3">Status</th>
+                <th className="py-2 pr-3 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border/60">
+              {filtered.map((b) => (
+                <tr key={b.id} className="align-top">
+                  <td className="py-3 pr-3 text-xs text-muted-foreground whitespace-nowrap">
+                    {new Date(b.created_at).toLocaleDateString()}
+                  </td>
+                  <td className="py-3 pr-3 whitespace-nowrap">{b.date}</td>
+                  <td className="py-3 pr-3">
+                    <div className="font-medium">{b.guides?.name ?? "—"}</div>
+                    <div className="text-xs text-muted-foreground truncate max-w-[180px]">{b.experience}</div>
+                  </td>
+                  <td className="py-3 pr-3">
+                    <div className="font-medium">{b.customer_name}</div>
+                    <div className="text-xs text-muted-foreground">{b.customer_email}</div>
+                    {b.notes && <div className="text-xs text-muted-foreground mt-1 max-w-[220px] truncate" title={b.notes}>{b.notes}</div>}
+                  </td>
+                  <td className="py-3 pr-3">{b.guests}</td>
+                  <td className="py-3 pr-3 font-medium">${Number(b.total).toFixed(0)}</td>
+                  <td className="py-3 pr-3">
+                    <span className={statusBadge(b.status)}>{b.status}</span>
+                  </td>
+                  <td className="py-3 pr-3 text-right whitespace-nowrap">
+                    <select
+                      value={b.status}
+                      onChange={(e) => setStatus(b.id, e.target.value)}
+                      className="h-8 rounded-md border border-input bg-background px-2 text-xs"
+                    >
+                      <option value="pending">pending</option>
+                      <option value="confirmed">confirmed</option>
+                      <option value="cancelled">cancelled</option>
+                    </select>
+                    <button
+                      onClick={() => remove(b.id)}
+                      className="ml-2 inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                      aria-label="Delete"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
