@@ -75,23 +75,26 @@ type Booking = {
 function AdminPage() {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
-  const [tab, setTab] = useState<"cities" | "guides" | "articles" | "social">("cities");
+  const [tab, setTab] = useState<"bookings" | "cities" | "guides" | "articles" | "social">("bookings");
   const [cities, setCities] = useState<City[]>([]);
   const [guides, setGuides] = useState<Guide[]>([]);
   const [articles, setArticles] = useState<Article[]>([]);
   const [embeds, setEmbeds] = useState<Embed[]>([]);
+  const [bookings, setBookings] = useState<Booking[]>([]);
 
   const loadData = useCallback(async () => {
-    const [c, g, a, e] = await Promise.all([
+    const [c, g, a, e, b] = await Promise.all([
       supabase.from("cities").select("*").order("sort_order"),
       supabase.from("guides").select("*").order("sort_order"),
       supabase.from("articles").select("*").order("sort_order").order("created_at", { ascending: false }),
       supabase.from("social_embeds").select("*").order("sort_order"),
+      supabase.from("bookings").select("*, guides(name, slug)").order("created_at", { ascending: false }),
     ]);
     if (c.data) setCities(c.data as City[]);
     if (g.data) setGuides(g.data as Guide[]);
     if (a.data) setArticles(a.data as Article[]);
     if (e.data) setEmbeds(e.data as Embed[]);
+    if (b.data) setBookings(b.data as Booking[]);
   }, []);
 
   useEffect(() => {
