@@ -1,6 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { Star, BadgeCheck, Zap, ArrowLeft, Check } from "lucide-react";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { useGuide } from "@/lib/content-queries";
@@ -15,6 +17,7 @@ function BookPage() {
   const { data: guide, isLoading } = useGuide(guideId);
   const navigate = useNavigate();
   const [confirmed, setConfirmed] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
     date: "",
     guests: 2,
@@ -43,8 +46,28 @@ function BookPage() {
   const handleGuestChange = (e: ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, guests: Math.max(1, Number(e.target.value) || 1) });
   };
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (submitting) return;
+    setSubmitting(true);
+    const { data: userData } = await supabase.auth.getUser();
+    const { error } = await supabase.from("bookings").insert({
+      guide_id: guide.id,
+      user_id: userData.user?.id ?? null,
+      experience: currentExperience,
+      date: form.date,
+      guests: form.guests,
+      customer_name: form.name,
+      customer_email: form.email,
+      notes: form.notes,
+      total: total + fee,
+      status: "pending",
+    });
+    setSubmitting(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     setConfirmed(true);
     window.scrollTo({ top: 0 });
   };
@@ -128,8 +151,8 @@ function BookPage() {
               <textarea value={form.notes} onChange={handleFieldChange} name="notes" rows={4} className="mt-2 w-full rounded-xl border border-input bg-background p-4 text-sm outline-none focus:ring-2 focus:ring-ring" placeholder="Anything specific you'd love to see or do…" />
             </div>
 
-            <button type="submit" className="inline-flex h-12 w-full items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.01]">
-              {guide.instantBook ? `Confirm & book — $${total + fee}` : `Request booking — $${total + fee}`}
+            <button type="submit" disabled={submitting} className="inline-flex h-12 w-full items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.01] disabled:opacity-60">
+              {submitting ? "Sending…" : guide.instantBook ? `Confirm & book — $${total + fee}` : `Request booking — $${total + fee}`}
             </button>
             <p className="text-center text-xs text-muted-foreground">You won't be charged until your guide confirms.</p>
           </form>

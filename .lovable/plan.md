@@ -1,30 +1,35 @@
-Rebrand from **Hamroh** to **Sancho** across the entire codebase.
+# Список заказов в админ-панели
 
-### Scope
-Replace every user-facing occurrence of "Hamroh" with "Sancho" in copy, meta tags, page titles, AI prompts, and translations. No layout, logic, or database changes.
+Сейчас в проекте нет таблицы заказов — форма на `/book/$guideId` просто показывает «You're booked!», ничего не сохраняя. Чтобы в админке появился реальный список заказов, нужно сначала их где-то хранить.
 
-### Files to update
-1. **src/routes/__root.tsx** — title, og:title
-2. **src/routes/index.tsx** — title, description
-3. **src/routes/guides.tsx** — title
-4. **src/routes/explore.tsx** — title, og:title
-5. **src/routes/explore.$slug.tsx** — title, description
-6. **src/routes/book.$guideId.tsx** — title
-7. **src/routes/guides.$guideId.tsx** — title
-8. **src/routes/how-it-works.tsx** — title, description, og:title
-9. **src/routes/become-a-guide.tsx** — title, description
-10. **src/routes/login.tsx** — title, logo text, subtitle, account prompt text
-11. **src/routes/settings.tsx** — title, logo text
-12. **src/routes/admin.tsx** — title, logo text
-13. **src/routes/ai.tsx** — title
-14. **src/routes/ai.$threadId.tsx** — footer attribution text
-15. **src/routes/api/chat.ts** — AI system prompt persona name
-16. **src/components/SiteHeader.tsx** — logo text
-17. **src/components/SiteFooter.tsx** — logo text, copyright line
-18. **src/lib/i18n.tsx** — "Hamroh AI" in hero.subtitle (en/uz/ru)
+## Что сделаем
 
-### Out of scope
-- No database migrations
-- No visual design changes
-- No functionality changes
-- File names and internal code references stay as-is
+1. **Создадим таблицу `bookings`** в базе:
+   - гид (`guide_id`), город (для удобного отображения),
+   - выбранный опыт, дата, число гостей,
+   - имя клиента, email, заметки,
+   - итоговая сумма, статус (`pending` / `confirmed` / `cancelled`),
+   - `user_id` (если пользователь залогинен, иначе NULL — гостевая бронь),
+   - служебные `created_at` / `updated_at`.
+   - RLS: вставлять может кто угодно (гостевые брони), видеть/менять — только админ и сам автор брони.
+
+2. **Сохранение брони** на странице `/book/$guideId`:
+   - при отправке формы делаем `insert` в `bookings`,
+   - показываем подтверждение только после успешной записи,
+   - ошибки — через `toast`.
+
+3. **Новая вкладка «Заказы» в `/admin`**:
+   - таблица: дата, гид, клиент (имя + email), гостей, сумма, статус, когда создан,
+   - сортировка по дате создания (новые сверху),
+   - смена статуса (`pending → confirmed / cancelled`) и удаление,
+   - быстрый фильтр по статусу.
+
+## Технические детали
+
+- Миграция Supabase: `CREATE TABLE public.bookings (...)` + GRANT для `anon` (INSERT, чтобы можно было бронировать без логина), `authenticated` (SELECT/INSERT своих), `service_role` (ALL); RLS-политики на основе `auth.uid()` и `has_role(auth.uid(), 'admin')`.
+- В `book.$guideId.tsx` — `await supabase.from("bookings").insert({...})` внутри `handleSubmit`, состояние загрузки на кнопке.
+- В `admin.tsx` — добавить тип `Booking`, вкладку `"bookings"`, загрузку через `supabase.from("bookings").select("*, guides(name, slug)")`, действия update/delete.
+
+## Открытый вопрос
+
+Сейчас бронировать может незалогиненный пользователь. Оставляем так (гостевые брони сохраняются с `user_id = null`), или требуем логин перед бронированием? По умолчанию в плане — **оставляем гостевые брони**.
