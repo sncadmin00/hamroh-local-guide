@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { Compass, Menu, Settings, Shield } from "lucide-react";
+import { Menu, Settings, Shield } from "lucide-react";
+import sanchoLogo from "@/assets/sancho-logo.png";
 import { useEffect, useState } from "react";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useI18n } from "@/lib/i18n";
@@ -52,9 +53,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-md">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link to="/" className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-            <Compass className="h-5 w-5" />
-          </div>
+          <img src={sanchoLogo} alt="Sancho" className="h-9 w-9 rounded-xl object-contain" />
           <span className="font-display text-xl font-semibold tracking-tight">Sancho</span>
         </Link>
 
