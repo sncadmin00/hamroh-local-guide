@@ -17,6 +17,7 @@ function BookPage() {
   const { data: guide, isLoading } = useGuide(guideId);
   const navigate = useNavigate();
   const [confirmed, setConfirmed] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
     date: "",
     guests: 2,
