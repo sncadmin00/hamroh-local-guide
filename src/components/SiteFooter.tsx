@@ -22,7 +22,7 @@ export function SiteFooter() {
     <footer className="border-t border-border/60 bg-background">
       <div className="container mx-auto flex flex-col items-center justify-between gap-4 px-4 py-10 md:flex-row">
         <div className="flex items-center gap-2">
-          <img src={sanchoLogo} alt="Sancho" className="h-8 w-8 rounded-lg object-contain" />
+          <img src={sanchoLogo} alt="Sancho" className="h-10 w-10 rounded-lg object-contain" />
         </div>
         <p className="text-sm text-muted-foreground">
           © {new Date().getFullYear()} Sancho · Trusted local guides
