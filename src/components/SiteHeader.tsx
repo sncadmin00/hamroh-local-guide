@@ -25,6 +25,7 @@ function TelegramIcon({ className }: { className?: string }) {
 
 export function SiteHeader() {
   const { t } = useI18n();
+  const navigate = useNavigate();
   const [signedIn, setSignedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   useEffect(() => {
@@ -43,6 +44,10 @@ export function SiteHeader() {
     });
     return () => sub.subscription.unsubscribe();
   }, []);
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    navigate({ to: "/", replace: true });
+  };
   const menuLinks = [
     { to: "/guides", label: t("nav.findGuide") },
     { to: "/explore", label: t("nav.explore") },
