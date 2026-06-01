@@ -1085,7 +1085,24 @@ function ApplicationsPanel({
                   </div>
                 </div>
                 {open && (
-                  <div className="mt-3 rounded-2xl bg-secondary/40 p-4 text-sm space-y-2">
+                  <div className="mt-3 rounded-2xl bg-secondary/40 p-4 text-sm space-y-3">
+                    {(a.portrait_url || (a.photo_urls && a.photo_urls.length > 0)) && (
+                      <div className="flex flex-wrap gap-2">
+                        {a.portrait_url && (
+                          <a href={a.portrait_url} target="_blank" rel="noreferrer">
+                            <img src={a.portrait_url} alt="Portrait" className="h-24 w-24 rounded-xl object-cover ring-1 ring-border/60" />
+                          </a>
+                        )}
+                        {a.photo_urls?.map((url) => (
+                          <a key={url} href={url} target="_blank" rel="noreferrer">
+                            <img src={url} alt="Tour" className="h-24 w-24 rounded-xl object-cover ring-1 ring-border/60" />
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                    {a.video_url && (
+                      <video src={a.video_url} controls className="w-full max-w-sm rounded-xl ring-1 ring-border/60" />
+                    )}
                     <div>
                       <span className="text-xs text-muted-foreground">Specialization: </span>
                       {a.specialization}
