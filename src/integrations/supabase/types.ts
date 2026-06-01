@@ -210,6 +210,39 @@ export type Database = {
           },
         ]
       }
+      categories: {
+        Row: {
+          created_at: string
+          description: string
+          icon: string
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          icon?: string
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          icon?: string
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       cities: {
         Row: {
           created_at: string
@@ -333,6 +366,21 @@ export type Database = {
           is_booked?: boolean
           start_time?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      guide_categories: {
+        Row: {
+          category_id: string
+          guide_id: string
+        }
+        Insert: {
+          category_id: string
+          guide_id: string
+        }
+        Update: {
+          category_id?: string
+          guide_id?: string
         }
         Relationships: []
       }
