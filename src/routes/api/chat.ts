@@ -104,16 +104,21 @@ function createWebSearchTool() {
         }));
         // Log discovered places for admin moderation (fire-and-forget)
         if (results.length > 0) {
+          const top = results[0];
           supabaseAdmin
             .from("place_suggestions")
             .insert({
-              query,
-              city: city ?? null,
-              source: "tavily",
-              raw_results: { answer: data.answer ?? null, results } as unknown as object,
+              name: top.title.slice(0, 200),
+              category: "other",
+              city_name: city ?? "",
+              description: (data.answer ?? top.snippet ?? "").slice(0, 1000),
+              raw_query: query,
+              source_url: top.url,
+              status: "pending",
             })
             .then(() => {});
         }
+
         return { answer: data.answer ?? null, results };
       } catch (e) {
         return { error: e instanceof Error ? e.message : "Search error" };
