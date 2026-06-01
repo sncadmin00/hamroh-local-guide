@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Compass, Trash2, Plus, Upload, ImageIcon, Video, Mail } from "lucide-react";
 import { CategoryIcon } from "@/components/CategoryIcon";
 import { inviteGuideToPortal } from "@/lib/admin-portal.functions";
+import { notifyGuideApplicationStatus } from "@/lib/lifecycle-emails.functions";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Admin — Sancho" }] }),
@@ -1217,6 +1218,13 @@ function ApplicationsPanel({
     if (error) toast.error(error.message);
     else {
       toast.success("Status updated");
+      if (status === "approved" || status === "rejected") {
+        try {
+          await notifyGuideApplicationStatus({ data: { application_id: id, status } });
+        } catch (e) {
+          console.error("status email failed", e);
+        }
+      }
       await reload();
     }
   };
