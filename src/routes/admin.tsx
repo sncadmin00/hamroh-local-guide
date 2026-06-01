@@ -123,22 +123,26 @@ function sourceBadgeClass(s: string): string {
 function AdminPage() {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
-  const [tab, setTab] = useState<"bookings" | "applications" | "cities" | "guides" | "articles" | "social">("bookings");
+  const [tab, setTab] = useState<"bookings" | "applications" | "cities" | "guides" | "categories" | "articles" | "social">("bookings");
   const [cities, setCities] = useState<City[]>([]);
   const [guides, setGuides] = useState<Guide[]>([]);
   const [articles, setArticles] = useState<Article[]>([]);
   const [embeds, setEmbeds] = useState<Embed[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [applications, setApplications] = useState<GuideApplication[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [guideCategories, setGuideCategories] = useState<GuideCategoryLink[]>([]);
 
   const loadData = useCallback(async () => {
-    const [c, g, a, e, b, ap] = await Promise.all([
+    const [c, g, a, e, b, ap, cat, gc] = await Promise.all([
       supabase.from("cities").select("*").order("sort_order"),
       supabase.from("guides").select("*").order("sort_order"),
       supabase.from("articles").select("*").order("sort_order").order("created_at", { ascending: false }),
       supabase.from("social_embeds").select("*").order("sort_order"),
       supabase.from("bookings").select("*, guides(name, slug)").order("created_at", { ascending: false }),
       supabase.from("guide_applications").select("*").order("created_at", { ascending: false }),
+      supabase.from("categories").select("*").order("sort_order"),
+      supabase.from("guide_categories").select("guide_id, category_id"),
     ]);
     if (c.data) setCities(c.data as City[]);
     if (g.data) setGuides(g.data as Guide[]);
@@ -146,6 +150,8 @@ function AdminPage() {
     if (e.data) setEmbeds(e.data as Embed[]);
     if (b.data) setBookings(b.data as Booking[]);
     if (ap.data) setApplications(ap.data as GuideApplication[]);
+    if (cat.data) setCategories(cat.data as Category[]);
+    if (gc.data) setGuideCategories(gc.data as GuideCategoryLink[]);
   }, []);
 
   useEffect(() => {
@@ -217,6 +223,12 @@ function AdminPage() {
             Guides ({guides.length})
           </button>
           <button
+            onClick={() => setTab("categories")}
+            className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "categories" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+          >
+            Categories ({categories.length})
+          </button>
+          <button
             onClick={() => setTab("articles")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "articles" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
@@ -233,7 +245,8 @@ function AdminPage() {
         {tab === "bookings" && <BookingsPanel bookings={bookings} reload={loadData} />}
         {tab === "applications" && <ApplicationsPanel applications={applications} reload={loadData} />}
         {tab === "cities" && <CitiesPanel cities={cities} reload={loadData} />}
-        {tab === "guides" && <GuidesPanel guides={guides} cities={cities} reload={loadData} />}
+        {tab === "guides" && <GuidesPanel guides={guides} cities={cities} categories={categories} guideCategories={guideCategories} reload={loadData} />}
+        {tab === "categories" && <CategoriesPanel categories={categories} reload={loadData} />}
         {tab === "articles" && <ArticlesPanel articles={articles} cities={cities} reload={loadData} />}
         {tab === "social" && <SocialPanel embeds={embeds} cities={cities} reload={loadData} />}
       </div>
