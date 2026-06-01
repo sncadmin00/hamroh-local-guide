@@ -148,12 +148,15 @@ export type Database = {
           customer_email: string
           customer_name: string
           date: string
+          duration_minutes: number
           experience: string
           guests: number
           guide_id: string
           id: string
           notes: string
+          slot_id: string | null
           source: string
+          start_time: string | null
           status: string
           total: number
           updated_at: string
@@ -164,12 +167,15 @@ export type Database = {
           customer_email: string
           customer_name: string
           date: string
+          duration_minutes?: number
           experience: string
           guests?: number
           guide_id: string
           id?: string
           notes?: string
+          slot_id?: string | null
           source?: string
+          start_time?: string | null
           status?: string
           total?: number
           updated_at?: string
@@ -180,12 +186,15 @@ export type Database = {
           customer_email?: string
           customer_name?: string
           date?: string
+          duration_minutes?: number
           experience?: string
           guests?: number
           guide_id?: string
           id?: string
           notes?: string
+          slot_id?: string | null
           source?: string
+          start_time?: string | null
           status?: string
           total?: number
           updated_at?: string
@@ -291,6 +300,42 @@ export type Database = {
         }
         Relationships: []
       }
+      guide_availability_slots: {
+        Row: {
+          booking_id: string | null
+          created_at: string
+          date: string
+          duration_minutes: number
+          guide_id: string
+          id: string
+          is_booked: boolean
+          start_time: string
+          updated_at: string
+        }
+        Insert: {
+          booking_id?: string | null
+          created_at?: string
+          date: string
+          duration_minutes?: number
+          guide_id: string
+          id?: string
+          is_booked?: boolean
+          start_time: string
+          updated_at?: string
+        }
+        Update: {
+          booking_id?: string | null
+          created_at?: string
+          date?: string
+          duration_minutes?: number
+          guide_id?: string
+          id?: string
+          is_booked?: boolean
+          start_time?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       guide_experiences: {
         Row: {
           created_at: string
@@ -347,6 +392,7 @@ export type Database = {
           specialties: string[]
           tagline: string
           updated_at: string
+          user_id: string | null
           verified: boolean
         }
         Insert: {
@@ -366,6 +412,7 @@ export type Database = {
           specialties?: string[]
           tagline?: string
           updated_at?: string
+          user_id?: string | null
           verified?: boolean
         }
         Update: {
@@ -385,6 +432,7 @@ export type Database = {
           specialties?: string[]
           tagline?: string
           updated_at?: string
+          user_id?: string | null
           verified?: boolean
         }
         Relationships: [
@@ -488,6 +536,10 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      is_guide_owner: {
+        Args: { _guide_id: string; _user_id: string }
         Returns: boolean
       }
     }
