@@ -9,7 +9,7 @@ import { inviteGuideToPortal } from "@/lib/admin-portal.functions";
 import { notifyGuideApplicationStatus } from "@/lib/lifecycle-emails.functions";
 
 export const Route = createFileRoute("/admin")({
-  head: () => ({ meta: [{ title: "Admin — Sancho" }] }),
+  head: () => ({ meta: [{ title: "Admin — Hamroh" }] }),
   component: AdminPage,
 });
 
