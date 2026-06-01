@@ -1,5 +1,5 @@
-import { Link } from "@tanstack/react-router";
-import { Menu, Settings, Shield } from "lucide-react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { Menu, Settings, Shield, LogIn, LogOut } from "lucide-react";
 import hamrohLogo from "@/assets/hamroh-logo.png";
 import { useEffect, useState } from "react";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -25,6 +25,7 @@ function TelegramIcon({ className }: { className?: string }) {
 
 export function SiteHeader() {
   const { t } = useI18n();
+  const navigate = useNavigate();
   const [signedIn, setSignedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   useEffect(() => {
@@ -43,6 +44,10 @@ export function SiteHeader() {
     });
     return () => sub.subscription.unsubscribe();
   }, []);
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    navigate({ to: "/", replace: true });
+  };
   const menuLinks = [
     { to: "/guides", label: t("nav.findGuide") },
     { to: "/explore", label: t("nav.explore") },
@@ -90,6 +95,22 @@ export function SiteHeader() {
             <WhatsAppIcon className="h-5 w-5" />
           </a>
 
+          {signedIn ? (
+            <button
+              onClick={signOut}
+              className="hidden md:inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-sm font-medium text-muted-foreground hover:bg-secondary/60 hover:text-foreground transition-colors"
+            >
+              <LogOut className="h-4 w-4" /> Sign out
+            </button>
+          ) : (
+            <Link
+              to="/login"
+              className="hidden md:inline-flex h-9 items-center gap-1.5 rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90 transition-opacity"
+            >
+              <LogIn className="h-4 w-4" /> Sign in
+            </Link>
+          )}
+
           <Sheet>
             <SheetTrigger asChild>
               <button
@@ -130,6 +151,21 @@ export function SiteHeader() {
                     activeProps={{ className: "px-3 py-3 rounded-lg text-base font-medium bg-secondary text-foreground inline-flex items-center gap-2" }}
                   >
                     <Shield className="h-4 w-4" /> Admin
+                  </Link>
+                )}
+                {signedIn ? (
+                  <button
+                    onClick={signOut}
+                    className="mt-2 px-3 py-3 rounded-lg text-base font-medium text-foreground hover:bg-secondary/60 inline-flex items-center gap-2 text-left"
+                  >
+                    <LogOut className="h-4 w-4" /> Sign out
+                  </button>
+                ) : (
+                  <Link
+                    to="/login"
+                    className="mt-2 px-3 py-3 rounded-lg text-base font-semibold bg-primary text-primary-foreground inline-flex items-center gap-2"
+                  >
+                    <LogIn className="h-4 w-4" /> Sign in
                   </Link>
                 )}
               </nav>
