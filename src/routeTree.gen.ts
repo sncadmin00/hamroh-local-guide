@@ -38,6 +38,8 @@ import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/e
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as ApiPublicHooksChatNotificationsRouteImport } from './routes/api/public/hooks/chat-notifications'
+import { Route as ApiPublicHooksBookingReviewsRouteImport } from './routes/api/public/hooks/booking-reviews'
+import { Route as ApiPublicHooksBookingRemindersRouteImport } from './routes/api/public/hooks/booking-reminders'
 
 const UnsubscribeRoute = UnsubscribeRouteImport.update({
   id: '/unsubscribe',
@@ -188,6 +190,18 @@ const ApiPublicHooksChatNotificationsRoute =
     path: '/api/public/hooks/chat-notifications',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksBookingReviewsRoute =
+  ApiPublicHooksBookingReviewsRouteImport.update({
+    id: '/api/public/hooks/booking-reviews',
+    path: '/api/public/hooks/booking-reviews',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksBookingRemindersRoute =
+  ApiPublicHooksBookingRemindersRouteImport.update({
+    id: '/api/public/hooks/booking-reminders',
+    path: '/api/public/hooks/booking-reminders',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -213,6 +227,8 @@ export interface FileRoutesByFullPath {
   '/messages/$bookingId': typeof MessagesBookingIdRoute
   '/messages/': typeof MessagesIndexRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
+  '/api/public/hooks/booking-reviews': typeof ApiPublicHooksBookingReviewsRoute
   '/api/public/hooks/chat-notifications': typeof ApiPublicHooksChatNotificationsRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -243,6 +259,8 @@ export interface FileRoutesByTo {
   '/messages/$bookingId': typeof MessagesBookingIdRoute
   '/messages': typeof MessagesIndexRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
+  '/api/public/hooks/booking-reviews': typeof ApiPublicHooksBookingReviewsRoute
   '/api/public/hooks/chat-notifications': typeof ApiPublicHooksChatNotificationsRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -275,6 +293,8 @@ export interface FileRoutesById {
   '/messages/$bookingId': typeof MessagesBookingIdRoute
   '/messages/': typeof MessagesIndexRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
+  '/api/public/hooks/booking-reviews': typeof ApiPublicHooksBookingReviewsRoute
   '/api/public/hooks/chat-notifications': typeof ApiPublicHooksChatNotificationsRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -308,6 +328,8 @@ export interface FileRouteTypes {
     | '/messages/$bookingId'
     | '/messages/'
     | '/lovable/email/suppression'
+    | '/api/public/hooks/booking-reminders'
+    | '/api/public/hooks/booking-reviews'
     | '/api/public/hooks/chat-notifications'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -338,6 +360,8 @@ export interface FileRouteTypes {
     | '/messages/$bookingId'
     | '/messages'
     | '/lovable/email/suppression'
+    | '/api/public/hooks/booking-reminders'
+    | '/api/public/hooks/booking-reviews'
     | '/api/public/hooks/chat-notifications'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -369,6 +393,8 @@ export interface FileRouteTypes {
     | '/messages/$bookingId'
     | '/messages/'
     | '/lovable/email/suppression'
+    | '/api/public/hooks/booking-reminders'
+    | '/api/public/hooks/booking-reviews'
     | '/api/public/hooks/chat-notifications'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -396,6 +422,8 @@ export interface RootRouteChildren {
   BookGuideIdRoute: typeof BookGuideIdRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
+  ApiPublicHooksBookingRemindersRoute: typeof ApiPublicHooksBookingRemindersRoute
+  ApiPublicHooksBookingReviewsRoute: typeof ApiPublicHooksBookingReviewsRoute
   ApiPublicHooksChatNotificationsRoute: typeof ApiPublicHooksChatNotificationsRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
@@ -609,6 +637,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksChatNotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/booking-reviews': {
+      id: '/api/public/hooks/booking-reviews'
+      path: '/api/public/hooks/booking-reviews'
+      fullPath: '/api/public/hooks/booking-reviews'
+      preLoaderRoute: typeof ApiPublicHooksBookingReviewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/booking-reminders': {
+      id: '/api/public/hooks/booking-reminders'
+      path: '/api/public/hooks/booking-reminders'
+      fullPath: '/api/public/hooks/booking-reminders'
+      preLoaderRoute: typeof ApiPublicHooksBookingRemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -677,6 +719,8 @@ const rootRouteChildren: RootRouteChildren = {
   BookGuideIdRoute: BookGuideIdRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
+  ApiPublicHooksBookingRemindersRoute: ApiPublicHooksBookingRemindersRoute,
+  ApiPublicHooksBookingReviewsRoute: ApiPublicHooksBookingReviewsRoute,
   ApiPublicHooksChatNotificationsRoute: ApiPublicHooksChatNotificationsRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
