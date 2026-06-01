@@ -142,6 +142,36 @@ export type Database = {
         }
         Relationships: []
       }
+      booking_messages: {
+        Row: {
+          body: string
+          booking_id: string
+          created_at: string
+          id: string
+          read_at: string | null
+          sender_id: string
+          sender_role: string
+        }
+        Insert: {
+          body: string
+          booking_id: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          sender_id: string
+          sender_role: string
+        }
+        Update: {
+          body?: string
+          booking_id?: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          sender_id?: string
+          sender_role?: string
+        }
+        Relationships: []
+      }
       bookings: {
         Row: {
           created_at: string
