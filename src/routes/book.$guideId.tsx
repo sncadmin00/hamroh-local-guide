@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { Star, BadgeCheck, Zap, ArrowLeft, Check } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,6 +8,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { useGuide } from "@/lib/content-queries";
 import { getBookingSource } from "@/hooks/useTrackSource";
+import { getGuideSlots, createBooking } from "@/lib/booking.functions";
 
 export const Route = createFileRoute("/book/$guideId")({
   head: () => ({ meta: [{ title: "Book a guide — Sancho" }] }),
@@ -19,6 +21,8 @@ function BookPage() {
   const navigate = useNavigate();
   const [confirmed, setConfirmed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [slots, setSlots] = useState<Array<{ id: string; date: string; start_time: string; duration_minutes: number }>>([]);
+  const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [form, setForm] = useState({
     date: "",
     guests: 2,
@@ -27,6 +31,16 @@ function BookPage() {
     email: "",
     notes: "",
   });
+
+  const fetchSlots = useServerFn(getGuideSlots);
+  const createBookingFn = useServerFn(createBooking);
+
+  useEffect(() => {
+    if (!guide) return;
+    fetchSlots({ data: { guide_id: guide.id } })
+      .then((rows) => setSlots(rows as typeof slots))
+      .catch(() => setSlots([]));
+  }, [guide, fetchSlots]);
 
   if (isLoading || !guide) {
     return (
@@ -40,6 +54,9 @@ function BookPage() {
 
   const experiences = guide.experiences.length > 0 ? guide.experiences : [{ title: "Full day with guide", duration: "8 hours", price: guide.pricePerDay }];
   const currentExperience = form.experience || experiences[0].title;
+  const hasInstantSlots = slots.length > 0;
+  const isInstantMode = hasInstantSlots && !!selectedSlot;
+  const chosenSlot = slots.find((s) => s.id === selectedSlot) ?? null;
 
   const handleFieldChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -50,28 +67,37 @@ function BookPage() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (submitting) return;
-    setSubmitting(true);
-    const { data: userData } = await supabase.auth.getUser();
-    const { error } = await supabase.from("bookings").insert({
-      guide_id: guide.id,
-      user_id: userData.user?.id ?? null,
-      experience: currentExperience,
-      date: form.date,
-      guests: form.guests,
-      customer_name: form.name,
-      customer_email: form.email,
-      notes: form.notes,
-      total: total + fee,
-      status: "pending",
-      source: getBookingSource(),
-    });
-    setSubmitting(false);
-    if (error) {
-      toast.error(error.message);
+    if (hasInstantSlots && !selectedSlot) {
+      toast.error("Please pick a time slot");
       return;
     }
-    setConfirmed(true);
-    window.scrollTo({ top: 0 });
+    setSubmitting(true);
+    const { data: userData } = await supabase.auth.getUser();
+    try {
+      await createBookingFn({
+        data: {
+          guide_id: guide.id,
+          slot_id: chosenSlot?.id ?? null,
+          user_id: userData.user?.id ?? null,
+          experience: currentExperience,
+          date: chosenSlot?.date ?? form.date,
+          start_time: chosenSlot?.start_time,
+          duration_minutes: chosenSlot?.duration_minutes,
+          guests: form.guests,
+          customer_name: form.name,
+          customer_email: form.email,
+          notes: form.notes,
+          total: total + fee,
+          source: getBookingSource(),
+        },
+      });
+      setConfirmed(true);
+      window.scrollTo({ top: 0 });
+    } catch (err) {
+      toast.error((err as Error).message);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const selectedExperience = experiences.find((e) => e.title === currentExperience) ?? experiences[0];
