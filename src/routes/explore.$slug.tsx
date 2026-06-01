@@ -6,17 +6,52 @@ import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Calendar } from "lucide-react";
 
 export const Route = createFileRoute("/explore/$slug")({
-  head: () => ({
-    meta: [
-      { title: "Article — Sancho" },
-      { name: "description", content: "Read a travel story from Sancho." },
-    ],
-  }),
+  loader: async ({ params }) => {
+    const { data } = await supabase
+      .from("articles")
+      .select("title, excerpt, cover_url")
+      .eq("slug", params.slug)
+      .eq("published", true)
+      .maybeSingle();
+    return { meta: data as { title: string; excerpt: string; cover_url: string | null } | null };
+  },
+  head: ({ params, loaderData }) => {
+    const m = loaderData?.meta;
+    const title = m ? `${m.title} — Hamroh` : "Article — Hamroh";
+    const description = m?.excerpt?.slice(0, 160) || "Read a travel story from Hamroh.";
+    const url = `https://hamroh-local-guide.lovable.app/explore/${params.slug}`;
+    const meta: Array<Record<string, string>> = [
+      { title },
+      { name: "description", content: description },
+      { property: "og:title", content: title },
+      { property: "og:description", content: description },
+      { property: "og:type", content: "article" },
+      { property: "og:url", content: url },
+    ];
+    if (m?.cover_url) {
+      meta.push({ property: "og:image", content: m.cover_url });
+      meta.push({ name: "twitter:card", content: "summary_large_image" });
+      meta.push({ name: "twitter:image", content: m.cover_url });
+    }
+    return {
+      meta,
+      links: [{ rel: "canonical", href: url }],
+    };
+  },
   component: ArticlePage,
   notFoundComponent: () => (
     <div className="min-h-screen flex items-center justify-center px-4 text-center">
       <div>
         <h1 className="font-display text-3xl font-semibold">Article not found</h1>
+        <Link to="/explore" className="mt-4 inline-block text-primary hover:underline">Back to Explore</Link>
+      </div>
+    </div>
+  ),
+  errorComponent: ({ error }) => (
+    <div className="min-h-screen flex items-center justify-center px-4 text-center">
+      <div>
+        <h1 className="font-display text-2xl font-semibold">Couldn't load article</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{error.message}</p>
         <Link to="/explore" className="mt-4 inline-block text-primary hover:underline">Back to Explore</Link>
       </div>
     </div>

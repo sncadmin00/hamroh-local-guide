@@ -12,6 +12,7 @@ import appCss from "../styles.css?url";
 import ogDefault from "@/assets/og-default.jpg";
 import { I18nProvider } from "@/lib/i18n";
 import { useTrackSource } from "@/hooks/useTrackSource";
+import { useCaptureReferral } from "@/hooks/useCaptureReferral";
 
 const SITE_URL = "https://hamroh-local-guide.lovable.app";
 const OG_IMAGE = `${SITE_URL}${ogDefault}`;
@@ -100,6 +101,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   useTrackSource();
+  useCaptureReferral();
   return (
     <QueryClientProvider client={queryClient}>
       <I18nProvider>
