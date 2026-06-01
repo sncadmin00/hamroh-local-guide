@@ -49,6 +49,8 @@ async function uploadTo(bucket: string, file: File): Promise<string> {
 
 function BecomeAGuidePage() {
   const [cities, setCities] = useState<{ id: string; name: string }[]>([]);
+  const [categories, setCategories] = useState<{ id: string; name: string; icon: string }[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [submitted, setSubmitted] = useState(false);
   const [saving, setSaving] = useState(false);
   const [portrait, setPortrait] = useState<File | null>(null);
@@ -73,7 +75,18 @@ function BecomeAGuidePage() {
       .then(({ data }) => {
         if (data) setCities(data);
       });
+    supabase
+      .from("categories")
+      .select("id, name, icon")
+      .order("sort_order")
+      .then(({ data }) => {
+        if (data) setCategories(data);
+      });
   }, []);
+
+  const toggleCategory = (id: string) =>
+    setSelectedCategories((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
+
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -149,8 +162,10 @@ function BecomeAGuidePage() {
         portrait_url,
         video_url,
         photo_urls,
+        category_ids: selectedCategories,
       });
       if (error) throw error;
+
       toast.success("Application submitted");
       setSubmitted(true);
     } catch (err) {
@@ -228,9 +243,35 @@ function BecomeAGuidePage() {
             <FormField label="Specialization">
               <input required value={form.specialization} onChange={set("specialization")} className={inputCls} placeholder="Food tours, history, architecture…" />
             </FormField>
+
+            {categories.length > 0 && (
+              <FormField label="Your categories (pick all that apply)">
+                <div className="mt-1 flex flex-wrap gap-2">
+                  {categories.map((c) => {
+                    const active = selectedCategories.includes(c.id);
+                    return (
+                      <button
+                        type="button"
+                        key={c.id}
+                        onClick={() => toggleCategory(c.id)}
+                        className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
+                          active
+                            ? "border-primary bg-primary text-primary-foreground"
+                            : "border-input bg-background text-foreground hover:bg-secondary/40"
+                        }`}
+                      >
+                        {c.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              </FormField>
+            )}
+
             <FormField label="About you">
               <textarea required rows={5} value={form.about} onChange={set("about")} className={inputCls} placeholder="Tell us about yourself, the tours you love to lead, and why travelers should pick you." />
             </FormField>
+
 
             <div className="pt-2 border-t border-border/60" />
 
