@@ -6,12 +6,19 @@ import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
 type ChatBody = { messages?: UIMessage[]; threadId?: string };
 
 async function buildSystemPrompt(client: ReturnType<typeof createClient<any, any, any>>) {
-  const { data } = await client
-    .from("guides")
-    .select("slug, name, tagline, languages, specialties, price_per_day, rating, reviews, instant_book, cities(name)")
-    .order("sort_order", { ascending: true });
+  const [guidesRes, placesRes] = await Promise.all([
+    client
+      .from("guides")
+      .select("slug, name, tagline, languages, specialties, price_per_day, rating, reviews, instant_book, cities(name)")
+      .order("sort_order", { ascending: true }),
+    client
+      .from("places")
+      .select("name, category, short_description, tags, cities(name), place_guides(guides(slug, name))")
+      .eq("published", true)
+      .order("sort_order", { ascending: true }),
+  ]);
 
-  const catalog = ((data ?? []) as Array<{
+  const guidesCatalog = ((guidesRes.data ?? []) as Array<{
       slug: string; name: string; tagline: string; languages: string[]; specialties: string[];
       price_per_day: number; rating: number; reviews: number; instant_book: boolean;
       cities: { name: string } | { name: string }[] | null;
@@ -22,17 +29,40 @@ async function buildSystemPrompt(client: ReturnType<typeof createClient<any, any
     })
     .join("\n");
 
-  return `You are Sancho AI, a friendly travel concierge helping travelers find the perfect local guide.
+  const placesCatalog = ((placesRes.data ?? []) as unknown as Array<{
+      name: string; category: string; short_description: string; tags: string[];
+      cities: { name: string } | { name: string }[] | null;
+      place_guides: Array<{ guides: { slug: string; name: string } | { slug: string; name: string }[] | null }> | null;
+    }>)
+    .map((p) => {
+      const cityName = Array.isArray(p.cities) ? p.cities[0]?.name ?? "" : p.cities?.name ?? "";
+      const linkedGuides = (p.place_guides ?? [])
+        .flatMap((pg) => (Array.isArray(pg.guides) ? pg.guides : pg.guides ? [pg.guides] : []))
+        .map((g) => `${g.name} (${g.slug})`)
+        .join(", ");
+      return `- ${p.name} [${p.category}] | City: ${cityName}${p.tags.length ? ` | Tags: ${p.tags.join(", ")}` : ""} | ${p.short_description}${linkedGuides ? ` | Guides who take travelers here: ${linkedGuides}` : ""}`;
+    })
+    .join("\n");
 
-You have access to the following verified guide catalog:
+  return `You are Hamroi AI, a friendly travel concierge for Uzbekistan helping travelers find the perfect local guide and discover the best places.
 
-${catalog}
+You have access to two verified catalogs:
+
+=== GUIDES CATALOG ===
+${guidesCatalog || "(no guides yet)"}
+
+=== PLACES CATALOG (restaurants, attractions, activities, routes) ===
+${placesCatalog || "(no places yet)"}
 
 Rules:
-- When recommending guides, mention them by name and explain WHY they fit the traveler's needs (language, specialty, vibe).
-- At the end of any recommendation, output a line in this exact format on its own line: GUIDES: id1,id2,id3 (using guide ids from the catalog). The UI will render them as cards.
+- When the user asks about places to visit, eat, or things to do — ALWAYS check PLACES CATALOG first. Recommend our verified places by name with a short reason.
+- After recommending a place, suggest a guide who can take them there (look at "Guides who take travelers here" or any guide in that city whose specialties match).
+- When recommending guides directly, mention them by name and explain WHY they fit (language, specialty, vibe).
+- At the end of any recommendation that includes guides, output a line in this exact format on its own line: GUIDES: id1,id2,id3 (using guide slug ids). The UI will render them as cards.
+- If PLACES CATALOG has nothing relevant for the user's city/category, be honest: say "I don't have verified spots for that yet in our catalog" and pivot to recommending a local guide who specializes in that area — they'll know the freshest spots in person.
+- Do NOT invent specific restaurant or place names that aren't in PLACES CATALOG. It's better to recommend a guide than to give outdated info.
 - Keep replies warm, concise, and useful. Use light markdown (bold, lists).
-- If the user asks about something unrelated to travel or guides, gently steer back.`;
+- If the user asks about something unrelated to travel, gently steer back.`;
 }
 
 export const Route = createFileRoute("/api/chat")({
