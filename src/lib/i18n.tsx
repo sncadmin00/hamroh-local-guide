@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 export type Lang = "en" | "uz" | "ru";
 
@@ -40,6 +41,24 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     const saved = (typeof window !== "undefined" && localStorage.getItem("lang")) as Lang | null;
     if (saved === "en" || saved === "uz" || saved === "ru") setLangState(saved);
   }, []);
+
+  // Sync current language to authenticated user's metadata and guide profile (if any).
+  useEffect(() => {
+    let cancelled = false;
+    const sync = async (l: Lang) => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (cancelled || !user) return;
+      if (user.user_metadata?.locale !== l) {
+        await supabase.auth.updateUser({ data: { locale: l } });
+      }
+      await supabase.from("guides").update({ locale: l }).eq("user_id", user.id);
+    };
+    sync(lang);
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      if (session?.user) sync(lang);
+    });
+    return () => { cancelled = true; sub.subscription.unsubscribe(); };
+  }, [lang]);
 
   const setLang = (l: Lang) => {
     setLangState(l);
