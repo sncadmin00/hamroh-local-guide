@@ -15,7 +15,7 @@ export const MagicLinkEmail = ({ siteName, confirmationUrl }: MagicLinkEmailProp
     <Preview>Ссылка для входа в {siteName}</Preview>
     <Body style={styles.main}>
       <Container style={styles.container}>
-        <Heading style={styles.brandBar}>Hamrohim</Heading>
+        <Heading style={styles.brandBar}>Hamroh</Heading>
         <Heading style={styles.h1}>Ссылка для входа</Heading>
         <Text style={styles.text}>
           Нажмите кнопку ниже, чтобы войти в {siteName}. Ссылка действует ограниченное время.

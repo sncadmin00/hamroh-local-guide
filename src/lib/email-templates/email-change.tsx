@@ -20,7 +20,7 @@ export const EmailChangeEmail = ({
     <Preview>Подтвердите смену email для {siteName}</Preview>
     <Body style={styles.main}>
       <Container style={styles.container}>
-        <Heading style={styles.brandBar}>Hamrohim</Heading>
+        <Heading style={styles.brandBar}>Hamroh</Heading>
         <Heading style={styles.h1}>Подтвердите смену email</Heading>
         <Text style={styles.text}>
           Вы запросили смену email для {siteName} с{' '}

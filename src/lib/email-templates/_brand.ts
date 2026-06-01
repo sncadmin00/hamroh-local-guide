@@ -1,4 +1,4 @@
-// Hamrohim brand styles for emails (white body required)
+// Hamroh brand styles for emails (white body required)
 export const BRAND = {
   primary: '#1F9BB4', // turquoise
   primaryDark: '#1A8499',

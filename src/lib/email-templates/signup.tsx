@@ -19,7 +19,7 @@ export const SignupEmail = ({
     <Preview>Подтвердите email для {siteName}</Preview>
     <Body style={styles.main}>
       <Container style={styles.container}>
-        <Heading style={styles.brandBar}>Hamrohim</Heading>
+        <Heading style={styles.brandBar}>Hamroh</Heading>
         <Heading style={styles.h1}>Подтвердите ваш email</Heading>
         <Text style={styles.text}>
           Добро пожаловать в{' '}

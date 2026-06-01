@@ -15,7 +15,7 @@ export const RecoveryEmail = ({ siteName, confirmationUrl }: RecoveryEmailProps)
     <Preview>Сброс пароля для {siteName}</Preview>
     <Body style={styles.main}>
       <Container style={styles.container}>
-        <Heading style={styles.brandBar}>Hamrohim</Heading>
+        <Heading style={styles.brandBar}>Hamroh</Heading>
         <Heading style={styles.h1}>Сброс пароля</Heading>
         <Text style={styles.text}>
           Мы получили запрос на сброс пароля для {siteName}. Нажмите кнопку ниже,
