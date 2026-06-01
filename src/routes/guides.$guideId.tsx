@@ -3,10 +3,46 @@ import { Star, BadgeCheck, Zap, MapPin, Globe2, Clock, ArrowLeft } from "lucide-
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { useGuide } from "@/lib/content-queries";
+import { supabase } from "@/integrations/supabase/client";
+
+const SITE_URL = "https://hamroh-local-guide.lovable.app";
 
 export const Route = createFileRoute("/guides/$guideId")({
-  head: () => ({ meta: [{ title: "Guide — Sancho" }] }),
+  loader: async ({ params }) => {
+    const { data } = await supabase
+      .from("guides")
+      .select("name, tagline, bio, photo_url, cities(name)")
+      .eq("slug", params.guideId)
+      .maybeSingle();
+    return { meta: data as { name: string; tagline: string; bio: string; photo_url: string | null; cities: { name: string } | null } | null };
+  },
+  head: ({ params, loaderData }) => {
+    const m = loaderData?.meta;
+    const title = m ? `${m.name} — Local guide in ${m.cities?.name ?? ""} | Sancho` : "Guide — Sancho";
+    const description = m ? (m.tagline || m.bio || `Book ${m.name}, a verified local guide.`).slice(0, 160) : "Book a verified local guide.";
+    const image = m?.photo_url || `${SITE_URL}/sancho-og.jpg`;
+    const url = `${SITE_URL}/guides/${params.guideId}`;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "profile" },
+        { property: "og:url", content: url },
+        { property: "og:image", content: image },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:image", content: image },
+      ],
+      links: [{ rel: "canonical", href: url }],
+    };
+  },
   component: GuidePage,
+  errorComponent: ({ error }) => (
+    <div className="min-h-screen flex items-center justify-center text-sm text-muted-foreground">
+      Couldn't load the guide: {error.message}
+    </div>
+  ),
 });
 
 function GuidePage() {

@@ -153,6 +153,7 @@ export type Database = {
           guide_id: string
           id: string
           notes: string
+          source: string
           status: string
           total: number
           updated_at: string
@@ -168,6 +169,7 @@ export type Database = {
           guide_id: string
           id?: string
           notes?: string
+          source?: string
           status?: string
           total?: number
           updated_at?: string
@@ -183,6 +185,7 @@ export type Database = {
           guide_id?: string
           id?: string
           notes?: string
+          source?: string
           status?: string
           total?: number
           updated_at?: string

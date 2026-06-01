@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { useGuide } from "@/lib/content-queries";
+import { getBookingSource } from "@/hooks/useTrackSource";
 
 export const Route = createFileRoute("/book/$guideId")({
   head: () => ({ meta: [{ title: "Book a guide — Sancho" }] }),
@@ -62,6 +63,7 @@ function BookPage() {
       notes: form.notes,
       total: total + fee,
       status: "pending",
+      source: getBookingSource(),
     });
     setSubmitting(false);
     if (error) {

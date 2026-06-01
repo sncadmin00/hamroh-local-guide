@@ -1,35 +1,55 @@
-# Список заказов в админ-панели
 
-Сейчас в проекте нет таблицы заказов — форма на `/book/$guideId` просто показывает «You're booked!», ничего не сохраняя. Чтобы в админке появился реальный список заказов, нужно сначала их где-то хранить.
+# План: трекинг источника + OG-картинки
 
-## Что сделаем
+Делаем 2 задачи параллельно — они независимы.
 
-1. **Создадим таблицу `bookings`** в базе:
-   - гид (`guide_id`), город (для удобного отображения),
-   - выбранный опыт, дата, число гостей,
-   - имя клиента, email, заметки,
-   - итоговая сумма, статус (`pending` / `confirmed` / `cancelled`),
-   - `user_id` (если пользователь залогинен, иначе NULL — гостевая бронь),
-   - служебные `created_at` / `updated_at`.
-   - RLS: вставлять может кто угодно (гостевые брони), видеть/менять — только админ и сам автор брони.
+## 1. Трекинг источника заказов (`?src=...`)
 
-2. **Сохранение брони** на странице `/book/$guideId`:
-   - при отправке формы делаем `insert` в `bookings`,
-   - показываем подтверждение только после успешной записи,
-   - ошибки — через `toast`.
+### База
+Миграция: добавить колонку `source TEXT NOT NULL DEFAULT 'web'` в `bookings`.
+Допустимые значения: `web`, `instagram`, `facebook`, `telegram`, `whatsapp`, `other`.
 
-3. **Новая вкладка «Заказы» в `/admin`**:
-   - таблица: дата, гид, клиент (имя + email), гостей, сумма, статус, когда создан,
-   - сортировка по дате создания (новые сверху),
-   - смена статуса (`pending → confirmed / cancelled`) и удаление,
-   - быстрый фильтр по статусу.
+### Фронт — захват источника
+- Новый хук `src/hooks/useTrackSource.ts`: при первом визите читает `?src=...` из URL, валидирует против whitelist, сохраняет в `sessionStorage` (ключ `bookingSource`). Если уже есть — не перезаписывает.
+- Подключить в `src/routes/__root.tsx` внутри `RootComponent`.
 
-## Технические детали
+### Фронт — запись в заказ
+В `src/routes/book.$guideId.tsx` в `handleSubmit`:
+- Читать `sessionStorage.getItem('bookingSource')` (fallback `'web'`).
+- Добавить `source` в `bookings.insert({...})`.
 
-- Миграция Supabase: `CREATE TABLE public.bookings (...)` + GRANT для `anon` (INSERT, чтобы можно было бронировать без логина), `authenticated` (SELECT/INSERT своих), `service_role` (ALL); RLS-политики на основе `auth.uid()` и `has_role(auth.uid(), 'admin')`.
-- В `book.$guideId.tsx` — `await supabase.from("bookings").insert({...})` внутри `handleSubmit`, состояние загрузки на кнопке.
-- В `admin.tsx` — добавить тип `Booking`, вкладку `"bookings"`, загрузку через `supabase.from("bookings").select("*, guides(name, slug)")`, действия update/delete.
+### Админка — `src/routes/admin.tsx`
+- Колонка **«Источник»** в таблице заказов с цветными бейджами:
+  - Web — серый, Instagram — розовый, Facebook — синий, Telegram — голубой, WhatsApp — зелёный, Other — outline.
+- Фильтр по источнику (select сверху таблицы).
+- Мини-статистика: количество заказов по каналам за последние 30 дней (карточки с цифрами).
 
-## Открытый вопрос
+## 2. OG-картинки
 
-Сейчас бронировать может незалогиненный пользователь. Оставляем так (гостевые брони сохраняются с `user_id = null`), или требуем логин перед бронированием? По умолчанию в плане — **оставляем гостевые брони**.
+### Что есть сейчас
+- `__root.tsx` — есть `og:title/description/type`, но **нет `og:image`**.
+- `guides.$guideId.tsx` — нужно проверить и добавить `og:image` из `guide.photo` (фото гида = идеальная share-картинка).
+- `index.tsx` — нужна общая брендовая og-картинка.
+
+### Что делаем
+1. **Сгенерировать одну дефолтную OG-картинку** (1200×630) для главной и фоллбэка — `src/assets/og-default.jpg`. Стиль: тёплая travel-эстетика, надпись «Sancho — Explore with locals».
+2. **`__root.tsx`**: добавить дефолтный `og:image` + `twitter:image` (абсолютный URL через `import.meta.env.VITE_*` или хардкод preview-домена).
+   - ВАЖНО по знаниям TanStack: `og:image` лучше ставить только на листовых маршрутах, иначе перекрывает детские. Поэтому либо ставим только на index.tsx, либо принимаем, что детские (guide page) переопределят своим.
+   - Делаем второй вариант: дефолт в root, override в `guides.$guideId.tsx`.
+3. **`guides.$guideId.tsx`**: в `head()` добавить `og:title` = имя гида + город, `og:description` = краткое bio, `og:image` = `guide.photo` (абсолютный URL), `og:type: 'profile'`.
+4. **`index.tsx`**: оставляет дефолт от root.
+
+### Абсолютные URL
+Для preview/published хостинга используем `https://hamroh-local-guide.lovable.app` как базу (из knowledge). Фото гидов уже абсолютные (Supabase storage) — оставляем как есть.
+
+## Порядок выполнения
+1. Миграция БД (`source` колонка) — отдельным шагом, ждём подтверждения.
+2. Параллельно: хук + book-форма + админка (источник).
+3. Параллельно: генерация OG-картинки + правки `head()` в root и guide-странице.
+
+## Что пользователь сделает САМ потом
+В соцсетях везде ставит ссылки:
+- Instagram bio → `sancho.app/?src=instagram`
+- Telegram канал → `sancho.app/?src=telegram`
+- WhatsApp статус → `sancho.app/?src=whatsapp`
+- Facebook страница → `sancho.app/?src=facebook`
