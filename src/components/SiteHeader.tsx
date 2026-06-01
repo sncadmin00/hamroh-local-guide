@@ -95,6 +95,22 @@ export function SiteHeader() {
             <WhatsAppIcon className="h-5 w-5" />
           </a>
 
+          {signedIn ? (
+            <button
+              onClick={signOut}
+              className="hidden md:inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-sm font-medium text-muted-foreground hover:bg-secondary/60 hover:text-foreground transition-colors"
+            >
+              <LogOut className="h-4 w-4" /> Sign out
+            </button>
+          ) : (
+            <Link
+              to="/login"
+              className="hidden md:inline-flex h-9 items-center gap-1.5 rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90 transition-opacity"
+            >
+              <LogIn className="h-4 w-4" /> Sign in
+            </Link>
+          )}
+
           <Sheet>
             <SheetTrigger asChild>
               <button
