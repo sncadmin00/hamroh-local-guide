@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {
-  Body, Container, Head, Heading, Html, Link, Preview, Text,
+  Body, Img, Container, Head, Heading, Html, Link, Preview, Text,
 } from '@react-email/components'
 import { styles } from './_brand'
 
@@ -20,7 +20,7 @@ export const EmailChangeEmail = ({
     <Preview>Подтвердите смену email для {siteName}</Preview>
     <Body style={styles.main}>
       <Container style={styles.container}>
-        <Heading style={styles.brandBar}>Hamroh</Heading>
+        <Img src={BRAND.logoUrl} alt="Hamroh" style={styles.logo} />
         <Heading style={styles.h1}>Подтвердите смену email</Heading>
         <Text style={styles.text}>
           Вы запросили смену email для {siteName} с{' '}

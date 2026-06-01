@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {
-  Body, Container, Head, Heading, Html, Link, Preview, Text,
+  Body, Img, Container, Head, Heading, Html, Link, Preview, Text,
 } from '@react-email/components'
 import { styles } from './_brand'
 
@@ -16,7 +16,7 @@ export const InviteEmail = ({ siteName, siteUrl, confirmationUrl }: InviteEmailP
     <Preview>Вас приглашают присоединиться к {siteName}</Preview>
     <Body style={styles.main}>
       <Container style={styles.container}>
-        <Heading style={styles.brandBar}>Hamroh</Heading>
+        <Img src={BRAND.logoUrl} alt="Hamroh" style={styles.logo} />
         <Heading style={styles.h1}>Вас пригласили</Heading>
         <Text style={styles.text}>
           Вас приглашают присоединиться к{' '}
