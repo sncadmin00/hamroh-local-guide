@@ -7,9 +7,10 @@ import { Compass, Trash2, Plus, Upload, ImageIcon, Video, Mail } from "lucide-re
 import { CategoryIcon } from "@/components/CategoryIcon";
 import { inviteGuideToPortal } from "@/lib/admin-portal.functions";
 import { notifyGuideApplicationStatus } from "@/lib/lifecycle-emails.functions";
+import hamrohLogo from "@/assets/hamroh-logo.png";
 
 export const Route = createFileRoute("/admin")({
-  head: () => ({ meta: [{ title: "Admin — Sancho" }] }),
+  head: () => ({ meta: [{ title: "Admin — Hamroh" }] }),
   component: AdminPage,
 });
 
@@ -239,10 +240,7 @@ function AdminPage() {
     <div className="min-h-screen bg-secondary/30 px-4 py-10">
       <div className="mx-auto max-w-5xl">
         <Link to="/" className="flex items-center gap-2 mb-6">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-            <Compass className="h-5 w-5" />
-          </div>
-          <span className="font-display text-xl font-semibold">Sancho</span>
+          <img src={hamrohLogo} alt="Hamroh" className="h-10 w-auto object-contain" />
         </Link>
 
         <h1 className="font-display text-3xl font-semibold">Admin</h1>
