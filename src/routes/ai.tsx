@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { listThreads, createThread, deleteThread } from "@/lib/ai-threads.functions";
-import { Compass, Plus, Trash2, MessageSquare, LogOut, ArrowLeft } from "lucide-react";
+import { Compass, Plus, Trash2, MessageSquare, LogOut, ArrowLeft, Calendar } from "lucide-react";
 
 export const Route = createFileRoute("/ai")({
   head: () => ({ meta: [{ title: "Sancho AI — Find your guide" }] }),
@@ -140,6 +140,9 @@ function AiLayout() {
           </ul>
         </div>
         <div className="border-t border-border/60 p-3 space-y-1">
+          <Link to="/my-bookings" className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:bg-secondary/60 hover:text-foreground">
+            <Calendar className="h-4 w-4" /> My bookings
+          </Link>
           <Link to="/" className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:bg-secondary/60 hover:text-foreground">
             <ArrowLeft className="h-4 w-4" /> Back to site
           </Link>
