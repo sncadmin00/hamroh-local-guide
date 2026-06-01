@@ -6,6 +6,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { CategoryIcon } from "@/components/CategoryIcon";
 import { supabase } from "@/integrations/supabase/client";
+import hamrohH from "@/assets/hamroh-h.png.asset.json";
 import { createThread } from "@/lib/ai-threads.functions";
 import { useCategories } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
@@ -110,7 +111,7 @@ function Home() {
           <div className="relative mb-10 md:mb-12">
             <div className="absolute inset-0 blur-2xl opacity-30 bg-gradient-to-br from-[#62A1B1] to-[#D5A08D] scale-150 rounded-full" />
             <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-[2rem] bg-gradient-to-br from-[#62A1B1] via-[#8BB5A9] to-[#D5A08D] flex items-center justify-center shadow-2xl shadow-slate-900/10 ring-1 ring-white/40">
-              <span className="font-display text-white text-5xl md:text-6xl font-semibold leading-none -mt-1">H</span>
+              <img src={hamrohH.url} alt="H" className="h-12 md:h-14 w-auto" />
             </div>
           </div>
 
