@@ -35,8 +35,8 @@
 
 :root {
   --radius: 0.875rem;
-  /* Warm sand background */
-  --background: oklch(0.985 0.012 80);
+  /* Warm cream background */
+  --background: oklch(0.98 0.008 75);
   --foreground: oklch(0.22 0.04 250);
 
   --card: oklch(1 0 0);
