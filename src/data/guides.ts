@@ -19,5 +19,6 @@ export interface Guide {
   reviews: number;
   verified: boolean;
   instantBook: boolean;
+  categories: { slug: string; name: string; icon: string }[];
   experiences: { title: string; duration: string; price: number }[];
 }

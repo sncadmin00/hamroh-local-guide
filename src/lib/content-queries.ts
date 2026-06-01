@@ -43,6 +43,7 @@ type GuideRow = {
   sort_order: number;
   cities: { name: string } | null;
   guide_experiences: { title: string; duration: string; price: number; sort_order: number }[];
+  guide_categories: { categories: { slug: string; name: string; icon: string } | null }[];
 };
 
 const PLACEHOLDER_PHOTO =
@@ -65,6 +66,9 @@ function mapGuide(row: GuideRow): Guide {
     reviews: row.reviews,
     verified: row.verified,
     instantBook: row.instant_book,
+    categories: (row.guide_categories ?? [])
+      .map((gc) => gc.categories)
+      .filter((c): c is { slug: string; name: string; icon: string } => !!c),
     experiences: [...(row.guide_experiences ?? [])]
       .sort((a, b) => a.sort_order - b.sort_order)
       .map((e) => ({ title: e.title, duration: e.duration, price: Number(e.price) })),
@@ -72,7 +76,7 @@ function mapGuide(row: GuideRow): Guide {
 }
 
 const GUIDE_SELECT =
-  "id, slug, name, city_id, photo_url, tagline, bio, languages, specialties, price_per_day, rating, reviews, verified, instant_book, sort_order, cities(name), guide_experiences(title, duration, price, sort_order)";
+  "id, slug, name, city_id, photo_url, tagline, bio, languages, specialties, price_per_day, rating, reviews, verified, instant_book, sort_order, cities(name), guide_experiences(title, duration, price, sort_order), guide_categories(categories(slug, name, icon))";
 
 async function fetchGuides(): Promise<Guide[]> {
   const { data, error } = await supabase
@@ -85,6 +89,29 @@ async function fetchGuides(): Promise<Guide[]> {
 
 export function useGuides() {
   return useQuery({ queryKey: ["guides"], queryFn: fetchGuides });
+}
+
+export type Category = {
+  id: string;
+  slug: string;
+  name: string;
+  icon: string;
+  description: string;
+  sort_order: number;
+};
+
+export function useCategories() {
+  return useQuery({
+    queryKey: ["categories"],
+    queryFn: async (): Promise<Category[]> => {
+      const { data, error } = await supabase
+        .from("categories")
+        .select("id, slug, name, icon, description, sort_order")
+        .order("sort_order", { ascending: true });
+      if (error) throw error;
+      return (data ?? []) as Category[];
+    },
+  });
 }
 
 async function fetchGuideBySlug(slug: string): Promise<Guide | null> {
