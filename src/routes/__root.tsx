@@ -60,10 +60,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Sancho — Explore places with locals" },
+      { title: "Hamroh — Explore places with locals" },
       { name: "description", content: "Book verified local guides in cities around the world. Authentic experiences, multiple languages, instant booking." },
-      { property: "og:site_name", content: "Sancho" },
-      { property: "og:title", content: "Sancho — Explore places with locals" },
+      { property: "og:site_name", content: "Hamroh" },
+      { property: "og:title", content: "Hamroh — Explore places with locals" },
       { property: "og:description", content: "Book verified local guides in cities around the world." },
       { property: "og:type", content: "website" },
       { property: "og:image", content: OG_IMAGE },
