@@ -140,6 +140,9 @@ function AiLayout() {
           </ul>
         </div>
         <div className="border-t border-border/60 p-3 space-y-1">
+          <Link to="/my-bookings" className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:bg-secondary/60 hover:text-foreground">
+            <Calendar className="h-4 w-4" /> My bookings
+          </Link>
           <Link to="/" className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:bg-secondary/60 hover:text-foreground">
             <ArrowLeft className="h-4 w-4" /> Back to site
           </Link>
