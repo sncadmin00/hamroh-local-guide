@@ -113,7 +113,7 @@ function Home() {
 
           {/* Headline */}
           <div className="text-center space-y-5 md:space-y-6 mb-12 md:mb-16">
-            <h1 className="font-display text-5xl md:text-7xl font-semibold tracking-tight text-slate-900 leading-[1.05]">
+            <h1 className="font-display md:text-7xl font-semibold tracking-tight text-slate-900 leading-[1.05] text-3xl">
               {t("hero.title")}
             </h1>
             <p className="text-base md:text-lg text-slate-500 max-w-lg mx-auto leading-relaxed font-light">
