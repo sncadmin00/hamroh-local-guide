@@ -1,9 +1,11 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { Compass, Apple } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { subscribeToNewsletter } from "@/lib/newsletter.functions";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Sign in — Hamroh" }] }),
@@ -15,6 +17,7 @@ type Method = "email" | "phone";
 function LoginPage() {
   const navigate = useNavigate();
   const { lang } = useI18n();
+  const subscribe = useServerFn(subscribeToNewsletter);
   const [method, setMethod] = useState<Method>("email");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,8 +25,10 @@ function LoginPage() {
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [newsletterOptIn, setNewsletterOptIn] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
 
   useEffect(() => {
     const resolveAndGo = async (userId: string) => {
@@ -59,10 +64,18 @@ function LoginPage() {
           },
         });
         if (error) throw error;
+        if (newsletterOptIn) {
+          try {
+            await subscribe({ data: { email, locale: lang as "ru" | "uz" | "en", source: "signup" } });
+          } catch (e) {
+            console.error("Newsletter opt-in failed", e);
+          }
+        }
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
       }
+
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
