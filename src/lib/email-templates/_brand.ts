@@ -25,12 +25,10 @@ export const styles = {
     borderRadius: '14px',
     padding: '40px 36px',
   } as const,
-  brandBar: {
-    fontFamily: '"Playfair Display", Georgia, serif',
-    fontSize: '24px',
-    fontWeight: 700 as const,
-    color: BRAND.primary,
-    letterSpacing: '-0.02em',
+  logo: {
+    display: 'block',
+    height: '40px',
+    width: 'auto',
     margin: '0 0 28px',
   } as const,
   h1: {
