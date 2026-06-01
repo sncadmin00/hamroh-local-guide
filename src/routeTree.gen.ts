@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as MyBookingsRouteImport } from './routes/my-bookings'
 import { Route as MessagesRouteImport } from './routes/messages'
@@ -34,7 +35,13 @@ import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/em
 import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
+import { Route as ApiPublicHooksChatNotificationsRouteImport } from './routes/api/public/hooks/chat-notifications'
 
+const UnsubscribeRoute = UnsubscribeRouteImport.update({
+  id: '/unsubscribe',
+  path: '/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -163,6 +170,12 @@ const LovableEmailQueueProcessRoute =
     path: '/lovable/email/queue/process',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksChatNotificationsRoute =
+  ApiPublicHooksChatNotificationsRouteImport.update({
+    id: '/api/public/hooks/chat-notifications',
+    path: '/api/public/hooks/chat-notifications',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -178,6 +191,7 @@ export interface FileRoutesByFullPath {
   '/messages': typeof MessagesRouteWithChildren
   '/my-bookings': typeof MyBookingsRoute
   '/settings': typeof SettingsRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/ai/$threadId': typeof AiThreadIdRoute
   '/api/chat': typeof ApiChatRoute
   '/book/$guideId': typeof BookGuideIdRoute
@@ -187,6 +201,7 @@ export interface FileRoutesByFullPath {
   '/messages/$bookingId': typeof MessagesBookingIdRoute
   '/messages/': typeof MessagesIndexRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/api/public/hooks/chat-notifications': typeof ApiPublicHooksChatNotificationsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
@@ -204,6 +219,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/my-bookings': typeof MyBookingsRoute
   '/settings': typeof SettingsRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/ai/$threadId': typeof AiThreadIdRoute
   '/api/chat': typeof ApiChatRoute
   '/book/$guideId': typeof BookGuideIdRoute
@@ -213,6 +229,7 @@ export interface FileRoutesByTo {
   '/messages/$bookingId': typeof MessagesBookingIdRoute
   '/messages': typeof MessagesIndexRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/api/public/hooks/chat-notifications': typeof ApiPublicHooksChatNotificationsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
@@ -232,6 +249,7 @@ export interface FileRoutesById {
   '/messages': typeof MessagesRouteWithChildren
   '/my-bookings': typeof MyBookingsRoute
   '/settings': typeof SettingsRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/ai/$threadId': typeof AiThreadIdRoute
   '/api/chat': typeof ApiChatRoute
   '/book/$guideId': typeof BookGuideIdRoute
@@ -241,6 +259,7 @@ export interface FileRoutesById {
   '/messages/$bookingId': typeof MessagesBookingIdRoute
   '/messages/': typeof MessagesIndexRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/api/public/hooks/chat-notifications': typeof ApiPublicHooksChatNotificationsRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
@@ -261,6 +280,7 @@ export interface FileRouteTypes {
     | '/messages'
     | '/my-bookings'
     | '/settings'
+    | '/unsubscribe'
     | '/ai/$threadId'
     | '/api/chat'
     | '/book/$guideId'
@@ -270,6 +290,7 @@ export interface FileRouteTypes {
     | '/messages/$bookingId'
     | '/messages/'
     | '/lovable/email/suppression'
+    | '/api/public/hooks/chat-notifications'
     | '/lovable/email/queue/process'
     | '/lovable/email/transactional/preview'
     | '/lovable/email/transactional/send'
@@ -287,6 +308,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/my-bookings'
     | '/settings'
+    | '/unsubscribe'
     | '/ai/$threadId'
     | '/api/chat'
     | '/book/$guideId'
@@ -296,6 +318,7 @@ export interface FileRouteTypes {
     | '/messages/$bookingId'
     | '/messages'
     | '/lovable/email/suppression'
+    | '/api/public/hooks/chat-notifications'
     | '/lovable/email/queue/process'
     | '/lovable/email/transactional/preview'
     | '/lovable/email/transactional/send'
@@ -314,6 +337,7 @@ export interface FileRouteTypes {
     | '/messages'
     | '/my-bookings'
     | '/settings'
+    | '/unsubscribe'
     | '/ai/$threadId'
     | '/api/chat'
     | '/book/$guideId'
@@ -323,6 +347,7 @@ export interface FileRouteTypes {
     | '/messages/$bookingId'
     | '/messages/'
     | '/lovable/email/suppression'
+    | '/api/public/hooks/chat-notifications'
     | '/lovable/email/queue/process'
     | '/lovable/email/transactional/preview'
     | '/lovable/email/transactional/send'
@@ -342,10 +367,12 @@ export interface RootRouteChildren {
   MessagesRoute: typeof MessagesRouteWithChildren
   MyBookingsRoute: typeof MyBookingsRoute
   SettingsRoute: typeof SettingsRoute
+  UnsubscribeRoute: typeof UnsubscribeRoute
   ApiChatRoute: typeof ApiChatRoute
   BookGuideIdRoute: typeof BookGuideIdRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
+  ApiPublicHooksChatNotificationsRoute: typeof ApiPublicHooksChatNotificationsRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
   LovableEmailTransactionalSendRoute: typeof LovableEmailTransactionalSendRoute
@@ -353,6 +380,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/unsubscribe': {
+      id: '/unsubscribe'
+      path: '/unsubscribe'
+      fullPath: '/unsubscribe'
+      preLoaderRoute: typeof UnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings': {
       id: '/settings'
       path: '/settings'
@@ -528,6 +562,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/chat-notifications': {
+      id: '/api/public/hooks/chat-notifications'
+      path: '/api/public/hooks/chat-notifications'
+      fullPath: '/api/public/hooks/chat-notifications'
+      preLoaderRoute: typeof ApiPublicHooksChatNotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -591,10 +632,12 @@ const rootRouteChildren: RootRouteChildren = {
   MessagesRoute: MessagesRouteWithChildren,
   MyBookingsRoute: MyBookingsRoute,
   SettingsRoute: SettingsRoute,
+  UnsubscribeRoute: UnsubscribeRoute,
   ApiChatRoute: ApiChatRoute,
   BookGuideIdRoute: BookGuideIdRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
+  ApiPublicHooksChatNotificationsRoute: ApiPublicHooksChatNotificationsRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
   LovableEmailTransactionalSendRoute: LovableEmailTransactionalSendRoute,

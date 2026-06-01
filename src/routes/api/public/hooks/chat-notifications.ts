@@ -19,7 +19,7 @@ function generateToken(): string {
 }
 
 async function getOrCreateUnsubToken(
-  supabase: ReturnType<typeof createClient>,
+  supabase: any,
   email: string,
 ): Promise<string | null> {
   const normalized = email.toLowerCase()
@@ -30,7 +30,7 @@ async function getOrCreateUnsubToken(
     .maybeSingle()
 
   if (existing && !existing.used_at) return existing.token as string
-  if (existing && existing.used_at) return null // already unsubscribed
+  if (existing && existing.used_at) return null
 
   const token = generateToken()
   await supabase
@@ -44,6 +44,7 @@ async function getOrCreateUnsubToken(
     .maybeSingle()
   return (stored?.token as string) ?? token
 }
+
 
 export const Route = createFileRoute('/api/public/hooks/chat-notifications')({
   server: {
