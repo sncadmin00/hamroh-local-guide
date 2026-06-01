@@ -37,8 +37,7 @@ async function buildSystemPrompt(client: ReturnType<typeof createClient<any, any
     .map((p) => {
       const cityName = Array.isArray(p.cities) ? p.cities[0]?.name ?? "" : p.cities?.name ?? "";
       const linkedGuides = (p.place_guides ?? [])
-        .map((pg) => pg.guides)
-        .filter((g): g is { slug: string; name: string } => g !== null)
+        .flatMap((pg) => (Array.isArray(pg.guides) ? pg.guides : pg.guides ? [pg.guides] : []))
         .map((g) => `${g.name} (${g.slug})`)
         .join(", ");
       return `- ${p.name} [${p.category}] | City: ${cityName}${p.tags.length ? ` | Tags: ${p.tags.join(", ")}` : ""} | ${p.short_description}${linkedGuides ? ` | Guides who take travelers here: ${linkedGuides}` : ""}`;
