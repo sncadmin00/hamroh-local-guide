@@ -7,7 +7,7 @@ export const BRAND = {
   muted: '#6B7388',
   border: '#E6E2D6',
   cream: '#FAF7F0',
-  logoUrl: 'https://notify.hamrohim.com/logo.png',
+  logoUrl: 'https://hamrohim.com/__l5e/assets-v1/febe74e2-791c-4653-aae8-460b9035810a/hamroh-logo.png',
 }
 
 export const styles = {
