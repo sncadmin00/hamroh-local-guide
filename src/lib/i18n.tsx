@@ -15,9 +15,9 @@ export const translations: Dict = {
   "common.contactUs": { en: "Contact us:", uz: "Aloqa:", ru: "Связаться:" },
   "hero.title": { en: "Find your local guide", uz: "Mahalliy yo'lboshchini toping", ru: "Найдите своего местного гида" },
   "hero.subtitle": {
-    en: "Describe the trip you want. Sancho AI matches you with a verified local guide.",
-    uz: "Qanday sayohat xohlayotganingizni yozing. Sancho AI sizga tasdiqlangan mahalliy yo'lboshchini topadi.",
-    ru: "Опишите желаемую поездку. Sancho AI подберёт вам проверенного местного гида.",
+    en: "Describe the trip you want. Hamroh AI matches you with a verified local guide.",
+    uz: "Qanday sayohat xohlayotganingizni yozing. Hamroh AI sizga tasdiqlangan mahalliy yo'lboshchini topadi.",
+    ru: "Опишите желаемую поездку. Hamroh AI подберёт вам проверенного местного гида.",
   },
   "hero.browse": {
     en: "Prefer to browse? Find a guide manually →",

@@ -25,7 +25,7 @@ export function SiteFooter() {
           <img src={hamrohLogo} alt="Hamroh" className="h-8 w-auto object-contain" />
         </div>
         <p className="text-sm text-muted-foreground">
-          © {new Date().getFullYear()} Sancho · Trusted local guides
+          © {new Date().getFullYear()} Hamroh · Trusted local guides
         </p>
         <div className="flex items-center gap-2">
           <a

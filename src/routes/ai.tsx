@@ -7,7 +7,7 @@ import { listThreads, createThread, deleteThread } from "@/lib/ai-threads.functi
 import { Compass, Plus, Trash2, MessageSquare, LogOut, ArrowLeft, Calendar } from "lucide-react";
 
 export const Route = createFileRoute("/ai")({
-  head: () => ({ meta: [{ title: "Sancho AI — Find your guide" }] }),
+  head: () => ({ meta: [{ title: "Hamroh AI — Find your guide" }] }),
   component: AiLayout,
 });
 
@@ -98,7 +98,7 @@ function AiLayout() {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <Compass className="h-4 w-4" />
             </div>
-            <span className="font-display text-lg font-semibold">Sancho AI</span>
+            <span className="font-display text-lg font-semibold">Hamroh AI</span>
           </Link>
         </div>
         <div className="p-3">

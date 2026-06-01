@@ -11,8 +11,8 @@ import { useI18n } from "@/lib/i18n";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Sancho — What's up? with AI" },
-      { name: "description", content: "Chat with Sancho AI to find a verified local guide. Tell us your trip, get matched in seconds." },
+      { title: "Hamroh — What's up? with AI" },
+      { name: "description", content: "Chat with Hamroh AI to find a verified local guide. Tell us your trip, get matched in seconds." },
     ],
   }),
   component: Home,
