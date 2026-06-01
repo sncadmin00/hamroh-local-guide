@@ -10,7 +10,15 @@ export interface TemplateEntry {
 }
 
 import { template as unreadChatMessage } from './unread-chat-message'
+import { template as bookingConfirmationClient } from './booking-confirmation-client'
+import { template as bookingNewGuide } from './booking-new-guide'
+import { template as bookingReminderClient } from './booking-reminder-client'
+import { template as bookingReviewRequest } from './booking-review-request'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'unread-chat-message': unreadChatMessage,
+  'booking-confirmation-client': bookingConfirmationClient,
+  'booking-new-guide': bookingNewGuide,
+  'booking-reminder-client': bookingReminderClient,
+  'booking-review-request': bookingReviewRequest,
 }

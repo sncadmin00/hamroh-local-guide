@@ -1,6 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { enqueueTransactionalEmail } from "@/lib/email/enqueue.server";
+
+const APP_BASE_URL = "https://hamrohim.com";
+
 
 // Public: list available slots for a guide on a specific date (or upcoming)
 export const getGuideSlots = createServerFn({ method: "GET" })
@@ -68,5 +72,70 @@ export const createBooking = createServerFn({ method: "POST" })
       .select("id, status")
       .single();
     if (error) throw new Error(error.message);
+
+    // Fire-and-forget transactional emails
+    try {
+      const { data: guide } = await supabaseAdmin
+        .from("guides")
+        .select("name, user_id")
+        .eq("id", data.guide_id)
+        .maybeSingle();
+
+      const guideName = guide?.name ?? undefined;
+      const status = (row.status as "confirmed" | "pending") ?? "pending";
+
+      const commonClient = {
+        customerName: data.customer_name,
+        guideName,
+        experience: data.experience,
+        date: data.date,
+        startTime: data.start_time,
+        guests: data.guests,
+        total: data.total,
+        bookingUrl: `${APP_BASE_URL}/my-bookings`,
+        status,
+      };
+
+      await enqueueTransactionalEmail({
+        supabase: supabaseAdmin,
+        templateName: "booking-confirmation-client",
+        recipientEmail: data.customer_email,
+        templateData: commonClient,
+        idempotencyKey: `booking-client-${row.id}`,
+      });
+
+      // Notify guide
+      if (guide?.user_id) {
+        const { data: guideUser } = await supabaseAdmin.auth.admin.getUserById(
+          guide.user_id,
+        );
+        const guideEmail = guideUser?.user?.email;
+        if (guideEmail) {
+          await enqueueTransactionalEmail({
+            supabase: supabaseAdmin,
+            templateName: "booking-new-guide",
+            recipientEmail: guideEmail,
+            templateData: {
+              guideName,
+              customerName: data.customer_name,
+              customerEmail: data.customer_email,
+              experience: data.experience,
+              date: data.date,
+              startTime: data.start_time,
+              guests: data.guests,
+              total: data.total,
+              notes: data.notes,
+              bookingUrl: `${APP_BASE_URL}/guide`,
+              status,
+            },
+            idempotencyKey: `booking-guide-${row.id}`,
+          });
+        }
+      }
+    } catch (e) {
+      console.error("Booking email enqueue failed", e);
+    }
+
     return row;
   });
+
