@@ -26,9 +26,13 @@ import { Route as MessagesIndexRouteImport } from './routes/messages.index'
 import { Route as MessagesBookingIdRouteImport } from './routes/messages.$bookingId'
 import { Route as GuidesGuideIdRouteImport } from './routes/guides.$guideId'
 import { Route as ExploreSlugRouteImport } from './routes/explore.$slug'
+import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as BookGuideIdRouteImport } from './routes/book.$guideId'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AiThreadIdRouteImport } from './routes/ai.$threadId'
+import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
+import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
+import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 
 const SettingsRoute = SettingsRouteImport.update({
@@ -116,6 +120,11 @@ const ExploreSlugRoute = ExploreSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => ExploreRoute,
 } as any)
+const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
+  id: '/email/unsubscribe',
+  path: '/email/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BookGuideIdRoute = BookGuideIdRouteImport.update({
   id: '/book/$guideId',
   path: '/book/$guideId',
@@ -131,6 +140,23 @@ const AiThreadIdRoute = AiThreadIdRouteImport.update({
   path: '/$threadId',
   getParentRoute: () => AiRoute,
 } as any)
+const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
+  id: '/lovable/email/suppression',
+  path: '/lovable/email/suppression',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LovableEmailTransactionalSendRoute =
+  LovableEmailTransactionalSendRouteImport.update({
+    id: '/lovable/email/transactional/send',
+    path: '/lovable/email/transactional/send',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const LovableEmailTransactionalPreviewRoute =
+  LovableEmailTransactionalPreviewRouteImport.update({
+    id: '/lovable/email/transactional/preview',
+    path: '/lovable/email/transactional/preview',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const LovableEmailQueueProcessRoute =
   LovableEmailQueueProcessRouteImport.update({
     id: '/lovable/email/queue/process',
@@ -155,11 +181,15 @@ export interface FileRoutesByFullPath {
   '/ai/$threadId': typeof AiThreadIdRoute
   '/api/chat': typeof ApiChatRoute
   '/book/$guideId': typeof BookGuideIdRoute
+  '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/explore/$slug': typeof ExploreSlugRoute
   '/guides/$guideId': typeof GuidesGuideIdRoute
   '/messages/$bookingId': typeof MessagesBookingIdRoute
   '/messages/': typeof MessagesIndexRoute
+  '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -177,11 +207,15 @@ export interface FileRoutesByTo {
   '/ai/$threadId': typeof AiThreadIdRoute
   '/api/chat': typeof ApiChatRoute
   '/book/$guideId': typeof BookGuideIdRoute
+  '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/explore/$slug': typeof ExploreSlugRoute
   '/guides/$guideId': typeof GuidesGuideIdRoute
   '/messages/$bookingId': typeof MessagesBookingIdRoute
   '/messages': typeof MessagesIndexRoute
+  '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -201,11 +235,15 @@ export interface FileRoutesById {
   '/ai/$threadId': typeof AiThreadIdRoute
   '/api/chat': typeof ApiChatRoute
   '/book/$guideId': typeof BookGuideIdRoute
+  '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/explore/$slug': typeof ExploreSlugRoute
   '/guides/$guideId': typeof GuidesGuideIdRoute
   '/messages/$bookingId': typeof MessagesBookingIdRoute
   '/messages/': typeof MessagesIndexRoute
+  '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -226,11 +264,15 @@ export interface FileRouteTypes {
     | '/ai/$threadId'
     | '/api/chat'
     | '/book/$guideId'
+    | '/email/unsubscribe'
     | '/explore/$slug'
     | '/guides/$guideId'
     | '/messages/$bookingId'
     | '/messages/'
+    | '/lovable/email/suppression'
     | '/lovable/email/queue/process'
+    | '/lovable/email/transactional/preview'
+    | '/lovable/email/transactional/send'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -248,11 +290,15 @@ export interface FileRouteTypes {
     | '/ai/$threadId'
     | '/api/chat'
     | '/book/$guideId'
+    | '/email/unsubscribe'
     | '/explore/$slug'
     | '/guides/$guideId'
     | '/messages/$bookingId'
     | '/messages'
+    | '/lovable/email/suppression'
     | '/lovable/email/queue/process'
+    | '/lovable/email/transactional/preview'
+    | '/lovable/email/transactional/send'
   id:
     | '__root__'
     | '/'
@@ -271,11 +317,15 @@ export interface FileRouteTypes {
     | '/ai/$threadId'
     | '/api/chat'
     | '/book/$guideId'
+    | '/email/unsubscribe'
     | '/explore/$slug'
     | '/guides/$guideId'
     | '/messages/$bookingId'
     | '/messages/'
+    | '/lovable/email/suppression'
     | '/lovable/email/queue/process'
+    | '/lovable/email/transactional/preview'
+    | '/lovable/email/transactional/send'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -294,7 +344,11 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   ApiChatRoute: typeof ApiChatRoute
   BookGuideIdRoute: typeof BookGuideIdRoute
+  EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
+  LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
+  LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
+  LovableEmailTransactionalSendRoute: typeof LovableEmailTransactionalSendRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -418,6 +472,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExploreSlugRouteImport
       parentRoute: typeof ExploreRoute
     }
+    '/email/unsubscribe': {
+      id: '/email/unsubscribe'
+      path: '/email/unsubscribe'
+      fullPath: '/email/unsubscribe'
+      preLoaderRoute: typeof EmailUnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/book/$guideId': {
       id: '/book/$guideId'
       path: '/book/$guideId'
@@ -438,6 +499,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/ai/$threadId'
       preLoaderRoute: typeof AiThreadIdRouteImport
       parentRoute: typeof AiRoute
+    }
+    '/lovable/email/suppression': {
+      id: '/lovable/email/suppression'
+      path: '/lovable/email/suppression'
+      fullPath: '/lovable/email/suppression'
+      preLoaderRoute: typeof LovableEmailSuppressionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/transactional/send': {
+      id: '/lovable/email/transactional/send'
+      path: '/lovable/email/transactional/send'
+      fullPath: '/lovable/email/transactional/send'
+      preLoaderRoute: typeof LovableEmailTransactionalSendRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/transactional/preview': {
+      id: '/lovable/email/transactional/preview'
+      path: '/lovable/email/transactional/preview'
+      fullPath: '/lovable/email/transactional/preview'
+      preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/lovable/email/queue/process': {
       id: '/lovable/email/queue/process'
@@ -511,18 +593,12 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   ApiChatRoute: ApiChatRoute,
   BookGuideIdRoute: BookGuideIdRoute,
+  EmailUnsubscribeRoute: EmailUnsubscribeRoute,
+  LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
+  LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
+  LovableEmailTransactionalSendRoute: LovableEmailTransactionalSendRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
