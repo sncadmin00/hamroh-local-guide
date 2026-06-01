@@ -13,11 +13,16 @@ function SettingsPage() {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
   const [currentEmail, setCurrentEmail] = useState("");
+  const [currentPhone, setCurrentPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [savingEmail, setSavingEmail] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
+  const [phone, setPhone] = useState("");
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [savingPhone, setSavingPhone] = useState(false);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data, error }) => {
@@ -26,10 +31,51 @@ function SettingsPage() {
         return;
       }
       setCurrentEmail(data.user.email ?? "");
+      setCurrentPhone(data.user.phone ?? "");
       setEmail(data.user.email ?? "");
+      setPhone(data.user.phone ? `+${data.user.phone}` : "");
       setChecking(false);
     });
   }, [navigate]);
+
+  const sendPhoneOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!phone.startsWith("+")) {
+      toast.error("Enter phone in international format (e.g. +998 90 123 45 67)");
+      return;
+    }
+    setSavingPhone(true);
+    const { error } = await supabase.auth.updateUser({ phone });
+    setSavingPhone(false);
+    if (error) toast.error(error.message);
+    else {
+      toast.success("Code sent to your phone");
+      setOtpSent(true);
+    }
+  };
+
+  const verifyPhoneOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (otp.length < 4) {
+      toast.error("Enter the code from SMS");
+      return;
+    }
+    setSavingPhone(true);
+    const { error } = await supabase.auth.verifyOtp({
+      phone: phone.replace(/\s/g, ""),
+      token: otp,
+      type: "phone_change",
+    });
+    setSavingPhone(false);
+    if (error) toast.error(error.message);
+    else {
+      toast.success("Phone number linked");
+      setOtp("");
+      setOtpSent(false);
+      const { data } = await supabase.auth.getUser();
+      setCurrentPhone(data.user?.phone ?? "");
+    }
+  };
 
   const updateEmail = async (e: React.FormEvent) => {
     e.preventDefault();
