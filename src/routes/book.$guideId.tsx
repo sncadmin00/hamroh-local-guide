@@ -9,6 +9,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { useGuide } from "@/lib/content-queries";
 import { getBookingSource } from "@/hooks/useTrackSource";
 import { getGuideSlots, createBooking } from "@/lib/booking.functions";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/book/$guideId")({
   head: () => ({ meta: [{ title: "Book a guide — Sancho" }] }),
@@ -19,6 +20,7 @@ function BookPage() {
   const { guideId } = Route.useParams();
   const { data: guide, isLoading } = useGuide(guideId);
   const navigate = useNavigate();
+  const { lang } = useI18n();
   const [confirmed, setConfirmed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [slots, setSlots] = useState<Array<{ id: string; date: string; start_time: string; duration_minutes: number }>>([]);
@@ -89,6 +91,7 @@ function BookPage() {
           notes: form.notes,
           total: total + fee,
           source: getBookingSource(),
+          locale: lang,
         },
       });
       setConfirmed(true);

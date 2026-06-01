@@ -27,7 +27,7 @@ export const Route = createFileRoute('/api/public/hooks/booking-reminders')({
 
         const { data: bookings, error } = await supabase
           .from('bookings')
-          .select('id, guide_id, customer_name, customer_email, experience, date, start_time, status')
+          .select('id, guide_id, customer_name, customer_email, experience, date, start_time, status, locale')
           .eq('date', tomorrow)
           .eq('status', 'confirmed')
           .limit(200)
@@ -41,7 +41,6 @@ export const Route = createFileRoute('/api/public/hooks/booking-reminders')({
         let queued = 0
         for (const b of bookings) {
           try {
-            // Idempotent: enqueue uses idempotency_key. Also dedupe via log lookup.
             const idem = `booking-reminder-${b.id}`
             const { data: already } = await supabase
               .from('email_send_log')
@@ -69,6 +68,7 @@ export const Route = createFileRoute('/api/public/hooks/booking-reminders')({
                 date: b.date,
                 startTime: b.start_time,
                 bookingUrl: `${APP_BASE_URL}/my-bookings`,
+                locale: (b.locale as string) ?? 'ru',
               },
               idempotencyKey: idem,
             })

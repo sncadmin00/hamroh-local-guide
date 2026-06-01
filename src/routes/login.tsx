@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { Compass, Apple } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Sign in — Hamroh" }] }),
@@ -13,6 +14,7 @@ type Method = "email" | "phone";
 
 function LoginPage() {
   const navigate = useNavigate();
+  const { lang } = useI18n();
   const [method, setMethod] = useState<Method>("email");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -51,7 +53,10 @@ function LoginPage() {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.origin + "/login" },
+          options: {
+            emailRedirectTo: window.location.origin + "/login",
+            data: { locale: lang },
+          },
         });
         if (error) throw error;
       } else {
@@ -70,7 +75,10 @@ function LoginPage() {
     setError(null);
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithOtp({ phone });
+      const { error } = await supabase.auth.signInWithOtp({
+        phone,
+        options: { data: { locale: lang } },
+      });
       if (error) throw error;
       setOtpSent(true);
     } catch (err) {
