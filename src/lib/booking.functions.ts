@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { enqueueTransactionalEmail } from "@/lib/email/enqueue.server";
+import { normalizeLocale } from "@/lib/email-templates/_i18n";
 
 const APP_BASE_URL = "https://hamrohim.com";
 
@@ -43,11 +44,13 @@ const bookingSchema = z.object({
   total: z.number().min(0),
   source: z.string().max(64).optional(),
   user_id: z.string().uuid().nullable().optional(),
+  locale: z.enum(["ru", "uz", "en"]).optional(),
 });
 
 export const createBooking = createServerFn({ method: "POST" })
   .inputValidator((input) => bookingSchema.parse(input))
   .handler(async ({ data }) => {
+    const clientLocale = normalizeLocale(data.locale);
     // Instant booking if slot picked, otherwise pending request
     const isInstant = !!data.slot_id;
     const insertPayload = {
@@ -65,6 +68,7 @@ export const createBooking = createServerFn({ method: "POST" })
       source: data.source ?? "web",
       user_id: data.user_id ?? null,
       status: isInstant ? "confirmed" : "pending",
+      locale: clientLocale,
     };
     const { data: row, error } = await supabaseAdmin
       .from("bookings")
@@ -77,30 +81,30 @@ export const createBooking = createServerFn({ method: "POST" })
     try {
       const { data: guide } = await supabaseAdmin
         .from("guides")
-        .select("name, user_id")
+        .select("name, user_id, locale")
         .eq("id", data.guide_id)
         .maybeSingle();
 
       const guideName = guide?.name ?? undefined;
+      const guideLocale = normalizeLocale(guide?.locale);
       const status = (row.status as "confirmed" | "pending") ?? "pending";
-
-      const commonClient = {
-        customerName: data.customer_name,
-        guideName,
-        experience: data.experience,
-        date: data.date,
-        startTime: data.start_time,
-        guests: data.guests,
-        total: data.total,
-        bookingUrl: `${APP_BASE_URL}/my-bookings`,
-        status,
-      };
 
       await enqueueTransactionalEmail({
         supabase: supabaseAdmin,
         templateName: "booking-confirmation-client",
         recipientEmail: data.customer_email,
-        templateData: commonClient,
+        templateData: {
+          customerName: data.customer_name,
+          guideName,
+          experience: data.experience,
+          date: data.date,
+          startTime: data.start_time,
+          guests: data.guests,
+          total: data.total,
+          bookingUrl: `${APP_BASE_URL}/my-bookings`,
+          status,
+          locale: clientLocale,
+        },
         idempotencyKey: `booking-client-${row.id}`,
       });
 
@@ -127,6 +131,7 @@ export const createBooking = createServerFn({ method: "POST" })
               notes: data.notes,
               bookingUrl: `${APP_BASE_URL}/guide`,
               status,
+              locale: guideLocale,
             },
             idempotencyKey: `booking-guide-${row.id}`,
           });
@@ -138,4 +143,3 @@ export const createBooking = createServerFn({ method: "POST" })
 
     return row;
   });
-
