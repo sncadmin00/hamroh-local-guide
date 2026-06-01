@@ -68,9 +68,25 @@ type Booking = {
   notes: string;
   total: number;
   status: string;
+  source: string;
   created_at: string;
   guides?: { name: string; slug: string } | null;
 };
+
+const SOURCES = ["web", "instagram", "facebook", "telegram", "whatsapp", "other"] as const;
+type SourceKey = (typeof SOURCES)[number];
+
+function sourceBadgeClass(s: string): string {
+  const base = "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium capitalize";
+  switch (s) {
+    case "instagram": return `${base} bg-pink-100 text-pink-700`;
+    case "facebook": return `${base} bg-blue-100 text-blue-700`;
+    case "telegram": return `${base} bg-sky-100 text-sky-700`;
+    case "whatsapp": return `${base} bg-green-100 text-green-700`;
+    case "web": return `${base} bg-secondary text-muted-foreground`;
+    default: return `${base} border border-border text-muted-foreground`;
+  }
+}
 
 function AdminPage() {
   const navigate = useNavigate();
@@ -778,8 +794,20 @@ function SocialPanel({
 
 function BookingsPanel({ bookings, reload }: { bookings: Booking[]; reload: () => Promise<void> }) {
   const [filter, setFilter] = useState<"all" | "pending" | "confirmed" | "cancelled">("all");
+  const [sourceFilter, setSourceFilter] = useState<"all" | SourceKey>("all");
 
-  const filtered = filter === "all" ? bookings : bookings.filter((b) => b.status === filter);
+  const filtered = bookings.filter((b) => {
+    if (filter !== "all" && b.status !== filter) return false;
+    if (sourceFilter !== "all" && b.source !== sourceFilter) return false;
+    return true;
+  });
+
+  // Stats per source for last 30 days
+  const thirtyDaysAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
+  const recentStats = SOURCES.map((s) => ({
+    source: s,
+    count: bookings.filter((b) => b.source === s && new Date(b.created_at).getTime() >= thirtyDaysAgo).length,
+  }));
 
   const setStatus = async (id: string, status: string) => {
     const { error } = await supabase.from("bookings").update({ status }).eq("id", id);
@@ -808,84 +836,115 @@ function BookingsPanel({ bookings, reload }: { bookings: Booking[]; reload: () =
   };
 
   return (
-    <div className="mt-6 rounded-3xl bg-card p-6 ring-1 ring-border/60">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="font-display text-lg font-semibold">Orders</h2>
-        <div className="inline-flex rounded-full bg-secondary/60 p-1">
-          {(["all", "pending", "confirmed", "cancelled"] as const).map((s) => (
-            <button
-              key={s}
-              onClick={() => setFilter(s)}
-              className={`px-3 h-8 rounded-full text-xs font-medium capitalize ${filter === s ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
-            >
-              {s}
-            </button>
+    <div className="mt-6 space-y-4">
+      {/* Source stats */}
+      <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
+        <h2 className="font-display text-lg font-semibold">Источники за 30 дней</h2>
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+          {recentStats.map((s) => (
+            <div key={s.source} className="rounded-2xl bg-secondary/40 p-3">
+              <div className="text-xs text-muted-foreground capitalize">{s.source}</div>
+              <div className="mt-1 font-display text-2xl font-semibold">{s.count}</div>
+            </div>
           ))}
         </div>
       </div>
 
-      {filtered.length === 0 ? (
-        <p className="mt-6 text-sm text-muted-foreground">No orders yet.</p>
-      ) : (
-        <div className="mt-4 overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="text-left text-xs uppercase text-muted-foreground">
-              <tr className="border-b border-border/60">
-                <th className="py-2 pr-3">Created</th>
-                <th className="py-2 pr-3">Date</th>
-                <th className="py-2 pr-3">Guide</th>
-                <th className="py-2 pr-3">Customer</th>
-                <th className="py-2 pr-3">Guests</th>
-                <th className="py-2 pr-3">Total</th>
-                <th className="py-2 pr-3">Status</th>
-                <th className="py-2 pr-3 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/60">
-              {filtered.map((b) => (
-                <tr key={b.id} className="align-top">
-                  <td className="py-3 pr-3 text-xs text-muted-foreground whitespace-nowrap">
-                    {new Date(b.created_at).toLocaleDateString()}
-                  </td>
-                  <td className="py-3 pr-3 whitespace-nowrap">{b.date}</td>
-                  <td className="py-3 pr-3">
-                    <div className="font-medium">{b.guides?.name ?? "—"}</div>
-                    <div className="text-xs text-muted-foreground truncate max-w-[180px]">{b.experience}</div>
-                  </td>
-                  <td className="py-3 pr-3">
-                    <div className="font-medium">{b.customer_name}</div>
-                    <div className="text-xs text-muted-foreground">{b.customer_email}</div>
-                    {b.notes && <div className="text-xs text-muted-foreground mt-1 max-w-[220px] truncate" title={b.notes}>{b.notes}</div>}
-                  </td>
-                  <td className="py-3 pr-3">{b.guests}</td>
-                  <td className="py-3 pr-3 font-medium">${Number(b.total).toFixed(0)}</td>
-                  <td className="py-3 pr-3">
-                    <span className={statusBadge(b.status)}>{b.status}</span>
-                  </td>
-                  <td className="py-3 pr-3 text-right whitespace-nowrap">
-                    <select
-                      value={b.status}
-                      onChange={(e) => setStatus(b.id, e.target.value)}
-                      className="h-8 rounded-md border border-input bg-background px-2 text-xs"
-                    >
-                      <option value="pending">pending</option>
-                      <option value="confirmed">confirmed</option>
-                      <option value="cancelled">cancelled</option>
-                    </select>
-                    <button
-                      onClick={() => remove(b.id)}
-                      className="ml-2 inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                      aria-label="Delete"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </td>
-                </tr>
+      <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="font-display text-lg font-semibold">Orders</h2>
+          <div className="flex flex-wrap items-center gap-2">
+            <select
+              value={sourceFilter}
+              onChange={(e) => setSourceFilter(e.target.value as "all" | SourceKey)}
+              className="h-8 rounded-full border border-input bg-background px-3 text-xs"
+            >
+              <option value="all">All sources</option>
+              {SOURCES.map((s) => (
+                <option key={s} value={s}>{s}</option>
               ))}
-            </tbody>
-          </table>
+            </select>
+            <div className="inline-flex rounded-full bg-secondary/60 p-1">
+              {(["all", "pending", "confirmed", "cancelled"] as const).map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setFilter(s)}
+                  className={`px-3 h-8 rounded-full text-xs font-medium capitalize ${filter === s ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
-      )}
+
+        {filtered.length === 0 ? (
+          <p className="mt-6 text-sm text-muted-foreground">No orders yet.</p>
+        ) : (
+          <div className="mt-4 overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="text-left text-xs uppercase text-muted-foreground">
+                <tr className="border-b border-border/60">
+                  <th className="py-2 pr-3">Created</th>
+                  <th className="py-2 pr-3">Source</th>
+                  <th className="py-2 pr-3">Date</th>
+                  <th className="py-2 pr-3">Guide</th>
+                  <th className="py-2 pr-3">Customer</th>
+                  <th className="py-2 pr-3">Guests</th>
+                  <th className="py-2 pr-3">Total</th>
+                  <th className="py-2 pr-3">Status</th>
+                  <th className="py-2 pr-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border/60">
+                {filtered.map((b) => (
+                  <tr key={b.id} className="align-top">
+                    <td className="py-3 pr-3 text-xs text-muted-foreground whitespace-nowrap">
+                      {new Date(b.created_at).toLocaleDateString()}
+                    </td>
+                    <td className="py-3 pr-3">
+                      <span className={sourceBadgeClass(b.source)}>{b.source}</span>
+                    </td>
+                    <td className="py-3 pr-3 whitespace-nowrap">{b.date}</td>
+                    <td className="py-3 pr-3">
+                      <div className="font-medium">{b.guides?.name ?? "—"}</div>
+                      <div className="text-xs text-muted-foreground truncate max-w-[180px]">{b.experience}</div>
+                    </td>
+                    <td className="py-3 pr-3">
+                      <div className="font-medium">{b.customer_name}</div>
+                      <div className="text-xs text-muted-foreground">{b.customer_email}</div>
+                      {b.notes && <div className="text-xs text-muted-foreground mt-1 max-w-[220px] truncate" title={b.notes}>{b.notes}</div>}
+                    </td>
+                    <td className="py-3 pr-3">{b.guests}</td>
+                    <td className="py-3 pr-3 font-medium">${Number(b.total).toFixed(0)}</td>
+                    <td className="py-3 pr-3">
+                      <span className={statusBadge(b.status)}>{b.status}</span>
+                    </td>
+                    <td className="py-3 pr-3 text-right whitespace-nowrap">
+                      <select
+                        value={b.status}
+                        onChange={(e) => setStatus(b.id, e.target.value)}
+                        className="h-8 rounded-md border border-input bg-background px-2 text-xs"
+                      >
+                        <option value="pending">pending</option>
+                        <option value="confirmed">confirmed</option>
+                        <option value="cancelled">cancelled</option>
+                      </select>
+                      <button
+                        onClick={() => remove(b.id)}
+                        className="ml-2 inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                        aria-label="Delete"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
