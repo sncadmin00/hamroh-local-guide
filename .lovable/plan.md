@@ -1,55 +1,60 @@
+Редизайн главной страницы в направлении **Premium Editorial Minimalist** с анимацией glow вокруг input на hover.
 
-# План: трекинг источника + OG-картинки
+## Общее настроение
+Тёплый кремовый фон (#FBF9F6), крупный серифный заголовок Playfair Display, чистый body-шрифт Plus Jakarta Sans, акцентные цвета бирюзовый → терракотовый. Минималистично, премиально, тревел-настроение.
 
-Делаем 2 задачи параллельно — они независимы.
+## Что меняем
 
-## 1. Трекинг источника заказов (`?src=...`)
+### 1. Шрифты (src/routes/__root.tsx)
+В head links заменить текущие Google Fonts на:
+- `Playfair Display:ital,wght@0,400..900;1,400..900`
+- `Plus Jakarta Sans:wght@300,400,500,600`
 
-### База
-Миграция: добавить колонку `source TEXT NOT NULL DEFAULT 'web'` в `bookings`.
-Допустимые значения: `web`, `instagram`, `facebook`, `telegram`, `whatsapp`, `other`.
+### 2. Дизайн-токены (src/styles.css)
+- `--font-display`: `"Playfair Display", Georgia, serif`
+- `--font-sans`: `"Plus Jakarta Sans", system-ui, sans-serif`
+- Фон страницы: тёплый кремовый (`#FBF9F6` или близкий oklch)
+- Добавить градиентные токены для glow-эффекта input
 
-### Фронт — захват источника
-- Новый хук `src/hooks/useTrackSource.ts`: при первом визите читает `?src=...` из URL, валидирует против whitelist, сохраняет в `sessionStorage` (ключ `bookingSource`). Если уже есть — не перезаписывает.
-- Подключить в `src/routes/__root.tsx` внутри `RootComponent`.
+### 3. Главная страница (src/routes/index.tsx) — полный редизайн героя
 
-### Фронт — запись в заказ
-В `src/routes/book.$guideId.tsx` в `handleSubmit`:
-- Читать `sessionStorage.getItem('bookingSource')` (fallback `'web'`).
-- Добавить `source` в `bookings.insert({...})`.
+**Иконка / логотип героя:**
+- Заменить текущий sparkle-иконку в заголовке на крупную (96×96px), с закруглёнными углами (rounded-3xl)
+- Градиент фона иконки: от бирюзового (#62A1B1) через зелёный (#8BB5A9) к терракотовому (#D5A08D)
+- Размытый glow за иконкой на фоне (blur-2xl, opacity-20, масштаб 150%)
 
-### Админка — `src/routes/admin.tsx`
-- Колонка **«Источник»** в таблице заказов с цветными бейджами:
-  - Web — серый, Instagram — розовый, Facebook — синий, Telegram — голубой, WhatsApp — зелёный, Other — outline.
-- Фильтр по источнику (select сверху таблицы).
-- Мини-статистика: количество заказов по каналам за последние 30 дней (карточки с цифрами).
+**Заголовок:**
+- "What's up?" — `text-7xl font-display font-semibold tracking-tight text-slate-900`
 
-## 2. OG-картинки
+**Подзаголовок:**
+- `text-lg text-slate-500 max-w-lg font-light`
+- Выделенный фрагмент "a verified local guide" — `text-slate-900 font-medium`
 
-### Что есть сейчас
-- `__root.tsx` — есть `og:title/description/type`, но **нет `og:image`**.
-- `guides.$guideId.tsx` — нужно проверить и добавить `og:image` из `guide.photo` (фото гида = идеальная share-картинка).
-- `index.tsx` — нужна общая брендовая og-картинка.
+**Input-блок (ключевой момент):**
+- Заменить textarea на input для компактности
+- Высокий input (`h-20`), очень закруглённые края (`rounded-[2.2rem]`)
+- Белый фон, тонкая рамка `border-slate-100`, мягкая тень
+- **Glow на hover:** абсолютный блок за input с `bg-gradient-to-r` от бирюзового к терракотовому, `blur`, `opacity-0` по умолчанию, `group-hover:opacity-100` с плавным переходом (`transition duration-1000 group-hover:duration-200`)
+- Круглая кнопка микрофона и круглая кнопка отправки справа внутри input
+- Кнопка отправки: бирюзовый фон (#8BB5A9), белая стрелка, hover темнее
 
-### Что делаем
-1. **Сгенерировать одну дефолтную OG-картинку** (1200×630) для главной и фоллбэка — `src/assets/og-default.jpg`. Стиль: тёплая travel-эстетика, надпись «Sancho — Explore with locals».
-2. **`__root.tsx`**: добавить дефолтный `og:image` + `twitter:image` (абсолютный URL через `import.meta.env.VITE_*` или хардкод preview-домена).
-   - ВАЖНО по знаниям TanStack: `og:image` лучше ставить только на листовых маршрутах, иначе перекрывает детские. Поэтому либо ставим только на index.tsx, либо принимаем, что детские (guide page) переопределят своим.
-   - Делаем второй вариант: дефолт в root, override в `guides.$guideId.tsx`.
-3. **`guides.$guideId.tsx`**: в `head()` добавить `og:title` = имя гида + город, `og:description` = краткое bio, `og:image` = `guide.photo` (абсолютный URL), `og:type: 'profile'`.
-4. **`index.tsx`**: оставляет дефолт от root.
+**Suggestion chips:**
+- Закруглённые (`rounded-full`), border-slate-100, bg-white/50
+- Текст slate-500, hover: border-slate-200 + text-slate-800
 
-### Абсолютные URL
-Для preview/published хостинга используем `https://hamroh-local-guide.lovable.app` как базу (из knowledge). Фото гидов уже абсолютные (Supabase storage) — оставляем как есть.
+**Вторичная ссылка:**
+- "Prefer to browse? Find a guide manually →" — подчёркнутая, text-slate-400, hover text-slate-900
 
-## Порядок выполнения
-1. Миграция БД (`source` колонка) — отдельным шагом, ждём подтверждения.
-2. Параллельно: хук + book-форма + админка (источник).
-3. Параллельно: генерация OG-картинки + правки `head()` в root и guide-странице.
+**Социальные иконки:**
+- Минималистичные круглые кнопки с border, hover: scale-110
+- WhatsApp — зелёный, Telegram — синий
 
-## Что пользователь сделает САМ потом
-В соцсетях везде ставит ссылки:
-- Instagram bio → `sancho.app/?src=instagram`
-- Telegram канал → `sancho.app/?src=telegram`
-- WhatsApp статус → `sancho.app/?src=whatsapp`
-- Facebook страница → `sancho.app/?src=facebook`
+### 4. Удалить / упростить
+- Убрать WhatsApp и Telegram из шапки главной (оставить только в футере / меню)
+- Убрать лишние отступы, сделать компактнее
+
+## Не трогаем
+- SiteHeader — оставляем как есть (логотип + навигация)
+- SiteFooter — используем существующий компонент
+- Функциональность AI-чата, логина, навигации — без изменений
+- i18n-переводы — оставляем вызовы `t()` на тех же ключах
