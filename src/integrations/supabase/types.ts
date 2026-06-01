@@ -736,6 +736,148 @@ export type Database = {
         }
         Relationships: []
       }
+      place_guides: {
+        Row: {
+          guide_id: string
+          place_id: string
+        }
+        Insert: {
+          guide_id: string
+          place_id: string
+        }
+        Update: {
+          guide_id?: string
+          place_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "place_guides_guide_id_fkey"
+            columns: ["guide_id"]
+            isOneToOne: false
+            referencedRelation: "guides"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "place_guides_place_id_fkey"
+            columns: ["place_id"]
+            isOneToOne: false
+            referencedRelation: "places"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      place_suggestions: {
+        Row: {
+          category: string
+          city_id: string | null
+          city_name: string
+          created_at: string
+          description: string
+          id: string
+          name: string
+          raw_query: string
+          source_url: string
+          status: string
+        }
+        Insert: {
+          category?: string
+          city_id?: string | null
+          city_name?: string
+          created_at?: string
+          description?: string
+          id?: string
+          name: string
+          raw_query?: string
+          source_url?: string
+          status?: string
+        }
+        Update: {
+          category?: string
+          city_id?: string | null
+          city_name?: string
+          created_at?: string
+          description?: string
+          id?: string
+          name?: string
+          raw_query?: string
+          source_url?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "place_suggestions_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      places: {
+        Row: {
+          address: string
+          body_md: string
+          category: string
+          city_id: string
+          created_at: string
+          id: string
+          lat: number | null
+          lng: number | null
+          name: string
+          photo_url: string | null
+          published: boolean
+          short_description: string
+          slug: string
+          sort_order: number
+          tags: string[]
+          updated_at: string
+        }
+        Insert: {
+          address?: string
+          body_md?: string
+          category?: string
+          city_id: string
+          created_at?: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          name: string
+          photo_url?: string | null
+          published?: boolean
+          short_description?: string
+          slug: string
+          sort_order?: number
+          tags?: string[]
+          updated_at?: string
+        }
+        Update: {
+          address?: string
+          body_md?: string
+          category?: string
+          city_id?: string
+          created_at?: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          name?: string
+          photo_url?: string | null
+          published?: boolean
+          short_description?: string
+          slug?: string
+          sort_order?: number
+          tags?: string[]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "places_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       referral_clicks: {
         Row: {
           created_at: string
