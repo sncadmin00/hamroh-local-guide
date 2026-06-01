@@ -279,6 +279,7 @@ export type Database = {
       guide_applications: {
         Row: {
           about: string
+          category_ids: string[]
           city: string
           created_at: string
           email: string
@@ -297,6 +298,7 @@ export type Database = {
         }
         Insert: {
           about?: string
+          category_ids?: string[]
           city: string
           created_at?: string
           email: string
@@ -315,6 +317,7 @@ export type Database = {
         }
         Update: {
           about?: string
+          category_ids?: string[]
           city?: string
           created_at?: string
           email?: string

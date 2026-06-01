@@ -1,0 +1,1 @@
+ALTER TABLE public.guide_applications ADD COLUMN IF NOT EXISTS category_ids uuid[] NOT NULL DEFAULT '{}';
