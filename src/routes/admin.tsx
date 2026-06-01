@@ -181,6 +181,12 @@ function AdminPage() {
             Orders ({bookings.length})
           </button>
           <button
+            onClick={() => setTab("applications")}
+            className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "applications" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+          >
+            Applications ({applications.filter((a) => a.status === "pending").length})
+          </button>
+          <button
             onClick={() => setTab("cities")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "cities" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
@@ -207,6 +213,7 @@ function AdminPage() {
         </div>
 
         {tab === "bookings" && <BookingsPanel bookings={bookings} reload={loadData} />}
+        {tab === "applications" && <ApplicationsPanel applications={applications} reload={loadData} />}
         {tab === "cities" && <CitiesPanel cities={cities} reload={loadData} />}
         {tab === "guides" && <GuidesPanel guides={guides} cities={cities} reload={loadData} />}
         {tab === "articles" && <ArticlesPanel articles={articles} cities={cities} reload={loadData} />}
