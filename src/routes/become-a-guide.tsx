@@ -49,6 +49,8 @@ async function uploadTo(bucket: string, file: File): Promise<string> {
 
 function BecomeAGuidePage() {
   const [cities, setCities] = useState<{ id: string; name: string }[]>([]);
+  const [categories, setCategories] = useState<{ id: string; name: string; icon: string }[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [submitted, setSubmitted] = useState(false);
   const [saving, setSaving] = useState(false);
   const [portrait, setPortrait] = useState<File | null>(null);
@@ -73,7 +75,18 @@ function BecomeAGuidePage() {
       .then(({ data }) => {
         if (data) setCities(data);
       });
+    supabase
+      .from("categories")
+      .select("id, name, icon")
+      .order("sort_order")
+      .then(({ data }) => {
+        if (data) setCategories(data);
+      });
   }, []);
+
+  const toggleCategory = (id: string) =>
+    setSelectedCategories((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
+
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
