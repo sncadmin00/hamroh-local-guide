@@ -4,10 +4,13 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { GuideCard } from "@/components/GuideCard";
 import { CityPicker } from "@/components/CityPicker";
-import { useGuides } from "@/lib/content-queries";
+import { CategoryIcon } from "@/components/CategoryIcon";
+import { useGuides, useCategories } from "@/lib/content-queries";
+
 export const Route = createFileRoute("/guides")({
-  validateSearch: (search: Record<string, unknown>): { city?: string } => ({
+  validateSearch: (search: Record<string, unknown>): { city?: string; category?: string } => ({
     city: typeof search.city === "string" ? search.city : undefined,
+    category: typeof search.category === "string" ? search.category : undefined,
   }),
   head: () => ({
     meta: [
@@ -19,11 +22,13 @@ export const Route = createFileRoute("/guides")({
 });
 
 function GuidesPage() {
-  const { city: initialCity } = Route.useSearch();
+  const { city: initialCity, category: initialCategory } = Route.useSearch();
   const [city, setCity] = useState<"All" | string>(initialCity ?? "All");
+  const [category, setCategory] = useState<"All" | string>(initialCategory ?? "All");
   const [lang, setLang] = useState<string>("All");
   const [instant, setInstant] = useState(false);
   const { data: guides = [], isLoading } = useGuides();
+  const { data: categories = [] } = useCategories();
 
   const allLangs = Array.from(new Set(guides.flatMap((g) => g.languages))).sort();
 
@@ -31,7 +36,8 @@ function GuidesPage() {
     (g) =>
       (city === "All" || g.city === city) &&
       (lang === "All" || g.languages.includes(lang)) &&
-      (!instant || g.instantBook),
+      (!instant || g.instantBook) &&
+      (category === "All" || g.categories.some((c) => c.slug === category)),
   );
 
   return (
@@ -65,6 +71,38 @@ function GuidesPage() {
             </label>
           </div>
         </div>
+
+        {categories.length > 0 && (
+          <div className="mt-4 flex flex-wrap gap-2">
+            <button
+              onClick={() => setCategory("All")}
+              className={`inline-flex items-center gap-1.5 h-9 px-4 rounded-full text-sm font-medium ring-1 transition ${
+                category === "All"
+                  ? "bg-primary text-primary-foreground ring-primary"
+                  : "bg-card ring-border/60 text-muted-foreground hover:bg-secondary/60"
+              }`}
+            >
+              All categories
+            </button>
+            {categories.map((c) => {
+              const on = category === c.slug;
+              return (
+                <button
+                  key={c.id}
+                  onClick={() => setCategory(c.slug)}
+                  className={`inline-flex items-center gap-1.5 h-9 px-4 rounded-full text-sm font-medium ring-1 transition ${
+                    on
+                      ? "bg-primary text-primary-foreground ring-primary"
+                      : "bg-card ring-border/60 text-muted-foreground hover:bg-secondary/60"
+                  }`}
+                >
+                  <CategoryIcon name={c.icon} className="h-4 w-4" />
+                  {c.name}
+                </button>
+              );
+            })}
+          </div>
+        )}
 
         {isLoading ? (
           <div className="mt-16 text-center text-muted-foreground">Loading…</div>
