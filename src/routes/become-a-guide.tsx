@@ -51,6 +51,8 @@ async function uploadTo(bucket: string, file: File): Promise<string> {
 }
 
 function BecomeAGuidePage() {
+  const notifyAdmins = useServerFn(notifyAdminsOfGuideApplication);
+
   const [cities, setCities] = useState<{ id: string; name: string }[]>([]);
   const [categories, setCategories] = useState<{ id: string; name: string; icon: string }[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -171,10 +173,11 @@ function BecomeAGuidePage() {
 
       // Notify admins (fire-and-forget)
       if (inserted?.id) {
-        notifyAdmins({ data: { application_id: inserted.id } }).catch((e) =>
-          console.error("Admin notify failed", e),
+        notifyAdmins({ data: { application_id: inserted.id } }).catch((err: unknown) =>
+          console.error("Admin notify failed", err),
         );
       }
+
 
       toast.success("Application submitted");
       setSubmitted(true);
