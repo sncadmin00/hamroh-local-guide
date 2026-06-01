@@ -10,14 +10,39 @@ import { MagicLinkEmail } from '@/lib/email-templates/magic-link'
 import { RecoveryEmail } from '@/lib/email-templates/recovery'
 import { EmailChangeEmail } from '@/lib/email-templates/email-change'
 import { ReauthenticationEmail } from '@/lib/email-templates/reauthentication'
+import { normalizeLocale, pick, type Locale } from '@/lib/email-templates/_i18n'
 
-const EMAIL_SUBJECTS: Record<string, string> = {
-  signup: 'Confirm your email',
-  invite: "You've been invited",
-  magiclink: 'Your login link',
-  recovery: 'Reset your password',
-  email_change: 'Confirm your new email',
-  reauthentication: 'Your verification code',
+const EMAIL_SUBJECTS: Record<string, Record<Locale, string>> = {
+  signup: {
+    ru: 'Подтвердите ваш email — Hamroh',
+    uz: 'Emailingizni tasdiqlang — Hamroh',
+    en: 'Confirm your email — Hamroh',
+  },
+  invite: {
+    ru: 'Вас пригласили в Hamroh',
+    uz: 'Sizni Hamroh ga taklif qilishdi',
+    en: "You've been invited to Hamroh",
+  },
+  magiclink: {
+    ru: 'Ваша ссылка для входа — Hamroh',
+    uz: 'Kirish havolangiz — Hamroh',
+    en: 'Your sign-in link — Hamroh',
+  },
+  recovery: {
+    ru: 'Сброс пароля — Hamroh',
+    uz: 'Parolni tiklash — Hamroh',
+    en: 'Reset your password — Hamroh',
+  },
+  email_change: {
+    ru: 'Подтвердите смену email — Hamroh',
+    uz: 'Email o‘zgarishini tasdiqlang — Hamroh',
+    en: 'Confirm your new email — Hamroh',
+  },
+  reauthentication: {
+    ru: 'Ваш код подтверждения — Hamroh',
+    uz: 'Tasdiqlash kodingiz — Hamroh',
+    en: 'Your verification code — Hamroh',
+  },
 }
 
 // Template mapping
@@ -41,6 +66,16 @@ function redactEmail(email: string | null | undefined): string {
   const [localPart, domain] = email.split('@')
   if (!localPart || !domain) return '***'
   return `${localPart[0]}***@${domain}`
+}
+
+function extractLocale(payloadData: any): Locale {
+  // Try several places where locale might live in the Lovable auth payload
+  return normalizeLocale(
+    payloadData?.user_metadata?.locale ??
+      payloadData?.user?.user_metadata?.locale ??
+      payloadData?.metadata?.locale ??
+      payloadData?.locale,
+  )
 }
 
 export const Route = createFileRoute("/lovable/email/auth/webhook")({
@@ -113,11 +148,11 @@ export const Route = createFileRoute("/lovable/email/auth/webhook")({
           )
         }
 
-        // The email action type is in payload.data.action_type (e.g., "signup", "recovery")
-        // payload.type is the hook event type ("auth")
         const emailType = payload.data.action_type
+        const locale = extractLocale(payload.data)
         console.log('Received auth event', {
           emailType,
+          locale,
           email_redacted: redactEmail(payload.data.email),
           run_id,
         })
@@ -131,7 +166,6 @@ export const Route = createFileRoute("/lovable/email/auth/webhook")({
           )
         }
 
-        // Build template props from payload.data (HookData structure)
         const templateProps = {
           siteName: SITE_NAME,
           siteUrl: `https://${ROOT_DOMAIN}`,
@@ -141,6 +175,7 @@ export const Route = createFileRoute("/lovable/email/auth/webhook")({
           email: payload.data.email,
           oldEmail: payload.data.old_email,
           newEmail: payload.data.new_email,
+          locale,
         }
 
         // Render React Email to HTML and plain text
@@ -163,13 +198,16 @@ export const Route = createFileRoute("/lovable/email/auth/webhook")({
         const supabase = createClient(supabaseUrl, supabaseServiceKey)
         const messageId = crypto.randomUUID()
 
-        // Log pending BEFORE enqueue so we have a record even if enqueue crashes
         await supabase.from('email_send_log').insert({
           message_id: messageId,
           template_name: emailType,
           recipient_email: payload.data.email,
           status: 'pending',
         })
+
+        const subject = EMAIL_SUBJECTS[emailType]
+          ? pick(EMAIL_SUBJECTS[emailType], locale)
+          : 'Hamroh'
 
         const { error: enqueueError } = await supabase.rpc('enqueue_email', {
           queue_name: 'auth_emails',
@@ -179,7 +217,7 @@ export const Route = createFileRoute("/lovable/email/auth/webhook")({
             to: payload.data.email,
             from: `${SITE_NAME} <noreply@${FROM_DOMAIN}>`,
             sender_domain: SENDER_DOMAIN,
-            subject: EMAIL_SUBJECTS[emailType] || 'Notification',
+            subject,
             html,
             text,
             purpose: 'transactional',
@@ -205,6 +243,7 @@ export const Route = createFileRoute("/lovable/email/auth/webhook")({
 
         console.log('Auth email enqueued', {
           emailType,
+          locale,
           email_redacted: redactEmail(payload.data.email),
           run_id,
         })
