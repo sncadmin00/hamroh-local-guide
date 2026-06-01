@@ -9,7 +9,12 @@ import {
 } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
+import ogDefault from "@/assets/og-default.jpg";
 import { I18nProvider } from "@/lib/i18n";
+import { useTrackSource } from "@/hooks/useTrackSource";
+
+const SITE_URL = "https://hamroh-local-guide.lovable.app";
+const OG_IMAGE = `${SITE_URL}${ogDefault}`;
 
 function NotFoundComponent() {
   return (
@@ -57,10 +62,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Sancho — Explore places with locals" },
       { name: "description", content: "Book verified local guides in cities around the world. Authentic experiences, multiple languages, instant booking." },
+      { property: "og:site_name", content: "Sancho" },
       { property: "og:title", content: "Sancho — Explore places with locals" },
       { property: "og:description", content: "Book verified local guides in cities around the world." },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: OG_IMAGE },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: OG_IMAGE },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -89,6 +99,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useTrackSource();
   return (
     <QueryClientProvider client={queryClient}>
       <I18nProvider>
