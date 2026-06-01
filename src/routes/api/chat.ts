@@ -29,10 +29,10 @@ async function buildSystemPrompt(client: ReturnType<typeof createClient<any, any
     })
     .join("\n");
 
-  const placesCatalog = ((placesRes.data ?? []) as Array<{
+  const placesCatalog = ((placesRes.data ?? []) as unknown as Array<{
       name: string; category: string; short_description: string; tags: string[];
       cities: { name: string } | { name: string }[] | null;
-      place_guides: Array<{ guides: { slug: string; name: string } | null }> | null;
+      place_guides: Array<{ guides: { slug: string; name: string } | { slug: string; name: string }[] | null }> | null;
     }>)
     .map((p) => {
       const cityName = Array.isArray(p.cities) ? p.cities[0]?.name ?? "" : p.cities?.name ?? "";
