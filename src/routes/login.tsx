@@ -71,6 +71,7 @@ function LoginPage() {
         } catch (e) {
           console.error("Welcome email failed", e);
         }
+        trackEvent("signup", { locale: lang });
         if (newsletterOptIn) {
           try {
             await subscribe({ data: { email, locale: lang as "ru" | "uz" | "en", source: "signup" } });
