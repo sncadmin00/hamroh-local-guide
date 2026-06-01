@@ -73,6 +73,20 @@ type Booking = {
   guides?: { name: string; slug: string } | null;
 };
 
+type GuideApplication = {
+  id: string;
+  full_name: string;
+  email: string;
+  phone: string;
+  city: string;
+  languages: string[];
+  specialization: string;
+  experience_years: number;
+  about: string;
+  status: string;
+  created_at: string;
+};
+
 const SOURCES = ["web", "instagram", "facebook", "telegram", "whatsapp", "other"] as const;
 type SourceKey = (typeof SOURCES)[number];
 
