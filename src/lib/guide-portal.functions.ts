@@ -114,7 +114,9 @@ export const updateBookingStatus = createServerFn({ method: "POST" })
       .eq("id", data.id)
       .maybeSingle();
 
-    const update: Record<string, unknown> = { status: data.status };
+    const update: { status: typeof data.status; cancellation_reason?: string | null } = {
+      status: data.status,
+    };
     if (data.status !== "confirmed" && data.reason) {
       update.cancellation_reason = data.reason;
     }
@@ -123,6 +125,7 @@ export const updateBookingStatus = createServerFn({ method: "POST" })
       .update(update)
       .eq("id", data.id);
     if (error) throw new Error(error.message);
+
 
     // Notify client (skip if no state change)
     if (prior && prior.status !== data.status && prior.customer_email) {
