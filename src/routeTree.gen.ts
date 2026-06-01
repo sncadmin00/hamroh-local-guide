@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as MyBookingsRouteImport } from './routes/my-bookings'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as GuidesRouteImport } from './routes/guides'
@@ -28,6 +29,11 @@ import { Route as AiThreadIdRouteImport } from './routes/ai.$threadId'
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyBookingsRoute = MyBookingsRouteImport.update({
+  id: '/my-bookings',
+  path: '/my-bookings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -111,6 +117,7 @@ export interface FileRoutesByFullPath {
   '/guides': typeof GuidesRouteWithChildren
   '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
+  '/my-bookings': typeof MyBookingsRoute
   '/settings': typeof SettingsRoute
   '/ai/$threadId': typeof AiThreadIdRoute
   '/api/chat': typeof ApiChatRoute
@@ -128,6 +135,7 @@ export interface FileRoutesByTo {
   '/guides': typeof GuidesRouteWithChildren
   '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
+  '/my-bookings': typeof MyBookingsRoute
   '/settings': typeof SettingsRoute
   '/ai/$threadId': typeof AiThreadIdRoute
   '/api/chat': typeof ApiChatRoute
@@ -146,6 +154,7 @@ export interface FileRoutesById {
   '/guides': typeof GuidesRouteWithChildren
   '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
+  '/my-bookings': typeof MyBookingsRoute
   '/settings': typeof SettingsRoute
   '/ai/$threadId': typeof AiThreadIdRoute
   '/api/chat': typeof ApiChatRoute
@@ -165,6 +174,7 @@ export interface FileRouteTypes {
     | '/guides'
     | '/how-it-works'
     | '/login'
+    | '/my-bookings'
     | '/settings'
     | '/ai/$threadId'
     | '/api/chat'
@@ -182,6 +192,7 @@ export interface FileRouteTypes {
     | '/guides'
     | '/how-it-works'
     | '/login'
+    | '/my-bookings'
     | '/settings'
     | '/ai/$threadId'
     | '/api/chat'
@@ -199,6 +210,7 @@ export interface FileRouteTypes {
     | '/guides'
     | '/how-it-works'
     | '/login'
+    | '/my-bookings'
     | '/settings'
     | '/ai/$threadId'
     | '/api/chat'
@@ -217,6 +229,7 @@ export interface RootRouteChildren {
   GuidesRoute: typeof GuidesRouteWithChildren
   HowItWorksRoute: typeof HowItWorksRoute
   LoginRoute: typeof LoginRoute
+  MyBookingsRoute: typeof MyBookingsRoute
   SettingsRoute: typeof SettingsRoute
   ApiChatRoute: typeof ApiChatRoute
   BookGuideIdRoute: typeof BookGuideIdRoute
@@ -229,6 +242,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my-bookings': {
+      id: '/my-bookings'
+      path: '/my-bookings'
+      fullPath: '/my-bookings'
+      preLoaderRoute: typeof MyBookingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -374,6 +394,7 @@ const rootRouteChildren: RootRouteChildren = {
   GuidesRoute: GuidesRouteWithChildren,
   HowItWorksRoute: HowItWorksRoute,
   LoginRoute: LoginRoute,
+  MyBookingsRoute: MyBookingsRoute,
   SettingsRoute: SettingsRoute,
   ApiChatRoute: ApiChatRoute,
   BookGuideIdRoute: BookGuideIdRoute,
@@ -381,3 +402,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
