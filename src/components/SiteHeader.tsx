@@ -101,14 +101,14 @@ export function SiteHeader() {
               onClick={signOut}
               className="hidden md:inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-sm font-medium text-muted-foreground hover:bg-secondary/60 hover:text-foreground transition-colors"
             >
-              <LogOut className="h-4 w-4" /> Sign out
+              <LogOut className="h-4 w-4" /> {t("common.signOut")}
             </button>
           ) : (
             <Link
               to="/login"
               className="hidden md:inline-flex h-9 items-center gap-1.5 rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90 transition-opacity"
             >
-              <LogIn className="h-4 w-4" /> Sign in
+              <LogIn className="h-4 w-4" /> {t("common.signIn")}
             </Link>
           )}
 
@@ -142,7 +142,7 @@ export function SiteHeader() {
                     className="px-3 py-3 rounded-lg text-base font-medium text-foreground hover:bg-secondary/60 inline-flex items-center gap-2"
                     activeProps={{ className: "px-3 py-3 rounded-lg text-base font-medium bg-secondary text-foreground inline-flex items-center gap-2" }}
                   >
-                    <MessageSquare className="h-4 w-4" /> Messages
+                    <MessageSquare className="h-4 w-4" /> {t("common.messages")}
                   </Link>
                 )}
                 {signedIn && (
@@ -151,7 +151,7 @@ export function SiteHeader() {
                     className="px-3 py-3 rounded-lg text-base font-medium text-foreground hover:bg-secondary/60 inline-flex items-center gap-2"
                     activeProps={{ className: "px-3 py-3 rounded-lg text-base font-medium bg-secondary text-foreground inline-flex items-center gap-2" }}
                   >
-                    <Settings className="h-4 w-4" /> Account settings
+                    <Settings className="h-4 w-4" /> {t("common.settings")}
                   </Link>
                 )}
                 {isAdmin && (
@@ -160,7 +160,7 @@ export function SiteHeader() {
                     className="px-3 py-3 rounded-lg text-base font-medium text-foreground hover:bg-secondary/60 inline-flex items-center gap-2"
                     activeProps={{ className: "px-3 py-3 rounded-lg text-base font-medium bg-secondary text-foreground inline-flex items-center gap-2" }}
                   >
-                    <Shield className="h-4 w-4" /> Admin
+                    <Shield className="h-4 w-4" /> {t("common.admin")}
                   </Link>
                 )}
                 {signedIn ? (
@@ -168,14 +168,14 @@ export function SiteHeader() {
                     onClick={signOut}
                     className="mt-2 px-3 py-3 rounded-lg text-base font-medium text-foreground hover:bg-secondary/60 inline-flex items-center gap-2 text-left"
                   >
-                    <LogOut className="h-4 w-4" /> Sign out
+                    <LogOut className="h-4 w-4" /> {t("common.signOut")}
                   </button>
                 ) : (
                   <Link
                     to="/login"
                     className="mt-2 px-3 py-3 rounded-lg text-base font-semibold bg-primary text-primary-foreground inline-flex items-center gap-2"
                   >
-                    <LogIn className="h-4 w-4" /> Sign in
+                    <LogIn className="h-4 w-4" /> {t("common.signIn")}
                   </Link>
                 )}
               </nav>

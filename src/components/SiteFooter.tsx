@@ -1,8 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { Instagram, Youtube, Music2, Twitter, Send } from "lucide-react";
 import hamrohLogo from "@/assets/hamroh-logo.png";
+import { useI18n } from "@/lib/i18n";
+
 
 export function SiteFooter() {
+  const { t } = useI18n();
   return (
     <footer className="border-t border-border/60 bg-background">
       <div className="container mx-auto px-4 py-10">
@@ -12,13 +15,13 @@ export function SiteFooter() {
           </div>
 
           <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
-            <Link to="/about" className="hover:text-foreground">About</Link>
-            <Link to="/how-it-works" className="hover:text-foreground">How it works</Link>
-            <Link to="/faq" className="hover:text-foreground">FAQ</Link>
-            <Link to="/contact" className="hover:text-foreground">Contact</Link>
-            <Link to="/terms" className="hover:text-foreground">Terms</Link>
-            <Link to="/privacy" className="hover:text-foreground">Privacy</Link>
-            <Link to="/refund-policy" className="hover:text-foreground">Refunds</Link>
+            <Link to="/about" className="hover:text-foreground">{t("footer.about")}</Link>
+            <Link to="/how-it-works" className="hover:text-foreground">{t("nav.howItWorks")}</Link>
+            <Link to="/faq" className="hover:text-foreground">{t("nav.faq")}</Link>
+            <Link to="/contact" className="hover:text-foreground">{t("footer.contact")}</Link>
+            <Link to="/terms" className="hover:text-foreground">{t("footer.terms")}</Link>
+            <Link to="/privacy" className="hover:text-foreground">{t("footer.privacy")}</Link>
+            <Link to="/refund-policy" className="hover:text-foreground">{t("footer.refunds")}</Link>
           </nav>
 
           <div className="flex items-center gap-2">
@@ -46,7 +49,7 @@ export function SiteFooter() {
         </div>
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
-          © {new Date().getFullYear()} Hamroh · Trusted local guides
+          © {new Date().getFullYear()} Hamroh · {t("footer.tagline")}
         </p>
       </div>
     </footer>

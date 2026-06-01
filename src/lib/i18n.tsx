@@ -15,6 +15,11 @@ export const translations: Dict = {
   "common.menu": { en: "Menu", uz: "Menyu", ru: "Меню" },
   "common.findUs": { en: "Find us:", uz: "Bizni toping:", ru: "Найти нас:" },
   "common.contactUs": { en: "Contact us:", uz: "Aloqa:", ru: "Связаться:" },
+  "common.signIn": { en: "Sign in", uz: "Kirish", ru: "Войти" },
+  "common.signOut": { en: "Sign out", uz: "Chiqish", ru: "Выйти" },
+  "common.messages": { en: "Messages", uz: "Xabarlar", ru: "Сообщения" },
+  "common.settings": { en: "Account settings", uz: "Hisob sozlamalari", ru: "Настройки аккаунта" },
+  "common.admin": { en: "Admin", uz: "Admin", ru: "Админ" },
   "hero.title": { en: "Find your local guide", uz: "Mahalliy hamrohizni toping", ru: "Найдите своего местного гида" },
   "hero.subtitle": {
     en: "Describe the trip you want. Hamroh AI matches you with a verified local guide.",
@@ -26,6 +31,19 @@ export const translations: Dict = {
     uz: "O'zingiz tanlamoqchimisiz? Yo'lboshchini qo'lda toping →",
     ru: "Хотите выбрать сами? Найдите гида вручную →",
   },
+  "hero.placeholder": {
+    en: "e.g. English-speaking food guide for two days…",
+    uz: "masalan, ikki kunlik ingliz tilida so'zlashuvchi taom yo'lboshchisi…",
+    ru: "напр., англоговорящий гид по еде на два дня…",
+  },
+  "browse.title": { en: "Browse by interest", uz: "Qiziqish bo'yicha ko'rish", ru: "По интересам" },
+  "browse.subtitle": { en: "Find a guide for what you love", uz: "Sevimli mavzuingiz bo'yicha yo'lboshchi toping", ru: "Найдите гида под ваши интересы" },
+  "footer.about": { en: "About", uz: "Biz haqimizda", ru: "О нас" },
+  "footer.contact": { en: "Contact", uz: "Aloqa", ru: "Контакты" },
+  "footer.terms": { en: "Terms", uz: "Shartlar", ru: "Условия" },
+  "footer.privacy": { en: "Privacy", uz: "Maxfiylik", ru: "Конфиденциальность" },
+  "footer.refunds": { en: "Refunds", uz: "Pulni qaytarish", ru: "Возвраты" },
+  "footer.tagline": { en: "Trusted local guides", uz: "Ishonchli mahalliy yo'lboshchilar", ru: "Проверенные местные гиды" },
 };
 
 const I18nContext = createContext<{ lang: Lang; setLang: (l: Lang) => void; t: (k: keyof typeof translations) => string }>({
