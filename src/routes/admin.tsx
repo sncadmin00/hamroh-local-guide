@@ -3,7 +3,8 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Compass, Trash2, Plus, Upload, ImageIcon, Video, Mail } from "lucide-react";
+import { Compass, Trash2, Plus, Upload, ImageIcon, Video, Mail, Tag } from "lucide-react";
+import { CategoryIcon } from "@/components/CategoryIcon";
 import { inviteGuideToPortal } from "@/lib/admin-portal.functions";
 
 export const Route = createFileRoute("/admin")({
@@ -92,6 +93,17 @@ type GuideApplication = {
   video_url: string | null;
   photo_urls: string[] | null;
 };
+
+type Category = {
+  id: string;
+  slug: string;
+  name: string;
+  icon: string;
+  description: string;
+  sort_order: number;
+};
+
+type GuideCategoryLink = { guide_id: string; category_id: string };
 
 const SOURCES = ["web", "instagram", "facebook", "telegram", "whatsapp", "other"] as const;
 type SourceKey = (typeof SOURCES)[number];
