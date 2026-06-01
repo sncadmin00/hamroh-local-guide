@@ -763,6 +763,39 @@ export type Database = {
         }
         Relationships: []
       }
+      reviews: {
+        Row: {
+          booking_id: string
+          comment: string
+          created_at: string
+          guide_id: string
+          id: string
+          rating: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          booking_id: string
+          comment?: string
+          created_at?: string
+          guide_id: string
+          id?: string
+          rating: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          booking_id?: string
+          comment?: string
+          created_at?: string
+          guide_id?: string
+          id?: string
+          rating?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       social_embed_cities: {
         Row: {
           city_id: string
@@ -908,6 +941,10 @@ export type Database = {
           msg_id: number
           read_ct: number
         }[]
+      }
+      recompute_guide_rating: {
+        Args: { _guide_id: string }
+        Returns: undefined
       }
     }
     Enums: {
