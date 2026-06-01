@@ -245,10 +245,13 @@ export type Database = {
           id: string
           languages: string[]
           phone: string
+          photo_urls: string[]
+          portrait_url: string | null
           specialization: string
           status: string
           updated_at: string
           user_id: string | null
+          video_url: string | null
         }
         Insert: {
           about?: string
@@ -260,10 +263,13 @@ export type Database = {
           id?: string
           languages?: string[]
           phone?: string
+          photo_urls?: string[]
+          portrait_url?: string | null
           specialization?: string
           status?: string
           updated_at?: string
           user_id?: string | null
+          video_url?: string | null
         }
         Update: {
           about?: string
@@ -275,10 +281,13 @@ export type Database = {
           id?: string
           languages?: string[]
           phone?: string
+          photo_urls?: string[]
+          portrait_url?: string | null
           specialization?: string
           status?: string
           updated_at?: string
           user_id?: string | null
+          video_url?: string | null
         }
         Relationships: []
       }
