@@ -188,7 +188,10 @@ export const Route = createFileRoute("/api/chat")({
           model,
           system: await buildSystemPrompt(userClient),
           messages: await convertToModelMessages(body.messages),
+          tools: { web_search: createWebSearchTool() },
+          stopWhen: stepCountIs(50),
         });
+
 
         return result.toUIMessageStreamResponse({
           originalMessages: body.messages,
