@@ -1,8 +1,8 @@
 import * as React from 'react'
 import {
-  Body, Container, Head, Heading, Html, Link, Preview, Text,
+  Body, Img, Container, Head, Heading, Html, Link, Preview, Text,
 } from '@react-email/components'
-import { styles } from './_brand'
+import { styles, BRAND } from './_brand'
 
 interface MagicLinkEmailProps {
   siteName: string
@@ -15,7 +15,7 @@ export const MagicLinkEmail = ({ siteName, confirmationUrl }: MagicLinkEmailProp
     <Preview>Ссылка для входа в {siteName}</Preview>
     <Body style={styles.main}>
       <Container style={styles.container}>
-        <Heading style={styles.brandBar}>Hamroh</Heading>
+        <Img src={BRAND.logoUrl} alt="Hamroh" style={styles.logo} />
         <Heading style={styles.h1}>Ссылка для входа</Heading>
         <Text style={styles.text}>
           Нажмите кнопку ниже, чтобы войти в {siteName}. Ссылка действует ограниченное время.

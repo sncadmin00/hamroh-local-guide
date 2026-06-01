@@ -1,8 +1,8 @@
 import * as React from 'react'
 import {
-  Body, Container, Head, Heading, Html, Preview, Text,
+  Body, Img, Container, Head, Heading, Html, Preview, Text,
 } from '@react-email/components'
-import { styles } from './_brand'
+import { styles, BRAND } from './_brand'
 
 interface ReauthenticationEmailProps {
   token: string
@@ -14,7 +14,7 @@ export const ReauthenticationEmail = ({ token }: ReauthenticationEmailProps) => 
     <Preview>Ваш код подтверждения</Preview>
     <Body style={styles.main}>
       <Container style={styles.container}>
-        <Heading style={styles.brandBar}>Hamroh</Heading>
+        <Img src={BRAND.logoUrl} alt="Hamroh" style={styles.logo} />
         <Heading style={styles.h1}>Подтверждение входа</Heading>
         <Text style={styles.text}>Используйте код ниже, чтобы подтвердить вашу личность:</Text>
         <Text style={styles.code}>{token}</Text>

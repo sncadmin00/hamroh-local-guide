@@ -1,8 +1,8 @@
 import * as React from 'react'
 import {
-  Body, Container, Head, Heading, Html, Link, Preview, Text,
+  Body, Img, Container, Head, Heading, Html, Link, Preview, Text,
 } from '@react-email/components'
-import { styles } from './_brand'
+import { styles, BRAND } from './_brand'
 
 interface RecoveryEmailProps {
   siteName: string
@@ -15,7 +15,7 @@ export const RecoveryEmail = ({ siteName, confirmationUrl }: RecoveryEmailProps)
     <Preview>Сброс пароля для {siteName}</Preview>
     <Body style={styles.main}>
       <Container style={styles.container}>
-        <Heading style={styles.brandBar}>Hamroh</Heading>
+        <Img src={BRAND.logoUrl} alt="Hamroh" style={styles.logo} />
         <Heading style={styles.h1}>Сброс пароля</Heading>
         <Text style={styles.text}>
           Мы получили запрос на сброс пароля для {siteName}. Нажмите кнопку ниже,
