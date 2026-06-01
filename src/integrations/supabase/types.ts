@@ -186,6 +186,7 @@ export type Database = {
           guests: number
           guide_id: string
           id: string
+          locale: string
           notes: string
           slot_id: string | null
           source: string
@@ -205,6 +206,7 @@ export type Database = {
           guests?: number
           guide_id: string
           id?: string
+          locale?: string
           notes?: string
           slot_id?: string | null
           source?: string
@@ -224,6 +226,7 @@ export type Database = {
           guests?: number
           guide_id?: string
           id?: string
+          locale?: string
           notes?: string
           slot_id?: string | null
           source?: string
@@ -568,6 +571,7 @@ export type Database = {
           id: string
           instant_book: boolean
           languages: string[]
+          locale: string
           name: string
           photo_url: string | null
           price_per_day: number
@@ -588,6 +592,7 @@ export type Database = {
           id?: string
           instant_book?: boolean
           languages?: string[]
+          locale?: string
           name: string
           photo_url?: string | null
           price_per_day?: number
@@ -608,6 +613,7 @@ export type Database = {
           id?: string
           instant_book?: boolean
           languages?: string[]
+          locale?: string
           name?: string
           photo_url?: string | null
           price_per_day?: number
