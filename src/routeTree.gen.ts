@@ -16,6 +16,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as GuidesRouteImport } from './routes/guides'
 import { Route as GuideRouteImport } from './routes/guide'
+import { Route as FaqRouteImport } from './routes/faq'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as BecomeAGuideRouteImport } from './routes/become-a-guide'
 import { Route as AiRouteImport } from './routes/ai'
@@ -62,6 +63,11 @@ const GuidesRoute = GuidesRouteImport.update({
 const GuideRoute = GuideRouteImport.update({
   id: '/guide',
   path: '/guide',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExploreRoute = ExploreRouteImport.update({
@@ -131,6 +137,7 @@ export interface FileRoutesByFullPath {
   '/ai': typeof AiRouteWithChildren
   '/become-a-guide': typeof BecomeAGuideRoute
   '/explore': typeof ExploreRouteWithChildren
+  '/faq': typeof FaqRoute
   '/guide': typeof GuideRoute
   '/guides': typeof GuidesRouteWithChildren
   '/how-it-works': typeof HowItWorksRoute
@@ -152,6 +159,7 @@ export interface FileRoutesByTo {
   '/ai': typeof AiRouteWithChildren
   '/become-a-guide': typeof BecomeAGuideRoute
   '/explore': typeof ExploreRouteWithChildren
+  '/faq': typeof FaqRoute
   '/guide': typeof GuideRoute
   '/guides': typeof GuidesRouteWithChildren
   '/how-it-works': typeof HowItWorksRoute
@@ -173,6 +181,7 @@ export interface FileRoutesById {
   '/ai': typeof AiRouteWithChildren
   '/become-a-guide': typeof BecomeAGuideRoute
   '/explore': typeof ExploreRouteWithChildren
+  '/faq': typeof FaqRoute
   '/guide': typeof GuideRoute
   '/guides': typeof GuidesRouteWithChildren
   '/how-it-works': typeof HowItWorksRoute
@@ -196,6 +205,7 @@ export interface FileRouteTypes {
     | '/ai'
     | '/become-a-guide'
     | '/explore'
+    | '/faq'
     | '/guide'
     | '/guides'
     | '/how-it-works'
@@ -217,6 +227,7 @@ export interface FileRouteTypes {
     | '/ai'
     | '/become-a-guide'
     | '/explore'
+    | '/faq'
     | '/guide'
     | '/guides'
     | '/how-it-works'
@@ -237,6 +248,7 @@ export interface FileRouteTypes {
     | '/ai'
     | '/become-a-guide'
     | '/explore'
+    | '/faq'
     | '/guide'
     | '/guides'
     | '/how-it-works'
@@ -259,6 +271,7 @@ export interface RootRouteChildren {
   AiRoute: typeof AiRouteWithChildren
   BecomeAGuideRoute: typeof BecomeAGuideRoute
   ExploreRoute: typeof ExploreRouteWithChildren
+  FaqRoute: typeof FaqRoute
   GuideRoute: typeof GuideRoute
   GuidesRoute: typeof GuidesRouteWithChildren
   HowItWorksRoute: typeof HowItWorksRoute
@@ -319,6 +332,13 @@ declare module '@tanstack/react-router' {
       path: '/guide'
       fullPath: '/guide'
       preLoaderRoute: typeof GuideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/explore': {
@@ -460,6 +480,7 @@ const rootRouteChildren: RootRouteChildren = {
   AiRoute: AiRouteWithChildren,
   BecomeAGuideRoute: BecomeAGuideRoute,
   ExploreRoute: ExploreRouteWithChildren,
+  FaqRoute: FaqRoute,
   GuideRoute: GuideRoute,
   GuidesRoute: GuidesRouteWithChildren,
   HowItWorksRoute: HowItWorksRoute,
