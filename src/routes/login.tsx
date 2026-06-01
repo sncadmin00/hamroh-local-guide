@@ -96,13 +96,13 @@ function LoginPage() {
 
   const google = async () => {
     setError(null);
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/ai" });
+    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/login" });
     if (result.error) setError(result.error.message);
   };
 
   const apple = async () => {
     setError(null);
-    const result = await lovable.auth.signInWithOAuth("apple", { redirect_uri: window.location.origin + "/ai" });
+    const result = await lovable.auth.signInWithOAuth("apple", { redirect_uri: window.location.origin + "/login" });
     if (result.error) setError(result.error.message);
   };
 
