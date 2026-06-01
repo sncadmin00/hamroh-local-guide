@@ -10,6 +10,7 @@ import { useGuide } from "@/lib/content-queries";
 import { getBookingSource } from "@/hooks/useTrackSource";
 import { getGuideSlots, createBooking } from "@/lib/booking.functions";
 import { useI18n } from "@/lib/i18n";
+import { trackEvent } from "@/lib/analytics";
 
 export const Route = createFileRoute("/book/$guideId")({
   head: () => ({ meta: [{ title: "Book a guide — Sancho" }] }),
@@ -95,6 +96,7 @@ function BookPage() {
         },
       });
       setConfirmed(true);
+      trackEvent("booking_created", { guide_id: guide.id, instant: !!chosenSlot, total: total + fee });
       window.scrollTo({ top: 0 });
     } catch (err) {
       toast.error((err as Error).message);
