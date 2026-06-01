@@ -1,134 +1,76 @@
 import {
-  Body,
-  Button,
-  Container,
-  Head,
-  Heading,
-  Html,
-  Preview,
-  Section,
-  Text,
+  Body, Button, Container, Head, Heading, Html, Img, Preview, Section, Text,
 } from '@react-email/components'
 import type { TemplateEntry } from './registry'
+import { BRAND, styles } from './_brand'
+import { normalizeLocale, pick, type Locale } from './_i18n'
 
-const SITE_NAME = 'Hamroh'
-
-interface UnreadChatMessageProps {
+interface Props {
   recipientName?: string
   senderName?: string
   messagePreview?: string
   bookingExperience?: string
   bookingUrl?: string
+  locale?: Locale | string
 }
 
-const UnreadChatMessageEmail = ({
-  recipientName,
-  senderName,
-  messagePreview,
-  bookingExperience,
-  bookingUrl,
-}: UnreadChatMessageProps) => (
-  <Html lang="en" dir="ltr">
-    <Head />
-    <Preview>
-      {senderName ? `New message from ${senderName}` : 'You have a new message'}
-    </Preview>
-    <Body style={main}>
-      <Container style={container}>
-        <Heading style={h1}>
-          {recipientName ? `Hi ${recipientName},` : 'Hi,'}
-        </Heading>
-        <Text style={text}>
-          You have an unread message
-          {senderName ? ` from ${senderName}` : ''}
-          {bookingExperience ? ` about "${bookingExperience}"` : ''}.
-        </Text>
+const T = {
+  previewWith: { ru: (s: string) => `Новое сообщение от ${s}`, uz: (s: string) => `${s} dan yangi xabar`, en: (s: string) => `New message from ${s}` },
+  previewNo: { ru: 'У вас новое сообщение', uz: 'Sizda yangi xabar bor', en: 'You have a new message' },
+  greet: { ru: (n?: string) => n ? `Здравствуйте, ${n}!` : 'Здравствуйте!', uz: (n?: string) => n ? `Assalomu alaykum, ${n}!` : 'Assalomu alaykum!', en: (n?: string) => n ? `Hi ${n},` : 'Hi,' },
+  body: {
+    ru: (sender?: string, exp?: string) => `У вас непрочитанное сообщение${sender ? ` от ${sender}` : ''}${exp ? ` по бронированию «${exp}»` : ''}.`,
+    uz: (sender?: string, exp?: string) => `Sizda o‘qilmagan xabar bor${sender ? `, ${sender} dan` : ''}${exp ? ` («${exp}» bron bo‘yicha)` : ''}.`,
+    en: (sender?: string, exp?: string) => `You have an unread message${sender ? ` from ${sender}` : ''}${exp ? ` about "${exp}"` : ''}.`,
+  },
+  cta: { ru: 'Открыть переписку', uz: 'Suhbatni ochish', en: 'Open conversation' },
+  footer: { ru: 'Вы получили это письмо, потому что в чате бронирования есть непрочитанное сообщение.', uz: 'Bu xatni oldingiz, chunki bron chatida o‘qilmagan xabar bor.', en: "You're receiving this because there's an unread message in your booking chat." },
+  subjectWith: { ru: (s: string) => `Новое сообщение от ${s} — Hamroh`, uz: (s: string) => `${s} dan yangi xabar — Hamroh`, en: (s: string) => `New message from ${s} — Hamroh` },
+  subjectNo: { ru: 'У вас новое сообщение — Hamroh', uz: 'Sizda yangi xabar bor — Hamroh', en: 'You have a new message — Hamroh' },
+}
 
-        {messagePreview ? (
-          <Section style={quoteBox}>
-            <Text style={quoteText}>"{messagePreview}"</Text>
-          </Section>
-        ) : null}
+const Email = ({ recipientName, senderName, messagePreview, bookingExperience, bookingUrl, locale }: Props) => {
+  const L = normalizeLocale(locale)
+  return (
+    <Html lang={L} dir="ltr">
+      <Head />
+      <Preview>{senderName ? pick(T.previewWith, L)(senderName) : pick(T.previewNo, L)}</Preview>
+      <Body style={styles.main}>
+        <Container style={styles.container}>
+          <Img src={BRAND.logoUrl} alt="Hamroh" style={styles.logo} />
+          <Heading style={styles.h1}>{pick(T.greet, L)(recipientName)}</Heading>
+          <Text style={styles.text}>{pick(T.body, L)(senderName, bookingExperience)}</Text>
+          {messagePreview && (
+            <Section style={quoteBox}>
+              <Text style={quoteText}>«{messagePreview}»</Text>
+            </Section>
+          )}
+          {bookingUrl && (
+            <Section style={{ textAlign: 'center', margin: '24px 0' }}>
+              <Button href={bookingUrl} style={styles.button}>{pick(T.cta, L)}</Button>
+            </Section>
+          )}
+          <Text style={styles.footer}>{pick(T.footer, L)}</Text>
+        </Container>
+      </Body>
+    </Html>
+  )
+}
 
-        {bookingUrl ? (
-          <Section style={{ textAlign: 'center', margin: '32px 0' }}>
-            <Button href={bookingUrl} style={button}>
-              Open conversation
-            </Button>
-          </Section>
-        ) : null}
-
-        <Text style={footer}>
-          You're receiving this because there's an unread message in your {SITE_NAME} booking chat.
-        </Text>
-      </Container>
-    </Body>
-  </Html>
-)
+const quoteBox = { borderLeft: `3px solid ${BRAND.primary}`, background: '#ffffff', padding: '12px 16px', margin: '16px 0', borderRadius: '4px' } as const
+const quoteText = { fontSize: '15px', color: BRAND.text, lineHeight: '1.5', margin: 0, fontStyle: 'italic' as const }
 
 export const template = {
-  component: UnreadChatMessageEmail,
-  subject: (data: Record<string, any>) =>
-    data?.senderName
-      ? `New message from ${data.senderName}`
-      : 'You have a new message',
+  component: Email,
+  subject: (d: Record<string, any>) => {
+    const L = normalizeLocale(d?.locale)
+    return d?.senderName ? pick(T.subjectWith, L)(d.senderName) : pick(T.subjectNo, L)
+  },
   displayName: 'Unread chat message',
   previewData: {
-    recipientName: 'Alex',
-    senderName: 'Maria',
-    messagePreview: 'Hi! Looking forward to our walk tomorrow — is 10am still good?',
-    bookingExperience: 'Old Town walking tour',
-    bookingUrl: 'https://hamrohim.com/messages/example',
+    recipientName: 'Алексей', senderName: 'Мария',
+    messagePreview: 'Здравствуйте! Жду нашу встречу завтра — 10:00 подходит?',
+    bookingExperience: 'Прогулка по Старому городу',
+    bookingUrl: 'https://hamrohim.com/messages/example', locale: 'ru',
   },
 } satisfies TemplateEntry
-
-const main: React.CSSProperties = {
-  backgroundColor: '#ffffff',
-  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-}
-const container: React.CSSProperties = {
-  padding: '24px',
-  maxWidth: '560px',
-  margin: '0 auto',
-}
-const h1: React.CSSProperties = {
-  fontSize: '22px',
-  fontWeight: 'bold',
-  color: '#0f172a',
-  margin: '0 0 16px',
-}
-const text: React.CSSProperties = {
-  fontSize: '15px',
-  color: '#334155',
-  lineHeight: '1.6',
-  margin: '0 0 16px',
-}
-const quoteBox: React.CSSProperties = {
-  borderLeft: '3px solid #0f172a',
-  background: '#f8fafc',
-  padding: '12px 16px',
-  margin: '16px 0',
-  borderRadius: '4px',
-}
-const quoteText: React.CSSProperties = {
-  fontSize: '15px',
-  color: '#0f172a',
-  lineHeight: '1.5',
-  margin: 0,
-  fontStyle: 'italic',
-}
-const button: React.CSSProperties = {
-  backgroundColor: '#0f172a',
-  color: '#ffffff',
-  padding: '12px 24px',
-  borderRadius: '6px',
-  textDecoration: 'none',
-  fontSize: '15px',
-  fontWeight: 600,
-  display: 'inline-block',
-}
-const footer: React.CSSProperties = {
-  fontSize: '12px',
-  color: '#94a3b8',
-  margin: '32px 0 0',
-}
