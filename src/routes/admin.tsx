@@ -73,6 +73,20 @@ type Booking = {
   guides?: { name: string; slug: string } | null;
 };
 
+type GuideApplication = {
+  id: string;
+  full_name: string;
+  email: string;
+  phone: string;
+  city: string;
+  languages: string[];
+  specialization: string;
+  experience_years: number;
+  about: string;
+  status: string;
+  created_at: string;
+};
+
 const SOURCES = ["web", "instagram", "facebook", "telegram", "whatsapp", "other"] as const;
 type SourceKey = (typeof SOURCES)[number];
 
@@ -91,26 +105,29 @@ function sourceBadgeClass(s: string): string {
 function AdminPage() {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
-  const [tab, setTab] = useState<"bookings" | "cities" | "guides" | "articles" | "social">("bookings");
+  const [tab, setTab] = useState<"bookings" | "applications" | "cities" | "guides" | "articles" | "social">("bookings");
   const [cities, setCities] = useState<City[]>([]);
   const [guides, setGuides] = useState<Guide[]>([]);
   const [articles, setArticles] = useState<Article[]>([]);
   const [embeds, setEmbeds] = useState<Embed[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
+  const [applications, setApplications] = useState<GuideApplication[]>([]);
 
   const loadData = useCallback(async () => {
-    const [c, g, a, e, b] = await Promise.all([
+    const [c, g, a, e, b, ap] = await Promise.all([
       supabase.from("cities").select("*").order("sort_order"),
       supabase.from("guides").select("*").order("sort_order"),
       supabase.from("articles").select("*").order("sort_order").order("created_at", { ascending: false }),
       supabase.from("social_embeds").select("*").order("sort_order"),
       supabase.from("bookings").select("*, guides(name, slug)").order("created_at", { ascending: false }),
+      supabase.from("guide_applications").select("*").order("created_at", { ascending: false }),
     ]);
     if (c.data) setCities(c.data as City[]);
     if (g.data) setGuides(g.data as Guide[]);
     if (a.data) setArticles(a.data as Article[]);
     if (e.data) setEmbeds(e.data as Embed[]);
     if (b.data) setBookings(b.data as Booking[]);
+    if (ap.data) setApplications(ap.data as GuideApplication[]);
   }, []);
 
   useEffect(() => {
@@ -164,6 +181,12 @@ function AdminPage() {
             Orders ({bookings.length})
           </button>
           <button
+            onClick={() => setTab("applications")}
+            className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "applications" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+          >
+            Applications ({applications.filter((a) => a.status === "pending").length})
+          </button>
+          <button
             onClick={() => setTab("cities")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "cities" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
@@ -190,6 +213,7 @@ function AdminPage() {
         </div>
 
         {tab === "bookings" && <BookingsPanel bookings={bookings} reload={loadData} />}
+        {tab === "applications" && <ApplicationsPanel applications={applications} reload={loadData} />}
         {tab === "cities" && <CitiesPanel cities={cities} reload={loadData} />}
         {tab === "guides" && <GuidesPanel guides={guides} cities={cities} reload={loadData} />}
         {tab === "articles" && <ArticlesPanel articles={articles} cities={cities} reload={loadData} />}
@@ -945,6 +969,139 @@ function BookingsPanel({ bookings, reload }: { bookings: Booking[]; reload: () =
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+function ApplicationsPanel({
+  applications,
+  reload,
+}: {
+  applications: GuideApplication[];
+  reload: () => Promise<void>;
+}) {
+  const [filter, setFilter] = useState<"all" | "pending" | "approved" | "rejected">("pending");
+  const [expanded, setExpanded] = useState<string | null>(null);
+
+  const filtered = applications.filter((a) => filter === "all" || a.status === filter);
+
+  const setStatus = async (id: string, status: string) => {
+    const { error } = await supabase.from("guide_applications").update({ status }).eq("id", id);
+    if (error) toast.error(error.message);
+    else {
+      toast.success("Status updated");
+      await reload();
+    }
+  };
+
+  const remove = async (id: string) => {
+    if (!confirm("Delete this application?")) return;
+    const { error } = await supabase.from("guide_applications").delete().eq("id", id);
+    if (error) toast.error(error.message);
+    else {
+      toast.success("Deleted");
+      await reload();
+    }
+  };
+
+  const badge = (s: string) => {
+    const base = "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium capitalize";
+    if (s === "approved") return `${base} bg-primary/10 text-primary`;
+    if (s === "rejected") return `${base} bg-destructive/10 text-destructive`;
+    return `${base} bg-accent/15 text-accent-foreground`;
+  };
+
+  return (
+    <div className="mt-6 rounded-3xl bg-card p-6 ring-1 ring-border/60">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="font-display text-lg font-semibold">Guide applications</h2>
+        <div className="inline-flex rounded-full bg-secondary/60 p-1">
+          {(["pending", "approved", "rejected", "all"] as const).map((s) => (
+            <button
+              key={s}
+              onClick={() => setFilter(s)}
+              className={`px-3 h-8 rounded-full text-xs font-medium capitalize ${filter === s ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {filtered.length === 0 ? (
+        <p className="mt-6 text-sm text-muted-foreground">No applications.</p>
+      ) : (
+        <ul className="mt-4 divide-y divide-border/60">
+          {filtered.map((a) => {
+            const open = expanded === a.id;
+            return (
+              <li key={a.id} className="py-4">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="font-medium">{a.full_name}</p>
+                      <span className={badge(a.status)}>{a.status}</span>
+                    </div>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {a.city} · {a.experience_years} yr · {new Date(a.created_at).toLocaleDateString()}
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground truncate">
+                      {a.email} · {a.phone}
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      onClick={() => setExpanded(open ? null : a.id)}
+                      className="h-8 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-secondary/60"
+                    >
+                      {open ? "Hide" : "Details"}
+                    </button>
+                    {a.status !== "approved" && (
+                      <button
+                        onClick={() => setStatus(a.id, "approved")}
+                        className="h-8 px-3 rounded-full text-xs font-medium bg-primary text-primary-foreground"
+                      >
+                        Approve
+                      </button>
+                    )}
+                    {a.status !== "rejected" && (
+                      <button
+                        onClick={() => setStatus(a.id, "rejected")}
+                        className="h-8 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-destructive/10 hover:text-destructive"
+                      >
+                        Reject
+                      </button>
+                    )}
+                    <button
+                      onClick={() => remove(a.id)}
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                      aria-label="Delete"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+                {open && (
+                  <div className="mt-3 rounded-2xl bg-secondary/40 p-4 text-sm space-y-2">
+                    <div>
+                      <span className="text-xs text-muted-foreground">Specialization: </span>
+                      {a.specialization}
+                    </div>
+                    <div>
+                      <span className="text-xs text-muted-foreground">Languages: </span>
+                      {a.languages.join(", ")}
+                    </div>
+                    <div>
+                      <span className="text-xs text-muted-foreground">About:</span>
+                      <p className="mt-1 whitespace-pre-wrap">{a.about}</p>
+                    </div>
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </div>
   );
 }

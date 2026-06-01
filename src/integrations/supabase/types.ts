@@ -234,6 +234,54 @@ export type Database = {
         }
         Relationships: []
       }
+      guide_applications: {
+        Row: {
+          about: string
+          city: string
+          created_at: string
+          email: string
+          experience_years: number
+          full_name: string
+          id: string
+          languages: string[]
+          phone: string
+          specialization: string
+          status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          about?: string
+          city: string
+          created_at?: string
+          email: string
+          experience_years?: number
+          full_name: string
+          id?: string
+          languages?: string[]
+          phone?: string
+          specialization?: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          about?: string
+          city?: string
+          created_at?: string
+          email?: string
+          experience_years?: number
+          full_name?: string
+          id?: string
+          languages?: string[]
+          phone?: string
+          specialization?: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       guide_experiences: {
         Row: {
           created_at: string
