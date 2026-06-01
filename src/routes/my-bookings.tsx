@@ -136,12 +136,3 @@ function MyBookingsPage() {
     </div>
   );
 }
-
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-    </div>
-  );
-}
