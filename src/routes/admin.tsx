@@ -972,3 +972,136 @@ function BookingsPanel({ bookings, reload }: { bookings: Booking[]; reload: () =
     </div>
   );
 }
+
+function ApplicationsPanel({
+  applications,
+  reload,
+}: {
+  applications: GuideApplication[];
+  reload: () => Promise<void>;
+}) {
+  const [filter, setFilter] = useState<"all" | "pending" | "approved" | "rejected">("pending");
+  const [expanded, setExpanded] = useState<string | null>(null);
+
+  const filtered = applications.filter((a) => filter === "all" || a.status === filter);
+
+  const setStatus = async (id: string, status: string) => {
+    const { error } = await supabase.from("guide_applications").update({ status }).eq("id", id);
+    if (error) toast.error(error.message);
+    else {
+      toast.success("Status updated");
+      await reload();
+    }
+  };
+
+  const remove = async (id: string) => {
+    if (!confirm("Delete this application?")) return;
+    const { error } = await supabase.from("guide_applications").delete().eq("id", id);
+    if (error) toast.error(error.message);
+    else {
+      toast.success("Deleted");
+      await reload();
+    }
+  };
+
+  const badge = (s: string) => {
+    const base = "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium capitalize";
+    if (s === "approved") return `${base} bg-primary/10 text-primary`;
+    if (s === "rejected") return `${base} bg-destructive/10 text-destructive`;
+    return `${base} bg-accent/15 text-accent-foreground`;
+  };
+
+  return (
+    <div className="mt-6 rounded-3xl bg-card p-6 ring-1 ring-border/60">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="font-display text-lg font-semibold">Guide applications</h2>
+        <div className="inline-flex rounded-full bg-secondary/60 p-1">
+          {(["pending", "approved", "rejected", "all"] as const).map((s) => (
+            <button
+              key={s}
+              onClick={() => setFilter(s)}
+              className={`px-3 h-8 rounded-full text-xs font-medium capitalize ${filter === s ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {filtered.length === 0 ? (
+        <p className="mt-6 text-sm text-muted-foreground">No applications.</p>
+      ) : (
+        <ul className="mt-4 divide-y divide-border/60">
+          {filtered.map((a) => {
+            const open = expanded === a.id;
+            return (
+              <li key={a.id} className="py-4">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="font-medium">{a.full_name}</p>
+                      <span className={badge(a.status)}>{a.status}</span>
+                    </div>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {a.city} · {a.experience_years} yr · {new Date(a.created_at).toLocaleDateString()}
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground truncate">
+                      {a.email} · {a.phone}
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      onClick={() => setExpanded(open ? null : a.id)}
+                      className="h-8 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-secondary/60"
+                    >
+                      {open ? "Hide" : "Details"}
+                    </button>
+                    {a.status !== "approved" && (
+                      <button
+                        onClick={() => setStatus(a.id, "approved")}
+                        className="h-8 px-3 rounded-full text-xs font-medium bg-primary text-primary-foreground"
+                      >
+                        Approve
+                      </button>
+                    )}
+                    {a.status !== "rejected" && (
+                      <button
+                        onClick={() => setStatus(a.id, "rejected")}
+                        className="h-8 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-destructive/10 hover:text-destructive"
+                      >
+                        Reject
+                      </button>
+                    )}
+                    <button
+                      onClick={() => remove(a.id)}
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                      aria-label="Delete"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+                {open && (
+                  <div className="mt-3 rounded-2xl bg-secondary/40 p-4 text-sm space-y-2">
+                    <div>
+                      <span className="text-xs text-muted-foreground">Specialization: </span>
+                      {a.specialization}
+                    </div>
+                    <div>
+                      <span className="text-xs text-muted-foreground">Languages: </span>
+                      {a.languages.join(", ")}
+                    </div>
+                    <div>
+                      <span className="text-xs text-muted-foreground">About:</span>
+                      <p className="mt-1 whitespace-pre-wrap">{a.about}</p>
+                    </div>
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
+  );
+}
