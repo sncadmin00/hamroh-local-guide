@@ -1,5 +1,5 @@
 import { Instagram, Youtube, Music2, Twitter } from "lucide-react";
-import hamrohLogo from "@/assets/hamroh-logo.jpg";
+import hamrohLogo from "@/assets/hamroh-logo.png";
 
 function WhatsAppIcon({ className }: { className?: string }) {
   return (

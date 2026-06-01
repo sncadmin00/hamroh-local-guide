@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Menu, Settings, Shield } from "lucide-react";
-import hamrohLogo from "@/assets/hamroh-logo.jpg";
+import hamrohLogo from "@/assets/hamroh-logo.png";
 import { useEffect, useState } from "react";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useI18n } from "@/lib/i18n";
