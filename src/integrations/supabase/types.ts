@@ -177,6 +177,7 @@ export type Database = {
       }
       bookings: {
         Row: {
+          cancellation_reason: string | null
           created_at: string
           customer_email: string
           customer_name: string
@@ -197,6 +198,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          cancellation_reason?: string | null
           created_at?: string
           customer_email: string
           customer_name: string
@@ -217,6 +219,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          cancellation_reason?: string | null
           created_at?: string
           customer_email?: string
           customer_name?: string
@@ -636,6 +639,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      newsletter_subscribers: {
+        Row: {
+          confirmed_at: string
+          created_at: string
+          email: string
+          id: string
+          last_sent_at: string | null
+          locale: string
+          source: string
+          unsubscribed_at: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          confirmed_at?: string
+          created_at?: string
+          email: string
+          id?: string
+          last_sent_at?: string | null
+          locale?: string
+          source?: string
+          unsubscribed_at?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          confirmed_at?: string
+          created_at?: string
+          email?: string
+          id?: string
+          last_sent_at?: string | null
+          locale?: string
+          source?: string
+          unsubscribed_at?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
       }
       social_embed_cities: {
         Row: {

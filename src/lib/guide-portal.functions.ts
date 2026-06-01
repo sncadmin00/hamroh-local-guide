@@ -1,6 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { enqueueTransactionalEmail } from "@/lib/email/enqueue.server";
+import { normalizeLocale } from "@/lib/email-templates/_i18n";
+
+const APP_BASE_URL = "https://hamrohim.com";
+
 
 // Returns the guide record linked to the current user (or null)
 export const getMyGuide = createServerFn({ method: "GET" })
@@ -95,14 +101,62 @@ export const updateBookingStatus = createServerFn({ method: "POST" })
     z.object({
       id: z.string().uuid(),
       status: z.enum(["confirmed", "declined", "cancelled"]),
+      reason: z.string().trim().max(500).optional(),
     }).parse(input),
   )
   .handler(async ({ context, data }) => {
     const { supabase } = context;
+
+    // Load prior state to detect transition + recipient
+    const { data: prior } = await supabase
+      .from("bookings")
+      .select("id, status, customer_email, customer_name, experience, date, start_time, locale, guide_id")
+      .eq("id", data.id)
+      .maybeSingle();
+
+    const update: { status: typeof data.status; cancellation_reason?: string | null } = {
+      status: data.status,
+    };
+    if (data.status !== "confirmed" && data.reason) {
+      update.cancellation_reason = data.reason;
+    }
     const { error } = await supabase
       .from("bookings")
-      .update({ status: data.status })
+      .update(update)
       .eq("id", data.id);
     if (error) throw new Error(error.message);
+
+
+    // Notify client (skip if no state change)
+    if (prior && prior.status !== data.status && prior.customer_email) {
+      try {
+        const { data: guide } = await supabaseAdmin
+          .from("guides")
+          .select("name")
+          .eq("id", prior.guide_id)
+          .maybeSingle();
+        await enqueueTransactionalEmail({
+          supabase: supabaseAdmin,
+          templateName: "booking-status-update-client",
+          recipientEmail: prior.customer_email,
+          templateData: {
+            customerName: prior.customer_name,
+            guideName: guide?.name ?? undefined,
+            experience: prior.experience,
+            date: prior.date,
+            startTime: prior.start_time,
+            reason: data.reason,
+            bookingUrl: `${APP_BASE_URL}/my-bookings`,
+            status: data.status,
+            locale: normalizeLocale(prior.locale),
+          },
+          idempotencyKey: `booking-status-${data.id}-${data.status}`,
+        });
+      } catch (e) {
+        console.error("Failed to notify client of status change", e);
+      }
+    }
+
     return { ok: true };
   });
+

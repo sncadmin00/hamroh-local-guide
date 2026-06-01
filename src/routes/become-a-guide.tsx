@@ -1,10 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, CheckCircle2, Upload, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import { notifyAdminsOfGuideApplication } from "@/lib/newsletter.functions";
+
 
 export const Route = createFileRoute("/become-a-guide")({
   head: () => ({
@@ -48,6 +51,8 @@ async function uploadTo(bucket: string, file: File): Promise<string> {
 }
 
 function BecomeAGuidePage() {
+  const notifyAdmins = useServerFn(notifyAdminsOfGuideApplication);
+
   const [cities, setCities] = useState<{ id: string; name: string }[]>([]);
   const [categories, setCategories] = useState<{ id: string; name: string; icon: string }[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -149,7 +154,7 @@ function BecomeAGuidePage() {
       }
       if (video) video_url = await uploadTo("guide-application-videos", video);
 
-      const { error } = await supabase.from("guide_applications").insert({
+      const { data: inserted, error } = await supabase.from("guide_applications").insert({
         full_name: parsed.data.full_name,
         email: parsed.data.email,
         phone: parsed.data.phone,
@@ -163,11 +168,20 @@ function BecomeAGuidePage() {
         video_url,
         photo_urls,
         category_ids: selectedCategories,
-      });
+      }).select("id").single();
       if (error) throw error;
+
+      // Notify admins (fire-and-forget)
+      if (inserted?.id) {
+        notifyAdmins({ data: { application_id: inserted.id } }).catch((err: unknown) =>
+          console.error("Admin notify failed", err),
+        );
+      }
+
 
       toast.success("Application submitted");
       setSubmitted(true);
+
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Something went wrong";
       toast.error(msg);
