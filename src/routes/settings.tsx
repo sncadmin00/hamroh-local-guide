@@ -13,11 +13,16 @@ function SettingsPage() {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
   const [currentEmail, setCurrentEmail] = useState("");
+  const [currentPhone, setCurrentPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [savingEmail, setSavingEmail] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
+  const [phone, setPhone] = useState("");
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [savingPhone, setSavingPhone] = useState(false);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data, error }) => {
@@ -26,10 +31,51 @@ function SettingsPage() {
         return;
       }
       setCurrentEmail(data.user.email ?? "");
+      setCurrentPhone(data.user.phone ?? "");
       setEmail(data.user.email ?? "");
+      setPhone(data.user.phone ? `+${data.user.phone}` : "");
       setChecking(false);
     });
   }, [navigate]);
+
+  const sendPhoneOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!phone.startsWith("+")) {
+      toast.error("Enter phone in international format (e.g. +998 90 123 45 67)");
+      return;
+    }
+    setSavingPhone(true);
+    const { error } = await supabase.auth.updateUser({ phone });
+    setSavingPhone(false);
+    if (error) toast.error(error.message);
+    else {
+      toast.success("Code sent to your phone");
+      setOtpSent(true);
+    }
+  };
+
+  const verifyPhoneOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (otp.length < 4) {
+      toast.error("Enter the code from SMS");
+      return;
+    }
+    setSavingPhone(true);
+    const { error } = await supabase.auth.verifyOtp({
+      phone: phone.replace(/\s/g, ""),
+      token: otp,
+      type: "phone_change",
+    });
+    setSavingPhone(false);
+    if (error) toast.error(error.message);
+    else {
+      toast.success("Phone number linked");
+      setOtp("");
+      setOtpSent(false);
+      const { data } = await supabase.auth.getUser();
+      setCurrentPhone(data.user?.phone ?? "");
+    }
+  };
 
   const updateEmail = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,9 +131,58 @@ function SettingsPage() {
         </Link>
 
         <h1 className="font-display text-3xl font-semibold">Account settings</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Signed in as {currentEmail}</p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Signed in as {currentEmail || (currentPhone ? `+${currentPhone}` : "—")}
+        </p>
 
-        <form onSubmit={updateEmail} className="mt-8 rounded-3xl bg-card p-6 ring-1 ring-border/60">
+        <form onSubmit={otpSent ? verifyPhoneOtp : sendPhoneOtp} className="mt-8 rounded-3xl bg-card p-6 ring-1 ring-border/60">
+          <h2 className="font-display text-lg font-semibold">Phone number</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {currentPhone
+              ? `Linked: +${currentPhone}. Link a new number to replace it.`
+              : "Link a phone so you can also sign in via SMS. Use international format."}
+          </p>
+          <input
+            type="tel"
+            required
+            placeholder="+998 90 123 45 67"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            disabled={otpSent}
+            className="mt-4 w-full h-11 rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring disabled:opacity-60"
+          />
+          {otpSent && (
+            <input
+              type="text"
+              inputMode="numeric"
+              required
+              placeholder="SMS code"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              className="mt-3 w-full h-11 rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring"
+            />
+          )}
+          <div className="mt-4 flex gap-3">
+            <button
+              type="submit"
+              disabled={savingPhone}
+              className="h-11 px-6 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-60"
+            >
+              {savingPhone ? "Saving…" : otpSent ? "Confirm code" : "Send code"}
+            </button>
+            {otpSent && (
+              <button
+                type="button"
+                onClick={() => { setOtpSent(false); setOtp(""); }}
+                className="h-11 px-5 rounded-full border border-input text-sm font-medium hover:bg-secondary"
+              >
+                Cancel
+              </button>
+            )}
+          </div>
+        </form>
+
+        <form onSubmit={updateEmail} className="mt-6 rounded-3xl bg-card p-6 ring-1 ring-border/60">
           <h2 className="font-display text-lg font-semibold">Email address</h2>
           <p className="mt-1 text-sm text-muted-foreground">We'll send a confirmation link to the new address.</p>
           <input
