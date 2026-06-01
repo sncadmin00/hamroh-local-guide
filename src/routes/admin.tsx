@@ -1,8 +1,10 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState, useCallback, useRef } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Compass, Trash2, Plus, Upload, ImageIcon, Video } from "lucide-react";
+import { Compass, Trash2, Plus, Upload, ImageIcon, Video, Mail } from "lucide-react";
+import { inviteGuideToPortal } from "@/lib/admin-portal.functions";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Admin — Sancho" }] }),
@@ -33,6 +35,7 @@ type Guide = {
   photo_url: string | null;
   specialties: string[];
   languages: string[];
+  user_id: string | null;
 };
 
 type Article = {
@@ -488,22 +491,54 @@ function GuidesPanel({
                 <div className="min-w-0">
                   <p className="font-medium truncate">{g.name}</p>
                   <p className="text-xs text-muted-foreground truncate">
-                    {city?.name ?? "—"} · ${Number(g.price_per_day).toFixed(0)}/day
+                    {city?.name ?? "—"} · ${Number(g.price_per_day).toFixed(0)}/day {g.user_id && <span className="ml-1 text-emerald-600">· portal linked</span>}
                   </p>
                 </div>
-                <button
-                  onClick={() => remove(g.id)}
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                  aria-label="Delete"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
+                <div className="flex items-center gap-1">
+                  <InvitePortalButton guide={g} reload={reload} />
+                  <button
+                    onClick={() => remove(g.id)}
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                    aria-label="Delete"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
               </li>
             );
           })}
         </ul>
       </div>
     </div>
+  );
+}
+
+function InvitePortalButton({ guide, reload }: { guide: Guide; reload: () => void }) {
+  const invite = useServerFn(inviteGuideToPortal);
+  const [busy, setBusy] = useState(false);
+  const onClick = async () => {
+    const email = window.prompt(`Send portal invite to which email for ${guide.name}?`);
+    if (!email) return;
+    setBusy(true);
+    try {
+      const res = await invite({ data: { guide_id: guide.id, email } });
+      toast.success(res.existed ? "User linked & magic link sent" : "Invite email sent");
+      reload();
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <button
+      onClick={onClick}
+      disabled={busy}
+      title={guide.user_id ? "Re-send invite / re-link" : "Invite to guide portal"}
+      className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-accent/10 hover:text-accent disabled:opacity-50"
+    >
+      <Mail className="h-4 w-4" />
+    </button>
   );
 }
 
