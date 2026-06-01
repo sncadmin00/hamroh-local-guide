@@ -17,6 +17,8 @@ import { template as bookingReviewRequest } from './booking-review-request'
 import { template as bookingStatusUpdateClient } from './booking-status-update-client'
 import { template as bookingCancelledByClient } from './booking-cancelled-by-client'
 import { template as guideApplicationAdmin } from './guide-application-admin'
+import { template as welcome } from './welcome'
+import { template as guideApplicationStatus } from './guide-application-status'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'unread-chat-message': unreadChatMessage,
@@ -27,5 +29,7 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'booking-status-update-client': bookingStatusUpdateClient,
   'booking-cancelled-by-client': bookingCancelledByClient,
   'guide-application-admin': guideApplicationAdmin,
+  'welcome': welcome,
+  'guide-application-status': guideApplicationStatus,
 }
 
