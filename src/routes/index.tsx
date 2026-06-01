@@ -4,8 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowUp, Mic, Sparkles } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { CategoryIcon } from "@/components/CategoryIcon";
 import { supabase } from "@/integrations/supabase/client";
 import { createThread } from "@/lib/ai-threads.functions";
+import { useCategories } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/")({
@@ -29,6 +31,7 @@ function Home() {
   const navigate = useNavigate();
   const create = useServerFn(createThread);
   const { t } = useI18n();
+  const { data: categories = [] } = useCategories();
   const [input, setInput] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [listening, setListening] = useState(false);
@@ -192,6 +195,36 @@ function Home() {
           </Link>
         </div>
       </main>
+
+      {/* Browse by interest */}
+      {categories.length > 0 && (
+        <section className="px-6 pb-20 md:pb-28">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-10">
+              <h2 className="font-display text-2xl md:text-3xl font-semibold text-slate-900">Browse by interest</h2>
+              <p className="mt-2 text-sm text-slate-500">Find a guide for what you love</p>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
+              {categories.map((c) => (
+                <Link
+                  key={c.id}
+                  to="/guides"
+                  search={{ category: c.slug }}
+                  className="group flex flex-col items-center text-center p-5 rounded-2xl bg-white border border-slate-100 hover:border-slate-200 hover:shadow-lg hover:-translate-y-0.5 transition-all"
+                >
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#62A1B1]/15 to-[#D5A08D]/15 flex items-center justify-center text-slate-700 group-hover:scale-110 transition-transform">
+                    <CategoryIcon name={c.icon} className="h-6 w-6" strokeWidth={1.75} />
+                  </div>
+                  <div className="mt-3 text-sm font-medium text-slate-800">{c.name}</div>
+                  {c.description && (
+                    <div className="mt-1 text-xs text-slate-400 line-clamp-2">{c.description}</div>
+                  )}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <SiteFooter />
     </div>
