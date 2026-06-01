@@ -6,6 +6,7 @@ import { lovable } from "@/integrations/lovable/index";
 import { Compass, Apple } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { subscribeToNewsletter } from "@/lib/newsletter.functions";
+import { sendWelcomeEmail } from "@/lib/lifecycle-emails.functions";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Sign in — Hamroh" }] }),
@@ -18,6 +19,7 @@ function LoginPage() {
   const navigate = useNavigate();
   const { lang } = useI18n();
   const subscribe = useServerFn(subscribeToNewsletter);
+  const sendWelcome = useServerFn(sendWelcomeEmail);
   const [method, setMethod] = useState<Method>("email");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -64,6 +66,11 @@ function LoginPage() {
           },
         });
         if (error) throw error;
+        try {
+          await sendWelcome({ data: { email, locale: lang as "ru" | "uz" | "en" } });
+        } catch (e) {
+          console.error("Welcome email failed", e);
+        }
         if (newsletterOptIn) {
           try {
             await subscribe({ data: { email, locale: lang as "ru" | "uz" | "en", source: "signup" } });
