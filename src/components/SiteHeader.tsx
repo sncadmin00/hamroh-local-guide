@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Menu, Settings, Shield, LogIn, LogOut } from "lucide-react";
+import { Menu, Settings, Shield, LogIn, LogOut, Mail, Phone } from "lucide-react";
 import hamrohLogo from "@/assets/hamroh-logo.png";
 import { useEffect, useState } from "react";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -188,6 +188,20 @@ export function SiteHeader() {
                   className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20 transition-colors"
                 >
                   <WhatsAppIcon className="h-5 w-5" />
+                </a>
+                <a
+                  href="mailto:hello@hamroh.com"
+                  aria-label="Email us"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-secondary text-foreground hover:bg-secondary/80 transition-colors"
+                >
+                  <Mail className="h-5 w-5" />
+                </a>
+                <a
+                  href="tel:+1234567890"
+                  aria-label="Call us"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-secondary text-foreground hover:bg-secondary/80 transition-colors"
+                >
+                  <Phone className="h-5 w-5" />
                 </a>
               </div>
             </SheetContent>
