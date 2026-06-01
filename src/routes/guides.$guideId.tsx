@@ -166,6 +166,8 @@ function GuidePage() {
                     </div>
                   ))}
                 </div>
+              </div>
+
               <div>
                 <h2 className="font-display text-2xl font-semibold">
                   Reviews <span className="text-base font-normal text-muted-foreground">· {guide.reviews}</span>
