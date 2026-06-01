@@ -143,7 +143,7 @@ function Home() {
                   }
                 }}
                 rows={1}
-                placeholder="e.g. English-speaking food guide for two days…"
+                placeholder={t("hero.placeholder")}
                 className="flex-1 resize-none bg-transparent py-4 text-base md:text-lg text-slate-800 placeholder:text-slate-300 outline-none max-h-40"
                 disabled={submitting}
               />
@@ -202,8 +202,8 @@ function Home() {
         <section className="px-6 pb-20 md:pb-28">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-10">
-              <h2 className="font-display text-2xl md:text-3xl font-semibold text-slate-900">Browse by interest</h2>
-              <p className="mt-2 text-sm text-slate-500">Find a guide for what you love</p>
+              <h2 className="font-display text-2xl md:text-3xl font-semibold text-slate-900">{t("browse.title")}</h2>
+              <p className="mt-2 text-sm text-slate-500">{t("browse.subtitle")}</p>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
               {categories.map((c) => (
