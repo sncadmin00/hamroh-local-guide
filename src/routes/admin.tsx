@@ -165,7 +165,7 @@ function sourceBadgeClass(s: string): string {
 function AdminPage() {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
-  const [tab, setTab] = useState<"bookings" | "applications" | "cities" | "guides" | "categories" | "articles" | "social">("bookings");
+  const [tab, setTab] = useState<"bookings" | "applications" | "cities" | "guides" | "categories" | "places" | "suggestions" | "articles" | "social">("bookings");
   const [cities, setCities] = useState<City[]>([]);
   const [guides, setGuides] = useState<Guide[]>([]);
   const [articles, setArticles] = useState<Article[]>([]);
@@ -174,9 +174,12 @@ function AdminPage() {
   const [applications, setApplications] = useState<GuideApplication[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [guideCategories, setGuideCategories] = useState<GuideCategoryLink[]>([]);
+  const [places, setPlaces] = useState<Place[]>([]);
+  const [placeGuides, setPlaceGuides] = useState<PlaceGuideLink[]>([]);
+  const [suggestions, setSuggestions] = useState<PlaceSuggestion[]>([]);
 
   const loadData = useCallback(async () => {
-    const [c, g, a, e, b, ap, cat, gc] = await Promise.all([
+    const [c, g, a, e, b, ap, cat, gc, p, pg, ps] = await Promise.all([
       supabase.from("cities").select("*").order("sort_order"),
       supabase.from("guides").select("*").order("sort_order"),
       supabase.from("articles").select("*").order("sort_order").order("created_at", { ascending: false }),
@@ -185,6 +188,9 @@ function AdminPage() {
       supabase.from("guide_applications").select("*").order("created_at", { ascending: false }),
       supabase.from("categories").select("*").order("sort_order"),
       supabase.from("guide_categories").select("guide_id, category_id"),
+      supabase.from("places").select("*").order("sort_order").order("created_at", { ascending: false }),
+      supabase.from("place_guides").select("place_id, guide_id"),
+      supabase.from("place_suggestions").select("*").eq("status", "pending").order("created_at", { ascending: false }),
     ]);
     if (c.data) setCities(c.data as City[]);
     if (g.data) setGuides(g.data as Guide[]);
@@ -194,6 +200,9 @@ function AdminPage() {
     if (ap.data) setApplications(ap.data as GuideApplication[]);
     if (cat.data) setCategories(cat.data as Category[]);
     if (gc.data) setGuideCategories(gc.data as GuideCategoryLink[]);
+    if (p.data) setPlaces(p.data as Place[]);
+    if (pg.data) setPlaceGuides(pg.data as PlaceGuideLink[]);
+    if (ps.data) setSuggestions(ps.data as PlaceSuggestion[]);
   }, []);
 
   useEffect(() => {
