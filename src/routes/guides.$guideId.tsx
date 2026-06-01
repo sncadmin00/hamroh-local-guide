@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { useGuide } from "@/lib/content-queries";
 import { supabase } from "@/integrations/supabase/client";
+import { GuideReviews } from "@/components/GuideReviews";
 
 const SITE_URL = "https://hamroh-local-guide.lovable.app";
 
@@ -164,6 +165,15 @@ function GuidePage() {
                       </div>
                     </div>
                   ))}
+                </div>
+              </div>
+
+              <div>
+                <h2 className="font-display text-2xl font-semibold">
+                  Reviews <span className="text-base font-normal text-muted-foreground">· {guide.reviews}</span>
+                </h2>
+                <div className="mt-4">
+                  <GuideReviews guideId={guide.id} />
                 </div>
               </div>
             </div>

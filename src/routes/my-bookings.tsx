@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { listMyBookings, cancelBookingAsClient } from "@/lib/my-bookings.functions";
 import { Calendar, Users, ArrowLeft, MessageSquare, X } from "lucide-react";
+import { ReviewForm } from "@/components/ReviewForm";
 
 
 export const Route = createFileRoute("/my-bookings")({
@@ -127,6 +128,17 @@ function MyBookingsPage() {
                       </button>
                     )}
                   </div>
+                  {(() => {
+                    const tripDate = new Date(b.date);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    const eligible =
+                      ["confirmed", "completed"].includes(String(b.status)) &&
+                      tripDate.getTime() <= today.getTime();
+                    return eligible ? (
+                      <ReviewForm bookingId={b.id} guideName={guide?.name} />
+                    ) : null;
+                  })()}
                 </div>
               </li>
             );
