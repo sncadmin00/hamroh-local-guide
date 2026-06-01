@@ -89,6 +89,13 @@ function MyBookingsPage() {
                     <span className="inline-flex items-center gap-1"><Users className="h-3.5 w-3.5" />{b.guests} {b.guests === 1 ? "guest" : "guests"}</span>
                     <span className="font-medium text-foreground">${Number(b.total).toFixed(0)}</span>
                   </div>
+                  <Link
+                    to="/messages/$bookingId"
+                    params={{ bookingId: b.id }}
+                    className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline"
+                  >
+                    <MessageSquare className="h-3.5 w-3.5" /> Message guide
+                  </Link>
                 </div>
               </li>
             );

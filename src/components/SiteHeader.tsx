@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Menu, Settings, Shield, LogIn, LogOut, Mail, Phone } from "lucide-react";
+import { Menu, Settings, Shield, LogIn, LogOut, Mail, Phone, MessageSquare } from "lucide-react";
 import hamrohLogo from "@/assets/hamroh-logo.png";
 import { useEffect, useState } from "react";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -135,6 +135,15 @@ export function SiteHeader() {
                     {link.label}
                   </Link>
                 ))}
+                {signedIn && (
+                  <Link
+                    to="/messages"
+                    className="px-3 py-3 rounded-lg text-base font-medium text-foreground hover:bg-secondary/60 inline-flex items-center gap-2"
+                    activeProps={{ className: "px-3 py-3 rounded-lg text-base font-medium bg-secondary text-foreground inline-flex items-center gap-2" }}
+                  >
+                    <MessageSquare className="h-4 w-4" /> Messages
+                  </Link>
+                )}
                 {signedIn && (
                   <Link
                     to="/settings"

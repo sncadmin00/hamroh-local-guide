@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as MyBookingsRouteImport } from './routes/my-bookings'
+import { Route as MessagesRouteImport } from './routes/messages'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as GuidesRouteImport } from './routes/guides'
@@ -20,6 +21,8 @@ import { Route as BecomeAGuideRouteImport } from './routes/become-a-guide'
 import { Route as AiRouteImport } from './routes/ai'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MessagesIndexRouteImport } from './routes/messages.index'
+import { Route as MessagesBookingIdRouteImport } from './routes/messages.$bookingId'
 import { Route as GuidesGuideIdRouteImport } from './routes/guides.$guideId'
 import { Route as ExploreSlugRouteImport } from './routes/explore.$slug'
 import { Route as BookGuideIdRouteImport } from './routes/book.$guideId'
@@ -34,6 +37,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const MyBookingsRoute = MyBookingsRouteImport.update({
   id: '/my-bookings',
   path: '/my-bookings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MessagesRoute = MessagesRouteImport.update({
+  id: '/messages',
+  path: '/messages',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -81,6 +89,16 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MessagesIndexRoute = MessagesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => MessagesRoute,
+} as any)
+const MessagesBookingIdRoute = MessagesBookingIdRouteImport.update({
+  id: '/$bookingId',
+  path: '/$bookingId',
+  getParentRoute: () => MessagesRoute,
+} as any)
 const GuidesGuideIdRoute = GuidesGuideIdRouteImport.update({
   id: '/$guideId',
   path: '/$guideId',
@@ -117,6 +135,7 @@ export interface FileRoutesByFullPath {
   '/guides': typeof GuidesRouteWithChildren
   '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
+  '/messages': typeof MessagesRouteWithChildren
   '/my-bookings': typeof MyBookingsRoute
   '/settings': typeof SettingsRoute
   '/ai/$threadId': typeof AiThreadIdRoute
@@ -124,6 +143,8 @@ export interface FileRoutesByFullPath {
   '/book/$guideId': typeof BookGuideIdRoute
   '/explore/$slug': typeof ExploreSlugRoute
   '/guides/$guideId': typeof GuidesGuideIdRoute
+  '/messages/$bookingId': typeof MessagesBookingIdRoute
+  '/messages/': typeof MessagesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -142,6 +163,8 @@ export interface FileRoutesByTo {
   '/book/$guideId': typeof BookGuideIdRoute
   '/explore/$slug': typeof ExploreSlugRoute
   '/guides/$guideId': typeof GuidesGuideIdRoute
+  '/messages/$bookingId': typeof MessagesBookingIdRoute
+  '/messages': typeof MessagesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -154,6 +177,7 @@ export interface FileRoutesById {
   '/guides': typeof GuidesRouteWithChildren
   '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
+  '/messages': typeof MessagesRouteWithChildren
   '/my-bookings': typeof MyBookingsRoute
   '/settings': typeof SettingsRoute
   '/ai/$threadId': typeof AiThreadIdRoute
@@ -161,6 +185,8 @@ export interface FileRoutesById {
   '/book/$guideId': typeof BookGuideIdRoute
   '/explore/$slug': typeof ExploreSlugRoute
   '/guides/$guideId': typeof GuidesGuideIdRoute
+  '/messages/$bookingId': typeof MessagesBookingIdRoute
+  '/messages/': typeof MessagesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -174,6 +200,7 @@ export interface FileRouteTypes {
     | '/guides'
     | '/how-it-works'
     | '/login'
+    | '/messages'
     | '/my-bookings'
     | '/settings'
     | '/ai/$threadId'
@@ -181,6 +208,8 @@ export interface FileRouteTypes {
     | '/book/$guideId'
     | '/explore/$slug'
     | '/guides/$guideId'
+    | '/messages/$bookingId'
+    | '/messages/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -199,6 +228,8 @@ export interface FileRouteTypes {
     | '/book/$guideId'
     | '/explore/$slug'
     | '/guides/$guideId'
+    | '/messages/$bookingId'
+    | '/messages'
   id:
     | '__root__'
     | '/'
@@ -210,6 +241,7 @@ export interface FileRouteTypes {
     | '/guides'
     | '/how-it-works'
     | '/login'
+    | '/messages'
     | '/my-bookings'
     | '/settings'
     | '/ai/$threadId'
@@ -217,6 +249,8 @@ export interface FileRouteTypes {
     | '/book/$guideId'
     | '/explore/$slug'
     | '/guides/$guideId'
+    | '/messages/$bookingId'
+    | '/messages/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -229,6 +263,7 @@ export interface RootRouteChildren {
   GuidesRoute: typeof GuidesRouteWithChildren
   HowItWorksRoute: typeof HowItWorksRoute
   LoginRoute: typeof LoginRoute
+  MessagesRoute: typeof MessagesRouteWithChildren
   MyBookingsRoute: typeof MyBookingsRoute
   SettingsRoute: typeof SettingsRoute
   ApiChatRoute: typeof ApiChatRoute
@@ -249,6 +284,13 @@ declare module '@tanstack/react-router' {
       path: '/my-bookings'
       fullPath: '/my-bookings'
       preLoaderRoute: typeof MyBookingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/messages': {
+      id: '/messages'
+      path: '/messages'
+      fullPath: '/messages'
+      preLoaderRoute: typeof MessagesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -313,6 +355,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/messages/': {
+      id: '/messages/'
+      path: '/'
+      fullPath: '/messages/'
+      preLoaderRoute: typeof MessagesIndexRouteImport
+      parentRoute: typeof MessagesRoute
+    }
+    '/messages/$bookingId': {
+      id: '/messages/$bookingId'
+      path: '/$bookingId'
+      fullPath: '/messages/$bookingId'
+      preLoaderRoute: typeof MessagesBookingIdRouteImport
+      parentRoute: typeof MessagesRoute
     }
     '/guides/$guideId': {
       id: '/guides/$guideId'
@@ -384,6 +440,20 @@ const GuidesRouteChildren: GuidesRouteChildren = {
 const GuidesRouteWithChildren =
   GuidesRoute._addFileChildren(GuidesRouteChildren)
 
+interface MessagesRouteChildren {
+  MessagesBookingIdRoute: typeof MessagesBookingIdRoute
+  MessagesIndexRoute: typeof MessagesIndexRoute
+}
+
+const MessagesRouteChildren: MessagesRouteChildren = {
+  MessagesBookingIdRoute: MessagesBookingIdRoute,
+  MessagesIndexRoute: MessagesIndexRoute,
+}
+
+const MessagesRouteWithChildren = MessagesRoute._addFileChildren(
+  MessagesRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
@@ -394,6 +464,7 @@ const rootRouteChildren: RootRouteChildren = {
   GuidesRoute: GuidesRouteWithChildren,
   HowItWorksRoute: HowItWorksRoute,
   LoginRoute: LoginRoute,
+  MessagesRoute: MessagesRouteWithChildren,
   MyBookingsRoute: MyBookingsRoute,
   SettingsRoute: SettingsRoute,
   ApiChatRoute: ApiChatRoute,
