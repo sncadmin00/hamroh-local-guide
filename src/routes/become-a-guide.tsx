@@ -162,8 +162,10 @@ function BecomeAGuidePage() {
         portrait_url,
         video_url,
         photo_urls,
+        category_ids: selectedCategories,
       });
       if (error) throw error;
+
       toast.success("Application submitted");
       setSubmitted(true);
     } catch (err) {
