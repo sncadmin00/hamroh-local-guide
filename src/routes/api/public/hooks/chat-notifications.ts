@@ -94,7 +94,7 @@ export const Route = createFileRoute('/api/public/hooks/chat-notifications')({
             // Load booking + guide info
             const { data: booking } = await supabase
               .from('bookings')
-              .select('id, guide_id, user_id, customer_email, customer_name, experience')
+              .select('id, guide_id, user_id, customer_email, customer_name, experience, locale')
               .eq('id', msg.booking_id)
               .maybeSingle()
 
@@ -107,16 +107,17 @@ export const Route = createFileRoute('/api/public/hooks/chat-notifications')({
               continue
             }
 
-            // Resolve recipient (the other party) + sender name
+            // Resolve recipient (the other party) + sender name + recipient locale
             let recipientEmail: string | null = null
             let recipientName: string | undefined
             let senderName: string | undefined
+            let recipientLocale = 'ru'
 
             if (msg.sender_role === 'client') {
-              // notify guide
+              // notify guide → use guide.locale
               const { data: guide } = await supabase
                 .from('guides')
-                .select('user_id, name')
+                .select('user_id, name, locale')
                 .eq('id', booking.guide_id)
                 .maybeSingle()
               if (guide?.user_id) {
@@ -125,12 +126,14 @@ export const Route = createFileRoute('/api/public/hooks/chat-notifications')({
                 )
                 recipientEmail = userRes?.user?.email ?? null
                 recipientName = (guide.name as string) || undefined
+                recipientLocale = (guide.locale as string) || 'ru'
               }
               senderName = booking.customer_name as string | undefined
             } else {
-              // sender is guide → notify client
+              // sender is guide → notify client, use booking.locale
               recipientEmail = booking.customer_email as string | null
               recipientName = booking.customer_name as string | undefined
+              recipientLocale = (booking.locale as string) || 'ru'
               const { data: guide } = await supabase
                 .from('guides')
                 .select('name')
@@ -185,6 +188,7 @@ export const Route = createFileRoute('/api/public/hooks/chat-notifications')({
               messagePreview: preview,
               bookingExperience: booking.experience as string,
               bookingUrl: `${APP_BASE_URL}/messages/${booking.id}`,
+              locale: recipientLocale,
             }
 
             const element = React.createElement(tpl.component, templateData)

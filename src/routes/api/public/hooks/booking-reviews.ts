@@ -27,7 +27,7 @@ export const Route = createFileRoute('/api/public/hooks/booking-reviews')({
 
         const { data: bookings, error } = await supabase
           .from('bookings')
-          .select('id, guide_id, customer_name, customer_email, experience, date, status')
+          .select('id, guide_id, customer_name, customer_email, experience, date, status, locale')
           .eq('date', yesterday)
           .eq('status', 'confirmed')
           .limit(200)
@@ -65,6 +65,7 @@ export const Route = createFileRoute('/api/public/hooks/booking-reviews')({
                 guideName: guide?.name,
                 experience: b.experience,
                 reviewUrl: `${APP_BASE_URL}/my-bookings`,
+                locale: (b.locale as string) ?? 'ru',
               },
               idempotencyKey: `booking-review-${b.id}`,
             })
