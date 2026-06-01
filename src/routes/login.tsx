@@ -3,7 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
-import { Compass, Apple } from "lucide-react";
+import { Compass, Apple, X } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { subscribeToNewsletter } from "@/lib/newsletter.functions";
 import { sendWelcomeEmail } from "@/lib/lifecycle-emails.functions";
@@ -137,8 +137,16 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-secondary/30 flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-secondary/30 flex items-center justify-center px-4 py-8 relative">
+      <Link
+        to="/"
+        aria-label="Close"
+        className="absolute top-4 right-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-card ring-1 ring-border/60 text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+      >
+        <X className="h-5 w-5" />
+      </Link>
       <div className="w-full max-w-md">
+
         <Link to="/" className="flex items-center gap-2 justify-center mb-8">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
             <Compass className="h-5 w-5" />
