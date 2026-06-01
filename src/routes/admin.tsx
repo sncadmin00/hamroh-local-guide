@@ -356,10 +356,14 @@ function CitiesPanel({ cities, reload }: { cities: City[]; reload: () => Promise
 function GuidesPanel({
   guides,
   cities,
+  categories,
+  guideCategories,
   reload,
 }: {
   guides: Guide[];
   cities: City[];
+  categories: Category[];
+  guideCategories: GuideCategoryLink[];
   reload: () => Promise<void>;
 }) {
   const [name, setName] = useState("");
@@ -511,27 +515,183 @@ function GuidesPanel({
           )}
           {guides.map((g) => {
             const city = cities.find((c) => c.id === g.city_id);
+            const selectedCatIds = new Set(
+              guideCategories.filter((gc) => gc.guide_id === g.id).map((gc) => gc.category_id),
+            );
             return (
-              <li key={g.id} className="py-3 flex items-center justify-between gap-3">
-                <div className="min-w-0">
-                  <p className="font-medium truncate">{g.name}</p>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {city?.name ?? "—"} · ${Number(g.price_per_day).toFixed(0)}/day {g.user_id && <span className="ml-1 text-emerald-600">· portal linked</span>}
-                  </p>
+              <li key={g.id} className="py-3 space-y-2">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-medium truncate">{g.name}</p>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {city?.name ?? "—"} · ${Number(g.price_per_day).toFixed(0)}/day {g.user_id && <span className="ml-1 text-emerald-600">· portal linked</span>}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <InvitePortalButton guide={g} reload={reload} />
+                    <button
+                      onClick={() => remove(g.id)}
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                      aria-label="Delete"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1">
-                  <InvitePortalButton guide={g} reload={reload} />
-                  <button
-                    onClick={() => remove(g.id)}
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                    aria-label="Delete"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </div>
+                {categories.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5">
+                    {categories.map((cat) => {
+                      const on = selectedCatIds.has(cat.id);
+                      return (
+                        <button
+                          key={cat.id}
+                          onClick={async () => {
+                            if (on) {
+                              const { error } = await supabase
+                                .from("guide_categories")
+                                .delete()
+                                .eq("guide_id", g.id)
+                                .eq("category_id", cat.id);
+                              if (error) toast.error(error.message);
+                              else await reload();
+                            } else {
+                              const { error } = await supabase
+                                .from("guide_categories")
+                                .insert({ guide_id: g.id, category_id: cat.id });
+                              if (error) toast.error(error.message);
+                              else await reload();
+                            }
+                          }}
+                          className={`inline-flex items-center gap-1 px-2.5 h-7 rounded-full text-xs font-medium ring-1 transition ${
+                            on
+                              ? "bg-primary text-primary-foreground ring-primary"
+                              : "bg-card ring-border/60 text-muted-foreground hover:bg-secondary/60"
+                          }`}
+                        >
+                          <CategoryIcon name={cat.icon} className="h-3 w-3" />
+                          {cat.name}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
               </li>
             );
           })}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function CategoriesPanel({ categories, reload }: { categories: Category[]; reload: () => Promise<void> }) {
+  const [name, setName] = useState("");
+  const [slug, setSlug] = useState("");
+  const [icon, setIcon] = useState("");
+  const [description, setDescription] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const add = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name || !slug) {
+      toast.error("Name and slug required");
+      return;
+    }
+    setSaving(true);
+    const { error } = await supabase.from("categories").insert({
+      name,
+      slug,
+      icon: icon || "tag",
+      description,
+      sort_order: categories.length,
+    });
+    setSaving(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success("Category added");
+    setName("");
+    setSlug("");
+    setIcon("");
+    setDescription("");
+    await reload();
+  };
+
+  const remove = async (id: string) => {
+    if (!confirm("Delete this category? Guide links will also be removed.")) return;
+    const { error } = await supabase.from("categories").delete().eq("id", id);
+    if (error) toast.error(error.message);
+    else {
+      toast.success("Deleted");
+      await reload();
+    }
+  };
+
+  return (
+    <div className="mt-6 grid gap-6 lg:grid-cols-2">
+      <form onSubmit={add} className="rounded-3xl bg-card p-6 ring-1 ring-border/60 h-fit">
+        <h2 className="font-display text-lg font-semibold">Add a category</h2>
+        <div className="mt-4 space-y-3">
+          <Field label="Name" value={name} onChange={setName} placeholder="Gastro" />
+          <Field label="Slug" value={slug} onChange={setSlug} placeholder="gastro" />
+          <Field
+            label="Icon (lucide name, e.g. utensils, mountain, camera)"
+            value={icon}
+            onChange={setIcon}
+            placeholder="utensils"
+          />
+          <div>
+            <label className="text-xs font-medium text-muted-foreground">Description</label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={2}
+              className="mt-1 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+            />
+          </div>
+          {icon && (
+            <div className="text-xs text-muted-foreground inline-flex items-center gap-2">
+              Preview: <CategoryIcon name={icon} className="h-5 w-5 text-foreground" />
+            </div>
+          )}
+        </div>
+        <button
+          type="submit"
+          disabled={saving}
+          className="mt-5 inline-flex items-center gap-2 h-11 px-6 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-60"
+        >
+          <Plus className="h-4 w-4" /> {saving ? "Saving…" : "Add category"}
+        </button>
+      </form>
+
+      <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
+        <h2 className="font-display text-lg font-semibold">Categories</h2>
+        <p className="mt-1 text-xs text-muted-foreground">Assign categories to guides from the Guides tab.</p>
+        <ul className="mt-4 divide-y divide-border/60">
+          {categories.length === 0 && (
+            <li className="py-4 text-sm text-muted-foreground">No categories yet.</li>
+          )}
+          {categories.map((c) => (
+            <li key={c.id} className="py-3 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="h-9 w-9 rounded-xl bg-secondary flex items-center justify-center shrink-0">
+                  <CategoryIcon name={c.icon} className="h-4 w-4" />
+                </div>
+                <div className="min-w-0">
+                  <p className="font-medium truncate">{c.name}</p>
+                  <p className="text-xs text-muted-foreground truncate">/{c.slug} · {c.icon || "tag"}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => remove(c.id)}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                aria-label="Delete"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </li>
+          ))}
         </ul>
       </div>
     </div>
