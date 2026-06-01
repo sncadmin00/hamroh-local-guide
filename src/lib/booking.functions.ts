@@ -1,6 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { enqueueTransactionalEmail } from "@/lib/email/enqueue.server";
+
+const APP_BASE_URL = "https://hamrohim.com";
+
 
 // Public: list available slots for a guide on a specific date (or upcoming)
 export const getGuideSlots = createServerFn({ method: "GET" })
