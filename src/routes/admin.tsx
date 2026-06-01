@@ -7,6 +7,7 @@ import { Compass, Trash2, Plus, Upload, ImageIcon, Video, Mail } from "lucide-re
 import { CategoryIcon } from "@/components/CategoryIcon";
 import { inviteGuideToPortal } from "@/lib/admin-portal.functions";
 import { notifyGuideApplicationStatus } from "@/lib/lifecycle-emails.functions";
+import hamrohLogo from "@/assets/hamroh-logo.png";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Admin — Hamroh" }] }),
