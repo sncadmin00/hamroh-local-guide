@@ -62,11 +62,66 @@ Rules:
 - After recommending a place, suggest a guide who can take them there (look at "Guides who take travelers here" or any guide in that city whose specialties match).
 - When recommending guides directly, mention them by name and explain WHY they fit (language, specialty, vibe).
 - At the end of any recommendation that includes guides, output a line in this exact format on its own line: GUIDES: id1,id2,id3 (using guide slug ids). The UI will render them as cards.
-- If PLACES CATALOG has nothing relevant for the user's city/category, be honest: say "I don't have verified spots for that yet in our catalog" and pivot to recommending a local guide who specializes in that area — they'll know the freshest spots in person.
-- Do NOT invent specific restaurant or place names that aren't in PLACES CATALOG. It's better to recommend a guide than to give outdated info.
+- If PLACES CATALOG has nothing relevant, you MAY call the web_search tool to find fresh info (events, hours, new spots). Always frame web results as "I found this online" and then suggest a local guide who can verify it in person.
+- Prefer our catalog over web results when both exist. Web search is a fallback, not the default.
+- Do NOT invent specific restaurant or place names. Either use PLACES CATALOG, web_search results, or honestly recommend a guide instead.
 - Keep replies warm, concise, and useful. Use light markdown (bold, lists).
 - If the user asks about something unrelated to travel, gently steer back.`;
 }
+
+function createWebSearchTool() {
+  return tool({
+    description:
+      "Search the web for fresh information about places, restaurants, events, opening hours, or attractions in Uzbekistan. Use only when PLACES CATALOG has no relevant entry.",
+    inputSchema: z.object({
+      query: z.string().describe("Search query in English or Russian, e.g. 'best plov restaurants Tashkent 2026'"),
+      city: z.string().optional().describe("City name for context, e.g. Tashkent, Samarkand"),
+    }),
+    execute: async ({ query, city }) => {
+      const apiKey = process.env.TAVILY_API_KEY;
+      if (!apiKey) return { error: "Web search not configured" };
+      try {
+        const res = await fetch("https://api.tavily.com/search", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            api_key: apiKey,
+            query: city ? `${query} ${city} Uzbekistan` : `${query} Uzbekistan`,
+            search_depth: "basic",
+            max_results: 5,
+            include_answer: true,
+          }),
+        });
+        if (!res.ok) return { error: `Search failed: ${res.status}` };
+        const data = (await res.json()) as {
+          answer?: string;
+          results?: Array<{ title: string; url: string; content: string }>;
+        };
+        const results = (data.results ?? []).slice(0, 5).map((r) => ({
+          title: r.title,
+          url: r.url,
+          snippet: r.content?.slice(0, 300),
+        }));
+        // Log discovered places for admin moderation (fire-and-forget)
+        if (results.length > 0) {
+          supabaseAdmin
+            .from("place_suggestions")
+            .insert({
+              query,
+              city: city ?? null,
+              source: "tavily",
+              raw_results: { answer: data.answer ?? null, results } as unknown as object,
+            })
+            .then(() => {});
+        }
+        return { answer: data.answer ?? null, results };
+      } catch (e) {
+        return { error: e instanceof Error ? e.message : "Search error" };
+      }
+    },
+  });
+}
+
 
 export const Route = createFileRoute("/api/chat")({
   server: {
