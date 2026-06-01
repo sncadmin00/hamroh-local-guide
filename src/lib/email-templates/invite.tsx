@@ -16,7 +16,7 @@ export const InviteEmail = ({ siteName, siteUrl, confirmationUrl }: InviteEmailP
     <Preview>Вас приглашают присоединиться к {siteName}</Preview>
     <Body style={styles.main}>
       <Container style={styles.container}>
-        <Heading style={styles.brandBar}>Hamrohim</Heading>
+        <Heading style={styles.brandBar}>Hamroh</Heading>
         <Heading style={styles.h1}>Вас пригласили</Heading>
         <Text style={styles.text}>
           Вас приглашают присоединиться к{' '}
