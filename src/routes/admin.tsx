@@ -280,6 +280,18 @@ function AdminPage() {
             Categories ({categories.length})
           </button>
           <button
+            onClick={() => setTab("places")}
+            className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "places" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+          >
+            Places ({places.length})
+          </button>
+          <button
+            onClick={() => setTab("suggestions")}
+            className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "suggestions" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+          >
+            AI Suggestions ({suggestions.length})
+          </button>
+          <button
             onClick={() => setTab("articles")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "articles" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
@@ -298,6 +310,8 @@ function AdminPage() {
         {tab === "cities" && <CitiesPanel cities={cities} reload={loadData} />}
         {tab === "guides" && <GuidesPanel guides={guides} cities={cities} categories={categories} guideCategories={guideCategories} reload={loadData} />}
         {tab === "categories" && <CategoriesPanel categories={categories} reload={loadData} />}
+        {tab === "places" && <PlacesPanel places={places} cities={cities} guides={guides} placeGuides={placeGuides} reload={loadData} />}
+        {tab === "suggestions" && <SuggestionsPanel suggestions={suggestions} cities={cities} reload={loadData} />}
         {tab === "articles" && <ArticlesPanel articles={articles} cities={cities} reload={loadData} />}
         {tab === "social" && <SocialPanel embeds={embeds} cities={cities} reload={loadData} />}
       </div>
