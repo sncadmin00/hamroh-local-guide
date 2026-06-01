@@ -382,7 +382,22 @@ export type Database = {
           category_id?: string
           guide_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "guide_categories_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "guide_categories_guide_id_fkey"
+            columns: ["guide_id"]
+            isOneToOne: false
+            referencedRelation: "guides"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       guide_experiences: {
         Row: {
