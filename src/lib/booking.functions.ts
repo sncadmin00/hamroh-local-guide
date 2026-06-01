@@ -1,0 +1,72 @@
+import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
+
+// Public: list available slots for a guide on a specific date (or upcoming)
+export const getGuideSlots = createServerFn({ method: "GET" })
+  .inputValidator((input) =>
+    z.object({
+      guide_id: z.string().uuid(),
+      from_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+    }).parse(input),
+  )
+  .handler(async ({ data }) => {
+    const from = data.from_date ?? new Date().toISOString().slice(0, 10);
+    const { data: rows, error } = await supabaseAdmin
+      .from("guide_availability_slots")
+      .select("id, date, start_time, duration_minutes")
+      .eq("guide_id", data.guide_id)
+      .eq("is_booked", false)
+      .gte("date", from)
+      .order("date", { ascending: true })
+      .order("start_time", { ascending: true })
+      .limit(50);
+    if (error) throw new Error(error.message);
+    return rows ?? [];
+  });
+
+const bookingSchema = z.object({
+  guide_id: z.string().uuid(),
+  slot_id: z.string().uuid().nullable().optional(),
+  experience: z.string().min(1).max(255),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  start_time: z.string().regex(/^\d{2}:\d{2}(:\d{2})?$/).optional(),
+  duration_minutes: z.number().int().min(30).max(720).optional(),
+  guests: z.number().int().min(1).max(50),
+  customer_name: z.string().min(1).max(200),
+  customer_email: z.string().email(),
+  notes: z.string().max(2000).optional(),
+  total: z.number().min(0),
+  source: z.string().max(64).optional(),
+  user_id: z.string().uuid().nullable().optional(),
+});
+
+export const createBooking = createServerFn({ method: "POST" })
+  .inputValidator((input) => bookingSchema.parse(input))
+  .handler(async ({ data }) => {
+    // Instant booking if slot picked, otherwise pending request
+    const isInstant = !!data.slot_id;
+    const insertPayload = {
+      guide_id: data.guide_id,
+      slot_id: data.slot_id ?? null,
+      experience: data.experience,
+      date: data.date,
+      start_time: data.start_time ?? null,
+      duration_minutes: data.duration_minutes ?? 120,
+      guests: data.guests,
+      customer_name: data.customer_name,
+      customer_email: data.customer_email,
+      notes: data.notes ?? "",
+      total: data.total,
+      source: data.source ?? "web",
+      user_id: data.user_id ?? null,
+      status: isInstant ? "confirmed" : "pending",
+    };
+    const { data: row, error } = await supabaseAdmin
+      .from("bookings")
+      .insert(insertPayload)
+      .select("id, status")
+      .single();
+    if (error) throw new Error(error.message);
+    return row;
+  });
