@@ -10,6 +10,7 @@ export const translations: Dict = {
   "nav.explore": { en: "Explore", uz: "Kashf eting", ru: "Обзор" },
   "nav.howItWorks": { en: "How it works", uz: "Qanday ishlaydi", ru: "Как это работает" },
   "nav.becomeGuide": { en: "Become a guide", uz: "Yo'lboshchi bo'ling", ru: "Стать гидом" },
+  "nav.faq": { en: "FAQ", uz: "FAQ", ru: "FAQ" },
   "common.menu": { en: "Menu", uz: "Menyu", ru: "Меню" },
   "common.findUs": { en: "Find us:", uz: "Bizni toping:", ru: "Найти нас:" },
   "common.contactUs": { en: "Contact us:", uz: "Aloqa:", ru: "Связаться:" },

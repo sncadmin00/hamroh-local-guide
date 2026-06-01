@@ -53,6 +53,7 @@ export function SiteHeader() {
     { to: "/explore", label: t("nav.explore") },
     { to: "/how-it-works", label: t("nav.howItWorks") },
     { to: "/become-a-guide", label: t("nav.becomeGuide") },
+    { to: "/faq", label: t("nav.faq") },
   ] as const;
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-md">
