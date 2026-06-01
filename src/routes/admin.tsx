@@ -1597,3 +1597,402 @@ function ApplicationsPanel({
     </div>
   );
 }
+
+function PlacesPanel({
+  places,
+  cities,
+  guides,
+  placeGuides,
+  reload,
+}: {
+  places: Place[];
+  cities: City[];
+  guides: Guide[];
+  placeGuides: PlaceGuideLink[];
+  reload: () => Promise<void>;
+}) {
+  const [cityId, setCityId] = useState("");
+  const [category, setCategory] = useState<string>("food");
+  const [name, setName] = useState("");
+  const [slug, setSlug] = useState("");
+  const [shortDescription, setShortDescription] = useState("");
+  const [bodyMd, setBodyMd] = useState("");
+  const [address, setAddress] = useState("");
+  const [photoUrl, setPhotoUrl] = useState("");
+  const [tags, setTags] = useState("");
+  const [published, setPublished] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [filterCity, setFilterCity] = useState<string>("");
+  const [filterCategory, setFilterCategory] = useState<string>("");
+
+  const add = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name || !slug || !cityId) {
+      toast.error("Name, slug and city are required");
+      return;
+    }
+    setSaving(true);
+    const { error } = await supabase.from("places").insert({
+      city_id: cityId,
+      category,
+      name,
+      slug,
+      short_description: shortDescription,
+      body_md: bodyMd,
+      address,
+      photo_url: photoUrl || null,
+      tags: tags ? tags.split(",").map((t) => t.trim()).filter(Boolean) : [],
+      published,
+      sort_order: places.length,
+    });
+    setSaving(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success("Place added");
+    setName("");
+    setSlug("");
+    setShortDescription("");
+    setBodyMd("");
+    setAddress("");
+    setPhotoUrl("");
+    setTags("");
+    await reload();
+  };
+
+  const remove = async (id: string) => {
+    if (!confirm("Delete this place?")) return;
+    const { error } = await supabase.from("places").delete().eq("id", id);
+    if (error) toast.error(error.message);
+    else {
+      toast.success("Deleted");
+      await reload();
+    }
+  };
+
+  const togglePublished = async (p: Place) => {
+    const { error } = await supabase.from("places").update({ published: !p.published }).eq("id", p.id);
+    if (error) toast.error(error.message);
+    else await reload();
+  };
+
+  const toggleGuide = async (placeId: string, guideId: string, currentlyLinked: boolean) => {
+    if (currentlyLinked) {
+      const { error } = await supabase
+        .from("place_guides")
+        .delete()
+        .eq("place_id", placeId)
+        .eq("guide_id", guideId);
+      if (error) toast.error(error.message);
+      else await reload();
+    } else {
+      const { error } = await supabase.from("place_guides").insert({ place_id: placeId, guide_id: guideId });
+      if (error) toast.error(error.message);
+      else await reload();
+    }
+  };
+
+  if (cities.length === 0) {
+    return (
+      <div className="mt-6 rounded-3xl bg-card p-6 ring-1 ring-border/60 text-sm text-muted-foreground">
+        Add at least one city before creating places.
+      </div>
+    );
+  }
+
+  const filtered = places.filter(
+    (p) => (!filterCity || p.city_id === filterCity) && (!filterCategory || p.category === filterCategory),
+  );
+
+  return (
+    <div className="mt-6 grid gap-6 lg:grid-cols-2">
+      <form onSubmit={add} className="rounded-3xl bg-card p-6 ring-1 ring-border/60 h-fit">
+        <h2 className="font-display text-lg font-semibold">Add a place</h2>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Places appear in AI recommendations and on the public site. AI sees only published places.
+        </p>
+        <div className="mt-4 space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs font-medium text-muted-foreground">City</label>
+              <select
+                value={cityId}
+                onChange={(e) => setCityId(e.target.value)}
+                className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+              >
+                <option value="">Select city…</option>
+                {cities.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-muted-foreground">Category</label>
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+              >
+                {PLACE_CATEGORIES.map((c) => (
+                  <option key={c.value} value={c.value}>
+                    {c.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <Field label="Name" value={name} onChange={setName} placeholder="Plov Center" />
+          <Field label="Slug" value={slug} onChange={setSlug} placeholder="plov-center-tashkent" />
+          <div>
+            <label className="text-xs font-medium text-muted-foreground">
+              Short description (1–2 sentences, used by AI)
+            </label>
+            <textarea
+              value={shortDescription}
+              onChange={(e) => setShortDescription(e.target.value)}
+              rows={2}
+              className="mt-1 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+              placeholder="Legendary spot for authentic Uzbek plov. Sold out by 2pm — go early."
+            />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-muted-foreground">Full description (markdown)</label>
+            <textarea
+              value={bodyMd}
+              onChange={(e) => setBodyMd(e.target.value)}
+              rows={4}
+              className="mt-1 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+            />
+          </div>
+          <Field label="Address" value={address} onChange={setAddress} placeholder="Iftikhor 1, Tashkent" />
+          <Field label="Photo URL" value={photoUrl} onChange={setPhotoUrl} placeholder="https://…" />
+          <Field
+            label="Tags (comma separated)"
+            value={tags}
+            onChange={setTags}
+            placeholder="local-favorite, lunch, budget"
+          />
+          <label className="inline-flex items-center gap-2 text-sm pt-1">
+            <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} />
+            Published (visible to AI and on site)
+          </label>
+        </div>
+        <button
+          type="submit"
+          disabled={saving}
+          className="mt-5 inline-flex items-center gap-2 h-11 px-6 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-60"
+        >
+          <Plus className="h-4 w-4" /> {saving ? "Saving…" : "Add place"}
+        </button>
+      </form>
+
+      <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
+        <h2 className="font-display text-lg font-semibold">Places</h2>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <select
+            value={filterCity}
+            onChange={(e) => setFilterCity(e.target.value)}
+            className="h-9 rounded-full border border-input bg-background px-3 text-xs"
+          >
+            <option value="">All cities</option>
+            {cities.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+          <select
+            value={filterCategory}
+            onChange={(e) => setFilterCategory(e.target.value)}
+            className="h-9 rounded-full border border-input bg-background px-3 text-xs"
+          >
+            <option value="">All categories</option>
+            {PLACE_CATEGORIES.map((c) => (
+              <option key={c.value} value={c.value}>
+                {c.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <ul className="mt-4 divide-y divide-border/60">
+          {filtered.length === 0 && <li className="py-4 text-sm text-muted-foreground">No places yet.</li>}
+          {filtered.map((p) => {
+            const city = cities.find((c) => c.id === p.city_id);
+            const linkedGuideIds = new Set(
+              placeGuides.filter((pg) => pg.place_id === p.id).map((pg) => pg.guide_id),
+            );
+            const cityGuides = guides.filter((g) => g.city_id === p.city_id);
+            return (
+              <li key={p.id} className="py-3 space-y-2">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-medium truncate">
+                      {p.name}{" "}
+                      <span className="text-xs text-muted-foreground font-normal">/ {p.category}</span>
+                    </p>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {city?.name ?? "—"} · {p.short_description.slice(0, 60)}
+                      {p.short_description.length > 60 && "…"}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <button
+                      onClick={() => togglePublished(p)}
+                      className={`px-2.5 h-7 rounded-full text-xs font-medium ring-1 ${
+                        p.published
+                          ? "bg-emerald-50 text-emerald-700 ring-emerald-200"
+                          : "bg-secondary text-muted-foreground ring-border/60"
+                      }`}
+                    >
+                      {p.published ? "Live" : "Draft"}
+                    </button>
+                    <button
+                      onClick={() => remove(p.id)}
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                      aria-label="Delete"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+                {cityGuides.length > 0 && (
+                  <div>
+                    <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                      Guides who take travelers here
+                    </p>
+                    <div className="mt-1 flex flex-wrap gap-1.5">
+                      {cityGuides.map((g) => {
+                        const on = linkedGuideIds.has(g.id);
+                        return (
+                          <button
+                            key={g.id}
+                            onClick={() => toggleGuide(p.id, g.id, on)}
+                            className={`px-2.5 h-7 rounded-full text-xs font-medium ring-1 transition ${
+                              on
+                                ? "bg-primary text-primary-foreground ring-primary"
+                                : "bg-card ring-border/60 text-muted-foreground hover:bg-secondary/60"
+                            }`}
+                          >
+                            {g.name}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function SuggestionsPanel({
+  suggestions,
+  cities,
+  reload,
+}: {
+  suggestions: PlaceSuggestion[];
+  cities: City[];
+  reload: () => Promise<void>;
+}) {
+  const approve = async (s: PlaceSuggestion) => {
+    const cityId = s.city_id ?? cities.find((c) => c.name.toLowerCase() === s.city_name.toLowerCase())?.id;
+    if (!cityId) {
+      toast.error("City not found — add it first or set manually");
+      return;
+    }
+    const baseSlug = s.name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "")
+      .slice(0, 60);
+    const slug = `${baseSlug}-${Math.random().toString(36).slice(2, 6)}`;
+    const { error: insErr } = await supabase.from("places").insert({
+      city_id: cityId,
+      category: s.category,
+      name: s.name,
+      slug,
+      short_description: s.description,
+      body_md: s.description + (s.source_url ? `\n\nSource: ${s.source_url}` : ""),
+      published: false,
+    });
+    if (insErr) {
+      toast.error(insErr.message);
+      return;
+    }
+    await supabase.from("place_suggestions").update({ status: "approved" }).eq("id", s.id);
+    toast.success("Added to Places as draft. Edit and publish from the Places tab.");
+    await reload();
+  };
+
+  const reject = async (id: string) => {
+    const { error } = await supabase.from("place_suggestions").update({ status: "rejected" }).eq("id", id);
+    if (error) toast.error(error.message);
+    else await reload();
+  };
+
+  return (
+    <div className="mt-6 rounded-3xl bg-card p-6 ring-1 ring-border/60">
+      <h2 className="font-display text-lg font-semibold">AI Suggestions</h2>
+      <p className="mt-1 text-xs text-muted-foreground">
+        Places the AI found online via user queries. Approve to add to Places (as draft) or reject.
+      </p>
+      {suggestions.length === 0 ? (
+        <p className="mt-4 text-sm text-muted-foreground">No pending suggestions.</p>
+      ) : (
+        <ul className="mt-4 divide-y divide-border/60">
+          {suggestions.map((s) => (
+            <li key={s.id} className="py-4 space-y-2">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium">
+                    {s.name}{" "}
+                    <span className="text-xs text-muted-foreground font-normal">
+                      / {s.category} · {s.city_name}
+                    </span>
+                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">{s.description}</p>
+                  {s.source_url && (
+                    <a
+                      href={s.source_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-1 inline-block text-xs text-primary hover:underline"
+                    >
+                      Source ↗
+                    </a>
+                  )}
+                  {s.raw_query && (
+                    <p className="mt-1 text-[11px] text-muted-foreground italic">
+                      User query: "{s.raw_query}"
+                    </p>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    onClick={() => approve(s)}
+                    className="px-3 h-9 rounded-full bg-primary text-primary-foreground text-xs font-semibold"
+                  >
+                    Approve
+                  </button>
+                  <button
+                    onClick={() => reject(s.id)}
+                    className="px-3 h-9 rounded-full ring-1 ring-border/60 text-xs font-medium hover:bg-destructive/10 hover:text-destructive"
+                  >
+                    Reject
+                  </button>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
