@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { enqueueTransactionalEmail } from "@/lib/email/enqueue.server";
 
 const APP_BASE_URL = "https://hamrohim.com";
@@ -44,8 +45,16 @@ const statusSchema = z.object({
  * Admin-only — verifies caller has admin role.
  */
 export const notifyGuideApplicationStatus = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((input) => statusSchema.parse(input))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const { data: roles } = await supabaseAdmin
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", context.userId);
+    const isAdmin = (roles ?? []).some((r) => r.role === "admin");
+    if (!isAdmin) throw new Error("Forbidden");
+
     const { data: app } = await supabaseAdmin
       .from("guide_applications")
       .select("id, full_name, email")
