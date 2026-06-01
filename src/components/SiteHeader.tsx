@@ -153,6 +153,21 @@ export function SiteHeader() {
                     <Shield className="h-4 w-4" /> Admin
                   </Link>
                 )}
+                {signedIn ? (
+                  <button
+                    onClick={signOut}
+                    className="mt-2 px-3 py-3 rounded-lg text-base font-medium text-foreground hover:bg-secondary/60 inline-flex items-center gap-2 text-left"
+                  >
+                    <LogOut className="h-4 w-4" /> Sign out
+                  </button>
+                ) : (
+                  <Link
+                    to="/login"
+                    className="mt-2 px-3 py-3 rounded-lg text-base font-semibold bg-primary text-primary-foreground inline-flex items-center gap-2"
+                  >
+                    <LogIn className="h-4 w-4" /> Sign in
+                  </Link>
+                )}
               </nav>
               <div className="mt-6 flex items-center gap-3 px-3">
                 <span className="text-sm text-muted-foreground">{t("common.contactUs")}</span>
