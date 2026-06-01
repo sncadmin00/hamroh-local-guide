@@ -91,6 +91,29 @@ export function useGuides() {
   return useQuery({ queryKey: ["guides"], queryFn: fetchGuides });
 }
 
+export type Category = {
+  id: string;
+  slug: string;
+  name: string;
+  icon: string;
+  description: string;
+  sort_order: number;
+};
+
+export function useCategories() {
+  return useQuery({
+    queryKey: ["categories"],
+    queryFn: async (): Promise<Category[]> => {
+      const { data, error } = await supabase
+        .from("categories")
+        .select("id, slug, name, icon, description, sort_order")
+        .order("sort_order", { ascending: true });
+      if (error) throw error;
+      return (data ?? []) as Category[];
+    },
+  });
+}
+
 async function fetchGuideBySlug(slug: string): Promise<Guide | null> {
   const { data, error } = await supabase
     .from("guides")
