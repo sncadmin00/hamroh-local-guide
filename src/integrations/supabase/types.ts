@@ -148,6 +148,7 @@ export type Database = {
           booking_id: string
           created_at: string
           id: string
+          notification_sent_at: string | null
           read_at: string | null
           sender_id: string
           sender_role: string
@@ -157,6 +158,7 @@ export type Database = {
           booking_id: string
           created_at?: string
           id?: string
+          notification_sent_at?: string | null
           read_at?: string | null
           sender_id: string
           sender_role: string
@@ -166,6 +168,7 @@ export type Database = {
           booking_id?: string
           created_at?: string
           id?: string
+          notification_sent_at?: string | null
           read_at?: string | null
           sender_id?: string
           sender_role?: string
