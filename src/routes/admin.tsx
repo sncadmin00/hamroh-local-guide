@@ -85,6 +85,9 @@ type GuideApplication = {
   about: string;
   status: string;
   created_at: string;
+  portrait_url: string | null;
+  video_url: string | null;
+  photo_urls: string[] | null;
 };
 
 const SOURCES = ["web", "instagram", "facebook", "telegram", "whatsapp", "other"] as const;
