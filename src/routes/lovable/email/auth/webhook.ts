@@ -31,7 +31,7 @@ const EMAIL_TEMPLATES: Record<string, React.ComponentType<any>> = {
 }
 
 // Configuration
-const SITE_NAME = "hamroh-local-guide"
+const SITE_NAME = "Hamroh"
 const SENDER_DOMAIN = "notify.hamrohim.com"
 const ROOT_DOMAIN = "hamrohim.com"
 const FROM_DOMAIN = "hamrohim.com"
