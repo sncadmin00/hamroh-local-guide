@@ -1,8 +1,8 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Compass, Trash2, Plus } from "lucide-react";
+import { Compass, Trash2, Plus, Upload, ImageIcon, Video } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Admin — Sancho" }] }),
@@ -985,6 +985,10 @@ function ApplicationsPanel({
 }) {
   const [filter, setFilter] = useState<"all" | "pending" | "approved" | "rejected">("pending");
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [uploading, setUploading] = useState<Record<string, boolean>>({});
+  const portraitRef = useRef<HTMLInputElement>(null);
+  const photosRef = useRef<HTMLInputElement>(null);
+  const videoRef = useRef<HTMLInputElement>(null);
 
   const filtered = applications.filter((a) => filter === "all" || a.status === filter);
 
@@ -1014,6 +1018,81 @@ function ApplicationsPanel({
     return `${base} bg-accent/15 text-accent-foreground`;
   };
 
+  const uploadFile = async (bucket: string, file: File, path: string): Promise<string | null> => {
+    const { error: upErr } = await supabase.storage.from(bucket).upload(path, file, { upsert: true });
+    if (upErr) {
+      toast.error(upErr.message);
+      return null;
+    }
+    const { data } = supabase.storage.from(bucket).getPublicUrl(path);
+    return data?.publicUrl ?? null;
+  };
+
+  const handlePortraitUpload = async (appId: string, file: File) => {
+    setUploading((p) => ({ ...p, [appId + "-portrait"]: true }));
+    const ext = file.name.split(".").pop() ?? "jpg";
+    const path = `${appId}/portrait.${ext}`;
+    const url = await uploadFile("guide-application-photos", file, path);
+    if (url) {
+      const { error } = await supabase.from("guide_applications").update({ portrait_url: url }).eq("id", appId);
+      if (error) toast.error(error.message);
+      else { toast.success("Portrait uploaded"); await reload(); }
+    }
+    setUploading((p) => ({ ...p, [appId + "-portrait"]: false }));
+  };
+
+  const handlePhotosUpload = async (appId: string, files: FileList) => {
+    const app = applications.find((a) => a.id === appId);
+    const current = app?.photo_urls?.length ?? 0;
+    const toAdd = Math.min(files.length, 5 - current);
+    if (toAdd <= 0) { toast.error("Max 5 photos"); return; }
+
+    setUploading((p) => ({ ...p, [appId + "-photos"]: true }));
+    const newUrls: string[] = [];
+    for (let i = 0; i < toAdd; i++) {
+      const file = files[i];
+      const ext = file.name.split(".").pop() ?? "jpg";
+      const path = `${appId}/photos/${Date.now()}-${i}.${ext}`;
+      const url = await uploadFile("guide-application-photos", file, path);
+      if (url) newUrls.push(url);
+    }
+    if (newUrls.length > 0) {
+      const merged = [...(app?.photo_urls ?? []), ...newUrls];
+      const { error } = await supabase.from("guide_applications").update({ photo_urls: merged }).eq("id", appId);
+      if (error) toast.error(error.message);
+      else { toast.success("Photos uploaded"); await reload(); }
+    }
+    setUploading((p) => ({ ...p, [appId + "-photos"]: false }));
+  };
+
+  const removePhoto = async (appId: string, url: string) => {
+    const app = applications.find((a) => a.id === appId);
+    if (!app) return;
+    const next = (app.photo_urls ?? []).filter((u) => u !== url);
+    const { error } = await supabase.from("guide_applications").update({ photo_urls: next }).eq("id", appId);
+    if (error) toast.error(error.message);
+    else { toast.success("Photo removed"); await reload(); }
+  };
+
+  const handleVideoUpload = async (appId: string, file: File) => {
+    setUploading((p) => ({ ...p, [appId + "-video"]: true }));
+    const ext = file.name.split(".").pop() ?? "mp4";
+    const path = `${appId}/video.${ext}`;
+    const url = await uploadFile("guide-application-videos", file, path);
+    if (url) {
+      const { error } = await supabase.from("guide_applications").update({ video_url: url }).eq("id", appId);
+      if (error) toast.error(error.message);
+      else { toast.success("Video uploaded"); await reload(); }
+    }
+    setUploading((p) => ({ ...p, [appId + "-video"]: false }));
+  };
+
+  const removeVideo = async (appId: string) => {
+    const { error } = await supabase.from("guide_applications").update({ video_url: null }).eq("id", appId);
+    if (error) toast.error(error.message);
+    else { toast.success("Video removed"); await reload(); }
+  };
+
   return (
     <div className="mt-6 rounded-3xl bg-card p-6 ring-1 ring-border/60">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -1037,6 +1116,7 @@ function ApplicationsPanel({
         <ul className="mt-4 divide-y divide-border/60">
           {filtered.map((a) => {
             const open = expanded === a.id;
+            const photoCount = a.photo_urls?.length ?? 0;
             return (
               <li key={a.id} className="py-4">
                 <div className="flex flex-wrap items-start justify-between gap-3">
@@ -1085,24 +1165,124 @@ function ApplicationsPanel({
                   </div>
                 </div>
                 {open && (
-                  <div className="mt-3 rounded-2xl bg-secondary/40 p-4 text-sm space-y-3">
-                    {(a.portrait_url || (a.photo_urls && a.photo_urls.length > 0)) && (
-                      <div className="flex flex-wrap gap-2">
-                        {a.portrait_url && (
+                  <div className="mt-3 rounded-2xl bg-secondary/40 p-4 text-sm space-y-4">
+                    {/* Portrait */}
+                    <div>
+                      <p className="text-xs font-medium text-muted-foreground mb-2">Portrait</p>
+                      <div className="flex flex-wrap items-center gap-2">
+                        {a.portrait_url ? (
                           <a href={a.portrait_url} target="_blank" rel="noreferrer">
                             <img src={a.portrait_url} alt="Portrait" className="h-24 w-24 rounded-xl object-cover ring-1 ring-border/60" />
                           </a>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">No portrait</span>
                         )}
-                        {a.photo_urls?.map((url) => (
-                          <a key={url} href={url} target="_blank" rel="noreferrer">
-                            <img src={url} alt="Tour" className="h-24 w-24 rounded-xl object-cover ring-1 ring-border/60" />
-                          </a>
-                        ))}
+                        <button
+                          onClick={() => portraitRef.current?.click()}
+                          disabled={uploading[a.id + "-portrait"]}
+                          className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-secondary/60 disabled:opacity-50"
+                        >
+                          <Upload className="h-3.5 w-3.5" />
+                          {uploading[a.id + "-portrait"] ? "Uploading…" : a.portrait_url ? "Replace" : "Upload portrait"}
+                        </button>
+                        <input
+                          ref={portraitRef}
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handlePortraitUpload(a.id, file);
+                            e.target.value = "";
+                          }}
+                        />
                       </div>
-                    )}
-                    {a.video_url && (
-                      <video src={a.video_url} controls className="w-full max-w-sm rounded-xl ring-1 ring-border/60" />
-                    )}
+                    </div>
+
+                    {/* Photos */}
+                    <div>
+                      <p className="text-xs font-medium text-muted-foreground mb-2">Tour photos ({photoCount}/5)</p>
+                      <div className="flex flex-wrap items-center gap-2">
+                        {a.photo_urls?.map((url) => (
+                          <div key={url} className="relative group">
+                            <a href={url} target="_blank" rel="noreferrer">
+                              <img src={url} alt="Tour" className="h-24 w-24 rounded-xl object-cover ring-1 ring-border/60" />
+                            </a>
+                            <button
+                              onClick={() => removePhoto(a.id, url)}
+                              className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-destructive text-white flex items-center justify-center text-[10px] opacity-0 group-hover:opacity-100 transition"
+                              title="Remove"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </button>
+                          </div>
+                        ))}
+                        {photoCount < 5 && (
+                          <button
+                            onClick={() => photosRef.current?.click()}
+                            disabled={uploading[a.id + "-photos"]}
+                            className="inline-flex flex-col items-center justify-center gap-1 h-24 w-24 rounded-xl ring-1 ring-border/60 border-dashed border-2 border-border/60 text-muted-foreground hover:bg-secondary/40 disabled:opacity-50"
+                          >
+                            <ImageIcon className="h-5 w-5" />
+                            <span className="text-[10px]">{uploading[a.id + "-photos"] ? "…" : "Add photo"}</span>
+                          </button>
+                        )}
+                        <input
+                          ref={photosRef}
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          className="hidden"
+                          onChange={(e) => {
+                            if (e.target.files && e.target.files.length > 0) {
+                              handlePhotosUpload(a.id, e.target.files);
+                            }
+                            e.target.value = "";
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Video */}
+                    <div>
+                      <p className="text-xs font-medium text-muted-foreground mb-2">Video greeting</p>
+                      <div className="flex flex-wrap items-center gap-2">
+                        {a.video_url ? (
+                          <div className="relative group">
+                            <video src={a.video_url} controls className="w-full max-w-sm rounded-xl ring-1 ring-border/60" />
+                            <button
+                              onClick={() => removeVideo(a.id)}
+                              className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-destructive text-white flex items-center justify-center text-[10px]"
+                              title="Remove video"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </button>
+                          </div>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">No video</span>
+                        )}
+                        <button
+                          onClick={() => videoRef.current?.click()}
+                          disabled={uploading[a.id + "-video"]}
+                          className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-secondary/60 disabled:opacity-50"
+                        >
+                          <Video className="h-3.5 w-3.5" />
+                          {uploading[a.id + "-video"] ? "Uploading…" : a.video_url ? "Replace" : "Upload video"}
+                        </button>
+                        <input
+                          ref={videoRef}
+                          type="file"
+                          accept="video/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleVideoUpload(a.id, file);
+                            e.target.value = "";
+                          }}
+                        />
+                      </div>
+                    </div>
+
                     <div>
                       <span className="text-xs text-muted-foreground">Specialization: </span>
                       {a.specialization}
