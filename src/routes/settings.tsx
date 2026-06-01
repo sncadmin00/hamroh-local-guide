@@ -181,6 +181,9 @@ function SettingsPage() {
             )}
           </div>
         </form>
+
+        <form onSubmit={updateEmail} className="mt-6 rounded-3xl bg-card p-6 ring-1 ring-border/60">
+          <h2 className="font-display text-lg font-semibold">Email address</h2>
           <p className="mt-1 text-sm text-muted-foreground">We'll send a confirmation link to the new address.</p>
           <input
             type="email"
