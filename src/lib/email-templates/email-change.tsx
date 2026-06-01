@@ -2,7 +2,7 @@ import * as React from 'react'
 import {
   Body, Img, Container, Head, Heading, Html, Link, Preview, Text,
 } from '@react-email/components'
-import { styles } from './_brand'
+import { styles, BRAND } from './_brand'
 
 interface EmailChangeEmailProps {
   siteName: string
