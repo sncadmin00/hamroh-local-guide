@@ -1,10 +1,12 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { listMyBookings } from "@/lib/my-bookings.functions";
-import { Calendar, Users, ArrowLeft, MessageSquare } from "lucide-react";
+import { listMyBookings, cancelBookingAsClient } from "@/lib/my-bookings.functions";
+import { Calendar, Users, ArrowLeft, MessageSquare, X } from "lucide-react";
+
 
 export const Route = createFileRoute("/my-bookings")({
   head: () => ({ meta: [{ title: "My bookings — Sancho" }] }),
@@ -21,6 +23,8 @@ function MyBookingsPage() {
   const navigate = useNavigate();
   const [ready, setReady] = useState(false);
   const fetchBookings = useServerFn(listMyBookings);
+  const cancelBooking = useServerFn(cancelBookingAsClient);
+  const qc = useQueryClient();
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -34,6 +38,22 @@ function MyBookingsPage() {
     queryFn: () => fetchBookings(),
     enabled: ready,
   });
+
+  const cancelMut = useMutation({
+    mutationFn: (vars: { id: string; reason?: string }) =>
+      cancelBooking({ data: vars }),
+    onSuccess: () => {
+      toast.success("Booking cancelled");
+      qc.invalidateQueries({ queryKey: ["my-bookings"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const handleCancel = (id: string) => {
+    const reason = window.prompt("Reason for cancellation (optional):") ?? undefined;
+    if (window.confirm("Cancel this booking?")) cancelMut.mutate({ id, reason });
+  };
+
 
   if (!ready) return <div className="min-h-screen flex items-center justify-center text-sm text-muted-foreground">Loading…</div>;
 
@@ -89,14 +109,34 @@ function MyBookingsPage() {
                     <span className="inline-flex items-center gap-1"><Users className="h-3.5 w-3.5" />{b.guests} {b.guests === 1 ? "guest" : "guests"}</span>
                     <span className="font-medium text-foreground">${Number(b.total).toFixed(0)}</span>
                   </div>
-                  <Link
-                    to="/messages/$bookingId"
-                    params={{ bookingId: b.id }}
-                    className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline"
-                  >
-                    <MessageSquare className="h-3.5 w-3.5" /> Message guide
-                  </Link>
+                  <div className="mt-2 flex flex-wrap items-center gap-3">
+                    <Link
+                      to="/messages/$bookingId"
+                      params={{ bookingId: b.id }}
+                      className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline"
+                    >
+                      <MessageSquare className="h-3.5 w-3.5" /> Message guide
+                    </Link>
+                    {b.status !== "cancelled" && b.status !== "declined" && (
+                      <button
+                        onClick={() => handleCancel(b.id)}
+                        disabled={cancelMut.isPending}
+                        className="inline-flex items-center gap-1.5 text-xs font-medium text-destructive hover:underline disabled:opacity-50"
+                      >
+                        <X className="h-3.5 w-3.5" /> Cancel
+                      </button>
+                    )}
+                  </div>
                 </div>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
               </li>
             );
           })}
