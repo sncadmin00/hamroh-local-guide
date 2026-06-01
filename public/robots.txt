@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /guide
+Disallow: /my-bookings
+Disallow: /messages
+Disallow: /settings
+Disallow: /ai
+Disallow: /api/
+
+Sitemap: https://hamroh-local-guide.lovable.app/sitemap.xml
