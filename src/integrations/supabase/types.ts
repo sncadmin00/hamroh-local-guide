@@ -70,6 +70,30 @@ export type Database = {
         }
         Relationships: []
       }
+      analytics_events: {
+        Row: {
+          created_at: string
+          event: string
+          id: string
+          props: Json
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event: string
+          id?: string
+          props?: Json
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event?: string
+          id?: string
+          props?: Json
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       article_cities: {
         Row: {
           article_id: string
@@ -402,6 +426,36 @@ export type Database = {
         }
         Relationships: []
       }
+      feedback: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string
+          page: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          name: string
+          page?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          page?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       guide_applications: {
         Row: {
           about: string
@@ -579,6 +633,7 @@ export type Database = {
           photo_url: string | null
           price_per_day: number
           rating: number
+          referral_code: string | null
           reviews: number
           slug: string
           sort_order: number
@@ -600,6 +655,7 @@ export type Database = {
           photo_url?: string | null
           price_per_day?: number
           rating?: number
+          referral_code?: string | null
           reviews?: number
           slug: string
           sort_order?: number
@@ -621,6 +677,7 @@ export type Database = {
           photo_url?: string | null
           price_per_day?: number
           rating?: number
+          referral_code?: string | null
           reviews?: number
           slug?: string
           sort_order?: number
@@ -676,6 +733,33 @@ export type Database = {
           unsubscribed_at?: string | null
           updated_at?: string
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      referral_clicks: {
+        Row: {
+          created_at: string
+          guide_id: string
+          id: string
+          referral_code: string
+          source: string
+          user_agent: string
+        }
+        Insert: {
+          created_at?: string
+          guide_id: string
+          id?: string
+          referral_code: string
+          source?: string
+          user_agent?: string
+        }
+        Update: {
+          created_at?: string
+          guide_id?: string
+          id?: string
+          referral_code?: string
+          source?: string
+          user_agent?: string
         }
         Relationships: []
       }

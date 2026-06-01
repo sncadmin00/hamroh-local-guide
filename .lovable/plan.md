@@ -1,42 +1,61 @@
-## Plan: Integrate categories across admin, homepage, and city pages
+Большой объём — предлагаю порядок и состав изменений. После approve пройду по списку батчами.
 
-Build on the existing `categories` and `guide_categories` tables (already created with 6 starter categories).
+## Что сделаю
 
-### 1. Admin panel — manage categories and assign to guides
+### 3. Юридические страницы
+- `src/routes/terms.tsx`, `src/routes/privacy.tsx`, `src/routes/refund-policy.tsx`
+- Шаблонный текст RU/UZ/EN (адаптируем позже под юриста)
+- Ссылки в `SiteFooter`
 
-In `src/routes/admin.tsx` (or a new admin section):
-- Add a "Categories" tab with CRUD: list, create, edit (name, slug, icon, description, sort_order), delete
-- In the existing guide editor, add a multi-select to attach/detach categories via `guide_categories`
-- Use `lucide-react` icon names as strings (stored in `categories.icon`), render dynamically
+### 4. 404 / Error boundary
+- Уже есть `notFoundComponent` и `errorComponent` в `__root.tsx` — добавлю локализацию + проверю что ключевые роуты с loader'ами имеют свои boundaries
+- Добавлю `errorComponent`/`notFoundComponent` в `guides.$guideId`, `book.$guideId`, `explore.$slug`, `ai.$threadId`
 
-### 2. Homepage — category cards
+### 5. Форма обратной связи
+- Миграция: таблица `feedback` (id, user_id?, name, email, message, page, created_at) + RLS
+- Server fn `submitFeedback` (валидация zod) + email админам через существующий email pipeline
+- Страница `src/routes/contact.tsx` + ссылка в футере
 
-In `src/routes/index.tsx`:
-- Add a "Browse by interest" section showing all categories as cards (icon + name + short description)
-- Each card links to `/guides?category=<slug>`
-- Fetch via a new `useCategories()` hook in `src/lib/content-queries.ts`
+### 6. Аналитика событий
+- Миграция: таблица `analytics_events` (id, user_id?, event, props jsonb, created_at) + RLS (insert для всех, select только admin)
+- Хелпер `src/lib/analytics.ts` → `trackEvent(name, props)`
+- Инструментирую: signup, guide_view, booking_created, booking_cancelled, ai_prompt
 
-### 3. Guides page — category filter
+### 7. Локализация UI (RU/UZ/EN)
+- Расширю `src/lib/i18n.tsx` ключами для SiteHeader, SiteFooter, главных CTA на index, guides, my-bookings, login
+- Не буду переводить admin/guide cabinet (внутренние) — оставлю EN
+- Полный аудит всех страниц — пометка TODO для остального
 
-In `src/routes/guides.tsx`:
-- Add `category` to `validateSearch`
-- Add category chips/dropdown next to existing City/Language/Instant filters
-- Extend the `useGuides()` query to also load each guide's `guide_categories(category_id)`
-- Filter client-side by selected category slug
-- Reuse on `/explore` if desired (optional, can skip for now)
+### 8. Мобильная адаптация (375px)
+- Проверю/поправлю SiteHeader (бургер), index hero, guides grid, booking форму, my-bookings, messages
+- Скриншоты через preview не нужны — пройдусь по классам
 
-### Technical notes
+### 9. About / Team
+- `src/routes/about.tsx` с миссией, командой (плейсхолдер), контактами
+- Ссылка в футере
 
-- New hook `useCategories()` → `select * from categories order by sort_order`
-- Extend `GUIDE_SELECT` to include `guide_categories(category_id, categories(slug, name))`
-- Add `categories: { slug: string; name: string }[]` to the `Guide` type in `src/data/guides.ts`
-- Icons: use a small `<Icon name={...} />` wrapper that maps string → lucide component (with fallback)
-- No new migrations needed — schema and seeds are already in place
+### 10. og:image для динамики
+- `guides.$guideId`: og:image = photo гида (из loader data)
+- `explore.$slug` (статьи): og:image = cover_image статьи
+- Абсолютные URL
 
-### Out of scope (for later)
+### 11. sitemap.xml + robots.txt
+- `src/routes/sitemap[.]xml.ts` — статические роуты + динамика (guides published, articles published, cities)
+- `public/robots.txt` с `Sitemap:` директивой
 
-- Dedicated `/categories/<slug>` SEO landing pages
-- Showing categories on the explore page
-- Advertising/UTM tracking
+### 12. Реферальные ссылки гидов
+- Миграция: добавить `referral_code` в `guides` (unique) + таблица `referral_clicks` (id, guide_id, ref_source, ip_hash?, created_at)
+- Хелпер: `?ref=<code>` на любом URL → cookie + лог в `referral_clicks`
+- Кабинет гида: блок «Моя ссылка» с copy-to-clipboard + счётчик кликов
 
-Want me to proceed with all three, or start with one?
+## Технические заметки
+- Все таблицы с `GRANT` для `authenticated`/`service_role`
+- Все server fn под `requireSupabaseAuth` где нужна авторизация
+- og:image — абсолютные URL через `SITE_URL` константу
+- Аналитика: insert разрешён всем (включая anon) для landing, select — только admin
+
+## Что НЕ делаю в этом проходе
+- Полный перевод admin/guide cabinet
+- Реальные юр.тексты (только шаблоны)
+- Реальные фото команды на About
+- Brevo рассылка по статьям (отложено ранее)
