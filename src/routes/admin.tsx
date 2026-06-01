@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Compass, Trash2, Plus, Upload, ImageIcon, Video, Mail, Tag } from "lucide-react";
+import { Compass, Trash2, Plus, Upload, ImageIcon, Video, Mail } from "lucide-react";
 import { CategoryIcon } from "@/components/CategoryIcon";
 import { inviteGuideToPortal } from "@/lib/admin-portal.functions";
 
