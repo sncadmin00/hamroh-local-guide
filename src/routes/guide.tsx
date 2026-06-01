@@ -46,10 +46,10 @@ type Booking = {
 function GuidePortal() {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
-  const [guide, setGuide] = useState<{ id: string; name: string; slug: string; tagline: string; cities?: { name: string } | null } | null>(null);
+  const [guide, setGuide] = useState<{ id: string; name: string; slug: string; tagline: string; referral_code: string | null; referral_clicks: number; cities?: { name: string } | null } | null>(null);
   const [slots, setSlots] = useState<Slot[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [tab, setTab] = useState<"availability" | "bookings">("availability");
+  const [tab, setTab] = useState<"availability" | "bookings" | "referral">("availability");
 
   const fetchGuide = useServerFn(getMyGuide);
   const fetchSlots = useServerFn(listMySlots);
@@ -120,12 +120,15 @@ function GuidePortal() {
       </header>
 
       <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <div className="flex gap-2 mb-6">
+        <div className="flex gap-2 mb-6 flex-wrap">
           <TabBtn active={tab === "availability"} onClick={() => setTab("availability")}>
             <Calendar className="h-4 w-4" /> Availability
           </TabBtn>
           <TabBtn active={tab === "bookings"} onClick={() => setTab("bookings")}>
             Bookings ({bookings.length})
+          </TabBtn>
+          <TabBtn active={tab === "referral"} onClick={() => setTab("referral")}>
+            <Link2 className="h-4 w-4" /> Referral
           </TabBtn>
         </div>
 
@@ -161,6 +164,44 @@ function GuidePortal() {
             }}
           />
         )}
+
+        {tab === "referral" && (
+          <ReferralPanel code={guide.referral_code} clicks={guide.referral_clicks} />
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ReferralPanel({ code, clicks }: { code: string | null; clicks: number }) {
+  if (!code) {
+    return (
+      <div className="rounded-3xl bg-card p-6 ring-1 ring-border text-sm text-muted-foreground">
+        No referral code assigned yet. Contact an administrator.
+      </div>
+    );
+  }
+  const link = `https://hamroh-local-guide.lovable.app/?ref=${code}`;
+  return (
+    <div className="space-y-4">
+      <div className="rounded-3xl bg-card p-6 ring-1 ring-border">
+        <h2 className="font-display text-lg font-semibold">Your referral link</h2>
+        <p className="text-sm text-muted-foreground mt-1">
+          Share it on social media. Every traveller who books through it counts toward your stats.
+        </p>
+        <div className="mt-4 flex items-center gap-2">
+          <input readOnly value={link} className="flex-1 h-11 rounded-xl border border-input bg-background px-3 text-sm font-mono" />
+          <button
+            onClick={async () => { await navigator.clipboard.writeText(link); toast.success("Copied"); }}
+            className="h-11 px-4 rounded-xl bg-foreground text-background text-sm font-medium inline-flex items-center gap-2"
+          >
+            <Copy className="h-4 w-4" /> Copy
+          </button>
+        </div>
+      </div>
+      <div className="rounded-3xl bg-card p-6 ring-1 ring-border">
+        <p className="text-xs uppercase tracking-wider text-muted-foreground">Total link clicks</p>
+        <p className="mt-1 font-display text-3xl font-semibold">{clicks}</p>
       </div>
     </div>
   );
