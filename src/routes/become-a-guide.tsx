@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Upload, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
@@ -16,6 +16,10 @@ export const Route = createFileRoute("/become-a-guide")({
   component: BecomeAGuidePage,
 });
 
+const MAX_PHOTOS = 5;
+const MAX_PHOTO_BYTES = 8 * 1024 * 1024; // 8 MB
+const MAX_VIDEO_BYTES = 50 * 1024 * 1024; // 50 MB
+
 const schema = z.object({
   full_name: z.string().trim().min(2, "Please enter your full name").max(120),
   email: z.string().trim().email("Invalid email").max(255),
@@ -27,10 +31,29 @@ const schema = z.object({
   about: z.string().trim().min(20, "Please write at least a couple of sentences").max(2000),
 });
 
+function randomKey(name: string) {
+  const safe = name.replace(/[^a-zA-Z0-9._-]/g, "_");
+  return `${crypto.randomUUID()}-${safe}`;
+}
+
+async function uploadTo(bucket: string, file: File): Promise<string> {
+  const key = randomKey(file.name);
+  const { error } = await supabase.storage.from(bucket).upload(key, file, {
+    contentType: file.type,
+    cacheControl: "3600",
+  });
+  if (error) throw error;
+  const { data } = supabase.storage.from(bucket).getPublicUrl(key);
+  return data.publicUrl;
+}
+
 function BecomeAGuidePage() {
   const [cities, setCities] = useState<{ id: string; name: string }[]>([]);
   const [submitted, setSubmitted] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [portrait, setPortrait] = useState<File | null>(null);
+  const [photos, setPhotos] = useState<File[]>([]);
+  const [video, setVideo] = useState<File | null>(null);
   const [form, setForm] = useState({
     full_name: "",
     email: "",
@@ -55,6 +78,39 @@ function BecomeAGuidePage() {
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
 
+  const onPhotosChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const incoming = Array.from(e.target.files ?? []);
+    e.target.value = "";
+    const merged = [...photos, ...incoming].slice(0, MAX_PHOTOS);
+    for (const f of incoming) {
+      if (f.size > MAX_PHOTO_BYTES) {
+        toast.error(`${f.name} is larger than 8 MB`);
+        return;
+      }
+    }
+    setPhotos(merged);
+  };
+
+  const onVideoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0] ?? null;
+    e.target.value = "";
+    if (f && f.size > MAX_VIDEO_BYTES) {
+      toast.error("Video must be under 50 MB");
+      return;
+    }
+    setVideo(f);
+  };
+
+  const onPortraitChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0] ?? null;
+    e.target.value = "";
+    if (f && f.size > MAX_PHOTO_BYTES) {
+      toast.error("Portrait must be under 8 MB");
+      return;
+    }
+    setPortrait(f);
+  };
+
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const parsed = schema.safeParse(form);
@@ -63,30 +119,46 @@ function BecomeAGuidePage() {
       return;
     }
     setSaving(true);
-    const { data: userData } = await supabase.auth.getUser();
-    const languages = parsed.data.languages
-      .split(",")
-      .map((s) => s.trim())
-      .filter(Boolean);
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      const languages = parsed.data.languages
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
 
-    const { error } = await supabase.from("guide_applications").insert({
-      full_name: parsed.data.full_name,
-      email: parsed.data.email,
-      phone: parsed.data.phone,
-      city: parsed.data.city,
-      languages,
-      specialization: parsed.data.specialization,
-      experience_years: parsed.data.experience_years,
-      about: parsed.data.about,
-      user_id: userData.user?.id ?? null,
-    });
-    setSaving(false);
-    if (error) {
-      toast.error(error.message);
-      return;
+      let portrait_url: string | null = null;
+      let video_url: string | null = null;
+      const photo_urls: string[] = [];
+
+      if (portrait) portrait_url = await uploadTo("guide-application-photos", portrait);
+      for (const p of photos) {
+        photo_urls.push(await uploadTo("guide-application-photos", p));
+      }
+      if (video) video_url = await uploadTo("guide-application-videos", video);
+
+      const { error } = await supabase.from("guide_applications").insert({
+        full_name: parsed.data.full_name,
+        email: parsed.data.email,
+        phone: parsed.data.phone,
+        city: parsed.data.city,
+        languages,
+        specialization: parsed.data.specialization,
+        experience_years: parsed.data.experience_years,
+        about: parsed.data.about,
+        user_id: userData.user?.id ?? null,
+        portrait_url,
+        video_url,
+        photo_urls,
+      });
+      if (error) throw error;
+      toast.success("Application submitted");
+      setSubmitted(true);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Something went wrong";
+      toast.error(msg);
+    } finally {
+      setSaving(false);
     }
-    toast.success("Application submitted");
-    setSubmitted(true);
   };
 
   return (
@@ -159,6 +231,54 @@ function BecomeAGuidePage() {
             <FormField label="About you">
               <textarea required rows={5} value={form.about} onChange={set("about")} className={inputCls} placeholder="Tell us about yourself, the tours you love to lead, and why travelers should pick you." />
             </FormField>
+
+            <div className="pt-2 border-t border-border/60" />
+
+            <FormField label="Portrait photo (you, looking friendly)">
+              {portrait ? (
+                <FilePreview name={portrait.name} onRemove={() => setPortrait(null)}>
+                  <img src={URL.createObjectURL(portrait)} alt="Portrait preview" className="h-20 w-20 rounded-lg object-cover" />
+                </FilePreview>
+              ) : (
+                <UploadField accept="image/*" onChange={onPortraitChange} hint="JPG or PNG, up to 8 MB" />
+              )}
+            </FormField>
+
+            <FormField label={`Tour photos (up to ${MAX_PHOTOS})`}>
+              <div className="space-y-2">
+                {photos.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {photos.map((f, i) => (
+                      <div key={i} className="relative">
+                        <img src={URL.createObjectURL(f)} alt={f.name} className="h-20 w-20 rounded-lg object-cover ring-1 ring-border" />
+                        <button
+                          type="button"
+                          onClick={() => setPhotos((arr) => arr.filter((_, j) => j !== i))}
+                          className="absolute -top-1.5 -right-1.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-background ring-1 ring-border text-muted-foreground hover:text-destructive"
+                          aria-label="Remove"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {photos.length < MAX_PHOTOS && (
+                  <UploadField accept="image/*" multiple onChange={onPhotosChange} hint={`JPG or PNG, up to 8 MB each · ${MAX_PHOTOS - photos.length} left`} />
+                )}
+              </div>
+            </FormField>
+
+            <FormField label="Video message (optional)">
+              {video ? (
+                <FilePreview name={video.name} onRemove={() => setVideo(null)}>
+                  <video src={URL.createObjectURL(video)} className="h-20 w-32 rounded-lg object-cover bg-black" />
+                </FilePreview>
+              ) : (
+                <UploadField accept="video/*" onChange={onVideoChange} hint="MP4 or MOV, up to 50 MB · short intro about yourself" />
+              )}
+            </FormField>
+
             <div className="pt-2">
               <Button type="submit" size="lg" disabled={saving} className="rounded-full px-8 w-full sm:w-auto">
                 {saving ? "Submitting…" : "Submit application"}
@@ -183,5 +303,53 @@ function FormField({ label, children }: { label: string; children: React.ReactNo
       <span className="text-xs font-medium text-muted-foreground">{label}</span>
       {children}
     </label>
+  );
+}
+
+function UploadField({
+  accept,
+  multiple,
+  onChange,
+  hint,
+}: {
+  accept: string;
+  multiple?: boolean;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  hint: string;
+}) {
+  return (
+    <label className="mt-1 flex cursor-pointer items-center gap-3 rounded-xl border border-dashed border-input bg-background px-4 py-3 text-sm text-muted-foreground hover:bg-secondary/40 transition-colors">
+      <Upload className="h-4 w-4" />
+      <span className="flex-1">
+        <span className="font-medium text-foreground">Click to upload</span>
+        <span className="block text-xs">{hint}</span>
+      </span>
+      <input type="file" accept={accept} multiple={multiple} onChange={onChange} className="hidden" />
+    </label>
+  );
+}
+
+function FilePreview({
+  name,
+  onRemove,
+  children,
+}: {
+  name: string;
+  onRemove: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="mt-1 flex items-center gap-3 rounded-xl border border-input bg-background p-2">
+      {children}
+      <span className="flex-1 truncate text-sm">{name}</span>
+      <button
+        type="button"
+        onClick={onRemove}
+        className="inline-flex h-7 w-7 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+        aria-label="Remove"
+      >
+        <X className="h-4 w-4" />
+      </button>
+    </div>
   );
 }
