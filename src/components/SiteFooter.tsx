@@ -50,6 +50,15 @@ export function SiteFooter() {
           >
             <Twitter className="h-5 w-5" />
           </a>
+          <a
+            href="https://t.me/hamroh"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Telegram channel"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-secondary text-foreground hover:bg-secondary/80 transition-colors"
+          >
+            <Send className="h-5 w-5" />
+          </a>
         </div>
       </div>
     </footer>
