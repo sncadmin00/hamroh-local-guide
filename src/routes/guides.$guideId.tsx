@@ -43,6 +43,14 @@ export const Route = createFileRoute("/guides/$guideId")({
       Couldn't load the guide: {error.message}
     </div>
   ),
+  notFoundComponent: () => (
+    <div className="min-h-screen flex items-center justify-center px-4 text-center">
+      <div>
+        <h1 className="font-display text-3xl font-semibold">Guide not found</h1>
+        <Link to="/guides" className="mt-4 inline-block text-primary hover:underline">Browse all guides</Link>
+      </div>
+    </div>
+  ),
 });
 
 function GuidePage() {

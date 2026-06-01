@@ -1,0 +1,123 @@
+// Шаблонные юридические тексты. ВАЖНО: перед запуском адаптировать с юристом.
+export const LEGAL = {
+  terms: {
+    en: {
+      title: "Terms of Service",
+      updated: "Last updated: June 2026",
+      sections: [
+        ["1. Acceptance", "By using Hamroh you agree to these Terms. If you do not agree, do not use the service."],
+        ["2. Service", "Hamroh is a marketplace connecting travellers with independent local guides. We are not a tour operator and do not provide tours ourselves."],
+        ["3. Bookings", "When you confirm a booking, you enter into a contract directly with the guide. Hamroh facilitates the transaction."],
+        ["4. Payments & cancellations", "Free cancellation is available up to 24 hours before the experience. See our Refund Policy for details."],
+        ["5. User conduct", "You agree not to use the platform for unlawful purposes, harassment, or misrepresentation."],
+        ["6. Liability", "Hamroh is not liable for the conduct of guides or travellers. Use the service at your own risk."],
+        ["7. Changes", "We may update these Terms. Continued use after changes means acceptance."],
+        ["8. Contact", "Questions? Reach us at hello@hamrohim.com."],
+      ],
+    },
+    ru: {
+      title: "Условия использования",
+      updated: "Обновлено: июнь 2026",
+      sections: [
+        ["1. Принятие условий", "Используя Hamroh, вы соглашаетесь с этими условиями. Если не согласны — не пользуйтесь сервисом."],
+        ["2. Сервис", "Hamroh — площадка, связывающая путешественников с независимыми местными гидами. Мы не туроператор и не оказываем туры самостоятельно."],
+        ["3. Бронирования", "Подтверждая бронирование, вы заключаете договор напрямую с гидом. Hamroh обеспечивает транзакцию."],
+        ["4. Оплата и отмена", "Бесплатная отмена доступна не позднее, чем за 24 часа до экскурсии. Подробности — в Политике возврата."],
+        ["5. Поведение пользователей", "Запрещено использовать платформу в незаконных целях, для домогательств или обмана."],
+        ["6. Ответственность", "Hamroh не несёт ответственности за действия гидов или путешественников. Используйте сервис на свой риск."],
+        ["7. Изменения", "Мы можем обновлять условия. Продолжение использования означает согласие."],
+        ["8. Контакт", "Вопросы? Пишите на hello@hamrohim.com."],
+      ],
+    },
+    uz: {
+      title: "Foydalanish shartlari",
+      updated: "Yangilangan: 2026 yil iyun",
+      sections: [
+        ["1. Roziligi", "Hamrohdan foydalanib, siz ushbu shartlarga rozilik bildirasiz. Rozi bo'lmasangiz — xizmatdan foydalanmang."],
+        ["2. Xizmat", "Hamroh — sayohatchilarni mahalliy hamrohlar bilan bog'lovchi platforma. Biz tur operator emasmiz."],
+        ["3. Bronlash", "Bronni tasdiqlab, siz to'g'ridan-to'g'ri hamroh bilan shartnoma tuzasiz."],
+        ["4. To'lov va bekor qilish", "Bepul bekor qilish ekskursiyadan kamida 24 soat oldin mavjud."],
+        ["5. Foydalanuvchi xulqi", "Platformadan noqonuniy maqsadlarda foydalanish taqiqlanadi."],
+        ["6. Mas'uliyat", "Hamroh hamrohlar yoki sayohatchilar harakatlari uchun javobgar emas."],
+        ["7. O'zgarishlar", "Shartlar yangilanishi mumkin. Foydalanishni davom ettirish rozilikni anglatadi."],
+        ["8. Aloqa", "Savollar? hello@hamrohim.com ga yozing."],
+      ],
+    },
+  },
+  privacy: {
+    en: {
+      title: "Privacy Policy",
+      updated: "Last updated: June 2026",
+      sections: [
+        ["1. Data we collect", "Account info (name, email), bookings, messages with guides, optional profile photo."],
+        ["2. How we use it", "To run the service: create bookings, send transactional emails, prevent abuse, and improve features."],
+        ["3. Sharing", "We share booking details with the guide you book. We do not sell personal data."],
+        ["4. Storage", "Data is stored on secure cloud infrastructure (EU/US). We use industry-standard encryption."],
+        ["5. Your rights", "Request export or deletion of your data at hello@hamrohim.com."],
+        ["6. Cookies", "We use essential cookies for login and minimal analytics."],
+        ["7. Contact", "hello@hamrohim.com"],
+      ],
+    },
+    ru: {
+      title: "Политика конфиденциальности",
+      updated: "Обновлено: июнь 2026",
+      sections: [
+        ["1. Какие данные собираем", "Имя, email, бронирования, переписку с гидами, опционально фото профиля."],
+        ["2. Как используем", "Для работы сервиса: бронирования, транзакционные письма, защита от злоупотреблений, улучшение функций."],
+        ["3. Передача", "Делимся деталями бронирования с забронированным гидом. Не продаём персональные данные."],
+        ["4. Хранение", "Данные хранятся в защищённой облачной инфраструктуре (ЕС/США) с современным шифрованием."],
+        ["5. Ваши права", "Запросите экспорт или удаление данных на hello@hamrohim.com."],
+        ["6. Cookies", "Используем необходимые cookies для входа и минимальной аналитики."],
+        ["7. Контакт", "hello@hamrohim.com"],
+      ],
+    },
+    uz: {
+      title: "Maxfiylik siyosati",
+      updated: "Yangilangan: 2026 yil iyun",
+      sections: [
+        ["1. Qaysi ma'lumotlarni yig'amiz", "Ism, email, bronlar, hamrohlar bilan yozishma, ixtiyoriy profil rasm."],
+        ["2. Qanday foydalanamiz", "Xizmatni yuritish uchun: bronlash, xabarlar, suiiste'molning oldini olish."],
+        ["3. Ulashish", "Bron tafsilotlarini siz tanlagan hamroh bilan ulashamiz. Shaxsiy ma'lumotlarni sotmaymiz."],
+        ["4. Saqlash", "Ma'lumotlar zamonaviy shifrlash bilan himoyalangan bulutda saqlanadi."],
+        ["5. Sizning huquqlaringiz", "Ma'lumotlarni eksport yoki o'chirish uchun hello@hamrohim.com ga yozing."],
+        ["6. Cookies", "Faqat kerakli cookies ishlatamiz."],
+        ["7. Aloqa", "hello@hamrohim.com"],
+      ],
+    },
+  },
+  refund: {
+    en: {
+      title: "Refund Policy",
+      updated: "Last updated: June 2026",
+      sections: [
+        ["Free cancellation window", "Cancel up to 24 hours before the experience for a full refund."],
+        ["Late cancellation", "Cancellations within 24 hours of the start time are non-refundable unless the guide agrees."],
+        ["Guide cancellation", "If the guide cancels, you receive a full refund automatically."],
+        ["Force majeure", "Weather, illness with proof, or government restrictions — full refund."],
+        ["How to request", "Use the 'Cancel' button in your bookings or write to hello@hamrohim.com."],
+      ],
+    },
+    ru: {
+      title: "Политика возврата",
+      updated: "Обновлено: июнь 2026",
+      sections: [
+        ["Окно бесплатной отмены", "Отмена не позднее, чем за 24 часа до экскурсии — полный возврат."],
+        ["Поздняя отмена", "Отмены менее чем за 24 часа не возвращаются, если только гид не согласен."],
+        ["Отмена гидом", "Если гид отменяет — вы автоматически получаете полный возврат."],
+        ["Форс-мажор", "Погода, болезнь с подтверждением, госограничения — полный возврат."],
+        ["Как запросить", "Кнопка «Отменить» в ваших бронированиях или письмо на hello@hamrohim.com."],
+      ],
+    },
+    uz: {
+      title: "Qaytarish siyosati",
+      updated: "Yangilangan: 2026 yil iyun",
+      sections: [
+        ["Bepul bekor qilish oynasi", "Ekskursiyadan kamida 24 soat oldin bekor qilsangiz — to'liq qaytarish."],
+        ["Kechki bekor qilish", "24 soatdan keyin bekor qilish qaytarilmaydi (hamroh roziligi bo'lmasa)."],
+        ["Hamrohning bekor qilishi", "Hamroh bekor qilsa — siz avtomatik to'liq qaytarish olasiz."],
+        ["Fors-major", "Ob-havo, kasallik tasdig'i, davlat cheklovlari — to'liq qaytarish."],
+        ["Qanday so'rash", "Bronlaringizdagi «Bekor qilish» tugmasi yoki hello@hamrohim.com."],
+      ],
+    },
+  },
+} as const;

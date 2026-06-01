@@ -7,6 +7,7 @@ import { Compass, Apple } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { subscribeToNewsletter } from "@/lib/newsletter.functions";
 import { sendWelcomeEmail } from "@/lib/lifecycle-emails.functions";
+import { trackEvent } from "@/lib/analytics";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Sign in — Hamroh" }] }),
@@ -71,6 +72,7 @@ function LoginPage() {
         } catch (e) {
           console.error("Welcome email failed", e);
         }
+        trackEvent("signup", { locale: lang });
         if (newsletterOptIn) {
           try {
             await subscribe({ data: { email, locale: lang as "ru" | "uz" | "en", source: "signup" } });

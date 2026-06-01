@@ -8,18 +8,23 @@ import { normalizeLocale } from "@/lib/email-templates/_i18n";
 const APP_BASE_URL = "https://hamrohim.com";
 
 
-// Returns the guide record linked to the current user (or null)
+// Returns the guide record linked to the current user (or null), with referral stats
 export const getMyGuide = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
     const { data, error } = await supabase
       .from("guides")
-      .select("id, name, slug, photo_url, tagline, price_per_day, cities(name)")
+      .select("id, name, slug, photo_url, tagline, price_per_day, referral_code, cities(name)")
       .eq("user_id", userId)
       .maybeSingle();
     if (error) throw new Error(error.message);
-    return data;
+    if (!data) return null;
+    const { count } = await supabase
+      .from("referral_clicks")
+      .select("*", { count: "exact", head: true })
+      .eq("guide_id", data.id);
+    return { ...data, referral_clicks: count ?? 0 };
   });
 
 export const listMySlots = createServerFn({ method: "GET" })
