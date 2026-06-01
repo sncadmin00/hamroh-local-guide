@@ -106,6 +106,47 @@ type Category = {
 
 type GuideCategoryLink = { guide_id: string; category_id: string };
 
+type Place = {
+  id: string;
+  city_id: string;
+  category: string;
+  slug: string;
+  name: string;
+  short_description: string;
+  body_md: string;
+  address: string;
+  lat: number | null;
+  lng: number | null;
+  photo_url: string | null;
+  tags: string[];
+  published: boolean;
+  sort_order: number;
+};
+
+type PlaceGuideLink = { place_id: string; guide_id: string };
+
+type PlaceSuggestion = {
+  id: string;
+  city_id: string | null;
+  city_name: string;
+  category: string;
+  name: string;
+  description: string;
+  source_url: string;
+  raw_query: string;
+  status: string;
+  created_at: string;
+};
+
+const PLACE_CATEGORIES = [
+  { value: "food", label: "Food" },
+  { value: "attraction", label: "Attraction" },
+  { value: "activity", label: "Activity" },
+  { value: "shopping", label: "Shopping" },
+  { value: "route", label: "Route" },
+  { value: "nightlife", label: "Nightlife" },
+] as const;
+
 const SOURCES = ["web", "instagram", "facebook", "telegram", "whatsapp", "other"] as const;
 type SourceKey = (typeof SOURCES)[number];
 
