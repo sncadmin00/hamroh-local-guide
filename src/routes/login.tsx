@@ -199,7 +199,22 @@ function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full h-11 rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring"
               />
+              {mode === "signup" && (
+                <label className="flex items-start gap-2 text-xs text-muted-foreground cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={newsletterOptIn}
+                    onChange={(e) => setNewsletterOptIn(e.target.checked)}
+                    className="mt-0.5 h-4 w-4 rounded border-input accent-primary"
+                  />
+                  <span>
+                    Send me new articles and travel tips from Hamroh.
+                    You can unsubscribe anytime.
+                  </span>
+                </label>
+              )}
               {error && <p className="text-sm text-destructive">{error}</p>}
+
               <button
                 type="submit"
                 disabled={loading}
