@@ -8,23 +8,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { createThread } from "@/lib/ai-threads.functions";
 import { useI18n } from "@/lib/i18n";
 
-function WhatsAppIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
-      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-    </svg>
-  );
-}
-
-function TelegramIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
-      <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.479.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
-    </svg>
-  );
-}
-
-
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -95,7 +78,6 @@ function Home() {
 
   const submit = async (text: string) => {
     const t = text.trim();
-
     if (!t || submitting) return;
     setSubmitting(true);
     try {
@@ -119,28 +101,33 @@ function Home() {
     <div className="min-h-screen flex flex-col bg-background">
       <SiteHeader />
 
-      <main className="flex-1 flex items-center justify-center px-4 py-12 md:py-20">
-        <div className="w-full max-w-2xl mx-auto">
-          <div className="text-center">
-            <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent text-primary-foreground mb-6 shadow-[var(--shadow-elegant)]">
-              <Sparkles className="h-7 w-7" />
+      <main className="flex-1 flex items-center justify-center px-6 py-16 md:py-24">
+        <div className="w-full max-w-3xl mx-auto flex flex-col items-center">
+          {/* Brand icon with ambient glow */}
+          <div className="relative mb-10 md:mb-12">
+            <div className="absolute inset-0 blur-2xl opacity-30 bg-gradient-to-br from-[#62A1B1] to-[#D5A08D] scale-150 rounded-full" />
+            <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-[2rem] bg-gradient-to-br from-[#62A1B1] via-[#8BB5A9] to-[#D5A08D] flex items-center justify-center shadow-2xl shadow-slate-900/10 ring-1 ring-white/40">
+              <Sparkles className="w-9 h-9 md:w-10 md:h-10 text-white" strokeWidth={1.5} />
             </div>
-            <h1 className="font-display text-4xl md:text-5xl font-semibold leading-tight">
+          </div>
+
+          {/* Headline */}
+          <div className="text-center space-y-5 md:space-y-6 mb-12 md:mb-16">
+            <h1 className="font-display text-5xl md:text-7xl font-semibold tracking-tight text-slate-900 leading-[1.05]">
               {t("hero.title")}
             </h1>
-            <p className="mt-3 text-muted-foreground text-base md:text-lg">
+            <p className="text-base md:text-lg text-slate-500 max-w-lg mx-auto leading-relaxed font-light">
               {t("hero.subtitle")}
             </p>
           </div>
 
+          {/* AI Input with hover glow */}
           <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              submit(input);
-            }}
-            className="mt-8"
+            onSubmit={(e) => { e.preventDefault(); submit(input); }}
+            className="w-full max-w-2xl relative group"
           >
-            <div className="flex items-end gap-2 rounded-2xl bg-card ring-1 ring-border/60 focus-within:ring-primary/40 p-2 shadow-[var(--shadow-elegant)]">
+            <div className="absolute -inset-1 bg-gradient-to-r from-[#62A1B1]/40 to-[#D5A08D]/40 rounded-[2.5rem] blur-md opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition duration-1000 group-hover:duration-200" />
+            <div className="relative flex items-end gap-2 bg-white border border-slate-100 shadow-[0_15px_40px_-15px_rgba(0,0,0,0.08)] rounded-[2rem] p-2 pl-5 md:pl-6">
               <textarea
                 ref={taRef}
                 value={input}
@@ -151,73 +138,58 @@ function Home() {
                     submit(input);
                   }
                 }}
-                rows={2}
-                placeholder="e.g. English-speaking food guide for two days, mid-range budget…"
-                className="flex-1 resize-none bg-transparent px-3 py-2 text-base outline-none max-h-48"
+                rows={1}
+                placeholder="e.g. English-speaking food guide for two days…"
+                className="flex-1 resize-none bg-transparent py-4 text-base md:text-lg text-slate-800 placeholder:text-slate-300 outline-none max-h-40"
                 disabled={submitting}
               />
-              <button
-                type="button"
-                onClick={toggleMic}
-                disabled={submitting}
-                className={`h-10 w-10 shrink-0 inline-flex items-center justify-center rounded-xl ring-1 ring-border/60 hover:bg-secondary transition-colors ${listening ? "bg-destructive text-destructive-foreground animate-pulse" : "bg-background text-muted-foreground"}`}
-                aria-label={listening ? "Stop voice input" : "Start voice input"}
-              >
-                <Mic className="h-4 w-4" />
-              </button>
-              <button
-                type="submit"
-                disabled={submitting || !input.trim()}
-                className="h-10 w-10 shrink-0 inline-flex items-center justify-center rounded-xl bg-primary text-primary-foreground disabled:opacity-40 hover:opacity-90"
-                aria-label="Send"
-              >
-                <ArrowUp className="h-4 w-4" />
-              </button>
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={toggleMic}
+                  disabled={submitting}
+                  aria-label={listening ? "Stop voice input" : "Start voice input"}
+                  className={`h-11 w-11 inline-flex items-center justify-center rounded-full transition-colors ${
+                    listening
+                      ? "bg-destructive text-destructive-foreground animate-pulse"
+                      : "text-slate-400 hover:text-slate-700 hover:bg-slate-50"
+                  }`}
+                >
+                  <Mic className="h-5 w-5" />
+                </button>
+                <button
+                  type="submit"
+                  disabled={submitting || !input.trim()}
+                  aria-label="Send"
+                  className="h-11 w-11 inline-flex items-center justify-center rounded-full bg-[#8BB5A9] hover:bg-[#7aa297] text-white shadow-md shadow-slate-900/10 transition-all active:scale-95 disabled:opacity-40 disabled:hover:bg-[#8BB5A9]"
+                >
+                  <ArrowUp className="h-5 w-5" strokeWidth={2.5} />
+                </button>
+              </div>
             </div>
           </form>
 
-          <div className="mt-4 flex flex-wrap justify-center gap-2">
+          {/* Suggestions */}
+          <div className="flex flex-wrap justify-center gap-2.5 mt-8 max-w-2xl">
             {SUGGESTIONS.map((s) => (
               <button
                 key={s}
                 onClick={() => submit(s)}
                 disabled={submitting}
-                className="rounded-full bg-secondary/60 hover:bg-secondary px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                className="px-4 py-2 rounded-full border border-slate-200/70 bg-white/50 text-sm text-slate-500 hover:border-slate-300 hover:text-slate-800 hover:bg-white transition-all"
               >
                 {s}
               </button>
             ))}
           </div>
 
-          <p className="mt-8 text-center text-sm">
-            <Link to="/guides" className="text-muted-foreground hover:text-foreground underline underline-offset-4">
-              {t("hero.browse")}
-            </Link>
-          </p>
-
-          <div className="mt-5 flex flex-col items-center justify-center gap-2">
-            <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{t("common.findUs")}</span>
-            <div className="flex items-center gap-3">
-              <a
-                href="https://wa.me/1234567890"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Chat on WhatsApp"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20 transition-colors"
-              >
-                <WhatsAppIcon className="h-5 w-5" />
-              </a>
-              <a
-                href="https://t.me/yourtelegram"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Join Telegram"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#229ED9]/10 text-[#229ED9] hover:bg-[#229ED9]/20 transition-colors"
-              >
-                <TelegramIcon className="h-5 w-5" />
-              </a>
-            </div>
-          </div>
+          {/* Secondary action */}
+          <Link
+            to="/guides"
+            className="mt-12 text-sm text-slate-400 hover:text-slate-900 transition-colors border-b border-slate-200 hover:border-slate-400 pb-0.5"
+          >
+            {t("hero.browse")}
+          </Link>
         </div>
       </main>
 
