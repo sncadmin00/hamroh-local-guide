@@ -152,16 +152,43 @@ function BookPage() {
               </select>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            {hasInstantSlots ? (
               <div>
-                <label className="text-sm font-medium">Date</label>
-                <input type="date" required value={form.date} onChange={handleFieldChange} name="date" className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring" />
+                <label className="text-sm font-medium inline-flex items-center gap-1.5">
+                  <Zap className="h-4 w-4 text-accent" /> Pick an available slot (instant booking)
+                </label>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {slots.map((s) => {
+                    const on = selectedSlot === s.id;
+                    return (
+                      <button
+                        key={s.id}
+                        type="button"
+                        onClick={() => setSelectedSlot(s.id)}
+                        className={`px-3 h-10 rounded-full text-sm ring-1 transition ${on ? "bg-accent text-accent-foreground ring-accent" : "bg-background ring-border hover:bg-muted"}`}
+                      >
+                        {s.date} · {s.start_time.slice(0,5)} · {s.duration_minutes}m
+                      </button>
+                    );
+                  })}
+                </div>
+                <div className="mt-4">
+                  <label className="text-sm font-medium">Guests</label>
+                  <input type="number" min={1} max={12} value={form.guests} onChange={handleGuestChange} className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring" />
+                </div>
               </div>
-              <div>
-                <label className="text-sm font-medium">Guests</label>
-                <input type="number" min={1} max={12} value={form.guests} onChange={handleGuestChange} className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring" />
+            ) : (
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="text-sm font-medium">Date</label>
+                  <input type="date" required value={form.date} onChange={handleFieldChange} name="date" className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring" />
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Guests</label>
+                  <input type="number" min={1} max={12} value={form.guests} onChange={handleGuestChange} className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring" />
+                </div>
               </div>
-            </div>
+            )}
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
@@ -180,9 +207,9 @@ function BookPage() {
             </div>
 
             <button type="submit" disabled={submitting} className="inline-flex h-12 w-full items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.01] disabled:opacity-60">
-              {submitting ? "Sending…" : guide.instantBook ? `Confirm & book — $${total + fee}` : `Request booking — $${total + fee}`}
+              {submitting ? "Sending…" : isInstantMode ? `Confirm & book — $${total + fee}` : `Request booking — $${total + fee}`}
             </button>
-            <p className="text-center text-xs text-muted-foreground">You won't be charged until your guide confirms.</p>
+            <p className="text-center text-xs text-muted-foreground">{isInstantMode ? "Your slot is locked in instantly." : "Your guide will review and confirm this request."}</p>
           </form>
 
           <aside className="lg:sticky lg:top-24 lg:self-start">
