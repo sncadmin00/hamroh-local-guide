@@ -24,11 +24,20 @@ function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    const resolveAndGo = async (userId: string) => {
+      const [{ data: guide }, { data: roles }] = await Promise.all([
+        supabase.from("guides").select("id").eq("user_id", userId).maybeSingle(),
+        supabase.from("user_roles").select("role").eq("user_id", userId),
+      ]);
+      const isAdmin = roles?.some((r) => r.role === "admin");
+      const dest = guide ? "/guide" : isAdmin ? "/admin" : "/ai";
+      navigate({ to: dest, replace: true });
+    };
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      if (session) navigate({ to: "/ai", replace: true });
+      if (session?.user) resolveAndGo(session.user.id);
     });
     supabase.auth.getUser().then(({ data }) => {
-      if (data.user) navigate({ to: "/ai", replace: true });
+      if (data.user) resolveAndGo(data.user.id);
     });
     return () => sub.subscription.unsubscribe();
   }, [navigate]);
@@ -42,7 +51,7 @@ function LoginPage() {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.origin + "/ai" },
+          options: { emailRedirectTo: window.location.origin + "/login" },
         });
         if (error) throw error;
       } else {
@@ -87,13 +96,13 @@ function LoginPage() {
 
   const google = async () => {
     setError(null);
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/ai" });
+    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/login" });
     if (result.error) setError(result.error.message);
   };
 
   const apple = async () => {
     setError(null);
-    const result = await lovable.auth.signInWithOAuth("apple", { redirect_uri: window.location.origin + "/ai" });
+    const result = await lovable.auth.signInWithOAuth("apple", { redirect_uri: window.location.origin + "/login" });
     if (result.error) setError(result.error.message);
   };
 
