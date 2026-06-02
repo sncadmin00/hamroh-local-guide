@@ -52,7 +52,8 @@ function GuidesPage() {
         </div>
       </section>
 
-      <section className="container mx-auto px-4 py-10">
+      <section className="container mx-auto px-4 py-10" aria-labelledby="filter-heading">
+        <h2 id="filter-heading" className="sr-only">Filter guides</h2>
         <div className="flex flex-col gap-4 rounded-2xl bg-card p-4 ring-1 ring-border/60 shadow-[var(--shadow-card)] md:flex-row md:items-center md:p-5">
           <CityPicker value={city} onChange={setCity} />
 
@@ -104,12 +105,15 @@ function GuidesPage() {
           </div>
         )}
 
+        <h2 id="guides-heading" className="sr-only mt-10">
+          {isLoading ? "Loading guides" : `${filtered.length} guides found`}
+        </h2>
         {isLoading ? (
           <div className="mt-16 text-center text-muted-foreground">Loading…</div>
         ) : filtered.length === 0 ? (
           <div className="mt-16 text-center text-muted-foreground">No guides match your filters yet — try widening your search.</div>
         ) : (
-          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div aria-labelledby="guides-heading" className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filtered.map((g) => <GuideCard key={g.id} guide={g} />)}
           </div>
         )}
