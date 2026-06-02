@@ -56,6 +56,7 @@ export const LEGAL = {
         ["5. Your rights", "Request export or deletion of your data at hello@hamrohim.com."],
         ["6. Cookies", "We use essential cookies for login and minimal analytics."],
         ["7. Contact", "hello@hamrohim.com"],
+        ["8. Operator", "Hamroh is operated by Ark Labs LLC."],
       ],
     },
     ru: {
