@@ -56,6 +56,7 @@ export const LEGAL = {
         ["5. Your rights", "Request export or deletion of your data at hello@hamrohim.com."],
         ["6. Cookies", "We use essential cookies for login and minimal analytics."],
         ["7. Contact", "hello@hamrohim.com"],
+        ["8. Operator", "Hamroh is operated by Ark Labs LLC."],
       ],
     },
     ru: {
@@ -69,6 +70,7 @@ export const LEGAL = {
         ["5. Ваши права", "Запросите экспорт или удаление данных на hello@hamrohim.com."],
         ["6. Cookies", "Используем необходимые cookies для входа и минимальной аналитики."],
         ["7. Контакт", "hello@hamrohim.com"],
+        ["8. Оператор", "Сервис Hamroh управляется компанией Ark Labs LLC."],
       ],
     },
     uz: {
@@ -82,6 +84,7 @@ export const LEGAL = {
         ["5. Sizning huquqlaringiz", "Ma'lumotlarni eksport yoki o'chirish uchun hello@hamrohim.com ga yozing."],
         ["6. Cookies", "Faqat kerakli cookies ishlatamiz."],
         ["7. Aloqa", "hello@hamrohim.com"],
+        ["8. Operator", "Hamroh Ark Labs LLC tomonidan boshqariladi."],
       ],
     },
   },
