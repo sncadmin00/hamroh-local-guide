@@ -4,6 +4,7 @@ import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { enqueueTransactionalEmail } from "@/lib/email/enqueue.server";
 import { normalizeLocale } from "@/lib/email-templates/_i18n";
 import { bookingDetailsText, sendTelegramMessage } from "@/lib/telegram-notifications.server";
+import { getOptionalUserId } from "@/lib/optional-auth.server";
 
 const APP_BASE_URL = "https://hamrohim.com";
 
@@ -47,7 +48,6 @@ const bookingSchema = z.object({
   notes: z.string().max(2000).optional(),
   total: z.number().min(0),
   source: z.string().max(64).optional(),
-  user_id: z.string().uuid().nullable().optional(),
   locale: z.enum(["ru", "uz", "en"]).optional(),
 }).refine((data) => data.customer_email || data.customer_telegram_chat_id, {
   message: "Email or Telegram contact is required",
@@ -57,6 +57,8 @@ export const createBooking = createServerFn({ method: "POST" })
   .inputValidator((input) => bookingSchema.parse(input))
   .handler(async ({ data }) => {
     const clientLocale = normalizeLocale(data.locale);
+    // Resolve the user from the bearer token; never trust client input.
+    const authedUserId = await getOptionalUserId();
     // Instant booking if slot picked, otherwise pending request
     const isInstant = !!data.slot_id;
     const insertPayload = {
@@ -75,7 +77,7 @@ export const createBooking = createServerFn({ method: "POST" })
       notes: data.notes ?? "",
       total: data.total,
       source: data.source ?? "web",
-      user_id: data.user_id ?? null,
+      user_id: authedUserId,
       status: isInstant ? "confirmed" : "pending",
       locale: clientLocale,
     };
@@ -99,11 +101,11 @@ export const createBooking = createServerFn({ method: "POST" })
       const status = (row.status as "confirmed" | "pending") ?? "pending";
 
       let notificationEmail = data.customer_email || null;
-      if (!notificationEmail && data.user_id) {
+      if (!notificationEmail && authedUserId) {
         const { data: clientTelegram } = await supabaseAdmin
           .from("telegram_accounts")
           .select("email")
-          .eq("user_id", data.user_id)
+          .eq("user_id", authedUserId)
           .maybeSingle();
         notificationEmail = clientTelegram?.email ?? null;
       }
@@ -129,11 +131,11 @@ export const createBooking = createServerFn({ method: "POST" })
       }
 
       let clientChatId = data.customer_telegram_chat_id ?? null;
-      if (!clientChatId && data.user_id) {
+      if (!clientChatId && authedUserId) {
         const { data: clientTelegram } = await supabaseAdmin
           .from("telegram_accounts")
           .select("telegram_chat_id")
-          .eq("user_id", data.user_id)
+          .eq("user_id", authedUserId)
           .maybeSingle();
         clientChatId = clientTelegram?.telegram_chat_id ?? null;
       }

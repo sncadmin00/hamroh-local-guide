@@ -50,9 +50,10 @@ export const Route = createFileRoute('/api/public/hooks/chat-notifications')({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const authHeader = request.headers.get('authorization') ?? request.headers.get('apikey')
-        if (!authHeader) {
-          return Response.json({ error: 'Unauthorized' }, { status: 401 })
+        const authHeader = request.headers.get('authorization') ?? request.headers.get('apikey') ?? ''
+        const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : authHeader.trim()
+        if (!token || token !== process.env.SUPABASE_SERVICE_ROLE_KEY) {
+          return Response.json({ error: 'Forbidden' }, { status: 403 })
         }
 
         const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
