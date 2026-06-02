@@ -13,6 +13,7 @@ import ogDefault from "@/assets/og-default.jpg";
 import { I18nProvider } from "@/lib/i18n";
 import { useTrackSource } from "@/hooks/useTrackSource";
 import { useCaptureReferral } from "@/hooks/useCaptureReferral";
+import { Toaster } from "@/components/ui/sonner";
 
 const SITE_URL = "https://hamroh-local-guide.lovable.app";
 const OG_IMAGE = `${SITE_URL}${ogDefault}`;
@@ -106,6 +107,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <I18nProvider>
         <Outlet />
+        <Toaster />
       </I18nProvider>
     </QueryClientProvider>
   );
