@@ -205,7 +205,7 @@ function Home() {
               <h2 className="font-display text-2xl md:text-3xl font-semibold text-slate-900">{t("browse.title")}</h2>
               <p className="mt-2 text-sm text-slate-500">{t("browse.subtitle")}</p>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-3 md:gap-4">
               {categories.map((c) => (
                 <Link
                   key={c.id}
