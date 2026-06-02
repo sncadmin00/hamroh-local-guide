@@ -9,7 +9,7 @@ import { GuidePostsFeed } from "@/components/GuidePostsFeed";
 
 const SITE_URL = "https://hamroh-local-guide.lovable.app";
 
-export const Route = createFileRoute("/guides/$guideId")({
+export const Route = createFileRoute("/guides_/$guideId")({
   loader: async ({ params }) => {
     const { data } = await supabase
       .from("guides")
