@@ -70,7 +70,7 @@ type Booking = {
   date: string;
   guests: number;
   customer_name: string;
-  customer_email: string;
+  customer_email: string | null;
   notes: string;
   total: number;
   status: string;
@@ -1222,7 +1222,7 @@ function BookingsPanel({ bookings, reload }: { bookings: Booking[]; reload: () =
                     </td>
                     <td className="py-3 pr-3">
                       <div className="font-medium">{b.customer_name}</div>
-                      <div className="text-xs text-muted-foreground">{b.customer_email}</div>
+                      <div className="text-xs text-muted-foreground">{b.customer_email ?? "Telegram"}</div>
                       {b.notes && <div className="text-xs text-muted-foreground mt-1 max-w-[220px] truncate" title={b.notes}>{b.notes}</div>}
                     </td>
                     <td className="py-3 pr-3">{b.guests}</td>
