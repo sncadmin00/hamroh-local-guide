@@ -182,7 +182,7 @@ function GuidePage() {
                   Reviews <span className="text-base font-normal text-muted-foreground">· {guide.reviews}</span>
                 </h2>
                 <div className="mt-4">
-                  <GuideReviews guideId={guide.id} />
+                  <GuideReviews guideId={guide.dbId} />
                 </div>
               </div>
             </div>
