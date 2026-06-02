@@ -8,25 +8,20 @@ import { useI18n } from "@/lib/i18n";
 import { subscribeToNewsletter } from "@/lib/newsletter.functions";
 import { sendWelcomeEmail } from "@/lib/lifecycle-emails.functions";
 import { trackEvent } from "@/lib/analytics";
+import { TelegramLoginButton } from "@/components/TelegramLoginButton";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Sign in — Hamroh" }] }),
   component: LoginPage,
 });
 
-type Method = "email" | "phone";
-
 function LoginPage() {
   const navigate = useNavigate();
   const { lang } = useI18n();
   const subscribe = useServerFn(subscribeToNewsletter);
   const sendWelcome = useServerFn(sendWelcomeEmail);
-  const [method, setMethod] = useState<Method>("email");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [phone, setPhone] = useState("");
-  const [otp, setOtp] = useState("");
-  const [otpSent, setOtpSent] = useState(false);
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [newsletterOptIn, setNewsletterOptIn] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -87,38 +82,6 @@ function LoginPage() {
 
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const sendOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.signInWithOtp({
-        phone,
-        options: { data: { locale: lang } },
-      });
-      if (error) throw error;
-      setOtpSent(true);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const verifyOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.verifyOtp({ phone, token: otp, type: "sms" });
-      if (error) throw error;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Invalid code");
     } finally {
       setLoading(false);
     }
