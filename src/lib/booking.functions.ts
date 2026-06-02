@@ -98,11 +98,20 @@ export const createBooking = createServerFn({ method: "POST" })
       const guideLocale = normalizeLocale(guide?.locale);
       const status = (row.status as "confirmed" | "pending") ?? "pending";
 
-      if (data.customer_email) {
+      let notificationEmail = data.customer_email || null;
+      if (!notificationEmail && data.user_id) {
+        const { data: clientTelegram } = await supabaseAdmin
+          .from("telegram_accounts")
+          .select("email")
+          .eq("user_id", data.user_id)
+          .maybeSingle();
+        notificationEmail = clientTelegram?.email ?? null;
+      }
+      if (notificationEmail) {
         await enqueueTransactionalEmail({
           supabase: supabaseAdmin,
           templateName: "booking-confirmation-client",
-          recipientEmail: data.customer_email,
+          recipientEmail: notificationEmail,
           templateData: {
             customerName: data.customer_name,
             guideName,
