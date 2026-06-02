@@ -302,6 +302,12 @@ function AdminPage() {
           >
             Social ({embeds.length})
           </button>
+          <button
+            onClick={() => setTab("users")}
+            className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "users" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+          >
+            Users
+          </button>
         </div>
 
         {tab === "bookings" && <BookingsPanel bookings={bookings} reload={loadData} />}
@@ -313,6 +319,7 @@ function AdminPage() {
         {tab === "suggestions" && <SuggestionsPanel suggestions={suggestions} cities={cities} reload={loadData} />}
         {tab === "articles" && <ArticlesPanel articles={articles} cities={cities} reload={loadData} />}
         {tab === "social" && <SocialPanel embeds={embeds} cities={cities} reload={loadData} />}
+        {tab === "users" && <UsersPanel />}
       </div>
     </div>
   );
