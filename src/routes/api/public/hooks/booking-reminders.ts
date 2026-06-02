@@ -41,6 +41,7 @@ export const Route = createFileRoute('/api/public/hooks/booking-reminders')({
         let queued = 0
         for (const b of bookings) {
           try {
+            if (!b.customer_email) continue
             const idem = `booking-reminder-${b.id}`
             const { data: already } = await supabase
               .from('email_send_log')
