@@ -5,6 +5,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { useGuide } from "@/lib/content-queries";
 import { supabase } from "@/integrations/supabase/client";
 import { GuideReviews } from "@/components/GuideReviews";
+import { GuidePostsFeed } from "@/components/GuidePostsFeed";
 
 const SITE_URL = "https://hamroh-local-guide.lovable.app";
 
