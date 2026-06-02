@@ -67,7 +67,6 @@ const subscribeSchema = z.object({
   email: z.string().email().max(255),
   locale: z.enum(["ru", "uz", "en"]).optional(),
   source: z.string().max(64).optional(),
-  user_id: z.string().uuid().nullable().optional(),
 });
 
 /** Add an email to newsletter list (idempotent — re-opts in if previously unsubscribed). */
@@ -75,6 +74,7 @@ export const subscribeToNewsletter = createServerFn({ method: "POST" })
   .inputValidator((input) => subscribeSchema.parse(input))
   .handler(async ({ data }) => {
     const email = data.email.trim().toLowerCase();
+    const userId = await getOptionalUserId();
     const { error } = await supabaseAdmin
       .from("newsletter_subscribers")
       .upsert(
@@ -82,7 +82,7 @@ export const subscribeToNewsletter = createServerFn({ method: "POST" })
           email,
           locale: data.locale ?? "ru",
           source: data.source ?? "signup",
-          user_id: data.user_id ?? null,
+          user_id: userId,
           unsubscribed_at: null,
           confirmed_at: new Date().toISOString(),
         },
