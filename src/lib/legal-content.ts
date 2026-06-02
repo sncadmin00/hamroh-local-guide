@@ -84,6 +84,7 @@ export const LEGAL = {
         ["5. Sizning huquqlaringiz", "Ma'lumotlarni eksport yoki o'chirish uchun hello@hamrohim.com ga yozing."],
         ["6. Cookies", "Faqat kerakli cookies ishlatamiz."],
         ["7. Aloqa", "hello@hamrohim.com"],
+        ["8. Operator", "Hamroh Ark Labs LLC tomonidan boshqariladi."],
       ],
     },
   },
