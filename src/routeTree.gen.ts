@@ -31,7 +31,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MessagesIndexRouteImport } from './routes/messages.index'
 import { Route as MessagesBookingIdRouteImport } from './routes/messages.$bookingId'
-import { Route as GuidesGuideIdRouteImport } from './routes/guides.$guideId'
+import { Route as GuidesGuideIdRouteImport } from './routes/guides_.$guideId'
 import { Route as ExploreSlugRouteImport } from './routes/explore.$slug'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as BookGuideIdRouteImport } from './routes/book.$guideId'
@@ -159,9 +159,9 @@ const MessagesBookingIdRoute = MessagesBookingIdRouteImport.update({
   getParentRoute: () => MessagesRoute,
 } as any)
 const GuidesGuideIdRoute = GuidesGuideIdRouteImport.update({
-  id: '/$guideId',
-  path: '/$guideId',
-  getParentRoute: () => GuidesRoute,
+  id: '/guides_/$guideId',
+  path: '/guides/$guideId',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ExploreSlugRoute = ExploreSlugRouteImport.update({
   id: '/$slug',
@@ -256,7 +256,7 @@ export interface FileRoutesByFullPath {
   '/explore': typeof ExploreRouteWithChildren
   '/faq': typeof FaqRoute
   '/guide': typeof GuideRoute
-  '/guides': typeof GuidesRouteWithChildren
+  '/guides': typeof GuidesRoute
   '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
   '/messages': typeof MessagesRouteWithChildren
@@ -296,7 +296,7 @@ export interface FileRoutesByTo {
   '/explore': typeof ExploreRouteWithChildren
   '/faq': typeof FaqRoute
   '/guide': typeof GuideRoute
-  '/guides': typeof GuidesRouteWithChildren
+  '/guides': typeof GuidesRoute
   '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
   '/my-bookings': typeof MyBookingsRoute
@@ -336,7 +336,7 @@ export interface FileRoutesById {
   '/explore': typeof ExploreRouteWithChildren
   '/faq': typeof FaqRoute
   '/guide': typeof GuideRoute
-  '/guides': typeof GuidesRouteWithChildren
+  '/guides': typeof GuidesRoute
   '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
   '/messages': typeof MessagesRouteWithChildren
@@ -352,7 +352,7 @@ export interface FileRoutesById {
   '/book/$guideId': typeof BookGuideIdRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/explore/$slug': typeof ExploreSlugRoute
-  '/guides/$guideId': typeof GuidesGuideIdRoute
+  '/guides_/$guideId': typeof GuidesGuideIdRoute
   '/messages/$bookingId': typeof MessagesBookingIdRoute
   '/messages/': typeof MessagesIndexRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
@@ -473,7 +473,7 @@ export interface FileRouteTypes {
     | '/book/$guideId'
     | '/email/unsubscribe'
     | '/explore/$slug'
-    | '/guides/$guideId'
+    | '/guides_/$guideId'
     | '/messages/$bookingId'
     | '/messages/'
     | '/lovable/email/suppression'
@@ -498,7 +498,7 @@ export interface RootRouteChildren {
   ExploreRoute: typeof ExploreRouteWithChildren
   FaqRoute: typeof FaqRoute
   GuideRoute: typeof GuideRoute
-  GuidesRoute: typeof GuidesRouteWithChildren
+  GuidesRoute: typeof GuidesRoute
   HowItWorksRoute: typeof HowItWorksRoute
   LoginRoute: typeof LoginRoute
   MessagesRoute: typeof MessagesRouteWithChildren
@@ -512,6 +512,7 @@ export interface RootRouteChildren {
   ApiChatRoute: typeof ApiChatRoute
   BookGuideIdRoute: typeof BookGuideIdRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
+  GuidesGuideIdRoute: typeof GuidesGuideIdRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   ApiPublicHooksBookingRemindersRoute: typeof ApiPublicHooksBookingRemindersRoute
   ApiPublicHooksBookingReviewsRoute: typeof ApiPublicHooksBookingReviewsRoute
@@ -680,12 +681,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MessagesBookingIdRouteImport
       parentRoute: typeof MessagesRoute
     }
-    '/guides/$guideId': {
-      id: '/guides/$guideId'
-      path: '/$guideId'
+    '/guides_/$guideId': {
+      id: '/guides_/$guideId'
+      path: '/guides/$guideId'
       fullPath: '/guides/$guideId'
       preLoaderRoute: typeof GuidesGuideIdRouteImport
-      parentRoute: typeof GuidesRoute
+      parentRoute: typeof rootRouteImport
     }
     '/explore/$slug': {
       id: '/explore/$slug'
@@ -816,17 +817,6 @@ const ExploreRouteChildren: ExploreRouteChildren = {
 const ExploreRouteWithChildren =
   ExploreRoute._addFileChildren(ExploreRouteChildren)
 
-interface GuidesRouteChildren {
-  GuidesGuideIdRoute: typeof GuidesGuideIdRoute
-}
-
-const GuidesRouteChildren: GuidesRouteChildren = {
-  GuidesGuideIdRoute: GuidesGuideIdRoute,
-}
-
-const GuidesRouteWithChildren =
-  GuidesRoute._addFileChildren(GuidesRouteChildren)
-
 interface MessagesRouteChildren {
   MessagesBookingIdRoute: typeof MessagesBookingIdRoute
   MessagesIndexRoute: typeof MessagesIndexRoute
@@ -851,7 +841,7 @@ const rootRouteChildren: RootRouteChildren = {
   ExploreRoute: ExploreRouteWithChildren,
   FaqRoute: FaqRoute,
   GuideRoute: GuideRoute,
-  GuidesRoute: GuidesRouteWithChildren,
+  GuidesRoute: GuidesRoute,
   HowItWorksRoute: HowItWorksRoute,
   LoginRoute: LoginRoute,
   MessagesRoute: MessagesRouteWithChildren,
@@ -865,6 +855,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiChatRoute: ApiChatRoute,
   BookGuideIdRoute: BookGuideIdRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
+  GuidesGuideIdRoute: GuidesGuideIdRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   ApiPublicHooksBookingRemindersRoute: ApiPublicHooksBookingRemindersRoute,
   ApiPublicHooksBookingReviewsRoute: ApiPublicHooksBookingReviewsRoute,
@@ -879,3 +870,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
