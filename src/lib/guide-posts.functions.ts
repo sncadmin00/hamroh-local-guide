@@ -87,7 +87,7 @@ export const updateMyGuidePost = createServerFn({ method: "POST" })
   .inputValidator((input) => updateSchema.parse(input))
   .handler(async ({ context, data }) => {
     const { supabase } = context;
-    const patch: Record<string, unknown> = {};
+    const patch: { platform?: string; caption?: string } = {};
     if (data.platform !== undefined) patch.platform = data.platform;
     if (data.caption !== undefined) patch.caption = data.caption;
     const { error } = await supabase.from("guide_posts").update(patch).eq("id", data.id);
