@@ -48,7 +48,6 @@ const bookingSchema = z.object({
   notes: z.string().max(2000).optional(),
   total: z.number().min(0),
   source: z.string().max(64).optional(),
-  user_id: z.string().uuid().nullable().optional(),
   locale: z.enum(["ru", "uz", "en"]).optional(),
 }).refine((data) => data.customer_email || data.customer_telegram_chat_id, {
   message: "Email or Telegram contact is required",
