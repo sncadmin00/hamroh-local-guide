@@ -3,7 +3,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
-import { Compass, Apple, X } from "lucide-react";
+import { Apple, X } from "lucide-react";
+import hamrohLogo from "@/assets/hamroh-logo.png";
 import { useI18n } from "@/lib/i18n";
 import { subscribeToNewsletter } from "@/lib/newsletter.functions";
 import { sendWelcomeEmail } from "@/lib/lifecycle-emails.functions";
@@ -110,11 +111,8 @@ function LoginPage() {
       </Link>
       <div className="w-full max-w-md">
 
-        <Link to="/" className="flex items-center gap-2 justify-center mb-8">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-            <Compass className="h-5 w-5" />
-          </div>
-          <span className="font-display text-xl font-semibold">Hamroh</span>
+        <Link to="/" className="flex items-center justify-center mb-8">
+          <img src={hamrohLogo} alt="Hamroh" className="h-10 w-auto object-contain" />
         </Link>
         <div className="rounded-3xl bg-card p-8 ring-1 ring-border/60 shadow-[var(--shadow-elegant)]">
           <h1 className="font-display text-2xl font-semibold">{mode === "signin" ? "Welcome back" : "Create account"}</h1>
