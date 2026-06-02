@@ -101,11 +101,11 @@ export const createBooking = createServerFn({ method: "POST" })
       const status = (row.status as "confirmed" | "pending") ?? "pending";
 
       let notificationEmail = data.customer_email || null;
-      if (!notificationEmail && data.user_id) {
+      if (!notificationEmail && authedUserId) {
         const { data: clientTelegram } = await supabaseAdmin
           .from("telegram_accounts")
           .select("email")
-          .eq("user_id", data.user_id)
+          .eq("user_id", authedUserId)
           .maybeSingle();
         notificationEmail = clientTelegram?.email ?? null;
       }
@@ -131,11 +131,11 @@ export const createBooking = createServerFn({ method: "POST" })
       }
 
       let clientChatId = data.customer_telegram_chat_id ?? null;
-      if (!clientChatId && data.user_id) {
+      if (!clientChatId && authedUserId) {
         const { data: clientTelegram } = await supabaseAdmin
           .from("telegram_accounts")
           .select("telegram_chat_id")
-          .eq("user_id", data.user_id)
+          .eq("user_id", authedUserId)
           .maybeSingle();
         clientChatId = clientTelegram?.telegram_chat_id ?? null;
       }
