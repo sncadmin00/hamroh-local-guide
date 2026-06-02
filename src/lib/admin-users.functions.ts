@@ -23,11 +23,9 @@ export const listAppUsers = createServerFn({ method: "GET" })
       .from("user_roles")
       .select("user_id, role");
 
-    const rolesByUser = new Map<string, string[]>();
+    const adminIds = new Set<string>();
     for (const r of roles ?? []) {
-      const arr = rolesByUser.get(r.user_id) ?? [];
-      arr.push(r.role as string);
-      rolesByUser.set(r.user_id, arr);
+      if (r.role === "admin") adminIds.add(r.user_id);
     }
 
     return {
@@ -36,17 +34,16 @@ export const listAppUsers = createServerFn({ method: "GET" })
         email: u.email ?? "",
         created_at: u.created_at,
         last_sign_in_at: u.last_sign_in_at ?? null,
-        roles: rolesByUser.get(u.id) ?? [],
+        is_admin: adminIds.has(u.id),
       })),
     };
   });
 
-export const setUserRole = createServerFn({ method: "POST" })
+export const setAdminRole = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) =>
     z.object({
       user_id: z.string().uuid(),
-      role: z.enum(["admin", "guide", "user"]),
       grant: z.boolean(),
     }).parse(input),
   )
@@ -56,22 +53,20 @@ export const setUserRole = createServerFn({ method: "POST" })
     if (data.grant) {
       const { error } = await supabaseAdmin
         .from("user_roles")
-        .insert({ user_id: data.user_id, role: data.role });
+        .insert({ user_id: data.user_id, role: "admin" });
       if (error && !error.message.includes("duplicate")) throw new Error(error.message);
     } else {
-      // Prevent removing the last admin
-      if (data.role === "admin") {
-        const { count } = await supabaseAdmin
-          .from("user_roles")
-          .select("*", { count: "exact", head: true })
-          .eq("role", "admin");
-        if ((count ?? 0) <= 1) throw new Error("Cannot remove the last admin");
-      }
+      const { count } = await supabaseAdmin
+        .from("user_roles")
+        .select("*", { count: "exact", head: true })
+        .eq("role", "admin");
+      if ((count ?? 0) <= 1) throw new Error("Cannot remove the last admin");
+
       const { error } = await supabaseAdmin
         .from("user_roles")
         .delete()
         .eq("user_id", data.user_id)
-        .eq("role", data.role);
+        .eq("role", "admin");
       if (error) throw new Error(error.message);
     }
     return { ok: true };
