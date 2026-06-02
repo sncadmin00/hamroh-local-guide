@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Compass, Trash2, Plus, Upload, ImageIcon, Video, Mail } from "lucide-react";
 import { CategoryIcon } from "@/components/CategoryIcon";
 import { inviteGuideToPortal } from "@/lib/admin-portal.functions";
+import { listAppUsers, setAdminRole, inviteAdminUser } from "@/lib/admin-users.functions";
 import { notifyGuideApplicationStatus } from "@/lib/lifecycle-emails.functions";
 import hamrohLogo from "@/assets/hamroh-logo.png";
 
@@ -166,7 +167,7 @@ function sourceBadgeClass(s: string): string {
 function AdminPage() {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
-  const [tab, setTab] = useState<"bookings" | "applications" | "cities" | "guides" | "categories" | "places" | "suggestions" | "articles" | "social">("bookings");
+  const [tab, setTab] = useState<"bookings" | "applications" | "cities" | "guides" | "categories" | "places" | "suggestions" | "articles" | "social" | "users">("bookings");
   const [cities, setCities] = useState<City[]>([]);
   const [guides, setGuides] = useState<Guide[]>([]);
   const [articles, setArticles] = useState<Article[]>([]);
@@ -301,6 +302,12 @@ function AdminPage() {
           >
             Social ({embeds.length})
           </button>
+          <button
+            onClick={() => setTab("users")}
+            className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "users" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+          >
+            Users
+          </button>
         </div>
 
         {tab === "bookings" && <BookingsPanel bookings={bookings} reload={loadData} />}
@@ -312,6 +319,7 @@ function AdminPage() {
         {tab === "suggestions" && <SuggestionsPanel suggestions={suggestions} cities={cities} reload={loadData} />}
         {tab === "articles" && <ArticlesPanel articles={articles} cities={cities} reload={loadData} />}
         {tab === "social" && <SocialPanel embeds={embeds} cities={cities} reload={loadData} />}
+        {tab === "users" && <UsersPanel />}
       </div>
     </div>
   );
@@ -1994,3 +2002,127 @@ function SuggestionsPanel({
     </div>
   );
 }
+
+type AppUser = {
+  id: string;
+  email: string;
+  created_at: string;
+  last_sign_in_at: string | null;
+  is_admin: boolean;
+};
+
+function UsersPanel() {
+  const listFn = useServerFn(listAppUsers);
+  const setRoleFn = useServerFn(setAdminRole);
+  const inviteFn = useServerFn(inviteAdminUser);
+  const [users, setUsers] = useState<AppUser[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [email, setEmail] = useState("");
+  const [inviting, setInviting] = useState(false);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await listFn();
+      setUsers(res.users);
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  }, [listFn]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  const toggle = async (u: AppUser) => {
+    if (u.is_admin && !confirm(`Remove admin role from ${u.email}?`)) return;
+    try {
+      await setRoleFn({ data: { user_id: u.id, grant: !u.is_admin } });
+      toast.success(u.is_admin ? "Admin role removed" : "Admin role granted");
+      await load();
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+  };
+
+  const invite = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+    setInviting(true);
+    try {
+      const res = await inviteFn({ data: { email } });
+      toast.success(res.existed ? "Admin role granted to existing user" : "Invite sent");
+      setEmail("");
+      await load();
+    } catch (err) {
+      toast.error((err as Error).message);
+    } finally {
+      setInviting(false);
+    }
+  };
+
+  return (
+    <div className="mt-6 grid gap-6 md:grid-cols-2">
+      <form onSubmit={invite} className="rounded-3xl bg-card p-6 ring-1 ring-border/60 h-fit">
+        <h2 className="font-display text-lg font-semibold">Invite admin</h2>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Send an invite email. If the user already exists, admin role will be granted immediately.
+        </p>
+        <div className="mt-4">
+          <Field label="Email" value={email} onChange={setEmail} placeholder="new-admin@example.com" />
+        </div>
+        <button
+          type="submit"
+          disabled={inviting}
+          className="mt-5 inline-flex items-center gap-2 h-11 px-6 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-60"
+        >
+          <Plus className="h-4 w-4" /> {inviting ? "Sending…" : "Invite admin"}
+        </button>
+      </form>
+
+      <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
+        <h2 className="font-display text-lg font-semibold">All users ({users.length})</h2>
+        {loading ? (
+          <p className="mt-4 text-sm text-muted-foreground">Loading…</p>
+        ) : (
+          <ul className="mt-4 divide-y divide-border/60">
+            {users.length === 0 && (
+              <li className="py-4 text-sm text-muted-foreground">No users.</li>
+            )}
+            {users.map((u) => (
+              <li key={u.id} className="py-3 flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="font-medium truncate flex items-center gap-2">
+                    {u.email}
+                    {u.is_admin && (
+                      <span className="inline-flex items-center rounded-full bg-primary/10 text-primary px-2 py-0.5 text-[10px] font-semibold uppercase">
+                        Admin
+                      </span>
+                    )}
+                  </p>
+                  <p className="text-xs text-muted-foreground truncate">
+                    Joined {new Date(u.created_at).toLocaleDateString()}
+                    {u.last_sign_in_at && ` · Last login ${new Date(u.last_sign_in_at).toLocaleDateString()}`}
+                  </p>
+                </div>
+                <button
+                  onClick={() => toggle(u)}
+                  className={`h-9 px-3 rounded-full text-xs font-semibold ${
+                    u.is_admin
+                      ? "bg-destructive/10 text-destructive hover:bg-destructive/20"
+                      : "bg-primary text-primary-foreground hover:opacity-90"
+                  }`}
+                >
+                  {u.is_admin ? "Remove admin" : "Make admin"}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  );
+}
+
