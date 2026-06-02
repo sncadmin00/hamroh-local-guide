@@ -2119,17 +2119,32 @@ function UsersPanel() {
                     {u.last_sign_in_at && ` · Last login ${new Date(u.last_sign_in_at).toLocaleDateString()}`}
                   </p>
                 </div>
-                <button
-                  onClick={() => toggle(u)}
-                  className={`h-9 px-3 rounded-full text-xs font-semibold ${
-                    u.is_admin
-                      ? "bg-destructive/10 text-destructive hover:bg-destructive/20"
-                      : "bg-primary text-primary-foreground hover:opacity-90"
-                  }`}
-                >
-                  {u.is_admin ? "Remove admin" : "Make admin"}
-                </button>
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    onClick={() => toggle(u)}
+                    className={`h-9 px-3 rounded-full text-xs font-semibold ${
+                      u.is_admin
+                        ? "bg-destructive/10 text-destructive hover:bg-destructive/20"
+                        : "bg-primary text-primary-foreground hover:opacity-90"
+                    }`}
+                  >
+                    {u.is_admin ? "Remove admin" : "Make admin"}
+                  </button>
+                  <button
+                    onClick={() => removeUser(u)}
+                    className="h-9 px-3 rounded-full text-xs font-semibold border border-destructive/40 text-destructive hover:bg-destructive/10"
+                  >
+                    Delete
+                  </button>
+                </div>
               </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  );
+}
             ))}
           </ul>
         )}
