@@ -2145,11 +2145,4 @@ function UsersPanel() {
     </div>
   );
 }
-            ))}
-          </ul>
-        )}
-      </div>
-    </div>
-  );
-}
 
