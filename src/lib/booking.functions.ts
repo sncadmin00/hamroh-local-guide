@@ -57,6 +57,8 @@ export const createBooking = createServerFn({ method: "POST" })
   .inputValidator((input) => bookingSchema.parse(input))
   .handler(async ({ data }) => {
     const clientLocale = normalizeLocale(data.locale);
+    // Resolve the user from the bearer token; never trust client input.
+    const authedUserId = await getOptionalUserId();
     // Instant booking if slot picked, otherwise pending request
     const isInstant = !!data.slot_id;
     const insertPayload = {
@@ -75,7 +77,7 @@ export const createBooking = createServerFn({ method: "POST" })
       notes: data.notes ?? "",
       total: data.total,
       source: data.source ?? "web",
-      user_id: data.user_id ?? null,
+      user_id: authedUserId,
       status: isInstant ? "confirmed" : "pending",
       locale: clientLocale,
     };
