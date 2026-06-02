@@ -15,7 +15,7 @@ import { getMyTelegramAccount } from "@/lib/telegram.functions";
 import { TelegramLoginButton } from "@/components/TelegramLoginButton";
 
 export const Route = createFileRoute("/book/$guideId")({
-  head: () => ({ meta: [{ title: "Book a guide — Sancho" }] }),
+  head: () => ({ meta: [{ title: "Book a guide — Hamroh" }] }),
   component: BookPage,
 });
 
