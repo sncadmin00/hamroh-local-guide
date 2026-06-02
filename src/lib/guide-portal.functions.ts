@@ -4,6 +4,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { enqueueTransactionalEmail } from "@/lib/email/enqueue.server";
 import { normalizeLocale } from "@/lib/email-templates/_i18n";
+import { bookingDetailsText, sendTelegramMessage } from "@/lib/telegram-notifications.server";
 
 const APP_BASE_URL = "https://hamrohim.com";
 
@@ -93,7 +94,7 @@ export const listMyBookings = createServerFn({ method: "GET" })
     if (!guide) return [];
     const { data, error } = await supabase
       .from("bookings")
-      .select("id, customer_name, customer_email, experience, date, start_time, duration_minutes, guests, total, status, notes, created_at, slot_id")
+      .select("id, customer_name, customer_email, customer_telegram_username, experience, date, start_time, duration_minutes, guests, total, status, notes, created_at, slot_id")
       .eq("guide_id", guide.id)
       .order("date", { ascending: false });
     if (error) throw new Error(error.message);
@@ -115,7 +116,7 @@ export const updateBookingStatus = createServerFn({ method: "POST" })
     // Load prior state to detect transition + recipient
     const { data: prior } = await supabase
       .from("bookings")
-      .select("id, status, customer_email, customer_name, experience, date, start_time, locale, guide_id")
+      .select("id, status, customer_email, customer_telegram_chat_id, customer_name, experience, date, start_time, locale, guide_id")
       .eq("id", data.id)
       .maybeSingle();
 
@@ -133,30 +134,43 @@ export const updateBookingStatus = createServerFn({ method: "POST" })
 
 
     // Notify client (skip if no state change)
-    if (prior && prior.status !== data.status && prior.customer_email) {
+    if (prior && prior.status !== data.status) {
       try {
         const { data: guide } = await supabaseAdmin
           .from("guides")
           .select("name")
           .eq("id", prior.guide_id)
           .maybeSingle();
-        await enqueueTransactionalEmail({
-          supabase: supabaseAdmin,
-          templateName: "booking-status-update-client",
-          recipientEmail: prior.customer_email,
-          templateData: {
-            customerName: prior.customer_name,
-            guideName: guide?.name ?? undefined,
-            experience: prior.experience,
-            date: prior.date,
-            startTime: prior.start_time,
-            reason: data.reason,
-            bookingUrl: `${APP_BASE_URL}/my-bookings`,
-            status: data.status,
-            locale: normalizeLocale(prior.locale),
-          },
-          idempotencyKey: `booking-status-${data.id}-${data.status}`,
-        });
+        if (prior.customer_email) {
+          await enqueueTransactionalEmail({
+            supabase: supabaseAdmin,
+            templateName: "booking-status-update-client",
+            recipientEmail: prior.customer_email,
+            templateData: {
+              customerName: prior.customer_name,
+              guideName: guide?.name ?? undefined,
+              experience: prior.experience,
+              date: prior.date,
+              startTime: prior.start_time,
+              reason: data.reason,
+              bookingUrl: `${APP_BASE_URL}/my-bookings`,
+              status: data.status,
+              locale: normalizeLocale(prior.locale),
+            },
+            idempotencyKey: `booking-status-${data.id}-${data.status}`,
+          });
+        }
+        await sendTelegramMessage(prior.customer_telegram_chat_id, bookingDetailsText({
+          title: `Booking ${data.status}`,
+          guideName: guide?.name ?? undefined,
+          customerName: prior.customer_name,
+          experience: prior.experience,
+          date: prior.date,
+          startTime: prior.start_time,
+          status: data.status,
+          reason: data.reason,
+          url: `${APP_BASE_URL}/my-bookings`,
+        }));
       } catch (e) {
         console.error("Failed to notify client of status change", e);
       }
