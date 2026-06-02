@@ -2015,6 +2015,7 @@ function UsersPanel() {
   const listFn = useServerFn(listAppUsers);
   const setRoleFn = useServerFn(setAdminRole);
   const inviteFn = useServerFn(inviteAdminUser);
+  const deleteFn = useServerFn(deleteAppUser);
   const [users, setUsers] = useState<AppUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState("");
