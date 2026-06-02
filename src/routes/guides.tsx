@@ -14,7 +14,7 @@ export const Route = createFileRoute("/guides")({
   }),
   head: () => ({
     meta: [
-      { title: "All guides — Sancho" },
+      { title: "All guides — Hamroh" },
       { name: "description", content: "Browse verified local guides in cities around the world." },
     ],
   }),

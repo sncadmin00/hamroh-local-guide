@@ -10,7 +10,7 @@ import { ReviewForm } from "@/components/ReviewForm";
 
 
 export const Route = createFileRoute("/my-bookings")({
-  head: () => ({ meta: [{ title: "My bookings — Sancho" }] }),
+  head: () => ({ meta: [{ title: "My bookings — Hamroh" }] }),
   component: MyBookingsPage,
   errorComponent: ({ error }) => (
     <div className="min-h-screen flex items-center justify-center text-sm text-destructive">
@@ -66,7 +66,7 @@ function MyBookingsPage() {
         <div className="flex items-center justify-between mb-6">
           <h1 className="font-display text-2xl font-semibold">My bookings</h1>
           <Link to="/ai" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
-            <ArrowLeft className="h-4 w-4" /> Back to Sancho AI
+            <ArrowLeft className="h-4 w-4" /> Back to Hamroh AI
           </Link>
         </div>
 

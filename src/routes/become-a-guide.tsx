@@ -12,8 +12,8 @@ import { notifyAdminsOfGuideApplication } from "@/lib/newsletter.functions";
 export const Route = createFileRoute("/become-a-guide")({
   head: () => ({
     meta: [
-      { title: "Become a Guide — Sancho" },
-      { name: "description", content: "Join Sancho as a local guide and share your city with travelers." },
+      { title: "Become a Guide — Hamroh" },
+      { name: "description", content: "Join Hamroh as a local guide and share your city with travelers." },
     ],
   }),
   component: BecomeAGuidePage,
