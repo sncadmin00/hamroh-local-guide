@@ -8,8 +8,11 @@ export const Route = createFileRoute('/api/public/hooks/booking-reviews')({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const auth = request.headers.get('authorization') ?? request.headers.get('apikey')
-        if (!auth) return Response.json({ error: 'Unauthorized' }, { status: 401 })
+        const auth = request.headers.get('authorization') ?? request.headers.get('apikey') ?? ''
+        const token = auth.startsWith('Bearer ') ? auth.slice(7).trim() : auth.trim()
+        if (!token || token !== process.env.SUPABASE_SERVICE_ROLE_KEY) {
+          return Response.json({ error: 'Forbidden' }, { status: 403 })
+        }
 
         const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
         const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
