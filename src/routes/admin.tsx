@@ -167,7 +167,7 @@ function sourceBadgeClass(s: string): string {
 function AdminPage() {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
-  const [tab, setTab] = useState<"bookings" | "applications" | "cities" | "guides" | "categories" | "places" | "suggestions" | "articles" | "social">("bookings");
+  const [tab, setTab] = useState<"bookings" | "applications" | "cities" | "guides" | "categories" | "places" | "suggestions" | "articles" | "social" | "users">("bookings");
   const [cities, setCities] = useState<City[]>([]);
   const [guides, setGuides] = useState<Guide[]>([]);
   const [articles, setArticles] = useState<Article[]>([]);
