@@ -1,14 +1,11 @@
-Добавить новую категорию "People" в таблицу categories и обновить UI-сетку на главной странице.
+## Chto nado sdelat
 
-## Что нужно сделать
+V komponente `GuidePostsFeed.tsx`:
 
-1. **Данные в БД** — вставить в таблицу `categories` новую запись:
-   - `name`: "People"
-   - `slug`: "people"
-   - `icon`: "Users"
-   - `description`: "Local heroes you should meet"
-   - `sort_order`: 7 (в конец списка)
+1. Zamenit obertyvayushchiy `<a>` element na `<div>`, chtoby kartochki postov ne byli klikabelnymi.
+2. Ubrat atributy `href`, `target`, `rel`.
+3. Ubrat effekty, assoczirovannye s ssylkoy: `hover:-translate-y-0.5`, `hover:shadow-[var(--shadow-elegant)]`, `group-hover:scale-105`, `transition-all`.
+4. Ubrat import `ExternalLink`, poskolku on ispolzuetsya tolko dlya platformy "other" (link), a ssylki teper ne nujny.
+5. Platforma "other" mozhet byt otobrajena s prostyim tekstovym labelom vmesto ikonki ssylki.
 
-2. **Главная страница** — сейчас категории отображаются в сетке `grid-cols-6`. При 8 категориях (2 строки по 6 + 2 остаток) раскладка будет выглядеть неровно. Изменить сетку на `grid-cols-4` или `grid-cols-2 sm:grid-cols-4 lg:grid-cols-4` для аккуратного вида (2 ряда по 4).
-
-3. **Переводы** — добавить ключ для категории "People" в i18n файлы (ru, en, uz).
+Itog: lenta postov ostaetsya vizualno priyatnoy, no polnostyu neklikabelnoy. Klient ne mozhet pereyti na post gidaa napryamuyu.
