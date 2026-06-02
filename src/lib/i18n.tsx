@@ -36,7 +36,7 @@ export const translations: Dict = {
     uz: "masalan, ikki kunlik ingliz tilida so'zlashuvchi taom hamrohi…",
     ru: "напр., англоговорящий гид по еде на два дня…",
   },
-  "browse.title": { en: "Browse by interest", uz: "Qiziqish bo'yicha ko'rish", ru: "По интересам" },
+  "browse.title": { en: "Browse by interest", uz: "Qiziqish bo'yicha izlash", ru: "По интересам" },
   "browse.subtitle": { en: "Find a guide for what you love", uz: "Sevimli mavzuingiz bo'yicha hamroh toping", ru: "Найдите гида под ваши интересы" },
   "footer.about": { en: "About", uz: "Biz haqimizda", ru: "О нас" },
   "footer.contact": { en: "Contact", uz: "Aloqa", ru: "Контакты" },
