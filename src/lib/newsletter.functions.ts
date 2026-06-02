@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { enqueueTransactionalEmail } from "@/lib/email/enqueue.server";
+import { getOptionalUserId } from "@/lib/optional-auth.server";
 
 const APP_BASE_URL = "https://hamrohim.com";
 
