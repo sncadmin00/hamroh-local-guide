@@ -41,6 +41,7 @@ export const Route = createFileRoute('/api/public/hooks/booking-reviews')({
         let queued = 0
         for (const b of bookings) {
           try {
+            if (!b.customer_email) continue
             const { data: already } = await supabase
               .from('email_send_log')
               .select('id')
