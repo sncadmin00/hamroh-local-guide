@@ -4,6 +4,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { enqueueTransactionalEmail } from "@/lib/email/enqueue.server";
 import { normalizeLocale } from "@/lib/email-templates/_i18n";
+import { bookingDetailsText, sendTelegramMessage } from "@/lib/telegram-notifications.server";
 
 const APP_BASE_URL = "https://hamrohim.com";
 
@@ -61,7 +62,7 @@ export const cancelBookingAsClient = createServerFn({ method: "POST" })
       if (guide?.user_id) {
         const { data: guideUser } = await supabaseAdmin.auth.admin.getUserById(guide.user_id);
         const guideEmail = guideUser?.user?.email;
-        if (guideEmail) {
+          if (guideEmail) {
           await enqueueTransactionalEmail({
             supabase: supabaseAdmin,
             templateName: "booking-cancelled-by-client",
@@ -79,6 +80,21 @@ export const cancelBookingAsClient = createServerFn({ method: "POST" })
             idempotencyKey: `booking-cancel-by-client-${booking.id}`,
           });
         }
+        const { data: guideTelegram } = await supabaseAdmin
+          .from("telegram_accounts")
+          .select("telegram_chat_id")
+          .eq("user_id", guide.user_id)
+          .maybeSingle();
+        await sendTelegramMessage(guideTelegram?.telegram_chat_id, bookingDetailsText({
+          title: "Booking cancelled by client",
+          customerName: booking.customer_name,
+          guideName: guide.name ?? undefined,
+          experience: booking.experience,
+          date: booking.date,
+          startTime: booking.start_time,
+          reason: data.reason,
+          url: `${APP_BASE_URL}/guide`,
+        }));
       }
     } catch (e) {
       console.error("Failed to notify guide of client cancellation", e);
