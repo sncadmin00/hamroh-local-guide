@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Calendar, Plus, Trash2, Check, X, LogOut, Loader2, Copy, Link2 } from "lucide-react";
+import { Calendar, Plus, Trash2, Check, X, LogOut, Loader2, Copy, Link2, Image as ImageIcon } from "lucide-react";
 import {
   getMyGuide,
   listMySlots,
@@ -12,6 +12,7 @@ import {
   listMyBookings,
   updateBookingStatus,
 } from "@/lib/guide-portal.functions";
+import { GuidePostsPanel } from "@/components/GuidePostsPanel";
 
 export const Route = createFileRoute("/guide")({
   head: () => ({ meta: [{ title: "Guide portal — Hamroh" }] }),
@@ -50,7 +51,7 @@ function GuidePortal() {
   const [guide, setGuide] = useState<{ id: string; name: string; slug: string; tagline: string; referral_code: string | null; referral_clicks: number; cities?: { name: string } | null } | null>(null);
   const [slots, setSlots] = useState<Slot[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [tab, setTab] = useState<"availability" | "bookings" | "referral">("availability");
+  const [tab, setTab] = useState<"availability" | "bookings" | "posts" | "referral">("availability");
 
   const fetchGuide = useServerFn(getMyGuide);
   const fetchSlots = useServerFn(listMySlots);
@@ -128,6 +129,9 @@ function GuidePortal() {
           <TabBtn active={tab === "bookings"} onClick={() => setTab("bookings")}>
             Bookings ({bookings.length})
           </TabBtn>
+          <TabBtn active={tab === "posts"} onClick={() => setTab("posts")}>
+            <ImageIcon className="h-4 w-4" /> Posts
+          </TabBtn>
           <TabBtn active={tab === "referral"} onClick={() => setTab("referral")}>
             <Link2 className="h-4 w-4" /> Referral
           </TabBtn>
@@ -165,6 +169,8 @@ function GuidePortal() {
             }}
           />
         )}
+
+        {tab === "posts" && <GuidePostsPanel />}
 
         {tab === "referral" && (
           <ReferralPanel code={guide.referral_code} clicks={guide.referral_clicks} />
