@@ -49,7 +49,7 @@ const faqData: Record<string, { question: { en: string; uz: string; ru: string }
     },
     {
       question: { en: "How do I contact my guide before the tour?", uz: "Sayohatdan oldin hamroh bilan qanday bog'lanish mumkin?", ru: "Как связаться с гидом перед экскурсией?" },
-      answer: { en: "Once your booking is confirmed, a chat is opened between you and your guide. You can coordinate details, ask questions, and plan your itinerary there.", uz: "Broningiz tasdiqlangandan so'ng, siz va hamrohngiz o'rtasida chat ochiladi. U yerda tafsilotlarni muvofiqlashtirishingiz, savollar berishingiz va marshrutni rejalashtirishingiz mumkin.", ru: "После подтверждения бронирования между вами и гидом открывается чат. Там можно согласовать детали, задать вопросы и спланировать маршрут." },
+      answer: { en: "Once your booking is confirmed, a chat is opened between you and your guide. You can coordinate details, ask questions, and plan your itinerary there.", uz: "Broningiz tasdiqlangandan so'ng, siz va hamrohingiz o'rtasida chat ochiladi. U yerda tafsilotlarni muvofiqlashtirishingiz, savollar berishingiz va marshrutni rejalashtirishingiz mumkin.", ru: "После подтверждения бронирования между вами и гидом открывается чат. Там можно согласовать детали, задать вопросы и спланировать маршрут." },
     },
     {
       question: { en: "What if I have a problem during my trip?", uz: "Sayohatim davomida muammo yuzaga kelsa-chi?", ru: "Что если возникнут проблемы во время поездки?" },

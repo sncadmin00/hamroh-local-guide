@@ -33,7 +33,7 @@ export const translations: Dict = {
   },
   "hero.placeholder": {
     en: "e.g. English-speaking food guide for two days…",
-    uz: "masalan, ikki kunlik ingliz tilida so'zlashuvchi taom hamrohsi…",
+    uz: "masalan, ikki kunlik ingliz tilida so'zlashuvchi taom hamrohi…",
     ru: "напр., англоговорящий гид по еде на два дня…",
   },
   "browse.title": { en: "Browse by interest", uz: "Qiziqish bo'yicha ko'rish", ru: "По интересам" },
