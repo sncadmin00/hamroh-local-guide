@@ -30,7 +30,8 @@ type Slot = {
 type Booking = {
   id: string;
   customer_name: string;
-  customer_email: string;
+  customer_email: string | null;
+  customer_telegram_username: string | null;
   experience: string;
   date: string;
   start_time: string | null;
@@ -297,7 +298,9 @@ function BookingsPanel({
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <p className="font-medium">{b.customer_name} · {b.guests} {b.guests === 1 ? "guest" : "guests"}</p>
-              <p className="text-xs text-muted-foreground truncate">{b.customer_email}</p>
+              <p className="text-xs text-muted-foreground truncate">
+                {b.customer_email || (b.customer_telegram_username ? `@${b.customer_telegram_username}` : "Telegram")}
+              </p>
               <p className="text-sm mt-2">
                 <span className="font-medium">{b.experience}</span> — {b.date}
                 {b.start_time && <> · {b.start_time.slice(0, 5)}</>}

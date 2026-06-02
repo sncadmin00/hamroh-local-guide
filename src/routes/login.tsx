@@ -8,25 +8,20 @@ import { useI18n } from "@/lib/i18n";
 import { subscribeToNewsletter } from "@/lib/newsletter.functions";
 import { sendWelcomeEmail } from "@/lib/lifecycle-emails.functions";
 import { trackEvent } from "@/lib/analytics";
+import { TelegramLoginButton } from "@/components/TelegramLoginButton";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Sign in — Hamroh" }] }),
   component: LoginPage,
 });
 
-type Method = "email" | "phone";
-
 function LoginPage() {
   const navigate = useNavigate();
   const { lang } = useI18n();
   const subscribe = useServerFn(subscribeToNewsletter);
   const sendWelcome = useServerFn(sendWelcomeEmail);
-  const [method, setMethod] = useState<Method>("email");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [phone, setPhone] = useState("");
-  const [otp, setOtp] = useState("");
-  const [otpSent, setOtpSent] = useState(false);
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [newsletterOptIn, setNewsletterOptIn] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -92,38 +87,6 @@ function LoginPage() {
     }
   };
 
-  const sendOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.signInWithOtp({
-        phone,
-        options: { data: { locale: lang } },
-      });
-      if (error) throw error;
-      setOtpSent(true);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const verifyOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.verifyOtp({ phone, token: otp, type: "sms" });
-      if (error) throw error;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Invalid code");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const google = async () => {
     setError(null);
     const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/login" });
@@ -158,6 +121,7 @@ function LoginPage() {
           <p className="mt-1 text-sm text-muted-foreground">Sign in to ask Hamroh AI about guides.</p>
 
           <div className="mt-6 space-y-2">
+            <TelegramLoginButton mode="signin" />
             <button
               onClick={google}
               type="button"
@@ -180,25 +144,7 @@ function LoginPage() {
             <div className="h-px flex-1 bg-border"></div>OR<div className="h-px flex-1 bg-border"></div>
           </div>
 
-          <div className="flex gap-1 rounded-full bg-secondary p-1 mb-4">
-            <button
-              type="button"
-              onClick={() => { setMethod("email"); setError(null); }}
-              className={`flex-1 h-9 rounded-full text-sm font-medium transition-colors ${method === "email" ? "bg-background shadow-sm" : "text-muted-foreground"}`}
-            >
-              Email
-            </button>
-            <button
-              type="button"
-              onClick={() => { setMethod("phone"); setError(null); }}
-              className={`flex-1 h-9 rounded-full text-sm font-medium transition-colors ${method === "phone" ? "bg-background shadow-sm" : "text-muted-foreground"}`}
-            >
-              Phone (SMS)
-            </button>
-          </div>
-
-          {method === "email" ? (
-            <form onSubmit={submitEmail} className="space-y-3">
+          <form onSubmit={submitEmail} className="space-y-3">
               <input
                 type="email"
                 required
@@ -245,52 +191,7 @@ function LoginPage() {
                   {mode === "signin" ? "Create one" : "Sign in"}
                 </button>
               </p>
-            </form>
-          ) : (
-            <form onSubmit={otpSent ? verifyOtp : sendOtp} className="space-y-3">
-              <input
-                type="tel"
-                required
-                placeholder="+1 555 123 4567"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                disabled={otpSent}
-                className="w-full h-11 rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring disabled:opacity-60"
-              />
-              {otpSent && (
-                <input
-                  type="text"
-                  required
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  placeholder="6-digit code"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
-                  className="w-full h-11 rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring tracking-widest"
-                />
-              )}
-              {error && <p className="text-sm text-destructive">{error}</p>}
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full h-11 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-60"
-              >
-                {loading ? "Please wait…" : otpSent ? "Verify code" : "Send code"}
-              </button>
-              {otpSent && (
-                <button
-                  type="button"
-                  onClick={() => { setOtpSent(false); setOtp(""); }}
-                  className="w-full text-center text-sm text-muted-foreground hover:text-foreground"
-                >
-                  Use a different number
-                </button>
-              )}
-              <p className="text-center text-xs text-muted-foreground">
-                Standard SMS rates may apply. Use international format with country code.
-              </p>
-            </form>
-          )}
+          </form>
         </div>
       </div>
     </div>

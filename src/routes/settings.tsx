@@ -1,8 +1,11 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Compass } from "lucide-react";
+import { TelegramLoginButton } from "@/components/TelegramLoginButton";
+import { getMyTelegramAccount, updateMyTelegramEmail } from "@/lib/telegram.functions";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({ meta: [{ title: "Account settings — Sancho" }] }),
@@ -11,18 +14,29 @@ export const Route = createFileRoute("/settings")({
 
 function SettingsPage() {
   const navigate = useNavigate();
+  const fetchTelegram = useServerFn(getMyTelegramAccount);
+  const saveTelegramEmail = useServerFn(updateMyTelegramEmail);
   const [checking, setChecking] = useState(true);
   const [currentEmail, setCurrentEmail] = useState("");
-  const [currentPhone, setCurrentPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [savingEmail, setSavingEmail] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
-  const [phone, setPhone] = useState("");
-  const [otp, setOtp] = useState("");
-  const [otpSent, setOtpSent] = useState(false);
-  const [savingPhone, setSavingPhone] = useState(false);
+  const [telegramEmail, setTelegramEmail] = useState("");
+  const [telegramLabel, setTelegramLabel] = useState<string | null>(null);
+  const [savingTelegramEmail, setSavingTelegramEmail] = useState(false);
+
+  const loadTelegram = async () => {
+    try {
+      const result = await fetchTelegram();
+      const account = result.account;
+      setTelegramLabel(account ? (account.telegram_username ? `@${account.telegram_username}` : String(account.telegram_user_id)) : null);
+      setTelegramEmail(account?.email ?? result.authEmail ?? "");
+    } catch {
+      setTelegramLabel(null);
+    }
+  };
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data, error }) => {
@@ -31,49 +45,23 @@ function SettingsPage() {
         return;
       }
       setCurrentEmail(data.user.email ?? "");
-      setCurrentPhone(data.user.phone ?? "");
       setEmail(data.user.email ?? "");
-      setPhone(data.user.phone ? `+${data.user.phone}` : "");
       setChecking(false);
+      loadTelegram();
     });
   }, [navigate]);
 
-  const sendPhoneOtp = async (e: React.FormEvent) => {
+  const updateTelegramEmail = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!phone.startsWith("+")) {
-      toast.error("Enter phone in international format (e.g. +998 90 123 45 67)");
-      return;
-    }
-    setSavingPhone(true);
-    const { error } = await supabase.auth.updateUser({ phone });
-    setSavingPhone(false);
-    if (error) toast.error(error.message);
-    else {
-      toast.success("Code sent to your phone");
-      setOtpSent(true);
-    }
-  };
-
-  const verifyPhoneOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (otp.length < 4) {
-      toast.error("Enter the code from SMS");
-      return;
-    }
-    setSavingPhone(true);
-    const { error } = await supabase.auth.verifyOtp({
-      phone: phone.replace(/\s/g, ""),
-      token: otp,
-      type: "phone_change",
-    });
-    setSavingPhone(false);
-    if (error) toast.error(error.message);
-    else {
-      toast.success("Phone number linked");
-      setOtp("");
-      setOtpSent(false);
-      const { data } = await supabase.auth.getUser();
-      setCurrentPhone(data.user?.phone ?? "");
+    setSavingTelegramEmail(true);
+    try {
+      await saveTelegramEmail({ data: { email: telegramEmail } });
+      toast.success("Telegram email saved");
+      await loadTelegram();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not save email");
+    } finally {
+      setSavingTelegramEmail(false);
     }
   };
 
@@ -132,55 +120,35 @@ function SettingsPage() {
 
         <h1 className="font-display text-3xl font-semibold">Account settings</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Signed in as {currentEmail || (currentPhone ? `+${currentPhone}` : "—")}
+          Signed in as {currentEmail || telegramLabel || "—"}
         </p>
 
-        <form onSubmit={otpSent ? verifyPhoneOtp : sendPhoneOtp} className="mt-8 rounded-3xl bg-card p-6 ring-1 ring-border/60">
-          <h2 className="font-display text-lg font-semibold">Phone number</h2>
+        <section className="mt-8 rounded-3xl bg-card p-6 ring-1 ring-border/60">
+          <h2 className="font-display text-lg font-semibold">Telegram</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            {currentPhone
-              ? `Linked: +${currentPhone}. Link a new number to replace it.`
-              : "Link a phone so you can also sign in via SMS. Use international format."}
+            {telegramLabel ? `Linked: ${telegramLabel}` : "Link Telegram to receive booking updates there."}
           </p>
-          <input
-            type="tel"
-            required
-            placeholder="+998 90 123 45 67"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            disabled={otpSent}
-            className="mt-4 w-full h-11 rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring disabled:opacity-60"
-          />
-          {otpSent && (
-            <input
-              type="text"
-              inputMode="numeric"
-              required
-              placeholder="SMS code"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-              className="mt-3 w-full h-11 rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
-          )}
-          <div className="mt-4 flex gap-3">
-            <button
-              type="submit"
-              disabled={savingPhone}
-              className="h-11 px-6 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-60"
-            >
-              {savingPhone ? "Saving…" : otpSent ? "Confirm code" : "Send code"}
-            </button>
-            {otpSent && (
+          {!telegramLabel && <div className="mt-4"><TelegramLoginButton mode="link" onLinked={loadTelegram} /></div>}
+          {telegramLabel && (
+            <form onSubmit={updateTelegramEmail} className="mt-5">
+              <label className="text-sm font-medium">Optional email for duplicate booking notifications</label>
+              <input
+                type="email"
+                value={telegramEmail}
+                onChange={(e) => setTelegramEmail(e.target.value)}
+                placeholder="you@email.com"
+                className="mt-2 w-full h-11 rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring"
+              />
               <button
-                type="button"
-                onClick={() => { setOtpSent(false); setOtp(""); }}
-                className="h-11 px-5 rounded-full border border-input text-sm font-medium hover:bg-secondary"
+                type="submit"
+                disabled={savingTelegramEmail}
+                className="mt-4 h-11 px-6 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-60"
               >
-                Cancel
+                {savingTelegramEmail ? "Saving…" : "Save email"}
               </button>
-            )}
-          </div>
-        </form>
+            </form>
+          )}
+        </section>
 
         <form onSubmit={updateEmail} className="mt-6 rounded-3xl bg-card p-6 ring-1 ring-border/60">
           <h2 className="font-display text-lg font-semibold">Email address</h2>

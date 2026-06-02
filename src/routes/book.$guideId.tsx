@@ -11,6 +11,8 @@ import { getBookingSource } from "@/hooks/useTrackSource";
 import { getGuideSlots, createBooking } from "@/lib/booking.functions";
 import { useI18n } from "@/lib/i18n";
 import { trackEvent } from "@/lib/analytics";
+import { getMyTelegramAccount } from "@/lib/telegram.functions";
+import { TelegramLoginButton } from "@/components/TelegramLoginButton";
 
 export const Route = createFileRoute("/book/$guideId")({
   head: () => ({ meta: [{ title: "Book a guide — Sancho" }] }),
@@ -26,6 +28,7 @@ function BookPage() {
   const [submitting, setSubmitting] = useState(false);
   const [slots, setSlots] = useState<Array<{ id: string; date: string; start_time: string; duration_minutes: number }>>([]);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
+  const [telegramContact, setTelegramContact] = useState<{ telegram_user_id: number; telegram_chat_id: number | null; telegram_username: string | null } | null>(null);
   const [form, setForm] = useState({
     date: "",
     guests: 2,
@@ -37,6 +40,7 @@ function BookPage() {
 
   const fetchSlots = useServerFn(getGuideSlots);
   const createBookingFn = useServerFn(createBooking);
+  const fetchTelegram = useServerFn(getMyTelegramAccount);
 
   useEffect(() => {
     if (!guide) return;
@@ -44,6 +48,24 @@ function BookPage() {
       .then((rows) => setSlots(rows as typeof slots))
       .catch(() => setSlots([]));
   }, [guide, fetchSlots]);
+
+  const loadTelegramContact = async () => {
+    const { data: userData } = await supabase.auth.getUser();
+    if (!userData.user) {
+      setTelegramContact(null);
+      return;
+    }
+    try {
+      const result = await fetchTelegram();
+      setTelegramContact(result.account as typeof telegramContact);
+    } catch {
+      setTelegramContact(null);
+    }
+  };
+
+  useEffect(() => {
+    loadTelegramContact();
+  }, []);
 
   if (isLoading || !guide) {
     return (
@@ -74,6 +96,10 @@ function BookPage() {
       toast.error("Please pick a time slot");
       return;
     }
+    if (!form.email && !telegramContact?.telegram_chat_id) {
+      toast.error("Add an email or link Telegram for booking updates");
+      return;
+    }
     setSubmitting(true);
     const { data: userData } = await supabase.auth.getUser();
     try {
@@ -89,6 +115,9 @@ function BookPage() {
           guests: form.guests,
           customer_name: form.name,
           customer_email: form.email,
+          customer_telegram_user_id: telegramContact?.telegram_user_id,
+          customer_telegram_chat_id: telegramContact?.telegram_chat_id ?? undefined,
+          customer_telegram_username: telegramContact?.telegram_username ?? undefined,
           notes: form.notes,
           total: total + fee,
           source: getBookingSource(),
@@ -121,7 +150,7 @@ function BookPage() {
           <p className="mt-3 text-muted-foreground">
             {guide.name} will meet you in {guide.city} on{" "}
             <span className="font-medium text-foreground">{form.date}</span>. We've sent a confirmation to{" "}
-            <span className="font-medium text-foreground">{form.email}</span>.
+            <span className="font-medium text-foreground">{form.email || "Telegram"}</span>.
           </p>
           <div className="mt-8 flex gap-3">
             <Link to="/guides" className="rounded-full border border-input px-5 py-2.5 text-sm font-medium">Browse more</Link>
@@ -202,8 +231,22 @@ function BookPage() {
               </div>
               <div>
                 <label className="text-sm font-medium">Email</label>
-                <input type="email" required value={form.email} onChange={handleFieldChange} name="email" className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring" placeholder="you@email.com" />
+                <input type="email" required={!telegramContact?.telegram_chat_id} value={form.email} onChange={handleFieldChange} name="email" className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring" placeholder={telegramContact?.telegram_chat_id ? "Optional" : "you@email.com"} />
               </div>
+            </div>
+
+            <div className="rounded-2xl bg-secondary/60 p-4">
+              <p className="text-sm font-medium">Telegram updates</p>
+              {telegramContact?.telegram_chat_id ? (
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Linked {telegramContact.telegram_username ? `@${telegramContact.telegram_username}` : "Telegram"}. Booking updates will arrive there.
+                </p>
+              ) : (
+                <div className="mt-3 space-y-3">
+                  <p className="text-sm text-muted-foreground">Link Telegram if you prefer booking updates there instead of email.</p>
+                  <TelegramLoginButton mode="link" onLinked={loadTelegramContact} />
+                </div>
+              )}
             </div>
 
             <div>

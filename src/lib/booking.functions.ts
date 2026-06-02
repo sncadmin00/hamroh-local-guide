@@ -3,6 +3,7 @@ import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { enqueueTransactionalEmail } from "@/lib/email/enqueue.server";
 import { normalizeLocale } from "@/lib/email-templates/_i18n";
+import { bookingDetailsText, sendTelegramMessage } from "@/lib/telegram-notifications.server";
 
 const APP_BASE_URL = "https://hamrohim.com";
 
@@ -39,12 +40,17 @@ const bookingSchema = z.object({
   duration_minutes: z.number().int().min(30).max(720).optional(),
   guests: z.number().int().min(1).max(50),
   customer_name: z.string().min(1).max(200),
-  customer_email: z.string().email(),
+  customer_email: z.string().email().optional().or(z.literal("")),
+  customer_telegram_user_id: z.number().int().positive().optional(),
+  customer_telegram_chat_id: z.number().int().optional(),
+  customer_telegram_username: z.string().max(255).optional(),
   notes: z.string().max(2000).optional(),
   total: z.number().min(0),
   source: z.string().max(64).optional(),
   user_id: z.string().uuid().nullable().optional(),
   locale: z.enum(["ru", "uz", "en"]).optional(),
+}).refine((data) => data.customer_email || data.customer_telegram_chat_id, {
+  message: "Email or Telegram contact is required",
 });
 
 export const createBooking = createServerFn({ method: "POST" })
@@ -62,7 +68,10 @@ export const createBooking = createServerFn({ method: "POST" })
       duration_minutes: data.duration_minutes ?? 120,
       guests: data.guests,
       customer_name: data.customer_name,
-      customer_email: data.customer_email,
+      customer_email: data.customer_email || null,
+      customer_telegram_user_id: data.customer_telegram_user_id ?? null,
+      customer_telegram_chat_id: data.customer_telegram_chat_id ?? null,
+      customer_telegram_username: data.customer_telegram_username ?? null,
       notes: data.notes ?? "",
       total: data.total,
       source: data.source ?? "web",
@@ -89,24 +98,55 @@ export const createBooking = createServerFn({ method: "POST" })
       const guideLocale = normalizeLocale(guide?.locale);
       const status = (row.status as "confirmed" | "pending") ?? "pending";
 
-      await enqueueTransactionalEmail({
-        supabase: supabaseAdmin,
-        templateName: "booking-confirmation-client",
-        recipientEmail: data.customer_email,
-        templateData: {
-          customerName: data.customer_name,
-          guideName,
-          experience: data.experience,
-          date: data.date,
-          startTime: data.start_time,
-          guests: data.guests,
-          total: data.total,
-          bookingUrl: `${APP_BASE_URL}/my-bookings`,
-          status,
-          locale: clientLocale,
-        },
-        idempotencyKey: `booking-client-${row.id}`,
-      });
+      let notificationEmail = data.customer_email || null;
+      if (!notificationEmail && data.user_id) {
+        const { data: clientTelegram } = await supabaseAdmin
+          .from("telegram_accounts")
+          .select("email")
+          .eq("user_id", data.user_id)
+          .maybeSingle();
+        notificationEmail = clientTelegram?.email ?? null;
+      }
+      if (notificationEmail) {
+        await enqueueTransactionalEmail({
+          supabase: supabaseAdmin,
+          templateName: "booking-confirmation-client",
+          recipientEmail: notificationEmail,
+          templateData: {
+            customerName: data.customer_name,
+            guideName,
+            experience: data.experience,
+            date: data.date,
+            startTime: data.start_time,
+            guests: data.guests,
+            total: data.total,
+            bookingUrl: `${APP_BASE_URL}/my-bookings`,
+            status,
+            locale: clientLocale,
+          },
+          idempotencyKey: `booking-client-${row.id}`,
+        });
+      }
+
+      let clientChatId = data.customer_telegram_chat_id ?? null;
+      if (!clientChatId && data.user_id) {
+        const { data: clientTelegram } = await supabaseAdmin
+          .from("telegram_accounts")
+          .select("telegram_chat_id")
+          .eq("user_id", data.user_id)
+          .maybeSingle();
+        clientChatId = clientTelegram?.telegram_chat_id ?? null;
+      }
+      await sendTelegramMessage(clientChatId, bookingDetailsText({
+        title: status === "confirmed" ? "Booking confirmed" : "Booking request received",
+        guideName,
+        experience: data.experience,
+        date: data.date,
+        startTime: data.start_time,
+        guests: data.guests,
+        status,
+        url: `${APP_BASE_URL}/my-bookings`,
+      }));
 
       // Notify guide
       if (guide?.user_id) {
@@ -122,7 +162,7 @@ export const createBooking = createServerFn({ method: "POST" })
             templateData: {
               guideName,
               customerName: data.customer_name,
-              customerEmail: data.customer_email,
+              customerEmail: data.customer_email || "Telegram",
               experience: data.experience,
               date: data.date,
               startTime: data.start_time,
@@ -136,6 +176,21 @@ export const createBooking = createServerFn({ method: "POST" })
             idempotencyKey: `booking-guide-${row.id}`,
           });
         }
+          const { data: guideTelegram } = await supabaseAdmin
+            .from("telegram_accounts")
+            .select("telegram_chat_id")
+            .eq("user_id", guide.user_id)
+            .maybeSingle();
+          await sendTelegramMessage(guideTelegram?.telegram_chat_id, bookingDetailsText({
+            title: "New booking request",
+            customerName: data.customer_name,
+            experience: data.experience,
+            date: data.date,
+            startTime: data.start_time,
+            guests: data.guests,
+            status,
+            url: `${APP_BASE_URL}/guide`,
+          }));
       }
     } catch (e) {
       console.error("Booking email enqueue failed", e);
