@@ -10,6 +10,7 @@ import {
 
 import appCss from "../styles.css?url";
 import ogDefault from "@/assets/og-default.jpg";
+import faviconH from "@/assets/hamroh-h.png.asset.json";
 import { I18nProvider } from "@/lib/i18n";
 import { useTrackSource } from "@/hooks/useTrackSource";
 import { useCaptureReferral } from "@/hooks/useCaptureReferral";
