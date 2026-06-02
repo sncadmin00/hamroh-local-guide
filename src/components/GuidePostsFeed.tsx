@@ -1,4 +1,4 @@
-import { Instagram, Facebook, Youtube, ExternalLink, Music2 } from "lucide-react";
+import { Instagram, Facebook, Youtube, Link2, Music2 } from "lucide-react";
 import { useGuidePosts, type GuidePost } from "@/lib/content-queries";
 
 const platformMeta: Record<GuidePost["platform"], { label: string; Icon: typeof Instagram }> = {
@@ -6,7 +6,7 @@ const platformMeta: Record<GuidePost["platform"], { label: string; Icon: typeof 
   facebook: { label: "Facebook", Icon: Facebook },
   tiktok: { label: "TikTok", Icon: Music2 },
   youtube: { label: "YouTube", Icon: Youtube },
-  other: { label: "Link", Icon: ExternalLink },
+  other: { label: "Post", Icon: Link2 },
 };
 
 export function GuidePostsFeed({ guideId, guideName }: { guideId: string; guideName: string }) {
@@ -37,19 +37,17 @@ export function GuidePostsFeed({ guideId, guideName }: { guideId: string; guideN
           const meta = platformMeta[post.platform];
           const Icon = meta.Icon;
           return (
-            <a
+            <div
               key={post.id}
-              href={post.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative flex h-72 w-48 shrink-0 snap-start flex-col overflow-hidden rounded-2xl bg-card ring-1 ring-border/60 transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-elegant)]"
+              className="relative flex h-72 w-48 shrink-0 snap-start flex-col overflow-hidden rounded-2xl bg-card ring-1 ring-border/60 select-none"
             >
               {post.thumbnailUrl ? (
                 <img
                   src={post.thumbnailUrl}
                   alt={post.caption || meta.label}
                   loading="lazy"
-                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  draggable={false}
+                  className="absolute inset-0 h-full w-full object-cover"
                 />
               ) : (
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/10 to-background" />
@@ -63,7 +61,7 @@ export function GuidePostsFeed({ guideId, guideName }: { guideId: string; guideN
                   <p className="line-clamp-3 text-xs leading-snug">{post.caption}</p>
                 )}
               </div>
-            </a>
+            </div>
           );
         })}
       </div>
