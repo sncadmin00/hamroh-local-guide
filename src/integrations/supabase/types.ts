@@ -629,6 +629,56 @@ export type Database = {
           },
         ]
       }
+      guide_posts: {
+        Row: {
+          caption: string
+          created_at: string
+          guide_id: string
+          id: string
+          platform: string
+          posted_at: string | null
+          sort_order: number
+          thumbnail_url: string | null
+          updated_at: string
+          url: string
+          visible: boolean
+        }
+        Insert: {
+          caption?: string
+          created_at?: string
+          guide_id: string
+          id?: string
+          platform: string
+          posted_at?: string | null
+          sort_order?: number
+          thumbnail_url?: string | null
+          updated_at?: string
+          url: string
+          visible?: boolean
+        }
+        Update: {
+          caption?: string
+          created_at?: string
+          guide_id?: string
+          id?: string
+          platform?: string
+          posted_at?: string | null
+          sort_order?: number
+          thumbnail_url?: string | null
+          updated_at?: string
+          url?: string
+          visible?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guide_posts_guide_id_fkey"
+            columns: ["guide_id"]
+            isOneToOne: false
+            referencedRelation: "guides"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       guides: {
         Row: {
           bio: string

@@ -132,6 +132,40 @@ export function useGuide(slug: string) {
   });
 }
 
+export type GuidePost = {
+  id: string;
+  platform: "instagram" | "facebook" | "tiktok" | "youtube" | "other";
+  url: string;
+  thumbnailUrl: string | null;
+  caption: string;
+  postedAt: string | null;
+};
+
+export function useGuidePosts(guideId: string | undefined) {
+  return useQuery({
+    queryKey: ["guide-posts", guideId],
+    enabled: !!guideId,
+    queryFn: async (): Promise<GuidePost[]> => {
+      const { data, error } = await supabase
+        .from("guide_posts")
+        .select("id, platform, url, thumbnail_url, caption, posted_at, sort_order")
+        .eq("guide_id", guideId!)
+        .eq("visible", true)
+        .order("sort_order", { ascending: true })
+        .order("posted_at", { ascending: false, nullsFirst: false });
+      if (error) throw error;
+      return (data ?? []).map((p) => ({
+        id: p.id,
+        platform: p.platform as GuidePost["platform"],
+        url: p.url,
+        thumbnailUrl: p.thumbnail_url,
+        caption: p.caption ?? "",
+        postedAt: p.posted_at,
+      }));
+    },
+  });
+}
+
 // Admin: list of all guides with extra admin fields
 export type GuideAdminRow = Guide & { sortOrder: number };
 export function useGuidesAdmin() {
