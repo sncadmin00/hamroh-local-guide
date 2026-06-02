@@ -19,9 +19,9 @@ export const Route = createFileRoute("/guides/$guideId")({
   },
   head: ({ params, loaderData }) => {
     const m = loaderData?.meta;
-    const title = m ? `${m.name} — Local guide in ${m.cities?.name ?? ""} | Sancho` : "Guide — Sancho";
+    const title = m ? `${m.name} — Local guide in ${m.cities?.name ?? ""} | Hamroh` : "Guide — Hamroh";
     const description = m ? (m.tagline || m.bio || `Book ${m.name}, a verified local guide.`).slice(0, 160) : "Book a verified local guide.";
-    const image = m?.photo_url || `${SITE_URL}/sancho-og.jpg`;
+    const image = m?.photo_url || `${SITE_URL}/hamroh-og.jpg`;
     const url = `${SITE_URL}/guides/${params.guideId}`;
     return {
       meta: [

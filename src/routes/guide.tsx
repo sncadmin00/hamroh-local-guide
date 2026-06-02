@@ -14,7 +14,7 @@ import {
 } from "@/lib/guide-portal.functions";
 
 export const Route = createFileRoute("/guide")({
-  head: () => ({ meta: [{ title: "Guide portal — Sancho" }] }),
+  head: () => ({ meta: [{ title: "Guide portal — Hamroh" }] }),
   component: GuidePortal,
 });
 
