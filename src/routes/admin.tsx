@@ -2048,6 +2048,17 @@ function UsersPanel() {
     }
   };
 
+  const removeUser = async (u: AppUser) => {
+    if (!confirm(`Permanently delete ${u.email}? This cannot be undone.`)) return;
+    try {
+      await deleteFn({ data: { user_id: u.id } });
+      toast.success("User deleted");
+      await load();
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+  };
+
   const invite = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
