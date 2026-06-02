@@ -38,7 +38,7 @@ function HowItWorksPage() {
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
                   <f.icon className="h-6 w-6" />
                 </div>
-                <h3 className="mt-5 font-display text-xl font-semibold">{f.title}</h3>
+                <h2 className="mt-5 font-display text-xl font-semibold">{f.title}</h2>
                 <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{f.text}</p>
               </div>
             ))}
