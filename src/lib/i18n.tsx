@@ -43,7 +43,7 @@ export const translations: Dict = {
   "footer.terms": { en: "Terms", uz: "Shartlar", ru: "Условия" },
   "footer.privacy": { en: "Privacy", uz: "Maxfiylik", ru: "Конфиденциальность" },
   "footer.refunds": { en: "Refunds", uz: "Pulni qaytarish", ru: "Возвраты" },
-  "footer.tagline": { en: "Trusted local guides", uz: "Ishonchli mahalliy yo'lboshchilar", ru: "Проверенные местные гиды" },
+  "footer.tagline": { en: "Operated by Ark Labs LLC", uz: "Ark Labs LLC tomonidan boshqariladi", ru: "Оператор — Ark Labs LLC" },
 };
 
 const I18nContext = createContext<{ lang: Lang; setLang: (l: Lang) => void; t: (k: keyof typeof translations) => string }>({
