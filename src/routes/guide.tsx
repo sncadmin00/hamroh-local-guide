@@ -129,6 +129,9 @@ function GuidePortal() {
           <TabBtn active={tab === "bookings"} onClick={() => setTab("bookings")}>
             Bookings ({bookings.length})
           </TabBtn>
+          <TabBtn active={tab === "posts"} onClick={() => setTab("posts")}>
+            <ImageIcon className="h-4 w-4" /> Posts
+          </TabBtn>
           <TabBtn active={tab === "referral"} onClick={() => setTab("referral")}>
             <Link2 className="h-4 w-4" /> Referral
           </TabBtn>
