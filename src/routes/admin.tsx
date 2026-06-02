@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Compass, Trash2, Plus, Upload, ImageIcon, Video, Mail } from "lucide-react";
 import { CategoryIcon } from "@/components/CategoryIcon";
 import { inviteGuideToPortal } from "@/lib/admin-portal.functions";
+import { listAppUsers, setAdminRole, inviteAdminUser } from "@/lib/admin-users.functions";
 import { notifyGuideApplicationStatus } from "@/lib/lifecycle-emails.functions";
 import hamrohLogo from "@/assets/hamroh-logo.png";
 
