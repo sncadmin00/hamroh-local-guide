@@ -63,6 +63,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "google-site-verification", content: "SGfarfVZaA-dwBPMwRnOquK8BriqN96NlCoVkn2kvt8" },
       { title: "Hamroh — Explore places with locals" },
       { name: "description", content: "Book verified local guides in cities around the world. Authentic experiences, multiple languages, instant booking." },
       { property: "og:site_name", content: "Hamroh" },
