@@ -203,8 +203,11 @@ export type Database = {
         Row: {
           cancellation_reason: string | null
           created_at: string
-          customer_email: string
+          customer_email: string | null
           customer_name: string
+          customer_telegram_chat_id: number | null
+          customer_telegram_user_id: number | null
+          customer_telegram_username: string | null
           date: string
           duration_minutes: number
           experience: string
@@ -224,8 +227,11 @@ export type Database = {
         Insert: {
           cancellation_reason?: string | null
           created_at?: string
-          customer_email: string
+          customer_email?: string | null
           customer_name: string
+          customer_telegram_chat_id?: number | null
+          customer_telegram_user_id?: number | null
+          customer_telegram_username?: string | null
           date: string
           duration_minutes?: number
           experience: string
@@ -245,8 +251,11 @@ export type Database = {
         Update: {
           cancellation_reason?: string | null
           created_at?: string
-          customer_email?: string
+          customer_email?: string | null
           customer_name?: string
+          customer_telegram_chat_id?: number | null
+          customer_telegram_user_id?: number | null
+          customer_telegram_username?: string | null
           date?: string
           duration_minutes?: number
           experience?: string
@@ -1019,6 +1028,51 @@ export type Database = {
           id?: string
           metadata?: Json | null
           reason?: string
+        }
+        Relationships: []
+      }
+      telegram_accounts: {
+        Row: {
+          created_at: string
+          email: string | null
+          first_name: string | null
+          id: string
+          last_name: string | null
+          linked_at: string
+          photo_url: string | null
+          telegram_chat_id: number | null
+          telegram_user_id: number
+          telegram_username: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          linked_at?: string
+          photo_url?: string | null
+          telegram_chat_id?: number | null
+          telegram_user_id: number
+          telegram_username?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          linked_at?: string
+          photo_url?: string | null
+          telegram_chat_id?: number | null
+          telegram_user_id?: number
+          telegram_username?: string | null
+          updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
