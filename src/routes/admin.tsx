@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Compass, Trash2, Plus, Upload, ImageIcon, Video, Mail } from "lucide-react";
 import { CategoryIcon } from "@/components/CategoryIcon";
 import { inviteGuideToPortal } from "@/lib/admin-portal.functions";
-import { listAppUsers, setAdminRole, inviteAdminUser } from "@/lib/admin-users.functions";
+import { listAppUsers, setAdminRole, inviteAdminUser, deleteAppUser } from "@/lib/admin-users.functions";
 import { notifyGuideApplicationStatus } from "@/lib/lifecycle-emails.functions";
 import hamrohLogo from "@/assets/hamroh-logo.png";
 
@@ -2015,6 +2015,7 @@ function UsersPanel() {
   const listFn = useServerFn(listAppUsers);
   const setRoleFn = useServerFn(setAdminRole);
   const inviteFn = useServerFn(inviteAdminUser);
+  const deleteFn = useServerFn(deleteAppUser);
   const [users, setUsers] = useState<AppUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState("");
@@ -2041,6 +2042,17 @@ function UsersPanel() {
     try {
       await setRoleFn({ data: { user_id: u.id, grant: !u.is_admin } });
       toast.success(u.is_admin ? "Admin role removed" : "Admin role granted");
+      await load();
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+  };
+
+  const removeUser = async (u: AppUser) => {
+    if (!confirm(`Permanently delete ${u.email}? This cannot be undone.`)) return;
+    try {
+      await deleteFn({ data: { user_id: u.id } });
+      toast.success("User deleted");
       await load();
     } catch (e) {
       toast.error((e as Error).message);
@@ -2107,16 +2119,24 @@ function UsersPanel() {
                     {u.last_sign_in_at && ` · Last login ${new Date(u.last_sign_in_at).toLocaleDateString()}`}
                   </p>
                 </div>
-                <button
-                  onClick={() => toggle(u)}
-                  className={`h-9 px-3 rounded-full text-xs font-semibold ${
-                    u.is_admin
-                      ? "bg-destructive/10 text-destructive hover:bg-destructive/20"
-                      : "bg-primary text-primary-foreground hover:opacity-90"
-                  }`}
-                >
-                  {u.is_admin ? "Remove admin" : "Make admin"}
-                </button>
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    onClick={() => toggle(u)}
+                    className={`h-9 px-3 rounded-full text-xs font-semibold ${
+                      u.is_admin
+                        ? "bg-destructive/10 text-destructive hover:bg-destructive/20"
+                        : "bg-primary text-primary-foreground hover:opacity-90"
+                    }`}
+                  >
+                    {u.is_admin ? "Remove admin" : "Make admin"}
+                  </button>
+                  <button
+                    onClick={() => removeUser(u)}
+                    className="h-9 px-3 rounded-full text-xs font-semibold border border-destructive/40 text-destructive hover:bg-destructive/10"
+                  >
+                    Delete
+                  </button>
+                </div>
               </li>
             ))}
           </ul>

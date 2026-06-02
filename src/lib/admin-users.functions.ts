@@ -103,3 +103,35 @@ export const inviteAdminUser = createServerFn({ method: "POST" })
 
     return { ok: true, existed: !!existing };
   });
+
+export const deleteAppUser = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) =>
+    z.object({ user_id: z.string().uuid() }).parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context.userId);
+
+    if (data.user_id === context.userId) {
+      throw new Error("You cannot delete your own account");
+    }
+
+    // If target is an admin, ensure we won't remove the last admin
+    const { data: targetRoles } = await supabaseAdmin
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", data.user_id);
+    const targetIsAdmin = (targetRoles ?? []).some((r) => r.role === "admin");
+    if (targetIsAdmin) {
+      const { count } = await supabaseAdmin
+        .from("user_roles")
+        .select("*", { count: "exact", head: true })
+        .eq("role", "admin");
+      if ((count ?? 0) <= 1) throw new Error("Cannot delete the last admin");
+    }
+
+    const { error } = await supabaseAdmin.auth.admin.deleteUser(data.user_id);
+    if (error) throw new Error(error.message);
+
+    return { ok: true };
+  });
