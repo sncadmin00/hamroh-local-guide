@@ -102,7 +102,7 @@ function GuidesPage() {
                   }`}
                 >
                   <CategoryIcon name={c.icon} className="h-4 w-4" />
-                  {c.name}
+                  {tCategory(c.slug, c.name)}
                 </button>
               );
             })}
