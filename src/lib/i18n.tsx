@@ -98,6 +98,12 @@ export const translations: Dict = {
   "browse.title": { en: "Browse by interest", uz: "Qiziqish bo'yicha izlash", ru: "По интересам" },
   "browse.subtitle": { en: "Find a guide for what you love", uz: "Sevimli mavzuingiz bo'yicha hamroh toping", ru: "Найдите гида под ваши интересы" },
 
+  "explore.tabs.guides": { en: "Top guides", uz: "Top hamrohlar", ru: "Топ гиды" },
+  "explore.tabs.tours": { en: "Top tours", uz: "Top sayohatlar", ru: "Топ туры" },
+  "explore.tabs.cities": { en: "Popular cities", uz: "Mashhur shaharlar", ru: "Популярные города" },
+  "explore.tabs.explore": { en: "Explore", uz: "Kashf eting", ru: "Обзор" },
+
+
   "cat.locals-favourite": { en: "Local's favourite", uz: "Mahalliylar tanlovi", ru: "Выбор местных" },
   "cat.people": { en: "People", uz: "Insonlar", ru: "Люди" },
   "cat.gastro": { en: "Gastro", uz: "Gastronomiya", ru: "Гастрономия" },
