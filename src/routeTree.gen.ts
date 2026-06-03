@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
+import { Route as ToursRouteImport } from './routes/tours'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SettingsRouteImport } from './routes/settings'
@@ -30,6 +31,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MessagesIndexRouteImport } from './routes/messages.index'
+import { Route as ToursSlugRouteImport } from './routes/tours_.$slug'
 import { Route as MessagesBookingIdRouteImport } from './routes/messages.$bookingId'
 import { Route as GuidesGuideIdRouteImport } from './routes/guides_.$guideId'
 import { Route as ExploreSlugRouteImport } from './routes/explore.$slug'
@@ -51,6 +53,11 @@ import { Route as ApiPublicHooksBookingRemindersRouteImport } from './routes/api
 const UnsubscribeRoute = UnsubscribeRouteImport.update({
   id: '/unsubscribe',
   path: '/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ToursRoute = ToursRouteImport.update({
+  id: '/tours',
+  path: '/tours',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TermsRoute = TermsRouteImport.update({
@@ -152,6 +159,11 @@ const MessagesIndexRoute = MessagesIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => MessagesRoute,
+} as any)
+const ToursSlugRoute = ToursSlugRouteImport.update({
+  id: '/tours_/$slug',
+  path: '/tours/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const MessagesBookingIdRoute = MessagesBookingIdRouteImport.update({
   id: '/$bookingId',
@@ -266,6 +278,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/tours': typeof ToursRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/ai/$threadId': typeof AiThreadIdRoute
   '/api/chat': typeof ApiChatRoute
@@ -274,6 +287,7 @@ export interface FileRoutesByFullPath {
   '/explore/$slug': typeof ExploreSlugRoute
   '/guides/$guideId': typeof GuidesGuideIdRoute
   '/messages/$bookingId': typeof MessagesBookingIdRoute
+  '/tours/$slug': typeof ToursSlugRoute
   '/messages/': typeof MessagesIndexRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
@@ -305,6 +319,7 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/tours': typeof ToursRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/ai/$threadId': typeof AiThreadIdRoute
   '/api/chat': typeof ApiChatRoute
@@ -313,6 +328,7 @@ export interface FileRoutesByTo {
   '/explore/$slug': typeof ExploreSlugRoute
   '/guides/$guideId': typeof GuidesGuideIdRoute
   '/messages/$bookingId': typeof MessagesBookingIdRoute
+  '/tours/$slug': typeof ToursSlugRoute
   '/messages': typeof MessagesIndexRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
@@ -346,6 +362,7 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/tours': typeof ToursRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/ai/$threadId': typeof AiThreadIdRoute
   '/api/chat': typeof ApiChatRoute
@@ -354,6 +371,7 @@ export interface FileRoutesById {
   '/explore/$slug': typeof ExploreSlugRoute
   '/guides_/$guideId': typeof GuidesGuideIdRoute
   '/messages/$bookingId': typeof MessagesBookingIdRoute
+  '/tours_/$slug': typeof ToursSlugRoute
   '/messages/': typeof MessagesIndexRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
@@ -388,6 +406,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/sitemap.xml'
     | '/terms'
+    | '/tours'
     | '/unsubscribe'
     | '/ai/$threadId'
     | '/api/chat'
@@ -396,6 +415,7 @@ export interface FileRouteTypes {
     | '/explore/$slug'
     | '/guides/$guideId'
     | '/messages/$bookingId'
+    | '/tours/$slug'
     | '/messages/'
     | '/lovable/email/suppression'
     | '/api/public/hooks/booking-reminders'
@@ -427,6 +447,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/sitemap.xml'
     | '/terms'
+    | '/tours'
     | '/unsubscribe'
     | '/ai/$threadId'
     | '/api/chat'
@@ -435,6 +456,7 @@ export interface FileRouteTypes {
     | '/explore/$slug'
     | '/guides/$guideId'
     | '/messages/$bookingId'
+    | '/tours/$slug'
     | '/messages'
     | '/lovable/email/suppression'
     | '/api/public/hooks/booking-reminders'
@@ -467,6 +489,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/sitemap.xml'
     | '/terms'
+    | '/tours'
     | '/unsubscribe'
     | '/ai/$threadId'
     | '/api/chat'
@@ -475,6 +498,7 @@ export interface FileRouteTypes {
     | '/explore/$slug'
     | '/guides_/$guideId'
     | '/messages/$bookingId'
+    | '/tours_/$slug'
     | '/messages/'
     | '/lovable/email/suppression'
     | '/api/public/hooks/booking-reminders'
@@ -508,11 +532,13 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
+  ToursRoute: typeof ToursRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
   ApiChatRoute: typeof ApiChatRoute
   BookGuideIdRoute: typeof BookGuideIdRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   GuidesGuideIdRoute: typeof GuidesGuideIdRoute
+  ToursSlugRoute: typeof ToursSlugRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   ApiPublicHooksBookingRemindersRoute: typeof ApiPublicHooksBookingRemindersRoute
   ApiPublicHooksBookingReviewsRoute: typeof ApiPublicHooksBookingReviewsRoute
@@ -532,6 +558,13 @@ declare module '@tanstack/react-router' {
       path: '/unsubscribe'
       fullPath: '/unsubscribe'
       preLoaderRoute: typeof UnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tours': {
+      id: '/tours'
+      path: '/tours'
+      fullPath: '/tours'
+      preLoaderRoute: typeof ToursRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/terms': {
@@ -673,6 +706,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/messages/'
       preLoaderRoute: typeof MessagesIndexRouteImport
       parentRoute: typeof MessagesRoute
+    }
+    '/tours_/$slug': {
+      id: '/tours_/$slug'
+      path: '/tours/$slug'
+      fullPath: '/tours/$slug'
+      preLoaderRoute: typeof ToursSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/messages/$bookingId': {
       id: '/messages/$bookingId'
@@ -851,11 +891,13 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
+  ToursRoute: ToursRoute,
   UnsubscribeRoute: UnsubscribeRoute,
   ApiChatRoute: ApiChatRoute,
   BookGuideIdRoute: BookGuideIdRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   GuidesGuideIdRoute: GuidesGuideIdRoute,
+  ToursSlugRoute: ToursSlugRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   ApiPublicHooksBookingRemindersRoute: ApiPublicHooksBookingRemindersRoute,
   ApiPublicHooksBookingReviewsRoute: ApiPublicHooksBookingReviewsRoute,
