@@ -36,6 +36,47 @@ export const translations: Dict = {
     uz: "masalan, ikki kunlik ingliz tilida so'zlashuvchi taom hamrohi…",
     ru: "напр., англоговорящий гид по еде на два дня…",
   },
+  "hero.tagline": {
+    en: "Powered by Hamroh AI · Free · No signup to try",
+    uz: "Hamroh AI · Bepul · Ro'yxatdan o'tmasdan sinab ko'ring",
+    ru: "Hamroh AI · Бесплатно · Без регистрации",
+  },
+  "hero.suggest.1": { en: "Korean-speaking food guide", uz: "Koreys tilida ovqat hamrohi", ru: "Гид по еде со знанием корейского" },
+  "hero.suggest.2": { en: "Sunset photography tour", uz: "Quyosh botishi fotosessiyasi", ru: "Фототур на закате" },
+  "hero.suggest.3": { en: "Family-friendly history walk", uz: "Oilaviy tarixiy sayohat", ru: "Историческая прогулка для семьи" },
+  "hero.suggest.4": { en: "Half-day artisan workshop", uz: "Yarim kunlik hunarmandlar ustaxonasi", ru: "Мастер-класс на полдня" },
+
+  "trust.verified": { en: "Verified locals", uz: "Tasdiqlangan mahalliylar", ru: "Проверенные местные" },
+  "trust.directChat": { en: "Direct chat", uz: "To'g'ridan-to'g'ri chat", ru: "Чат напрямую" },
+  "trust.secureBooking": { en: "Secure booking", uz: "Xavfsiz bron", ru: "Безопасная бронь" },
+
+  "how.title": { en: "How it works", uz: "Qanday ishlaydi", ru: "Как это работает" },
+  "how.subtitle": { en: "Three steps to your local guide", uz: "Hamrohingizgacha uch qadam", ru: "Три шага до вашего гида" },
+  "how.step1.title": { en: "Tell us your trip", uz: "Sayohatingizni yozing", ru: "Опишите поездку" },
+  "how.step1.desc": { en: "Describe what you want in your own words — Hamroh AI gets it.", uz: "O'z so'zlaringiz bilan tushuntiring — Hamroh AI tushunadi.", ru: "Расскажите своими словами — Hamroh AI поймёт." },
+  "how.step2.title": { en: "Get matched", uz: "Mos hamroh", ru: "Получите подбор" },
+  "how.step2.desc": { en: "We hand-pick verified locals who fit your trip and language.", uz: "Sayohatingiz va tilingizga mos tasdiqlangan hamrohlarni tanlaymiz.", ru: "Подбираем проверенных гидов под вашу поездку и язык." },
+  "how.step3.title": { en: "Book & chat", uz: "Bron qiling", ru: "Бронируйте и общайтесь" },
+  "how.step3.desc": { en: "Confirm your dates and message your guide directly.", uz: "Sanani tasdiqlang va hamroh bilan bog'laning.", ru: "Подтвердите даты и пишите гиду напрямую." },
+
+  "featured.title": { en: "Meet our top guides", uz: "Eng yaxshi hamrohlarimiz", ru: "Наши лучшие гиды" },
+  "featured.subtitle": { en: "Hand-picked locals with the best reviews", uz: "Eng yaxshi sharhli mahalliylar", ru: "Локалы с лучшими отзывами" },
+  "featured.viewAll": { en: "View all guides", uz: "Hammasini ko'rish", ru: "Все гиды" },
+
+  "cities.title": { en: "Popular cities", uz: "Mashhur shaharlar", ru: "Популярные города" },
+  "cities.subtitle": { en: "Pick a destination and meet your guide", uz: "Yo'nalishni tanlang va hamroh toping", ru: "Выберите город и найдите гида" },
+
+  "latest.title": { en: "Latest from our guides", uz: "Hamrohlarimizdan yangiliklar", ru: "Свежее от гидов" },
+  "latest.subtitle": { en: "What locals are sharing right now", uz: "Mahalliylar hozir ulashayotgan", ru: "Чем делятся локалы прямо сейчас" },
+
+  "reviews.title": { en: "Loved by travelers", uz: "Sayohatchilar yaxshi ko'radi", ru: "Путешественники нас любят" },
+  "reviews.subtitle": { en: "Real stories from real trips", uz: "Haqiqiy sayohatlardan haqiqiy hikoyalar", ru: "Реальные истории из реальных поездок" },
+  "reviews.about": { en: "about", uz: "haqida", ru: "о гиде" },
+
+  "cta.title": { en: "Are you a local guide?", uz: "Siz mahalliy hamrohmisiz?", ru: "Вы местный гид?" },
+  "cta.subtitle": { en: "Join Hamroh, share your city and grow your bookings.", uz: "Hamroh'ga qo'shiling, shahringizni ulashing va bronlaringizni oshiring.", ru: "Присоединяйтесь к Hamroh, делитесь городом и получайте больше броней." },
+  "cta.button": { en: "Become a guide", uz: "Hamroh bo'lish", ru: "Стать гидом" },
+
   "browse.title": { en: "Browse by interest", uz: "Qiziqish bo'yicha izlash", ru: "По интересам" },
   "browse.subtitle": { en: "Find a guide for what you love", uz: "Sevimli mavzuingiz bo'yicha hamroh toping", ru: "Найдите гида под ваши интересы" },
   "footer.about": { en: "About", uz: "Biz haqimizda", ru: "О нас" },
