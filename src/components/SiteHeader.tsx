@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Menu, Settings, Shield, LogIn, LogOut, Mail, Phone, MessageSquare } from "lucide-react";
+import { Menu, Settings, Shield, LogIn, LogOut, Mail, Phone, MessageSquare, User, Heart } from "lucide-react";
 import hamrohLogo from "@/assets/hamroh-logo.png";
 import { useEffect, useState } from "react";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -51,81 +51,58 @@ export function SiteHeader() {
   const menuLinks = [
     { to: "/guides", label: t("nav.findGuide") },
     { to: "/tours", label: t("nav.tours") },
-    { to: "/explore", label: t("nav.explore") },
-    { to: "/how-it-works", label: t("nav.howItWorks") },
+    { to: "/book", label: t("book.cta") },
     { to: "/become-a-guide", label: t("nav.becomeGuide") },
+    { to: "/how-it-works", label: t("nav.howItWorks") },
     { to: "/faq", label: t("nav.faq") },
   ] as const;
+  const navLinks = menuLinks.slice(0, 4);
+
   return (
-    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-md">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <Link to="/" className="flex items-center gap-2">
-          <img src={hamrohLogo} alt="Hamroh" className="h-10 w-auto object-contain" />
+    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur-md">
+      <div className="container mx-auto flex h-16 items-center justify-between gap-4 px-4">
+        {/* Left: logo */}
+        <Link to="/" className="flex items-center gap-2 shrink-0">
+          <img src={hamrohLogo} alt="Hamroh" className="h-9 w-auto object-contain" />
         </Link>
 
-        <nav className="hidden md:flex items-center gap-1">
-          {menuLinks.map((link) => (
+        {/* Center: clean nav */}
+        <nav className="hidden md:flex items-center gap-1 absolute left-1/2 -translate-x-1/2">
+          {navLinks.map((link) => (
             <Link
               key={link.to}
               to={link.to}
-              className="px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:bg-secondary/60 hover:text-foreground transition-colors"
-              activeProps={{ className: "px-3 py-2 rounded-lg text-sm font-medium bg-secondary text-foreground" }}
+              className="px-3.5 py-2 rounded-full text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-secondary/60 transition-colors"
+              activeProps={{ className: "px-3.5 py-2 rounded-full text-sm font-medium text-foreground bg-secondary" }}
             >
               {link.label}
             </Link>
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
+        {/* Right: wishlist, language, user pill */}
+        <div className="flex items-center gap-1.5 shrink-0">
           <Link
-            to="/book"
-            className="inline-flex h-9 items-center gap-1.5 rounded-full bg-gradient-to-r from-[#62A1B1] to-[#8BB5A9] px-3 md:px-4 text-xs md:text-sm font-semibold text-white shadow-sm shadow-slate-900/10 hover:opacity-95 transition-opacity"
+            to="/wishlist"
+            aria-label={t("nav.wishlist")}
+            className="hidden sm:inline-flex h-9 w-9 items-center justify-center rounded-full text-foreground/70 hover:text-foreground hover:bg-secondary/70 transition-colors"
           >
-            {t("book.cta")}
+            <Heart className="h-[18px] w-[18px]" />
           </Link>
+
           <LanguageSwitcher />
-          <a
-            href="https://t.me/yourtelegram"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Join Telegram"
-            className="hidden md:inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[#229ED9]/10 text-[#229ED9] hover:bg-[#229ED9]/20 transition-colors"
-          >
-            <TelegramIcon className="h-5 w-5" />
-          </a>
-          <a
-            href="https://wa.me/1234567890"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Chat on WhatsApp"
-            className="hidden md:inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20 transition-colors"
-          >
-            <WhatsAppIcon className="h-5 w-5" />
-          </a>
 
-          {signedIn ? (
-            <button
-              onClick={signOut}
-              className="hidden md:inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-sm font-medium text-muted-foreground hover:bg-secondary/60 hover:text-foreground transition-colors"
-            >
-              <LogOut className="h-4 w-4" /> {t("common.signOut")}
-            </button>
-          ) : (
-            <Link
-              to="/login"
-              className="hidden md:inline-flex h-9 items-center gap-1.5 rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90 transition-opacity"
-            >
-              <LogIn className="h-4 w-4" /> {t("common.signIn")}
-            </Link>
-          )}
-
+          {/* Airbnb-style avatar+menu pill */}
           <Sheet>
             <SheetTrigger asChild>
               <button
                 aria-label="Open menu"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full ring-1 ring-border/60 text-foreground hover:bg-secondary/60"
+                className="inline-flex items-center gap-2 h-10 pl-2.5 pr-1.5 rounded-full ring-1 ring-border/70 bg-card/80 hover:shadow-md transition-shadow"
               >
-                <Menu className="h-5 w-5" />
+                <Menu className="h-4 w-4 text-foreground/70" />
+                <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-secondary text-foreground/70">
+                  <User className="h-4 w-4" />
+                </span>
               </button>
             </SheetTrigger>
             <SheetContent side="right" className="w-72">
@@ -134,10 +111,11 @@ export function SiteHeader() {
               </SheetHeader>
               <nav className="mt-6 flex flex-col">
                 <Link
-                  to="/book"
-                  className="mb-2 px-3 py-3 rounded-lg text-base font-semibold bg-gradient-to-r from-[#62A1B1] to-[#8BB5A9] text-white inline-flex items-center gap-2"
+                  to="/wishlist"
+                  className="px-3 py-3 rounded-lg text-base font-medium text-foreground hover:bg-secondary/60 inline-flex items-center gap-2"
+                  activeProps={{ className: "px-3 py-3 rounded-lg text-base font-medium bg-secondary text-foreground inline-flex items-center gap-2" }}
                 >
-                  {t("book.cta")}
+                  <Heart className="h-4 w-4" /> {t("nav.wishlist")}
                 </Link>
                 {menuLinks.map((link) => (
                   <Link
