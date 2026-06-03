@@ -8,6 +8,8 @@ import { TrustBar } from "@/components/home/TrustBar";
 import { SpotlightBanner } from "@/components/home/SpotlightBanner";
 
 import { ExploreTabs } from "@/components/home/ExploreTabs";
+import { WhyHamroh } from "@/components/home/WhyHamroh";
+import { HomeFaq } from "@/components/home/HomeFaq";
 import { LatestPosts } from "@/components/home/LatestPosts";
 import { FeaturedReviews } from "@/components/home/FeaturedReviews";
 import { BecomeGuideCTA } from "@/components/home/BecomeGuideCTA";
