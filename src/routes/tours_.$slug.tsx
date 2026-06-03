@@ -120,7 +120,6 @@ function TourDetailPage() {
                 <Link
                   to="/book/$guideId"
                   params={{ guideId: guides[0].slug }}
-                  search={{ tour: tour.slug } as never}
                   className="mt-4 inline-flex h-11 w-full items-center justify-center rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90"
                 >
                   {t("tours.book")}
