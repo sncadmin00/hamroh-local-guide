@@ -31,9 +31,9 @@ export const translations: Dict = {
   "common.admin": { en: "Admin", uz: "Admin", ru: "Админ" },
   "hero.title": { en: "Find your local guide", uz: "Mahalliy hamrohizni toping", ru: "Найдите своего местного гида" },
   "hero.h1": {
-    en: "Find a verified local guide in 30 seconds",
-    uz: "30 soniyada tasdiqlangan mahalliy hamroh toping",
-    ru: "Найдите проверенного местного гида за 30 секунд",
+    en: "Find a trusted companion in 30 seconds",
+    uz: "30 soniyada ishonchli hamroh toping",
+    ru: "Найдите проверенного спутника за 30 секунд",
   },
   "hero.h1sub": {
     en: "Tell Hamroh AI about your trip — get matched with a verified guide in Uzbekistan and beyond.",
