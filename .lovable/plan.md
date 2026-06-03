@@ -1,33 +1,35 @@
-# Вариант 3: «How it works» под полем ввода
 
-## Идея
-Удалить большой блок `<HowItWorks />` под hero-секцией и заменить его на одну тонкую строку прямо под тэглайном/чипсами поиска. Это превращает «как это работает» из отдельного раздела в лёгкую микро-подсказку, освобождая ~400px вертикального места на главной.
+# Combine spotlight banner (option 1) + stats line (option 3)
 
-## Как это будет выглядеть
+Add two compact elements above the "Find your local guide" headline on the homepage.
 
-Под формой поиска, между tagline и кнопкой «Browse all guides», появится одна строка:
+## Layout
 
-```text
-  1  Tell us your trip  ──  2  Get matched  ──  3  Book & chat
+```
+[ 🔥 New guide in Nukus — tours to the Aral Sea  → ]   ← spotlight banner (thin pill)
+
+           Find your local guide                        ← existing headline
+   1,240 guides · 47 cities · 12,000 travelers          ← stats line (small, muted)
+
+           [ AI search input ]                          ← existing
+           [ suggestion chips ]
+           [ 1 Tell · 2 Match · 3 Book ]                ← existing mini steps
 ```
 
-- Маленькие кружки (20px) с цифрами 1/2/3 в мягком цвете `#8BB5A9`
-- Текст шага рядом — `text-sm text-slate-500`
-- Разделители — короткие линии `border-t border-slate-200` между шагами
-- На мобиле (≤480px) — те же 3 шага в один ряд, но только цифры + заголовок одним словом («Tell», «Match», «Book»), чтобы влезло без переноса. Альтернатива: вертикально в столбик, компактно.
-- Никаких иконок, описаний, glow-эффектов, рамок и фонов
-
-## Что меняется в коде
+## Changes
 
 **`src/routes/index.tsx`**
-- Удалить `<HowItWorks />` из jsx (строка 246) и удалить импорт (строка 9)
-- Добавить новый компактный inline-блок между tagline (строка 217) и блоком suggestions (строка 220), используя существующие i18n-ключи `how.step1.title`, `how.step2.title`, `how.step3.title`
+- Above the headline `<h1>`, add a centered pill banner: subtle bg (`bg-[#8BB5A9]/10`), small emoji + text + arrow, `rounded-full px-4 py-1.5 text-sm`, clickable → links to the featured guide's profile (or `/guides` for now).
+- Directly under the headline / tagline, add a one-line stats row: `text-sm text-slate-500`, three items separated by `·` dots, wraps on mobile.
+- Mobile (≤480px): banner stays single line with truncation; stats wrap to two lines if needed.
 
-**`src/components/home/HowItWorks.tsx`** — оставить файл как есть (на случай, если захотите вернуть), но он перестанет использоваться. По желанию могу удалить.
+**`src/lib/i18n.tsx`**
+- Add 4 new keys, translated for all supported languages:
+  - `hero.spotlight.label` — "New guide" / "Новый гид" / etc.
+  - `hero.spotlight.text` — "Tours to the Aral Sea from Nukus" (placeholder; can be data-driven later)
+  - `hero.stats.guides`, `hero.stats.cities`, `hero.stats.travelers` — number labels
+- Stats numbers themselves stay hardcoded for now (1,240 / 47 / 12,000) — easy to swap to real backend counts later.
 
-**i18n** — никаких изменений, переиспользую существующие ключи `how.step1.title`/`step2.title`/`step3.title`. Описания (`step1.desc` и т.д.) больше не показываем, но ключи оставляем.
-
-## Что НЕ меняется
-- Hero, поле ввода, голосовой ввод, suggestions-чипсы, кнопка «Browse all guides»
-- Все остальные секции главной (FeaturedGuides, PopularCities, LatestPosts, Reviews, BecomeGuideCTA)
-- Логика, навигация, бэкенд
+## Out of scope
+- No backend query yet — spotlight content and stats numbers are static placeholders in i18n. We can wire to Supabase counts / a `featured_guide` flag in a follow-up.
+- No changes to AI input, suggestions, mini steps, or other sections.
