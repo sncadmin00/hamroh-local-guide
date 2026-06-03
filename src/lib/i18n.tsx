@@ -46,6 +46,10 @@ export const translations: Dict = {
   "hero.suggest.3": { en: "Family-friendly history walk", uz: "Oilaviy tarixiy sayohat", ru: "Историческая прогулка для семьи" },
   "hero.suggest.4": { en: "Half-day artisan workshop", uz: "Yarim kunlik hunarmandlar ustaxonasi", ru: "Мастер-класс на полдня" },
 
+  "hero.stats.guides": { en: "verified guides", uz: "tasdiqlangan hamroh", ru: "проверенных гидов" },
+  "hero.stats.cities": { en: "cities", uz: "shahar", ru: "городов" },
+  "hero.stats.travelers": { en: "happy travelers", uz: "mamnun sayohatchi", ru: "довольных путешественников" },
+
   "spot.newGuide.label": { en: "New guide", uz: "Yangi hamroh", ru: "Новый гид" },
   "spot.newRoute.label": { en: "New route", uz: "Yangi yo'nalish", ru: "Новый маршрут" },
   "spot.news.label": { en: "News", uz: "Yangiliklar", ru: "Новости" },
