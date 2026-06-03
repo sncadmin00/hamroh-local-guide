@@ -154,6 +154,18 @@ function Home() {
             </div>
           </div>
 
+          {/* Spotlight banner */}
+          <Link
+            to="/guides"
+            className="mb-5 inline-flex max-w-full items-center gap-2 rounded-full bg-[#8BB5A9]/10 hover:bg-[#8BB5A9]/15 px-4 py-1.5 text-sm text-slate-700 transition-colors"
+          >
+            <span aria-hidden>🔥</span>
+            <span className="font-medium text-[#5e8a7e] shrink-0">{t("hero.spotlight.label")}</span>
+            <span className="text-slate-400" aria-hidden>·</span>
+            <span className="truncate text-slate-600">{t("hero.spotlight.text")}</span>
+            <span className="text-slate-400 shrink-0" aria-hidden>→</span>
+          </Link>
+
           {/* Headline */}
           <div className="text-center space-y-5 md:space-y-6 mb-10 md:mb-14">
             <h1 className="font-display text-4xl md:text-7xl font-semibold tracking-tight text-slate-900 leading-[1.05]">
@@ -162,8 +174,16 @@ function Home() {
             <p className="text-base md:text-lg text-slate-500 max-w-lg mx-auto leading-relaxed font-light">
               {t("hero.subtitle")}
             </p>
+            <p className="text-sm text-slate-500 flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
+              <span><span className="font-semibold text-slate-700">1,240</span> {t("hero.stats.guides")}</span>
+              <span className="text-slate-300" aria-hidden>·</span>
+              <span><span className="font-semibold text-slate-700">47</span> {t("hero.stats.cities")}</span>
+              <span className="text-slate-300" aria-hidden>·</span>
+              <span><span className="font-semibold text-slate-700">12,000</span> {t("hero.stats.travelers")}</span>
+            </p>
             <TrustBar />
           </div>
+
 
           {/* AI Input with hover glow */}
           <form

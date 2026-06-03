@@ -46,6 +46,16 @@ export const translations: Dict = {
   "hero.suggest.3": { en: "Family-friendly history walk", uz: "Oilaviy tarixiy sayohat", ru: "Историческая прогулка для семьи" },
   "hero.suggest.4": { en: "Half-day artisan workshop", uz: "Yarim kunlik hunarmandlar ustaxonasi", ru: "Мастер-класс на полдня" },
 
+  "hero.spotlight.label": { en: "New guide", uz: "Yangi hamroh", ru: "Новый гид" },
+  "hero.spotlight.text": {
+    en: "Tours to the Aral Sea from Nukus",
+    uz: "Nukusdan Orol dengiziga sayohatlar",
+    ru: "Туры к Аральскому морю из Нукуса",
+  },
+  "hero.stats.guides": { en: "verified guides", uz: "tasdiqlangan hamroh", ru: "проверенных гидов" },
+  "hero.stats.cities": { en: "cities", uz: "shahar", ru: "городов" },
+  "hero.stats.travelers": { en: "happy travelers", uz: "mamnun sayohatchi", ru: "довольных путешественников" },
+
   "trust.verified": { en: "Verified locals", uz: "Tasdiqlangan mahalliylar", ru: "Проверенные местные" },
   "trust.directChat": { en: "Direct chat", uz: "To'g'ridan-to'g'ri chat", ru: "Чат напрямую" },
   "trust.secureBooking": { en: "Secure booking", uz: "Xavfsiz bron", ru: "Безопасная бронь" },
