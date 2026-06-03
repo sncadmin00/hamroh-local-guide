@@ -25,7 +25,7 @@ export function FeaturedGuides() {
     .slice(0, 6);
 
   return (
-    <section className="px-6 py-16 md:py-20 bg-secondary/40">
+    <section className="px-6 py-10 md:py-20 bg-secondary/40">
       <div className="max-w-6xl mx-auto">
         <div className="flex items-end justify-between gap-4 mb-8">
           <div>
@@ -47,12 +47,12 @@ export function FeaturedGuides() {
           <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:thin]">
             {isLoading
               ? Array.from({ length: 3 }).map((_, i) => (
-                  <div key={i} className="w-72 shrink-0 snap-start">
+                  <div key={i} className="w-60 shrink-0 snap-start">
                     <GuideSkeleton />
                   </div>
                 ))
               : featured.map((g) => (
-                  <div key={g.id} className="w-72 shrink-0 snap-start">
+                  <div key={g.id} className="w-60 shrink-0 snap-start">
                     <GuideCard guide={g} />
                   </div>
                 ))}

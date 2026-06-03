@@ -13,7 +13,7 @@ export function TopTours() {
   const top = tours.slice(0, 8);
 
   return (
-    <section className="px-6 py-16 md:py-20">
+    <section className="px-6 py-10 md:py-20">
       <div className="max-w-6xl mx-auto">
         <div className="flex items-end justify-between gap-4 mb-8">
           <div>
@@ -34,7 +34,7 @@ export function TopTours() {
           <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 [scrollbar-width:thin]">
             {isLoading
               ? Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="w-72 shrink-0 snap-start rounded-2xl border border-border bg-card overflow-hidden">
+                  <div key={i} className="w-60 md:w-72 shrink-0 snap-start rounded-2xl border border-border bg-card overflow-hidden">
                     <Skeleton className="aspect-[4/3] w-full rounded-none" />
                     <div className="p-4 space-y-2">
                       <Skeleton className="h-4 w-3/4" />
@@ -47,7 +47,7 @@ export function TopTours() {
                 key={tour.id}
                 to="/tours/$slug"
                 params={{ slug: tour.slug }}
-                className="group w-72 shrink-0 snap-start rounded-2xl border border-border bg-card overflow-hidden hover:shadow-md transition-shadow"
+                className="group w-60 md:w-72 shrink-0 snap-start rounded-2xl border border-border bg-card overflow-hidden hover:shadow-md transition-shadow"
               >
                 <div className="relative aspect-[4/3] bg-secondary overflow-hidden">
                   {tour.cover_url ? (
