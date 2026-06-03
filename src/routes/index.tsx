@@ -231,13 +231,6 @@ function Home() {
 
 
 
-          {/* Secondary action */}
-          <Link
-            to="/guides"
-            className="mt-10 text-sm text-slate-400 hover:text-slate-900 transition-colors border-b border-slate-200 hover:border-slate-400 pb-0.5"
-          >
-            {t("hero.browse")}
-          </Link>
         </div>
       </main>
 

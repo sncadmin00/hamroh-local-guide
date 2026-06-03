@@ -27,11 +27,6 @@ export const translations: Dict = {
     uz: "Qanday sayohat xohlayotganingizni yozing. Hamroh AI sizga tasdiqlangan mahalliy hamrohni topadi.",
     ru: "Опишите желаемую поездку. Hamroh AI подберёт вам проверенного местного гида.",
   },
-  "hero.browse": {
-    en: "Prefer to browse? Find a guide manually →",
-    uz: "O'zingiz tanlamoqchimisiz? Hamrohni qo'lda toping →",
-    ru: "Хотите выбрать сами? Найдите гида вручную →",
-  },
   "hero.placeholder": {
     en: "e.g. English-speaking food guide for two days…",
     uz: "masalan, ikki kunlik ingliz tilida so'zlashuvchi taom hamrohi…",
