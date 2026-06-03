@@ -5,6 +5,8 @@ import { useCities, useGuides } from "@/lib/content-queries";
 import { useDetectedLocation } from "@/hooks/useDetectedLocation";
 import { nearestCityNames } from "@/data/cities";
 import { useI18n } from "@/lib/i18n";
+import { WishlistHeart } from "@/components/WishlistHeart";
+
 
 export function PopularCities() {
   const { t } = useI18n();
@@ -55,21 +57,23 @@ export function PopularCities() {
           {cities.map((c) => {
             const count = counts[c.id] ?? 0;
             return (
-              <Link
+              <div
                 key={c.id}
-                to="/guides"
-                search={{ city: c.name }}
-                className="inline-flex items-center gap-2 rounded-full bg-card ring-1 ring-border px-4 py-2.5 text-sm font-medium text-foreground hover:ring-primary/40 hover:shadow-sm transition-all"
+                className="group inline-flex items-center gap-1 rounded-full bg-card ring-1 ring-border pl-4 pr-1.5 py-1.5 text-sm font-medium text-foreground hover:ring-primary/40 hover:shadow-sm transition-all"
               >
-                <MapPin className="h-3.5 w-3.5 text-primary" />
-                {c.name}
-                {count > 0 && (
-                  <span className="text-xs text-muted-foreground">· {count}</span>
-                )}
-              </Link>
+                <Link to="/guides" search={{ city: c.name }} className="inline-flex items-center gap-2 py-1">
+                  <MapPin className="h-3.5 w-3.5 text-primary" />
+                  {c.name}
+                  {count > 0 && (
+                    <span className="text-xs text-muted-foreground">· {count}</span>
+                  )}
+                </Link>
+                <WishlistHeart type="city" id={c.id} size="sm" variant="ghost" />
+              </div>
             );
           })}
         </div>
+
       </div>
     </section>
   );
