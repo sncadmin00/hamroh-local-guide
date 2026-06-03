@@ -41,9 +41,8 @@ export function PopularCities() {
     acc[g.cityId] = (acc[g.cityId] ?? 0) + 1;
     return acc;
   }, {});
-  const tourCounts = tours.reduce<Record<string, number>>((acc, t) => {
-    const cid = t.cities?.id ?? (t as { city_id?: string }).city_id;
-    if (cid) acc[cid] = (acc[cid] ?? 0) + 1;
+  const tourCounts = tours.reduce<Record<string, number>>((acc, tour) => {
+    if (tour.city_id) acc[tour.city_id] = (acc[tour.city_id] ?? 0) + 1;
     return acc;
   }, {});
 
