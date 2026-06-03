@@ -243,7 +243,7 @@ function AdminPage() {
     <div className="min-h-screen bg-secondary/30 px-4 py-10">
       <div className="mx-auto max-w-5xl">
         <Link to="/" className="flex items-center gap-2 mb-6">
-          <img src={hamrohLogo} alt="Hamroh" className="h-10 w-auto object-contain" />
+          <img src={hamrohLogo} alt="Hamroh" className="h-12 w-auto object-contain" />
         </Link>
 
         <h1 className="font-display text-3xl font-semibold">Admin</h1>

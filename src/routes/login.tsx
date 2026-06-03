@@ -112,7 +112,7 @@ function LoginPage() {
       <div className="w-full max-w-md">
 
         <Link to="/" className="flex items-center justify-center mb-8">
-          <img src={hamrohLogo} alt="Hamroh" className="h-10 w-auto object-contain" />
+          <img src={hamrohLogo} alt="Hamroh" className="h-12 w-auto object-contain" />
         </Link>
         <div className="rounded-3xl bg-card p-8 ring-1 ring-border/60 shadow-[var(--shadow-elegant)]">
           <h1 className="font-display text-2xl font-semibold">{mode === "signin" ? "Welcome back" : "Create account"}</h1>
