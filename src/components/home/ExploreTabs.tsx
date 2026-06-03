@@ -26,7 +26,6 @@ export function ExploreTabs() {
       <>
         <FeaturedGuides />
         <TopTours />
-        <BrowseByInterest />
         <PopularCities />
       </>
     );
