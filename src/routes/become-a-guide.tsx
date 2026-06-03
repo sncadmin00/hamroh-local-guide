@@ -278,7 +278,8 @@ function BecomeAGuidePage() {
                             : "border-input bg-background text-foreground hover:bg-secondary/40"
                         }`}
                       >
-                        {c.name}
+                        {tCategory(c.slug, c.name)}
+
                       </button>
                     );
                   })}
