@@ -1,12 +1,25 @@
 import { Link } from "@tanstack/react-router";
 import { GuideCard } from "@/components/GuideCard";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useGuides } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
+
+function GuideSkeleton() {
+  return (
+    <div className="rounded-2xl border border-border bg-card overflow-hidden">
+      <Skeleton className="aspect-[4/3] w-full rounded-none" />
+      <div className="p-4 space-y-2">
+        <Skeleton className="h-4 w-3/4" />
+        <Skeleton className="h-3 w-1/2" />
+      </div>
+    </div>
+  );
+}
 
 export function FeaturedGuides() {
   const { t } = useI18n();
   const { data: guides = [], isLoading } = useGuides();
-  if (isLoading || guides.length === 0) return null;
+  if (!isLoading && guides.length === 0) return null;
   const featured = [...guides]
     .sort((a, b) => b.rating - a.rating)
     .slice(0, 6);
