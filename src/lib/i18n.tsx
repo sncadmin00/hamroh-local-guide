@@ -30,6 +30,16 @@ export const translations: Dict = {
   "common.settings": { en: "Account settings", uz: "Hisob sozlamalari", ru: "Настройки аккаунта" },
   "common.admin": { en: "Admin", uz: "Admin", ru: "Админ" },
   "hero.title": { en: "Find your local guide", uz: "Mahalliy hamrohizni toping", ru: "Найдите своего местного гида" },
+  "hero.h1": {
+    en: "Find a verified local guide in 30 seconds",
+    uz: "30 soniyada tasdiqlangan mahalliy hamroh toping",
+    ru: "Найдите проверенного местного гида за 30 секунд",
+  },
+  "hero.h1sub": {
+    en: "Tell Hamroh AI about your trip — get matched with a verified guide in Uzbekistan and beyond.",
+    uz: "Hamroh AI'ga sayohatingiz haqida aytib bering — O'zbekiston va undan tashqaridagi tasdiqlangan hamrohni toping.",
+    ru: "Расскажите Hamroh AI о поездке — подберём проверенного гида в Узбекистане и за его пределами.",
+  },
   "hero.subtitle": {
     en: "Describe the trip you want. Hamroh AI matches you with a verified local guide.",
     uz: "Qanday sayohat xohlayotganingizni yozing. Hamroh AI sizga tasdiqlangan mahalliy hamrohni topadi.",
