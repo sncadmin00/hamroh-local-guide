@@ -72,62 +72,64 @@ export function PopularCities() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {cities.map((c) => {
-            const meta = CITY_META[c.slug];
-            const gCount = guideCounts[c.id] ?? 0;
-            const tCount = tourCounts[c.id] ?? 0;
-            return (
-              <Link
-                key={c.id}
-                to="/guides"
-                search={{ city: c.name }}
-                className="group relative block overflow-hidden rounded-2xl bg-card ring-1 ring-border hover:shadow-lg transition-all"
-              >
-                <div className="relative aspect-[4/5] overflow-hidden bg-secondary">
-                  {meta?.image && (
-                    <img
-                      src={meta.image}
-                      alt={c.name}
-                      loading="lazy"
-                      width={1024}
-                      height={1280}
-                      className="h-full w-full object-cover group-hover:scale-[1.04] transition-transform duration-500"
-                    />
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                  <WishlistHeart type="city" id={c.id} className="absolute right-3 top-3" />
-
-                  <div className="absolute inset-x-0 bottom-0 p-5 text-white">
-                    <h3 className="font-display text-2xl font-semibold">{c.name}</h3>
-                    {meta?.tagline && (
-                      <p className="mt-1 text-sm text-white/85 line-clamp-2">{meta.tagline}</p>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
+          {cities
+            .filter((c) => c.slug in CITY_META)
+            .map((c) => {
+              const meta = CITY_META[c.slug];
+              const gCount = guideCounts[c.id] ?? 0;
+              const tCount = tourCounts[c.id] ?? 0;
+              return (
+                <Link
+                  key={c.id}
+                  to="/guides"
+                  search={{ city: c.name }}
+                  className="group relative block overflow-hidden rounded-xl md:rounded-2xl bg-card ring-1 ring-border hover:shadow-lg transition-all"
+                >
+                  <div className="relative aspect-[3/4] md:aspect-[4/5] overflow-hidden bg-secondary">
+                    {meta?.image && (
+                      <img
+                        src={meta.image}
+                        alt={c.name}
+                        loading="lazy"
+                        width={1024}
+                        height={1280}
+                        className="h-full w-full object-cover group-hover:scale-[1.04] transition-transform duration-500"
+                      />
                     )}
-                    <div className="mt-3 flex items-center gap-3 text-xs text-white/90">
-                      {gCount > 0 && <span>{gCount} {gCount === 1 ? "guide" : "guides"}</span>}
-                      {gCount > 0 && tCount > 0 && <span className="opacity-60">·</span>}
-                      {tCount > 0 && <span>{tCount} {tCount === 1 ? "tour" : "tours"}</span>}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                    <WishlistHeart type="city" id={c.id} className="absolute right-2 top-2 md:right-3 md:top-3" />
+
+                    <div className="absolute inset-x-0 bottom-0 p-3 md:p-5 text-white">
+                      <h3 className="font-display text-lg md:text-2xl font-semibold">{c.name}</h3>
+                      {meta?.tagline && (
+                        <p className="mt-0.5 md:mt-1 text-xs md:text-sm text-white/85 line-clamp-2">{meta.tagline}</p>
+                      )}
+                      <div className="mt-2 md:mt-3 flex items-center gap-2 md:gap-3 text-[10px] md:text-xs text-white/90">
+                        {gCount > 0 && <span>{gCount} {gCount === 1 ? "guide" : "guides"}</span>}
+                        {gCount > 0 && tCount > 0 && <span className="opacity-60">·</span>}
+                        {tCount > 0 && <span>{tCount} {tCount === 1 ? "tour" : "tours"}</span>}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Link>
-            );
-          })}
+                </Link>
+              );
+            })}
 
           {COMING_SOON.map((c) => (
             <div
               key={c.name}
-              className="relative overflow-hidden rounded-2xl ring-1 ring-dashed ring-border bg-secondary/40"
+              className="relative overflow-hidden rounded-xl md:rounded-2xl ring-1 ring-dashed ring-border bg-secondary/40"
             >
-              <div className="relative aspect-[4/5] flex flex-col items-center justify-center p-6 text-center">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-background/80 ring-1 ring-border px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
-                  <Clock className="h-3 w-3" />
+              <div className="relative aspect-[3/4] md:aspect-[4/5] flex flex-col items-center justify-center p-4 md:p-6 text-center">
+                <span className="inline-flex items-center gap-1 rounded-full bg-background/80 ring-1 ring-border px-2.5 py-0.5 md:px-3 md:py-1 text-[10px] md:text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+                  <Clock className="h-2.5 w-2.5 md:h-3 md:w-3" />
                   Coming soon
                 </span>
-                <h3 className="mt-4 font-display text-2xl font-semibold text-foreground/70">
+                <h3 className="mt-3 md:mt-4 font-display text-lg md:text-2xl font-semibold text-foreground/70">
                   {c.name}
                 </h3>
-                <p className="mt-2 text-sm text-muted-foreground max-w-[20ch]">{c.tagline}</p>
+                <p className="mt-1.5 md:mt-2 text-xs md:text-sm text-muted-foreground max-w-[20ch]">{c.tagline}</p>
               </div>
             </div>
           ))}
