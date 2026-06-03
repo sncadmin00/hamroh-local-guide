@@ -16,6 +16,20 @@ const KIND_LABEL_KEY: Record<SpotlightKind, "spot.newGuide.label" | "spot.newRou
   new_tour: "spot.newTour.label",
 };
 
+const KIND_BADGE_KEY: Record<SpotlightKind, "spot.badge.new" | "spot.badge.featured" | "spot.badge.trending" | "spot.badge.limited"> = {
+  new_guide: "spot.badge.featured",
+  new_route: "spot.badge.trending",
+  news: "spot.badge.limited",
+  new_tour: "spot.badge.new",
+};
+
+const KIND_BADGE_STYLE: Record<SpotlightKind, string> = {
+  new_guide: "bg-[#5e8a7e] text-white",
+  new_route: "bg-orange-500 text-white",
+  news: "bg-rose-500 text-white",
+  new_tour: "bg-amber-400 text-slate-900",
+};
+
 export function SpotlightBanner() {
   const { t, lang } = useI18n();
   const { data: items = [] } = useSpotlights();
