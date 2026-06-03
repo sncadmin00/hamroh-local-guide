@@ -7,6 +7,8 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { notifyAdminsOfGuideApplication } from "@/lib/newsletter.functions";
+import { useI18n } from "@/lib/i18n";
+
 
 
 export const Route = createFileRoute("/become-a-guide")({
