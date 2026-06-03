@@ -132,6 +132,36 @@ export const translations: Dict = {
   "tours.allCities": { en: "All cities", uz: "Barcha shaharlar", ru: "Все города" },
   "tours.empty": { en: "No tours yet. Check back soon.", uz: "Hozircha sayohatlar yo'q.", ru: "Туров пока нет. Загляните позже." },
   "tours.backToList": { en: "← All tours", uz: "← Barcha sayohatlar", ru: "← Все туры" },
+
+  "book.cta": { en: "Book an experience", uz: "Tajriba bron qilish", ru: "Забронировать опыт" },
+  "book.eyebrow": { en: "Browse & book", uz: "Tanlang va bron qiling", ru: "Выберите и забронируйте" },
+  "book.title": { en: "Book an experience", uz: "Tajribangizni bron qiling", ru: "Забронируйте свой опыт" },
+  "book.subtitle": {
+    en: "Pick a country, city or interest — we'll show matching guides and tours.",
+    uz: "Mamlakat, shahar yoki qiziqishni tanlang — mos hamrohlar va sayohatlarni ko'rsatamiz.",
+    ru: "Выберите страну, город или интерес — покажем подходящих гидов и туры.",
+  },
+  "book.country": { en: "Country", uz: "Mamlakat", ru: "Страна" },
+  "book.city": { en: "City", uz: "Shahar", ru: "Город" },
+  "book.interest": { en: "Interest", uz: "Qiziqish", ru: "Интерес" },
+  "book.anyCountry": { en: "Any country", uz: "Har qanday mamlakat", ru: "Любая страна" },
+  "book.anyCity": { en: "Any city", uz: "Har qanday shahar", ru: "Любой город" },
+  "book.anyInterest": { en: "Any interest", uz: "Har qanday qiziqish", ru: "Любой интерес" },
+  "book.searchCity": { en: "Search cities…", uz: "Shaharlarni qidirish…", ru: "Поиск города…" },
+  "book.searchInterest": { en: "Search interests…", uz: "Qiziqishlarni qidirish…", ru: "Поиск интереса…" },
+  "book.noCity": { en: "No cities found.", uz: "Shaharlar topilmadi.", ru: "Города не найдены." },
+  "book.noInterest": { en: "No interests found.", uz: "Qiziqishlar topilmadi.", ru: "Интересы не найдены." },
+  "book.tab.all": { en: "All", uz: "Hammasi", ru: "Все" },
+  "book.tab.guides": { en: "Guides", uz: "Hamrohlar", ru: "Гиды" },
+  "book.tab.tours": { en: "Tours", uz: "Sayohatlar", ru: "Туры" },
+  "book.noResults": {
+    en: "Nothing matches yet — try a different city or interest.",
+    uz: "Mos keladigan natija yo'q — boshqa shahar yoki qiziqishni sinab ko'ring.",
+    ru: "Ничего не найдено — попробуйте другой город или интерес.",
+  },
+  "book.clearAll": { en: "Clear all filters", uz: "Filtrlarni tozalash", ru: "Сбросить фильтры" },
+  "book.autoDetected": { en: "Suggested by your location", uz: "Sizning joylashuvingiz bo'yicha", ru: "Подобрано по вашему местоположению" },
+  "book.change": { en: "change", uz: "o'zgartirish", ru: "изменить" },
 };
 
 const I18nContext = createContext<{ lang: Lang; setLang: (l: Lang) => void; t: (k: keyof typeof translations) => string; tCategory: (slug: string, fallback?: string) => string }>({

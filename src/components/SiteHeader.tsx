@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Menu, Settings, Shield, LogIn, LogOut, Mail, Phone, MessageSquare } from "lucide-react";
+import { Menu, Settings, Shield, LogIn, LogOut, Mail, Phone, MessageSquare, Compass } from "lucide-react";
 import hamrohLogo from "@/assets/hamroh-logo.png";
 import { useEffect, useState } from "react";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -77,6 +77,14 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <Link
+            to="/book"
+            className="inline-flex h-9 items-center gap-1.5 rounded-full bg-gradient-to-r from-[#62A1B1] to-[#8BB5A9] px-3 md:px-4 text-xs md:text-sm font-semibold text-white shadow-sm shadow-slate-900/10 hover:opacity-95 transition-opacity"
+          >
+            <Compass className="h-4 w-4" />
+            <span className="hidden sm:inline">{t("book.cta")}</span>
+            <span className="sm:hidden">{t("book.city")}</span>
+          </Link>
           <LanguageSwitcher />
           <a
             href="https://t.me/yourtelegram"
@@ -127,6 +135,12 @@ export function SiteHeader() {
                 <SheetTitle className="text-left">{t("common.menu")}</SheetTitle>
               </SheetHeader>
               <nav className="mt-6 flex flex-col">
+                <Link
+                  to="/book"
+                  className="mb-2 px-3 py-3 rounded-lg text-base font-semibold bg-gradient-to-r from-[#62A1B1] to-[#8BB5A9] text-white inline-flex items-center gap-2"
+                >
+                  <Compass className="h-4 w-4" /> {t("book.cta")}
+                </Link>
                 {menuLinks.map((link) => (
                   <Link
                     key={link.to}
