@@ -8,9 +8,7 @@ import { CategoryIcon } from "@/components/CategoryIcon";
 import { TrustBar } from "@/components/home/TrustBar";
 import { SpotlightBanner } from "@/components/home/SpotlightBanner";
 
-import { FeaturedGuides } from "@/components/home/FeaturedGuides";
-import { TopTours } from "@/components/home/TopTours";
-import { PopularCities } from "@/components/home/PopularCities";
+import { ExploreTabs } from "@/components/home/ExploreTabs";
 import { LatestPosts } from "@/components/home/LatestPosts";
 import { FeaturedReviews } from "@/components/home/FeaturedReviews";
 import { BecomeGuideCTA } from "@/components/home/BecomeGuideCTA";
