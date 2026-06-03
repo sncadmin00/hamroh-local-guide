@@ -6,7 +6,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { CategoryIcon } from "@/components/CategoryIcon";
 import { TrustBar } from "@/components/home/TrustBar";
-import { HowItWorks } from "@/components/home/HowItWorks";
+
 import { FeaturedGuides } from "@/components/home/FeaturedGuides";
 import { PopularCities } from "@/components/home/PopularCities";
 import { LatestPosts } from "@/components/home/LatestPosts";
@@ -216,6 +216,17 @@ function Home() {
           {/* Tagline under input */}
           <p className="mt-3 text-xs text-slate-400">{t("hero.tagline")}</p>
 
+          {/* How it works — inline mini steps */}
+          <div className="mt-6 flex items-center justify-center gap-2 sm:gap-3 text-sm text-slate-500 flex-wrap">
+            {[t("how.step1.title"), t("how.step2.title"), t("how.step3.title")].map((label, i) => (
+              <div key={i} className="flex items-center gap-2 sm:gap-3">
+                {i > 0 && <span className="hidden sm:block w-6 h-px bg-slate-200" aria-hidden />}
+                <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-[#8BB5A9]/15 text-[#5e8a7e] text-[11px] font-semibold">{i + 1}</span>
+                <span>{label}</span>
+              </div>
+            ))}
+          </div>
+
           {/* Suggestions */}
           <div className="flex flex-wrap justify-center gap-2.5 mt-6 max-w-2xl">
             {SUGGEST_KEYS.map((k) => {
@@ -243,7 +254,7 @@ function Home() {
         </div>
       </main>
 
-      <HowItWorks />
+      
       <FeaturedGuides />
 
       {/* Browse by interest */}
