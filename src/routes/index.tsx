@@ -6,6 +6,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { CategoryIcon } from "@/components/CategoryIcon";
 import { TrustBar } from "@/components/home/TrustBar";
+import { SpotlightBanner } from "@/components/home/SpotlightBanner";
 
 import { FeaturedGuides } from "@/components/home/FeaturedGuides";
 import { PopularCities } from "@/components/home/PopularCities";
