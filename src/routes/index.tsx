@@ -59,6 +59,26 @@ export const Route = createFileRoute("/")({
           description: "AI-powered marketplace for verified local guides.",
         }),
       },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: [
+            { q: "How does Hamroh work?", a: "Describe your trip in your own words. Our AI matches you with verified local guides who fit your language, budget and interests. Chat with them and book in one place." },
+            { q: "Are the guides really verified?", a: "Yes. Each guide submits ID, references and sample tours. Our team reviews every application manually before approval." },
+            { q: "How do I pay?", a: "Pay securely online by card. We hold your payment and release it to the guide after your trip is completed." },
+            { q: "Can I cancel a booking?", a: "Yes — cancel free of charge up to 24 hours before the tour starts. Later cancellations may not be refundable." },
+            { q: "What languages do guides speak?", a: "English, Russian and Uzbek are most common. Many guides also speak French, German, Korean, Japanese and more." },
+            { q: "Do I need to sign up to chat with AI?", a: "No — try Hamroh AI for free without signup. You'll only need an account when you're ready to book or message a guide." },
+          ].map(({ q, a }) => ({
+            "@type": "Question",
+            name: q,
+            acceptedAnswer: { "@type": "Answer", text: a },
+          })),
+        }),
+      },
+
     ],
   }),
   component: Home,
