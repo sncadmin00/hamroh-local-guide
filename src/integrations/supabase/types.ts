@@ -1196,7 +1196,22 @@ export type Database = {
           category_id?: string
           tour_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "tour_categories_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tour_categories_tour_id_fkey"
+            columns: ["tour_id"]
+            isOneToOne: false
+            referencedRelation: "tours"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tour_guides: {
         Row: {
@@ -1211,7 +1226,22 @@ export type Database = {
           guide_id?: string
           tour_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "tour_guides_guide_id_fkey"
+            columns: ["guide_id"]
+            isOneToOne: false
+            referencedRelation: "guides"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tour_guides_tour_id_fkey"
+            columns: ["tour_id"]
+            isOneToOne: false
+            referencedRelation: "tours"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tours: {
         Row: {
@@ -1268,7 +1298,15 @@ export type Database = {
           title?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "tours_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
