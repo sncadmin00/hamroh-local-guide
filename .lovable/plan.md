@@ -1,116 +1,62 @@
-## Cel
+# Plan: 5 ulushenij glavnoy stranicy Hamroh
 
-1. Pochistit shapku v stile Airbnb: ubrat lishnie ikonki, sdelat dyhaniya i bolshe vozduxa.
-2. Dobavit Wishlist: serdechki na karto4kah gidov, turov i gorodah; otdelnaya stranica /wishlist; gostevoy rezhim cherez localStorage s migraciey v BD posle login.
+## 1. Dobavit H1 i perekomponovat hero
+**Fayl:** `src/routes/index.tsx`
 
----
+- Dobavit krupnyy zagolovok H1 nad statistikoy: "Naydite proverennogo mestnogo gida za 30 sekund" (s perevodami v `i18n`)
+- Podzagolovok pod nim: "AI podberyot vam ideal'nogo gida v Uzbekistane i ne tol'ko"
+- Umen'shit verkhniy padding (`py-10 md:py-24` → `py-6 md:py-16`)
+- Peremestit' statistiku + trust-bar **pod** AI-input (sayichas oni sverkhu i otvlekayut ot glavnogo CTA — inputa)
+- Poryadok: SpotlightBanner → H1 → podzagolovok → AI-input → tagline → statistika → trust-bar → "how it works" steps
 
-## 1. Chistka shapki (SiteHeader)
+## 2. Skeleton-loadery vmesto "Loading..."
+**Fayly:** `src/components/home/FeaturedGuides.tsx`, `TopTours.tsx`, `PopularCities.tsx`, `src/components/home/ExploreTabs.tsx`
 
-**Ubirayem:**
-- WhatsApp i Telegram ikonki iz desktop-shapki (ostavlyaem v mobile sheet menu, oni tam uzhe est).
-- Yarkuyu BOOK pill iz centra/spravo \u2014 zamenyaem na obychnyy menu-link "Book" v navigacii (chtoby ne kri4al cvetom).
-- "Sign in" knopku iz desktop-shapki \u2014 prevrashchaem v krugluyu avatar-ikonku v stile Airbnb (User icon esli ne zalogen, initsialy esli zalogen) \u2014 klik otkryvaet to zhe Sheet-menu.
+- Zamenit' tekstovyy `<EmptyState>Loading…</EmptyState>` na shimmer-karochki ispol'zuya `Skeleton` iz `@/components/ui/skeleton`
+- Pokazyvat' 3-6 skeleton-karochek s temi je proportsiyami (aspect-ratio), chto i nastoyaschie karochki
+- Razlichit' "zagrujaetsya" (skeleton) vs "pusto" (drugoy state s ikonkoy)
 
-**Dobavlyaem:**
-- Heart-ikonku Wishlist sprava ot logo (na desktop) i v Sheet menu (na mobile). Klik vedet na /wishlist.
+## 3. Novye sektsii "Pochemu Hamroh" + FAQ
+**Novye fayly:**
+- `src/components/home/WhyHamroh.tsx` — 4 karochki s ikonkami: Proverennye gidy / Pryamaya svyaz / Bezopasnaya oplata / Besplatnaya otmena
+- `src/components/home/HomeFaq.tsx` — 5-6 voprosov v `Accordion` iz shadcn (Kak rabotaet? Kak oplachivat'? Mojno li otmenit'? i t.d.)
 
-**Itog:** sleva logo, po centru chistyy nav (Find a guide / Tours / Cities / Become a guide), sprava \u2014 wishlist heart, jazyk, krugloe menu (avatar + gamburger v odnom pille, kak v Airbnb).
-
-```text
-[logo Hamroh]    Find a guide   Tours   Cities   Become a guide    [\u2661] [RU \u25be]  [\u2630 \u29be]
+**Vstavit' v** `src/routes/index.tsx` mejdu `ExploreTabs` i `LatestPosts`:
+```
+<ExploreTabs />
+<WhyHamroh />
+<LatestPosts />
+<FeaturedReviews />
+<HomeFaq />
+<BecomeGuideCTA />
 ```
 
----
+Dobavit' JSON-LD `FAQPage` schema v `head()` glavnoy stranicy dlya SEO.
 
-## 2. Wishlist (dannye)
+## 4. Pochinit' header
+**Fayl:** `src/components/SiteHeader.tsx`
 
-**Novaya tablica `public.wishlists`:**
-```sql
-create table public.wishlists (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid not null,
-  item_type text not null check (item_type in ('guide','tour','city')),
-  item_id uuid not null,
-  created_at timestamptz not null default now(),
-  unique (user_id, item_type, item_id)
-);
+- "Find a guide" → "Guides" (chtoby ne perenosilos' na 2 stroki)
+- "BOOK" → "Book" (ubrat' kaps, sdelat' kak ostal'nye punkty)
+- Na mobile spryatat' ikonku heart v menu (ostavit' tol'ko EN, gamburger, user)
+- Dobavit' `whitespace-nowrap` na nav-linki
 
-grant select, insert, delete on public.wishlists to authenticated;
-grant all on public.wishlists to service_role;
+## 5. Garmonizirovat' "Become a guide" banner
+**Fayl:** `src/components/home/BecomeGuideCTA.tsx`
 
-alter table public.wishlists enable row level security;
-create policy "Users view own wishlist" on public.wishlists for select to authenticated using (auth.uid() = user_id);
-create policy "Users add to own wishlist" on public.wishlists for insert to authenticated with check (auth.uid() = user_id);
-create policy "Users remove from own wishlist" on public.wishlists for delete to authenticated using (auth.uid() = user_id);
-```
+- Zamenit' temno-siniy gradient na brendovyy: ot `#8BB5A9` (sage) k `#D5A08D` (terracotta)
+- Ili variant: teplyy beje fon s tekstom temnym i CTA-knopkoy sage
+- Sokhranit' okruglyye uglovaya i shadow, no obnovit' tsveta pod paletu sayta
 
-**Gostevoy rezhim:**
-- Kogda yuzer ne zalogen \u2014 wishlist hranitsya v `localStorage` po klyuchu `hamroh:wishlist` kak `[{type, id}, ...]`.
-- Posle uspeshnogo login \u2014 migraciya: prochitat localStorage, vyzvat server-fn `migrateGuestWishlist` (insert ... on conflict do nothing), o4istit localStorage.
+## Tekhnicheskie zametki
+- Vse novye stroki teksta dobavlyayutsya v `src/lib/i18n.tsx` dlya vseh podderjivaemyh yazykov (en, ru, uz)
+- Dlya skeletonov ispol'zovat' suschestvuyuschiy `Skeleton` komponent
+- FAQ Accordion uje est' v `src/components/ui/accordion.tsx`
+- WhyHamroh ikonki vzyat' iz `lucide-react` (ShieldCheck, MessageCircle, CreditCard, RefreshCw)
+- Posle dobavleniya FAQ obnovit' JSON-LD v `head()` route `/` dobavit' `FAQPage` schema
 
----
-
-## 3. Wishlist (client)
-
-**Hook `useWishlist()`** v `src/hooks/useWishlist.ts`:
-- Vozvrashchaet `items: Set<string>` (klyuch `${type}:${id}`), `toggle(type, id)`, `isWishlisted(type, id)`.
-- Pri zaloge \u2014 podpisyvaetsya na TanStack Query (`['wishlist', userId]`) cherez server-fn `listWishlist`.
-- Mutaciya cherez `addWishlistItem` / `removeWishlistItem` server-fns, s optimisticheskim apdeitom.
-- Pri otsutstvii sessii \u2014 chitaet/pishet localStorage, broadcastit cherez kustomnoe event `wishlist:change`.
-
-**Komponent `<WishlistHeart>`** v `src/components/WishlistHeart.tsx`:
-- `<WishlistHeart type="guide" id={...} className="..." />`
-- Render: krugloe poluprozra4noe kabashon s `Heart` iz lucide; pri active \u2014 `fill="currentColor"` cveta `destructive` (krasnyy).
-- Stop propagation pri klike (chtoby ne triggerit Link na karto4ke).
-- Toast "Saved to wishlist" / "Removed".
-
-**Gde stavim serdechko:**
-- `GuideCard` \u2014 absolutno v pravom-verxnem uglu kartinki.
-- Karto4ka tura v `TopTours` i `ExploreTabs` \u2014 to zhe samoe.
-- Stranica gida `/guides/$guideId` \u2014 ryadom s imenem.
-- Stranica tura `/tours/$slug` \u2014 ryadom s zagolovkom.
-- Chip goroda v `PopularCities` \u2014 malenkoe serdechko vnutri chipa sprava (toggle pri klike, ne perehod).
-
----
-
-## 4. Stranica `/wishlist`
-
-Novyy fayl `src/routes/wishlist.tsx`:
-- Hed: `<title>My wishlist \u00b7 Hamroh</title>` + noindex.
-- Tri sekcii s tabami: Guides / Tours / Cities.
-- Esli zalogen \u2014 podgruzhayut polnye obekty cherez Query (`useGuides`, `useTours`, `useCities`) i filtruyut po item_id iz wishlist.
-- Esli gost \u2014 to zhe samoe, no source \u2014 localStorage.
-- Pustoe sostoyanie: "Tap the heart on any guide, tour or city to save it here."
-
----
-
-## 5. Server functions
-
-`src/lib/wishlist.functions.ts`:
-- `listWishlist` (GET, requireSupabaseAuth) \u2014 vozvrashchaet vse zapisi yuzera.
-- `addWishlistItem({type, id})` (POST, auth, Zod validator).
-- `removeWishlistItem({type, id})` (POST, auth).
-- `migrateGuestWishlist({items})` (POST, auth) \u2014 bulk insert on conflict do nothing.
-
----
-
-## 6. i18n keys
-
-V `src/lib/i18n.tsx` dobavit:
-- `wishlist.title` = "My wishlist"
-- `wishlist.empty` = "Tap the heart on any guide, tour or city to save it here."
-- `wishlist.tabs.guides|tours|cities`
-- `wishlist.saved` = "Saved to wishlist"
-- `wishlist.removed` = "Removed from wishlist"
-- `nav.wishlist` = "Wishlist"
-
-(s uz / ru perevodami)
-
----
-
-## Chto NE menyaem
-
-- `ExploreTabs`, `PopularCities` logiku (tolko vstavlyaem heart v markup chipa/kartochki).
-- AI poisk pod shapkoy, hero text, footer.
-- Lyubye drugie marshruty i RLS na sushchestvuyushchih tablicah.
+## Chto ne menyaem
+- AI-input i ego stilizatsiya (rabotaet horosho)
+- Logika `ExploreTabs` na desktope
+- Karochki gorodov (uje pochineny)
+- Spotlight banner

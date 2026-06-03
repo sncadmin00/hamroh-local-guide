@@ -8,6 +8,8 @@ import { TrustBar } from "@/components/home/TrustBar";
 import { SpotlightBanner } from "@/components/home/SpotlightBanner";
 
 import { ExploreTabs } from "@/components/home/ExploreTabs";
+import { WhyHamroh } from "@/components/home/WhyHamroh";
+import { HomeFaq } from "@/components/home/HomeFaq";
 import { LatestPosts } from "@/components/home/LatestPosts";
 import { FeaturedReviews } from "@/components/home/FeaturedReviews";
 import { BecomeGuideCTA } from "@/components/home/BecomeGuideCTA";
@@ -57,6 +59,26 @@ export const Route = createFileRoute("/")({
           description: "AI-powered marketplace for verified local guides.",
         }),
       },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: [
+            { q: "How does Hamroh work?", a: "Describe your trip in your own words. Our AI matches you with verified local guides who fit your language, budget and interests. Chat with them and book in one place." },
+            { q: "Are the guides really verified?", a: "Yes. Each guide submits ID, references and sample tours. Our team reviews every application manually before approval." },
+            { q: "How do I pay?", a: "Pay securely online by card. We hold your payment and release it to the guide after your trip is completed." },
+            { q: "Can I cancel a booking?", a: "Yes — cancel free of charge up to 24 hours before the tour starts. Later cancellations may not be refundable." },
+            { q: "What languages do guides speak?", a: "English, Russian and Uzbek are most common. Many guides also speak French, German, Korean, Japanese and more." },
+            { q: "Do I need to sign up to chat with AI?", a: "No — try Hamroh AI for free without signup. You'll only need an account when you're ready to book or message a guide." },
+          ].map(({ q, a }) => ({
+            "@type": "Question",
+            name: q,
+            acceptedAnswer: { "@type": "Answer", text: a },
+          })),
+        }),
+      },
+
     ],
   }),
   component: Home,
@@ -142,34 +164,21 @@ function Home() {
     <div className="min-h-screen flex flex-col bg-background">
       <SiteHeader />
 
-      <main className="flex items-center justify-center px-6 py-10 md:py-24">
+      <main className="flex items-center justify-center px-6 py-6 md:py-16">
         <div className="w-full max-w-3xl mx-auto flex flex-col items-center">
           {/* Spotlight carousel */}
           <SpotlightBanner />
 
-
-          {/* Stats + trust */}
-          <div className="text-center space-y-4 mb-6 md:mb-8">
-            <p className="text-sm text-slate-500 flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
-              <span><span className="font-semibold text-slate-700">1,240</span> {t("hero.stats.guides")}</span>
-              <span className="text-slate-300" aria-hidden>·</span>
-              <span><span className="font-semibold text-slate-700">47</span> {t("hero.stats.cities")}</span>
-              <span className="text-slate-300" aria-hidden>·</span>
-              <span><span className="font-semibold text-slate-700">12,000</span> {t("hero.stats.travelers")}</span>
+          {/* H1 + subtitle */}
+          <div className="text-center mt-2 mb-6 md:mb-8">
+            <h1 className="font-display text-3xl md:text-5xl font-semibold tracking-tight text-foreground leading-[1.1]">
+              {t("hero.h1")}
+            </h1>
+            <p className="mt-3 md:mt-4 text-sm md:text-lg text-slate-500 max-w-xl mx-auto">
+              {t("hero.h1sub")}
             </p>
-            <TrustBar />
-
-            {/* How it works — moved above AI input */}
-            <div className="flex items-center justify-center gap-2 sm:gap-3 text-sm text-slate-500 flex-wrap pt-1">
-              {[t("how.step1.title"), t("how.step2.title"), t("how.step3.title")].map((label, i) => (
-                <div key={i} className="flex items-center gap-2 sm:gap-3">
-                  {i > 0 && <span className="hidden sm:block w-6 h-px bg-slate-200" aria-hidden />}
-                  <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-[#8BB5A9]/15 text-[#5e8a7e] text-[11px] font-semibold">{i + 1}</span>
-                  <span>{label}</span>
-                </div>
-              ))}
-            </div>
           </div>
+
 
 
           {/* AI Input with hover glow */}
@@ -223,21 +232,40 @@ function Home() {
           {/* Tagline under input */}
           <p className="mt-3 text-xs text-slate-400">{t("hero.tagline")}</p>
 
-          {/* How it works moved above input */}
-
-
-
+          {/* Stats + trust + steps moved below input */}
+          <div className="text-center space-y-4 mt-8 md:mt-10">
+            <p className="text-sm text-slate-500 flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
+              <span><span className="font-semibold text-slate-700">1,240</span> {t("hero.stats.guides")}</span>
+              <span className="text-slate-300" aria-hidden>·</span>
+              <span><span className="font-semibold text-slate-700">47</span> {t("hero.stats.cities")}</span>
+              <span className="text-slate-300" aria-hidden>·</span>
+              <span><span className="font-semibold text-slate-700">12,000</span> {t("hero.stats.travelers")}</span>
+            </p>
+            <TrustBar />
+            <div className="flex items-center justify-center gap-2 sm:gap-3 text-sm text-slate-500 flex-wrap pt-1">
+              {[t("how.step1.title"), t("how.step2.title"), t("how.step3.title")].map((label, i) => (
+                <div key={i} className="flex items-center gap-2 sm:gap-3">
+                  {i > 0 && <span className="hidden sm:block w-6 h-px bg-slate-200" aria-hidden />}
+                  <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-[#8BB5A9]/15 text-[#5e8a7e] text-[11px] font-semibold">{i + 1}</span>
+                  <span>{label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </main>
 
 
       <ExploreTabs />
+      <WhyHamroh />
 
       <LatestPosts />
       <FeaturedReviews />
+      <HomeFaq />
       <BecomeGuideCTA />
 
       <SiteFooter />
+
     </div>
   );
 }
