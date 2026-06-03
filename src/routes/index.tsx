@@ -69,8 +69,9 @@ const SUGGEST_KEYS = ["hero.suggest.1", "hero.suggest.2", "hero.suggest.3", "her
 function Home() {
   const navigate = useNavigate();
   const create = useServerFn(createThread);
-  const { t } = useI18n();
+  const { t, tCategory } = useI18n();
   const { data: categories = [] } = useCategories();
+
   const [input, setInput] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [listening, setListening] = useState(false);
