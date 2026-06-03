@@ -81,8 +81,7 @@ export function SiteHeader() {
             to="/book"
             className="inline-flex h-9 items-center gap-1.5 rounded-full bg-gradient-to-r from-[#62A1B1] to-[#8BB5A9] px-3 md:px-4 text-xs md:text-sm font-semibold text-white shadow-sm shadow-slate-900/10 hover:opacity-95 transition-opacity"
           >
-            <Compass className="h-4 w-4" />
-            <span>{t("book.cta")}</span>
+            {t("book.cta")}
           </Link>
           <LanguageSwitcher />
           <a
@@ -138,7 +137,7 @@ export function SiteHeader() {
                   to="/book"
                   className="mb-2 px-3 py-3 rounded-lg text-base font-semibold bg-gradient-to-r from-[#62A1B1] to-[#8BB5A9] text-white inline-flex items-center gap-2"
                 >
-                  <Compass className="h-4 w-4" /> {t("book.cta")}
+                  {t("book.cta")}
                 </Link>
                 {menuLinks.map((link) => (
                   <Link
