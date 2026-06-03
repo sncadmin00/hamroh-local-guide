@@ -6,7 +6,7 @@ export type Lang = "en" | "uz" | "ru";
 type Dict = Record<string, { en: string; uz: string; ru: string }>;
 
 export const translations: Dict = {
-  "nav.findGuide": { en: "Find a guide", uz: "Hamroh toping", ru: "Найти гида" },
+  "nav.findGuide": { en: "Guides", uz: "Hamrohlar", ru: "Гиды" },
   "nav.cities": { en: "Cities", uz: "Shaharlar", ru: "Города" },
   "nav.tours": { en: "Tours", uz: "Sayohatlar", ru: "Туры" },
   "nav.explore": { en: "Explore", uz: "Kashf eting", ru: "Обзор" },
