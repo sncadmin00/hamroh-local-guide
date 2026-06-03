@@ -177,7 +177,7 @@ function SpotlightEditor({
         <button onClick={onClose} className="text-sm text-muted-foreground">Cancel</button>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-3 sm:grid-cols-3">
         <label className="text-sm">
           <span className="text-muted-foreground">Kind</span>
           <select
@@ -186,6 +186,16 @@ function SpotlightEditor({
             className="mt-1 w-full h-9 rounded-lg border border-border bg-background px-2"
           >
             {SPOTLIGHT_KINDS.map((k) => <option key={k} value={k}>{k}</option>)}
+          </select>
+        </label>
+        <label className="text-sm">
+          <span className="text-muted-foreground">Badge</span>
+          <select
+            value={form.badge ?? ""}
+            onChange={(e) => set("badge", (e.target.value || null) as SpotlightBadge | null)}
+            className="mt-1 w-full h-9 rounded-lg border border-border bg-background px-2"
+          >
+            {BADGE_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
           </select>
         </label>
         <label className="text-sm">
@@ -198,6 +208,7 @@ function SpotlightEditor({
           />
         </label>
       </div>
+
 
       <div className="grid gap-3 sm:grid-cols-3">
         {(["en","uz","ru"] as const).map((l) => (
