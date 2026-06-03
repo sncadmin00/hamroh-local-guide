@@ -143,6 +143,16 @@ export function ExploreTabs() {
 
 function EmptyState() {
   return (
-    <div className="text-center text-sm text-muted-foreground py-12">Loading…</div>
+    <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div key={i} className="rounded-2xl border border-border bg-card overflow-hidden">
+          <div className="aspect-[4/3] w-full bg-secondary animate-pulse" />
+          <div className="p-4 space-y-2">
+            <div className="h-4 w-3/4 bg-secondary rounded animate-pulse" />
+            <div className="h-3 w-1/2 bg-secondary rounded animate-pulse" />
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }
