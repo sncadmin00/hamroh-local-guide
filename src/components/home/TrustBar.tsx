@@ -1,4 +1,4 @@
-import { BadgeCheck, MessageCircle, ShieldCheck } from "lucide-react";
+import { BadgeCheck, MessageCircle, ShieldCheck, Star } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 
 export function TrustBar() {
@@ -7,6 +7,7 @@ export function TrustBar() {
     { Icon: BadgeCheck, label: t("trust.verified") },
     { Icon: MessageCircle, label: t("trust.directChat") },
     { Icon: ShieldCheck, label: t("trust.secureBooking") },
+    { Icon: Star, label: t("trust.rated") },
   ];
   return (
     <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-slate-500">
