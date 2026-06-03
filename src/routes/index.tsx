@@ -66,7 +66,7 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
-const SUGGEST_KEYS = ["hero.suggest.1", "hero.suggest.2", "hero.suggest.3", "hero.suggest.4"] as const;
+
 
 function Home() {
   const navigate = useNavigate();
