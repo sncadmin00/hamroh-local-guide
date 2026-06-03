@@ -137,8 +137,13 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   };
 
   const t = (k: keyof typeof translations) => translations[k]?.[lang] ?? translations[k]?.en ?? String(k);
+  const tCategory = (slug: string, fallback?: string) => {
+    const key = `cat.${slug}` as keyof typeof translations;
+    return translations[key]?.[lang] ?? fallback ?? translations[key]?.en ?? slug;
+  };
 
-  return <I18nContext.Provider value={{ lang, setLang, t }}>{children}</I18nContext.Provider>;
+  return <I18nContext.Provider value={{ lang, setLang, t, tCategory }}>{children}</I18nContext.Provider>;
+
 }
 
 export const useI18n = () => useContext(I18nContext);
