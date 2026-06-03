@@ -133,7 +133,7 @@ export const translations: Dict = {
   "tours.empty": { en: "No tours yet. Check back soon.", uz: "Hozircha sayohatlar yo'q.", ru: "Туров пока нет. Загляните позже." },
   "tours.backToList": { en: "← All tours", uz: "← Barcha sayohatlar", ru: "← Все туры" },
 
-  "book.cta": { en: "Book an experience", uz: "Tajriba bron qilish", ru: "Забронировать опыт" },
+  "book.cta": { en: "BOOK", uz: "BOOK", ru: "BOOK" },
   "book.eyebrow": { en: "Browse & book", uz: "Tanlang va bron qiling", ru: "Выберите и забронируйте" },
   "book.title": { en: "Book an experience", uz: "Tajribangizni bron qiling", ru: "Забронируйте свой опыт" },
   "book.subtitle": {
