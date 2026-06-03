@@ -7,6 +7,7 @@ export function TrustBar() {
     { Icon: BadgeCheck, label: t("trust.verified") },
     { Icon: MessageCircle, label: t("trust.directChat") },
     { Icon: ShieldCheck, label: t("trust.secureBooking") },
+    { Icon: Star, label: t("trust.rated") },
   ];
   return (
     <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-slate-500">
