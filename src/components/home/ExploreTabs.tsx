@@ -46,21 +46,20 @@ export function ExploreTabs() {
     <section className="px-6 py-16 md:py-20 bg-secondary/40">
       <div className="max-w-6xl mx-auto">
         <Tabs value={tab} onValueChange={setTab} className="w-full">
-          <div className="flex items-center justify-between gap-4 mb-8 flex-wrap">
-            <TabsList className="h-11 bg-white/70 backdrop-blur ring-1 ring-border p-1 rounded-full">
-              <TabsTrigger value="guides" className="rounded-full px-4 h-9 text-sm">
-                {t("explore.tabs.guides")}
-              </TabsTrigger>
-              <TabsTrigger value="tours" className="rounded-full px-4 h-9 text-sm">
-                {t("explore.tabs.tours")}
-              </TabsTrigger>
-              <TabsTrigger value="cities" className="rounded-full px-4 h-9 text-sm">
-                {t("explore.tabs.cities")}
-              </TabsTrigger>
-              <TabsTrigger value="explore" className="rounded-full px-4 h-9 text-sm">
-                {t("explore.tabs.explore")}
-              </TabsTrigger>
+          <div className="relative mb-10 border-b border-border">
+            <TabsList className="mx-auto flex h-auto w-full justify-center gap-8 md:gap-14 bg-transparent p-0 rounded-none">
+              {(["guides", "tours", "cities", "explore"] as const).map((key) => (
+                <TabsTrigger
+                  key={key}
+                  value={key}
+                  className="relative rounded-none bg-transparent px-0 pb-3 pt-1 text-sm font-medium text-muted-foreground shadow-none transition-colors hover:text-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none after:absolute after:left-0 after:right-0 after:-bottom-px after:h-[2px] after:bg-foreground after:scale-x-0 after:transition-transform after:origin-center data-[state=active]:after:scale-x-100"
+                >
+                  {t(`explore.tabs.${key}`)}
+                </TabsTrigger>
+              ))}
             </TabsList>
+          </div>
+          <div className="mb-6 flex justify-end">
             <Link
               to={viewAllByTab[tab].to}
               className="text-sm font-medium text-primary hover:underline"
