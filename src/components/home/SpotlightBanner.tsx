@@ -102,10 +102,10 @@ export function SpotlightBanner() {
               tabIndex={active ? 0 : -1}
               className={`${active ? "relative opacity-100" : "absolute inset-0 opacity-0 pointer-events-none"} flex items-center gap-4 sm:gap-5 p-4 sm:p-5 transition-opacity duration-500`}
             >
-              <div className="relative h-28 w-28 sm:h-36 sm:w-36 shrink-0 overflow-hidden rounded-2xl ring-1 ring-white/60 shadow-md">
+              <div className="relative h-44 w-44 sm:h-64 sm:w-64 shrink-0 overflow-hidden rounded-2xl ring-1 ring-white/60 shadow-md">
                 <img src={s.image_url || PLACEHOLDER} alt="" className="h-full w-full object-cover" loading="lazy" />
-                <span className="absolute left-1.5 top-1.5 rounded-full bg-orange-500 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white shadow-sm">
-                  New
+                <span className={`absolute left-2 top-2 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider shadow-sm ${KIND_BADGE_STYLE[s.kind]}`}>
+                  {t(KIND_BADGE_KEY[s.kind])}
                 </span>
               </div>
               <div className="min-w-0 flex-1 text-left">
@@ -122,8 +122,11 @@ export function SpotlightBanner() {
                 <div className="mt-1.5 line-clamp-2 text-sm sm:text-base text-slate-500 leading-relaxed">
                   {desc}
                 </div>
+                <div className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-[#5e8a7e] group-hover:text-[#4a6f66] transition-colors">
+                  {t("spot.cta.view")}
+                  <ArrowUpRight className="h-4 w-4" />
+                </div>
               </div>
-              <ArrowUpRight className="h-6 w-6 sm:h-7 sm:w-7 shrink-0 text-slate-400 group-hover:text-slate-700 transition-colors" />
             </a>
           );
         })}
