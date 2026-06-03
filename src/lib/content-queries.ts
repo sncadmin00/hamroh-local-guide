@@ -267,3 +267,109 @@ export function useIsAdmin() {
     staleTime: 60_000,
   });
 }
+
+// ============ Spotlights ============
+export function useSpotlights() {
+  return useQuery({
+    queryKey: ["spotlights"],
+    queryFn: async (): Promise<SpotlightRow[]> => {
+      const { data, error } = await (supabase as any)
+        .from("spotlights")
+        .select("*")
+        .order("sort_order", { ascending: true });
+      if (error) throw error;
+      return (data ?? []) as SpotlightRow[];
+    },
+  });
+}
+
+export function useSpotlightsAdmin() {
+  return useQuery({
+    queryKey: ["spotlights-admin"],
+    queryFn: async (): Promise<SpotlightRow[]> => {
+      const { data, error } = await (supabase as any)
+        .from("spotlights")
+        .select("*")
+        .order("sort_order", { ascending: true })
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return (data ?? []) as SpotlightRow[];
+    },
+  });
+}
+
+// ============ Tours ============
+export type TourRow = {
+  id: string;
+  slug: string;
+  title: string;
+  short_description: string;
+  description_md: string;
+  cover_url: string | null;
+  city_id: string;
+  duration_hours: number;
+  price_from: number;
+  highlights: string[];
+  included: string[];
+  not_included: string[];
+  published: boolean;
+  sort_order: number;
+  cities?: { name: string; slug: string } | null;
+  tour_guides?: { guide_id: string; guides: { id: string; slug: string; name: string; photo_url: string | null } | null }[];
+  tour_categories?: { category_id: string; categories: { slug: string; name: string; icon: string } | null }[];
+};
+
+const TOUR_SELECT =
+  "id, slug, title, short_description, description_md, cover_url, city_id, duration_hours, price_from, highlights, included, not_included, published, sort_order, cities(name, slug), tour_guides(guide_id, guides(id, slug, name, photo_url)), tour_categories(category_id, categories(slug, name, icon))";
+
+export function useTours(opts?: { citySlug?: string; categorySlug?: string }) {
+  return useQuery({
+    queryKey: ["tours", opts?.citySlug ?? null, opts?.categorySlug ?? null],
+    queryFn: async (): Promise<TourRow[]> => {
+      const { data, error } = await (supabase as any)
+        .from("tours")
+        .select(TOUR_SELECT)
+        .eq("published", true)
+        .order("sort_order", { ascending: true });
+      if (error) throw error;
+      let rows = (data ?? []) as TourRow[];
+      if (opts?.citySlug) rows = rows.filter((r) => r.cities?.slug === opts.citySlug);
+      if (opts?.categorySlug) rows = rows.filter((r) => r.tour_categories?.some((tc) => tc.categories?.slug === opts.categorySlug));
+      return rows;
+    },
+  });
+}
+
+export function useToursAdmin() {
+  return useQuery({
+    queryKey: ["tours-admin"],
+    queryFn: async (): Promise<TourRow[]> => {
+      const { data, error } = await (supabase as any)
+        .from("tours")
+        .select(TOUR_SELECT)
+        .order("sort_order", { ascending: true });
+      if (error) throw error;
+      return (data ?? []) as TourRow[];
+    },
+  });
+}
+
+export function useTour(slug: string) {
+  return useQuery({
+    queryKey: ["tour", slug],
+    enabled: !!slug,
+    queryFn: async (): Promise<TourRow | null> => {
+      const { data, error } = await (supabase as any)
+        .from("tours")
+        .select(TOUR_SELECT)
+        .eq("slug", slug)
+        .eq("published", true)
+        .maybeSingle();
+      if (error) throw error;
+      return (data as TourRow | null) ?? null;
+    },
+  });
+}
+
+export const SPOTLIGHT_KINDS: SpotlightKind[] = ["new_guide", "new_route", "news", "new_tour"];
+
