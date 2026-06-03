@@ -24,7 +24,9 @@ export const Route = createFileRoute("/guides")({
 });
 
 function GuidesPage() {
+  const { tCategory } = useI18n();
   const { city: initialCity, category: initialCategory } = Route.useSearch();
+
   const [city, setCity] = useState<"All" | string>(initialCity ?? "All");
   const [category, setCategory] = useState<"All" | string>(initialCategory ?? "All");
   const [lang, setLang] = useState<string>("All");
