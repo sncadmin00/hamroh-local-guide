@@ -8,6 +8,8 @@ import { CategoryIcon } from "@/components/CategoryIcon";
 import { inviteGuideToPortal } from "@/lib/admin-portal.functions";
 import { listAppUsers, setAdminRole, inviteAdminUser, deleteAppUser } from "@/lib/admin-users.functions";
 import { notifyGuideApplicationStatus } from "@/lib/lifecycle-emails.functions";
+import { SpotlightsPanel } from "@/components/admin/SpotlightsPanel";
+import { ToursPanel } from "@/components/admin/ToursPanel";
 import hamrohLogo from "@/assets/hamroh-logo.png";
 
 export const Route = createFileRoute("/admin")({
@@ -167,7 +169,7 @@ function sourceBadgeClass(s: string): string {
 function AdminPage() {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
-  const [tab, setTab] = useState<"bookings" | "applications" | "cities" | "guides" | "categories" | "places" | "suggestions" | "articles" | "social" | "users">("bookings");
+  const [tab, setTab] = useState<"bookings" | "applications" | "cities" | "guides" | "tours" | "spotlights" | "categories" | "places" | "suggestions" | "articles" | "social" | "users">("bookings");
   const [cities, setCities] = useState<City[]>([]);
   const [guides, setGuides] = useState<Guide[]>([]);
   const [articles, setArticles] = useState<Article[]>([]);
@@ -273,6 +275,18 @@ function AdminPage() {
             Guides ({guides.length})
           </button>
           <button
+            onClick={() => setTab("tours")}
+            className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "tours" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+          >
+            Tours
+          </button>
+          <button
+            onClick={() => setTab("spotlights")}
+            className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "spotlights" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+          >
+            Spotlight
+          </button>
+          <button
             onClick={() => setTab("categories")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "categories" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
@@ -314,6 +328,8 @@ function AdminPage() {
         {tab === "applications" && <ApplicationsPanel applications={applications} reload={loadData} />}
         {tab === "cities" && <CitiesPanel cities={cities} reload={loadData} />}
         {tab === "guides" && <GuidesPanel guides={guides} cities={cities} categories={categories} guideCategories={guideCategories} reload={loadData} />}
+        {tab === "tours" && <ToursPanel />}
+        {tab === "spotlights" && <SpotlightsPanel />}
         {tab === "categories" && <CategoriesPanel categories={categories} reload={loadData} />}
         {tab === "places" && <PlacesPanel places={places} cities={cities} guides={guides} placeGuides={placeGuides} reload={loadData} />}
         {tab === "suggestions" && <SuggestionsPanel suggestions={suggestions} cities={cities} reload={loadData} />}

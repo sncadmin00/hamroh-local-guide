@@ -1,48 +1,21 @@
-import guide1 from "@/assets/guide-1.jpg";
-import guide2 from "@/assets/guide-2.jpg";
-import heroSamarkand from "@/assets/hero-samarkand.jpg";
-import heroBukhara from "@/assets/hero-bukhara.jpg";
+// Spotlights are now stored in the `spotlights` table and managed via /admin.
+// This file keeps shared type definitions only.
 
-export type Spotlight = {
+export type SpotlightKind = "new_guide" | "new_route" | "news" | "new_tour";
+
+export type SpotlightRow = {
   id: string;
-  labelKey: string;
-  titleKey: string;
-  descKey: string;
-  image: string;
+  kind: SpotlightKind;
+  title_en: string;
+  title_uz: string;
+  title_ru: string;
+  description_en: string;
+  description_uz: string;
+  description_ru: string;
+  image_url: string | null;
   href: string;
+  is_active: boolean;
+  sort_order: number;
+  published_at: string;
+  expires_at: string | null;
 };
-
-export const spotlights: Spotlight[] = [
-  {
-    id: "aral-nukus",
-    labelKey: "spot.newGuide.label",
-    titleKey: "spot.aral.title",
-    descKey: "spot.aral.desc",
-    image: heroBukhara,
-    href: "/guides",
-  },
-  {
-    id: "samarkand-photo",
-    labelKey: "spot.newRoute.label",
-    titleKey: "spot.samarkand.title",
-    descKey: "spot.samarkand.desc",
-    image: heroSamarkand,
-    href: "/guides",
-  },
-  {
-    id: "guide-aziz",
-    labelKey: "spot.newGuide.label",
-    titleKey: "spot.aziz.title",
-    descKey: "spot.aziz.desc",
-    image: guide1,
-    href: "/guides",
-  },
-  {
-    id: "crafts-bazaar",
-    labelKey: "spot.news.label",
-    titleKey: "spot.crafts.title",
-    descKey: "spot.crafts.desc",
-    image: guide2,
-    href: "/guides",
-  },
-];
