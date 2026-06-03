@@ -85,7 +85,7 @@ export function SiteHeader() {
           <Link
             to="/wishlist"
             aria-label={t("nav.wishlist")}
-            className="hidden sm:inline-flex h-9 w-9 items-center justify-center rounded-full text-foreground/70 hover:text-foreground hover:bg-secondary/70 transition-colors"
+            className="hidden md:inline-flex h-9 w-9 items-center justify-center rounded-full text-foreground/70 hover:text-foreground hover:bg-secondary/70 transition-colors"
           >
             <Heart className="h-[18px] w-[18px]" />
           </Link>
