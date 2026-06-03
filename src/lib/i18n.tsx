@@ -97,11 +97,13 @@ export const translations: Dict = {
   "footer.tagline": { en: "Operated by Ark Labs LLC", uz: "Ark Labs LLC tomonidan boshqariladi", ru: "Оператор — Ark Labs LLC" },
 };
 
-const I18nContext = createContext<{ lang: Lang; setLang: (l: Lang) => void; t: (k: keyof typeof translations) => string }>({
+const I18nContext = createContext<{ lang: Lang; setLang: (l: Lang) => void; t: (k: keyof typeof translations) => string; tCategory: (slug: string, fallback?: string) => string }>({
   lang: "en",
   setLang: () => {},
   t: (k) => translations[k]?.en ?? String(k),
+  tCategory: (_slug, fallback) => fallback ?? "",
 });
+
 
 export function I18nProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>("en");
