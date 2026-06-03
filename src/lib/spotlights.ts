@@ -2,10 +2,12 @@
 // This file keeps shared type definitions only.
 
 export type SpotlightKind = "new_guide" | "new_route" | "news" | "new_tour";
+export type SpotlightBadge = "new" | "featured" | "trending" | "limited";
 
 export type SpotlightRow = {
   id: string;
   kind: SpotlightKind;
+  badge: SpotlightBadge | null;
   title_en: string;
   title_uz: string;
   title_ru: string;

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, ArrowUpRight } from "lucide-react";
 import { useSpotlights } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
-import type { SpotlightKind, SpotlightRow } from "@/lib/spotlights";
+import type { SpotlightBadge, SpotlightKind, SpotlightRow } from "@/lib/spotlights";
 
 const AUTOPLAY_MS = 6000;
 
@@ -16,18 +16,18 @@ const KIND_LABEL_KEY: Record<SpotlightKind, "spot.newGuide.label" | "spot.newRou
   new_tour: "spot.newTour.label",
 };
 
-const KIND_BADGE_KEY: Record<SpotlightKind, "spot.badge.new" | "spot.badge.featured" | "spot.badge.trending" | "spot.badge.limited"> = {
-  new_guide: "spot.badge.featured",
-  new_route: "spot.badge.trending",
-  news: "spot.badge.limited",
-  new_tour: "spot.badge.new",
+const BADGE_KEY: Record<SpotlightBadge, "spot.badge.new" | "spot.badge.featured" | "spot.badge.trending" | "spot.badge.limited"> = {
+  new: "spot.badge.new",
+  featured: "spot.badge.featured",
+  trending: "spot.badge.trending",
+  limited: "spot.badge.limited",
 };
 
-const KIND_BADGE_STYLE: Record<SpotlightKind, string> = {
-  new_guide: "bg-[#5e8a7e] text-white",
-  new_route: "bg-orange-500 text-white",
-  news: "bg-rose-500 text-white",
-  new_tour: "bg-amber-400 text-slate-900",
+const BADGE_STYLE: Record<SpotlightBadge, string> = {
+  new: "bg-[#5e8a7e] text-white",
+  featured: "bg-amber-400 text-slate-900",
+  trending: "bg-orange-500 text-white",
+  limited: "bg-rose-500 text-white",
 };
 
 export function SpotlightBanner() {
@@ -104,9 +104,11 @@ export function SpotlightBanner() {
             >
               <div className="relative h-44 w-44 sm:h-64 sm:w-64 shrink-0 overflow-hidden rounded-2xl ring-1 ring-white/60 shadow-md">
                 <img src={s.image_url || PLACEHOLDER} alt="" className="h-full w-full object-cover" loading="lazy" />
-                <span className={`absolute left-2 top-2 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider shadow-sm ${KIND_BADGE_STYLE[s.kind]}`}>
-                  {t(KIND_BADGE_KEY[s.kind])}
-                </span>
+                {s.badge && (
+                  <span className={`absolute left-2 top-2 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider shadow-sm ${BADGE_STYLE[s.badge]}`}>
+                    {t(BADGE_KEY[s.badge])}
+                  </span>
+                )}
               </div>
               <div className="min-w-0 flex-1 text-left">
                 <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-[#5e8a7e]">

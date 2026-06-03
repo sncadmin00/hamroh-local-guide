@@ -1,12 +1,21 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSpotlightsAdmin, SPOTLIGHT_KINDS } from "@/lib/content-queries";
-import type { SpotlightKind, SpotlightRow } from "@/lib/spotlights";
+import type { SpotlightBadge, SpotlightKind, SpotlightRow } from "@/lib/spotlights";
 import { toast } from "sonner";
 import { Trash2, Plus, Upload } from "lucide-react";
 
+const BADGE_OPTIONS: { value: SpotlightBadge | ""; label: string }[] = [
+  { value: "", label: "No badge" },
+  { value: "new", label: "New" },
+  { value: "featured", label: "Featured" },
+  { value: "trending", label: "Trending" },
+  { value: "limited", label: "Limited availability" },
+];
+
 const EMPTY: Partial<SpotlightRow> = {
   kind: "news",
+  badge: null,
   title_en: "",
   title_uz: "",
   title_ru: "",
@@ -138,6 +147,7 @@ function SpotlightEditor({
     setSaving(true);
     const payload = {
       kind: form.kind ?? "news",
+      badge: form.badge ?? null,
       title_en: form.title_en ?? "",
       title_uz: form.title_uz ?? "",
       title_ru: form.title_ru ?? "",
@@ -167,7 +177,7 @@ function SpotlightEditor({
         <button onClick={onClose} className="text-sm text-muted-foreground">Cancel</button>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-3 sm:grid-cols-3">
         <label className="text-sm">
           <span className="text-muted-foreground">Kind</span>
           <select
@@ -176,6 +186,16 @@ function SpotlightEditor({
             className="mt-1 w-full h-9 rounded-lg border border-border bg-background px-2"
           >
             {SPOTLIGHT_KINDS.map((k) => <option key={k} value={k}>{k}</option>)}
+          </select>
+        </label>
+        <label className="text-sm">
+          <span className="text-muted-foreground">Badge</span>
+          <select
+            value={form.badge ?? ""}
+            onChange={(e) => set("badge", (e.target.value || null) as SpotlightBadge | null)}
+            className="mt-1 w-full h-9 rounded-lg border border-border bg-background px-2"
+          >
+            {BADGE_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
           </select>
         </label>
         <label className="text-sm">
@@ -188,6 +208,7 @@ function SpotlightEditor({
           />
         </label>
       </div>
+
 
       <div className="grid gap-3 sm:grid-cols-3">
         {(["en","uz","ru"] as const).map((l) => (

@@ -1,0 +1,2 @@
+ALTER TABLE public.spotlights ADD COLUMN IF NOT EXISTS badge text;
+ALTER TABLE public.spotlights ADD CONSTRAINT spotlights_badge_check CHECK (badge IS NULL OR badge IN ('new','featured','trending','limited'));

@@ -1059,6 +1059,7 @@ export type Database = {
       }
       spotlights: {
         Row: {
+          badge: string | null
           created_at: string
           description_en: string
           description_ru: string
@@ -1077,6 +1078,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          badge?: string | null
           created_at?: string
           description_en?: string
           description_ru?: string
@@ -1095,6 +1097,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          badge?: string | null
           created_at?: string
           description_en?: string
           description_ru?: string
