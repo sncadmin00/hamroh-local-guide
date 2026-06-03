@@ -69,8 +69,9 @@ const SUGGEST_KEYS = ["hero.suggest.1", "hero.suggest.2", "hero.suggest.3", "her
 function Home() {
   const navigate = useNavigate();
   const create = useServerFn(createThread);
-  const { t } = useI18n();
+  const { t, tCategory } = useI18n();
   const { data: categories = [] } = useCategories();
+
   const [input, setInput] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [listening, setListening] = useState(false);
@@ -264,7 +265,7 @@ function Home() {
                   <span className="w-7 h-7 rounded-full bg-gradient-to-br from-[#62A1B1]/15 to-[#D5A08D]/15 flex items-center justify-center text-slate-700">
                     <CategoryIcon name={c.icon} className="h-4 w-4" strokeWidth={1.75} />
                   </span>
-                  <span className="text-sm font-medium text-slate-800 whitespace-nowrap">{c.name}</span>
+                  <span className="text-sm font-medium text-slate-800 whitespace-nowrap">{tCategory(c.slug, c.name)}</span>
                 </Link>
               ))}
             </div>

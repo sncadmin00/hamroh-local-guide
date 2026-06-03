@@ -7,6 +7,8 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { notifyAdminsOfGuideApplication } from "@/lib/newsletter.functions";
+import { useI18n } from "@/lib/i18n";
+
 
 
 export const Route = createFileRoute("/become-a-guide")({
@@ -52,9 +54,11 @@ async function uploadTo(bucket: string, file: File): Promise<string> {
 
 function BecomeAGuidePage() {
   const notifyAdmins = useServerFn(notifyAdminsOfGuideApplication);
+  const { tCategory } = useI18n();
 
   const [cities, setCities] = useState<{ id: string; name: string }[]>([]);
-  const [categories, setCategories] = useState<{ id: string; name: string; icon: string }[]>([]);
+  const [categories, setCategories] = useState<{ id: string; slug: string; name: string; icon: string }[]>([]);
+
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [submitted, setSubmitted] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -82,7 +86,7 @@ function BecomeAGuidePage() {
       });
     supabase
       .from("categories")
-      .select("id, name, icon")
+      .select("id, slug, name, icon")
       .order("sort_order")
       .then(({ data }) => {
         if (data) setCategories(data);
@@ -274,7 +278,8 @@ function BecomeAGuidePage() {
                             : "border-input bg-background text-foreground hover:bg-secondary/40"
                         }`}
                       >
-                        {c.name}
+                        {tCategory(c.slug, c.name)}
+
                       </button>
                     );
                   })}

@@ -6,6 +6,8 @@ import { GuideCard } from "@/components/GuideCard";
 import { CityPicker } from "@/components/CityPicker";
 import { CategoryIcon } from "@/components/CategoryIcon";
 import { useGuides, useCategories } from "@/lib/content-queries";
+import { useI18n } from "@/lib/i18n";
+
 
 export const Route = createFileRoute("/guides")({
   validateSearch: (search: Record<string, unknown>): { city?: string; category?: string } => ({
@@ -22,7 +24,9 @@ export const Route = createFileRoute("/guides")({
 });
 
 function GuidesPage() {
+  const { tCategory } = useI18n();
   const { city: initialCity, category: initialCategory } = Route.useSearch();
+
   const [city, setCity] = useState<"All" | string>(initialCity ?? "All");
   const [category, setCategory] = useState<"All" | string>(initialCategory ?? "All");
   const [lang, setLang] = useState<string>("All");
@@ -98,7 +102,7 @@ function GuidesPage() {
                   }`}
                 >
                   <CategoryIcon name={c.icon} className="h-4 w-4" />
-                  {c.name}
+                  {tCategory(c.slug, c.name)}
                 </button>
               );
             })}
