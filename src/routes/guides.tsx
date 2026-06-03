@@ -6,6 +6,8 @@ import { GuideCard } from "@/components/GuideCard";
 import { CityPicker } from "@/components/CityPicker";
 import { CategoryIcon } from "@/components/CategoryIcon";
 import { useGuides, useCategories } from "@/lib/content-queries";
+import { useI18n } from "@/lib/i18n";
+
 
 export const Route = createFileRoute("/guides")({
   validateSearch: (search: Record<string, unknown>): { city?: string; category?: string } => ({
