@@ -54,9 +54,11 @@ async function uploadTo(bucket: string, file: File): Promise<string> {
 
 function BecomeAGuidePage() {
   const notifyAdmins = useServerFn(notifyAdminsOfGuideApplication);
+  const { tCategory } = useI18n();
 
   const [cities, setCities] = useState<{ id: string; name: string }[]>([]);
-  const [categories, setCategories] = useState<{ id: string; name: string; icon: string }[]>([]);
+  const [categories, setCategories] = useState<{ id: string; slug: string; name: string; icon: string }[]>([]);
+
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [submitted, setSubmitted] = useState(false);
   const [saving, setSaving] = useState(false);
