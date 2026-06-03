@@ -104,9 +104,11 @@ export function SpotlightBanner() {
             >
               <div className="relative h-44 w-44 sm:h-64 sm:w-64 shrink-0 overflow-hidden rounded-2xl ring-1 ring-white/60 shadow-md">
                 <img src={s.image_url || PLACEHOLDER} alt="" className="h-full w-full object-cover" loading="lazy" />
-                <span className={`absolute left-2 top-2 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider shadow-sm ${KIND_BADGE_STYLE[s.kind]}`}>
-                  {t(KIND_BADGE_KEY[s.kind])}
-                </span>
+                {s.badge && (
+                  <span className={`absolute left-2 top-2 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider shadow-sm ${BADGE_STYLE[s.badge]}`}>
+                    {t(BADGE_KEY[s.badge])}
+                  </span>
+                )}
               </div>
               <div className="min-w-0 flex-1 text-left">
                 <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-[#5e8a7e]">
