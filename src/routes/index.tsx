@@ -160,14 +160,8 @@ function Home() {
           <SpotlightBanner />
 
 
-          {/* Headline */}
-          <div className="text-center space-y-5 md:space-y-6 mb-10 md:mb-14">
-            <h1 className="font-display text-4xl md:text-7xl font-semibold tracking-tight text-slate-900 leading-[1.05]">
-              {t("hero.title")}
-            </h1>
-            <p className="text-base md:text-lg text-slate-500 max-w-lg mx-auto leading-relaxed font-light">
-              {t("hero.subtitle")}
-            </p>
+          {/* Stats + trust */}
+          <div className="text-center space-y-4 mb-6 md:mb-8">
             <p className="text-sm text-slate-500 flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
               <span><span className="font-semibold text-slate-700">1,240</span> {t("hero.stats.guides")}</span>
               <span className="text-slate-300" aria-hidden>·</span>
@@ -176,6 +170,17 @@ function Home() {
               <span><span className="font-semibold text-slate-700">12,000</span> {t("hero.stats.travelers")}</span>
             </p>
             <TrustBar />
+
+            {/* How it works — moved above AI input */}
+            <div className="flex items-center justify-center gap-2 sm:gap-3 text-sm text-slate-500 flex-wrap pt-1">
+              {[t("how.step1.title"), t("how.step2.title"), t("how.step3.title")].map((label, i) => (
+                <div key={i} className="flex items-center gap-2 sm:gap-3">
+                  {i > 0 && <span className="hidden sm:block w-6 h-px bg-slate-200" aria-hidden />}
+                  <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-[#8BB5A9]/15 text-[#5e8a7e] text-[11px] font-semibold">{i + 1}</span>
+                  <span>{label}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
 
@@ -230,16 +235,8 @@ function Home() {
           {/* Tagline under input */}
           <p className="mt-3 text-xs text-slate-400">{t("hero.tagline")}</p>
 
-          {/* How it works — inline mini steps */}
-          <div className="mt-6 flex items-center justify-center gap-2 sm:gap-3 text-sm text-slate-500 flex-wrap">
-            {[t("how.step1.title"), t("how.step2.title"), t("how.step3.title")].map((label, i) => (
-              <div key={i} className="flex items-center gap-2 sm:gap-3">
-                {i > 0 && <span className="hidden sm:block w-6 h-px bg-slate-200" aria-hidden />}
-                <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-[#8BB5A9]/15 text-[#5e8a7e] text-[11px] font-semibold">{i + 1}</span>
-                <span>{label}</span>
-              </div>
-            ))}
-          </div>
+          {/* How it works moved above input */}
+
 
           {/* Suggestions */}
           <div className="flex flex-wrap justify-center gap-2.5 mt-6 max-w-2xl">
