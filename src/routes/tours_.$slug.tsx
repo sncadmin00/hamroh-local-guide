@@ -4,6 +4,8 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { useTour } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
 import { Clock, MapPin, Check, X } from "lucide-react";
+import { WishlistHeart } from "@/components/WishlistHeart";
+
 
 export const Route = createFileRoute("/tours_/$slug")({
   head: () => ({ meta: [{ title: "Tour — Hamroh" }] }),
@@ -53,9 +55,11 @@ function TourDetailPage() {
 
         <div className="mt-4 grid gap-6 lg:grid-cols-[2fr_1fr]">
           <div>
-            <div className="aspect-[16/9] overflow-hidden rounded-2xl bg-secondary">
+            <div className="relative aspect-[16/9] overflow-hidden rounded-2xl bg-secondary">
               <img src={tour.cover_url || PLACEHOLDER} alt={tour.title} className="h-full w-full object-cover" />
+              <WishlistHeart type="tour" id={tour.id} size="lg" className="absolute right-4 top-4" />
             </div>
+
 
             <div className="mt-5 flex items-center gap-3 text-sm text-muted-foreground">
               {tour.cities?.name && (

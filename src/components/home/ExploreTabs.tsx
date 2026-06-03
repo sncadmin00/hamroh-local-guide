@@ -3,7 +3,9 @@ import { Link } from "@tanstack/react-router";
 import { Clock } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { GuideCard } from "@/components/GuideCard";
+import { WishlistHeart } from "@/components/WishlistHeart";
 import { FeaturedGuides } from "@/components/home/FeaturedGuides";
+
 import { TopTours } from "@/components/home/TopTours";
 import { PopularCities } from "@/components/home/PopularCities";
 import { BrowseByInterest } from "@/components/home/BrowseByInterest";
@@ -89,7 +91,7 @@ export function ExploreTabs() {
                     params={{ slug: tour.slug }}
                     className="group rounded-2xl border border-border bg-card overflow-hidden hover:shadow-md transition-shadow"
                   >
-                    <div className="aspect-[4/3] bg-secondary overflow-hidden">
+                    <div className="relative aspect-[4/3] bg-secondary overflow-hidden">
                       {tour.cover_url ? (
                         <img
                           src={tour.cover_url}
@@ -98,7 +100,9 @@ export function ExploreTabs() {
                           className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform"
                         />
                       ) : null}
+                      <WishlistHeart type="tour" id={tour.id} className="absolute right-3 top-3" />
                     </div>
+
                     <div className="p-4">
                       <h3 className="font-display text-base font-semibold text-foreground line-clamp-2">
                         {tour.title}

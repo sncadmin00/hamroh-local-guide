@@ -2,6 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { Clock } from "lucide-react";
 import { useTours } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
+import { WishlistHeart } from "@/components/WishlistHeart";
+
 
 export function TopTours() {
   const { t } = useI18n();
@@ -36,7 +38,7 @@ export function TopTours() {
                 params={{ slug: tour.slug }}
                 className="group w-72 shrink-0 snap-start rounded-2xl border border-border bg-card overflow-hidden hover:shadow-md transition-shadow"
               >
-                <div className="aspect-[4/3] bg-secondary overflow-hidden">
+                <div className="relative aspect-[4/3] bg-secondary overflow-hidden">
                   {tour.cover_url ? (
                     <img
                       src={tour.cover_url}
@@ -45,7 +47,9 @@ export function TopTours() {
                       className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform"
                     />
                   ) : null}
+                  <WishlistHeart type="tour" id={tour.id} className="absolute right-3 top-3" />
                 </div>
+
                 <div className="p-4">
                   <h3 className="font-display text-base font-semibold text-foreground line-clamp-2">
                     {tour.title}

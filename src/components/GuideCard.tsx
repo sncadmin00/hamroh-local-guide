@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Star, BadgeCheck, Zap, MapPin } from "lucide-react";
 import type { Guide } from "@/data/guides";
+import { WishlistHeart } from "@/components/WishlistHeart";
 
 export function GuideCard({ guide }: { guide: Guide }) {
   return (
@@ -30,7 +31,9 @@ export function GuideCard({ guide }: { guide: Guide }) {
             </span>
           )}
         </div>
+        <WishlistHeart type="guide" id={guide.dbId} className="absolute right-3 top-3" />
       </div>
+
       <div className="flex flex-1 flex-col p-5">
         <div className="flex items-center justify-between gap-2">
           <h3 className="font-display text-xl font-semibold">{guide.name}</h3>

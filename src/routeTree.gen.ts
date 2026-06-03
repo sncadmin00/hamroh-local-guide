@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WishlistRouteImport } from './routes/wishlist'
 import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as ToursRouteImport } from './routes/tours'
 import { Route as TermsRouteImport } from './routes/terms'
@@ -51,6 +52,11 @@ import { Route as ApiPublicHooksChatNotificationsRouteImport } from './routes/ap
 import { Route as ApiPublicHooksBookingReviewsRouteImport } from './routes/api/public/hooks/booking-reviews'
 import { Route as ApiPublicHooksBookingRemindersRouteImport } from './routes/api/public/hooks/booking-reminders'
 
+const WishlistRoute = WishlistRouteImport.update({
+  id: '/wishlist',
+  path: '/wishlist',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UnsubscribeRoute = UnsubscribeRouteImport.update({
   id: '/unsubscribe',
   path: '/unsubscribe',
@@ -286,6 +292,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/tours': typeof ToursRoute
   '/unsubscribe': typeof UnsubscribeRoute
+  '/wishlist': typeof WishlistRoute
   '/ai/$threadId': typeof AiThreadIdRoute
   '/api/chat': typeof ApiChatRoute
   '/book/$guideId': typeof BookGuideIdRoute
@@ -328,6 +335,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/tours': typeof ToursRoute
   '/unsubscribe': typeof UnsubscribeRoute
+  '/wishlist': typeof WishlistRoute
   '/ai/$threadId': typeof AiThreadIdRoute
   '/api/chat': typeof ApiChatRoute
   '/book/$guideId': typeof BookGuideIdRoute
@@ -372,6 +380,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/tours': typeof ToursRoute
   '/unsubscribe': typeof UnsubscribeRoute
+  '/wishlist': typeof WishlistRoute
   '/ai/$threadId': typeof AiThreadIdRoute
   '/api/chat': typeof ApiChatRoute
   '/book/$guideId': typeof BookGuideIdRoute
@@ -417,6 +426,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/tours'
     | '/unsubscribe'
+    | '/wishlist'
     | '/ai/$threadId'
     | '/api/chat'
     | '/book/$guideId'
@@ -459,6 +469,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/tours'
     | '/unsubscribe'
+    | '/wishlist'
     | '/ai/$threadId'
     | '/api/chat'
     | '/book/$guideId'
@@ -502,6 +513,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/tours'
     | '/unsubscribe'
+    | '/wishlist'
     | '/ai/$threadId'
     | '/api/chat'
     | '/book/$guideId'
@@ -546,6 +558,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   ToursRoute: typeof ToursRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
+  WishlistRoute: typeof WishlistRoute
   ApiChatRoute: typeof ApiChatRoute
   BookGuideIdRoute: typeof BookGuideIdRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
@@ -566,6 +579,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/wishlist': {
+      id: '/wishlist'
+      path: '/wishlist'
+      fullPath: '/wishlist'
+      preLoaderRoute: typeof WishlistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/unsubscribe': {
       id: '/unsubscribe'
       path: '/unsubscribe'
@@ -913,6 +933,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   ToursRoute: ToursRoute,
   UnsubscribeRoute: UnsubscribeRoute,
+  WishlistRoute: WishlistRoute,
   ApiChatRoute: ApiChatRoute,
   BookGuideIdRoute: BookGuideIdRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
