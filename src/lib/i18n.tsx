@@ -36,9 +36,9 @@ export const translations: Dict = {
     ru: "Найдите проверенного спутника за 30 секунд",
   },
   "hero.h1sub": {
-    en: "Tell Hamroh AI about your trip — get matched with a verified guide in Uzbekistan and beyond.",
-    uz: "Hamroh AI'ga sayohatingiz haqida aytib bering — O'zbekiston va undan tashqaridagi tasdiqlangan hamrohni toping.",
-    ru: "Расскажите Hamroh AI о поездке — подберём проверенного гида в Узбекистане и за его пределами.",
+    en: "Get matched with a verified local guide who can show you the city, translate, and help you travel like a local.",
+    uz: "Sizga shaharni ko'rsatadigan, tarjima qiladigan va mahalliy aholi kabi sayohat qilishga yordam beradigan tasdiqlangan mahalliy hamrohni toping.",
+    ru: "Найдите проверенного местного гида, который покажет город, переведет и поможет путешествовать как местный.",
   },
   "hero.subtitle": {
     en: "Describe the trip you want. Hamroh AI matches you with a verified local guide.",
