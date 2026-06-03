@@ -61,7 +61,7 @@ export function SpotlightBanner() {
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
-      <div className="relative overflow-hidden rounded-2xl border border-slate-200/70 bg-gradient-to-br from-[#8BB5A9]/10 to-[#D5A08D]/10 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.08)]">
+      <div className="relative overflow-hidden rounded-3xl border border-slate-200/70 bg-gradient-to-br from-[#8BB5A9]/10 to-[#D5A08D]/10 shadow-[0_12px_40px_-15px_rgba(0,0,0,0.12)]">
         {items.map((s, i) => {
           const active = i === index;
           const { title, desc } = pick(s);
@@ -71,23 +71,23 @@ export function SpotlightBanner() {
               href={s.href}
               aria-hidden={!active}
               tabIndex={active ? 0 : -1}
-              className={`${active ? "relative opacity-100" : "absolute inset-0 opacity-0 pointer-events-none"} flex items-center gap-4 p-3 sm:p-4 transition-opacity duration-500`}
+              className={`${active ? "relative opacity-100" : "absolute inset-0 opacity-0 pointer-events-none"} flex items-center gap-4 sm:gap-5 p-4 sm:p-5 transition-opacity duration-500`}
             >
-              <div className="relative h-16 w-16 sm:h-20 sm:w-20 shrink-0 overflow-hidden rounded-xl ring-1 ring-white/60 shadow-sm">
+              <div className="relative h-28 w-28 sm:h-36 sm:w-36 shrink-0 overflow-hidden rounded-2xl ring-1 ring-white/60 shadow-md">
                 <img src={s.image_url || PLACEHOLDER} alt="" className="h-full w-full object-cover" loading="lazy" />
               </div>
               <div className="min-w-0 flex-1 text-left">
-                <div className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-[#5e8a7e]">
+                <div className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-[#5e8a7e]">
                   {t(KIND_LABEL_KEY[s.kind])}
                 </div>
-                <div className="mt-0.5 truncate text-sm sm:text-base font-semibold text-slate-800">
+                <div className="mt-1 line-clamp-2 text-base sm:text-xl font-semibold text-slate-800 leading-snug">
                   {title}
                 </div>
-                <div className="mt-0.5 line-clamp-1 text-xs sm:text-sm text-slate-500">
+                <div className="mt-1.5 line-clamp-2 text-sm sm:text-base text-slate-500 leading-relaxed">
                   {desc}
                 </div>
               </div>
-              <ArrowUpRight className="h-5 w-5 shrink-0 text-slate-400 group-hover:text-slate-700 transition-colors" />
+              <ArrowUpRight className="h-6 w-6 sm:h-7 sm:w-7 shrink-0 text-slate-400 group-hover:text-slate-700 transition-colors" />
             </a>
           );
         })}
