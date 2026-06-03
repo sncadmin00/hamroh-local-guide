@@ -66,7 +66,7 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
-const SUGGEST_KEYS = ["hero.suggest.1", "hero.suggest.2", "hero.suggest.3", "hero.suggest.4"] as const;
+
 
 function Home() {
   const navigate = useNavigate();
@@ -238,22 +238,6 @@ function Home() {
           {/* How it works moved above input */}
 
 
-          {/* Suggestions */}
-          <div className="flex flex-wrap justify-center gap-2.5 mt-6 max-w-2xl">
-            {SUGGEST_KEYS.map((k) => {
-              const label = t(k);
-              return (
-                <button
-                  key={k}
-                  onClick={() => submit(label)}
-                  disabled={submitting}
-                  className="px-4 py-2 rounded-full border border-slate-200/70 bg-white/50 text-sm text-slate-500 hover:border-slate-300 hover:text-slate-800 hover:bg-white transition-all"
-                >
-                  {label}
-                </button>
-              );
-            })}
-          </div>
 
           {/* Secondary action */}
           <Link
