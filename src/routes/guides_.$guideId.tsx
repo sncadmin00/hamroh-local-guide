@@ -6,6 +6,8 @@ import { useGuide } from "@/lib/content-queries";
 import { supabase } from "@/integrations/supabase/client";
 import { GuideReviews } from "@/components/GuideReviews";
 import { GuidePostsFeed } from "@/components/GuidePostsFeed";
+import { WishlistHeart } from "@/components/WishlistHeart";
+
 
 const SITE_URL = "https://hamroh-local-guide.lovable.app";
 
@@ -96,9 +98,11 @@ function GuidePage() {
       <section className="container mx-auto px-4 py-8 md:py-12">
         <div className="grid gap-10 lg:grid-cols-[1.2fr_1fr]">
           <div>
-            <div className="overflow-hidden rounded-3xl">
+            <div className="relative overflow-hidden rounded-3xl">
               <img src={guide.photo} alt={guide.name} width={1200} height={900} className="aspect-[4/3] w-full object-cover" />
+              <WishlistHeart type="guide" id={guide.dbId} size="lg" className="absolute right-4 top-4" />
             </div>
+
             <div className="mt-6 flex flex-wrap items-center gap-2">
               {guide.verified && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
