@@ -49,7 +49,7 @@ export function PopularCities() {
   const nearestCity = nearestName ? cities.find((c) => c.name === nearestName) ?? null : null;
 
   return (
-    <section className="px-6 py-16 md:py-20">
+    <section className="px-6 py-10 md:py-20">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-10">
           <h2 className="font-display text-2xl md:text-3xl font-semibold text-foreground">
@@ -86,7 +86,7 @@ export function PopularCities() {
                   search={{ city: c.name }}
                   className="group relative block overflow-hidden rounded-xl md:rounded-2xl bg-card ring-1 ring-border hover:shadow-lg transition-all"
                 >
-                  <div className="relative aspect-[3/4] md:aspect-[4/5] overflow-hidden bg-secondary">
+                  <div className="relative aspect-[4/5] overflow-hidden bg-secondary">
                     {meta?.image && (
                       <img
                         src={meta.image}
@@ -121,7 +121,7 @@ export function PopularCities() {
               key={c.name}
               className="relative overflow-hidden rounded-xl md:rounded-2xl ring-1 ring-dashed ring-border bg-secondary/40"
             >
-              <div className="relative aspect-[3/4] md:aspect-[4/5] flex flex-col items-center justify-center p-4 md:p-6 text-center">
+              <div className="relative aspect-[4/5] flex flex-col items-center justify-center p-4 md:p-6 text-center">
                 <span className="inline-flex items-center gap-1 rounded-full bg-background/80 ring-1 ring-border px-2.5 py-0.5 md:px-3 md:py-1 text-[10px] md:text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
                   <Clock className="h-2.5 w-2.5 md:h-3 md:w-3" />
                   Coming soon

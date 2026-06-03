@@ -1,62 +1,24 @@
-# Plan: 5 ulushenij glavnoy stranicy Hamroh
+## Problem
+На мобиле (390px) карточки в горизонтальных скроллах (Featured Guides, Top Tours) имеют ширину `w-72` (288px) — почти весь экран, и картинки `aspect-[4/3]` получаются ~216px высотой. Выглядит непропорционально большим.
 
-## 1. Dobavit H1 i perekomponovat hero
-**Fayl:** `src/routes/index.tsx`
+Города (Popular Cities) тоже занимают много вертикали — `aspect-[3/4]` в 2 колонки.
 
-- Dobavit krupnyy zagolovok H1 nad statistikoy: "Naydite proverennogo mestnogo gida za 30 sekund" (s perevodami v `i18n`)
-- Podzagolovok pod nim: "AI podberyot vam ideal'nogo gida v Uzbekistane i ne tol'ko"
-- Umen'shit verkhniy padding (`py-10 md:py-24` → `py-6 md:py-16`)
-- Peremestit' statistiku + trust-bar **pod** AI-input (sayichas oni sverkhu i otvlekayut ot glavnogo CTA — inputa)
-- Poryadok: SpotlightBanner → H1 → podzagolovok → AI-input → tagline → statistika → trust-bar → "how it works" steps
+## Changes
 
-## 2. Skeleton-loadery vmesto "Loading..."
-**Fayly:** `src/components/home/FeaturedGuides.tsx`, `TopTours.tsx`, `PopularCities.tsx`, `src/components/home/ExploreTabs.tsx`
+**1. `src/components/home/FeaturedGuides.tsx`**
+- Mobile scroll card: `w-72` → `w-60` (288 → 240px), чтобы вторая карточка явно выглядывала справа (peek = affordance скролла).
 
-- Zamenit' tekstovyy `<EmptyState>Loading…</EmptyState>` na shimmer-karochki ispol'zuya `Skeleton` iz `@/components/ui/skeleton`
-- Pokazyvat' 3-6 skeleton-karochek s temi je proportsiyami (aspect-ratio), chto i nastoyaschie karochki
-- Razlichit' "zagrujaetsya" (skeleton) vs "pusto" (drugoy state s ikonkoy)
+**2. `src/components/home/TopTours.tsx`**
+- Mobile scroll card: `w-72` → `w-60`.
+- Desktop остаётся как есть (тот же `w-72` достаточно компактен на ≥md).
 
-## 3. Novye sektsii "Pochemu Hamroh" + FAQ
-**Novye fayly:**
-- `src/components/home/WhyHamroh.tsx` — 4 karochki s ikonkami: Proverennye gidy / Pryamaya svyaz / Bezopasnaya oplata / Besplatnaya otmena
-- `src/components/home/HomeFaq.tsx` — 5-6 voprosov v `Accordion` iz shadcn (Kak rabotaet? Kak oplachivat'? Mojno li otmenit'? i t.d.)
+**3. `src/components/home/PopularCities.tsx`**
+- Mobile aspect: `aspect-[3/4]` → `aspect-[4/5]` (короче по высоте, картинки меньше). Desktop `md:aspect-[4/5]` остаётся.
 
-**Vstavit' v** `src/routes/index.tsx` mejdu `ExploreTabs` i `LatestPosts`:
-```
-<ExploreTabs />
-<WhyHamroh />
-<LatestPosts />
-<FeaturedReviews />
-<HomeFaq />
-<BecomeGuideCTA />
-```
+**4. Sections vertical padding (опционально, для общей компактности на мобиле)**
+- `FeaturedGuides`, `TopTours`, `PopularCities`: `py-16 md:py-20` → `py-10 md:py-20`.
 
-Dobavit' JSON-LD `FAQPage` schema v `head()` glavnoy stranicy dlya SEO.
-
-## 4. Pochinit' header
-**Fayl:** `src/components/SiteHeader.tsx`
-
-- "Find a guide" → "Guides" (chtoby ne perenosilos' na 2 stroki)
-- "BOOK" → "Book" (ubrat' kaps, sdelat' kak ostal'nye punkty)
-- Na mobile spryatat' ikonku heart v menu (ostavit' tol'ko EN, gamburger, user)
-- Dobavit' `whitespace-nowrap` na nav-linki
-
-## 5. Garmonizirovat' "Become a guide" banner
-**Fayl:** `src/components/home/BecomeGuideCTA.tsx`
-
-- Zamenit' temno-siniy gradient na brendovyy: ot `#8BB5A9` (sage) k `#D5A08D` (terracotta)
-- Ili variant: teplyy beje fon s tekstom temnym i CTA-knopkoy sage
-- Sokhranit' okruglyye uglovaya i shadow, no obnovit' tsveta pod paletu sayta
-
-## Tekhnicheskie zametki
-- Vse novye stroki teksta dobavlyayutsya v `src/lib/i18n.tsx` dlya vseh podderjivaemyh yazykov (en, ru, uz)
-- Dlya skeletonov ispol'zovat' suschestvuyuschiy `Skeleton` komponent
-- FAQ Accordion uje est' v `src/components/ui/accordion.tsx`
-- WhyHamroh ikonki vzyat' iz `lucide-react` (ShieldCheck, MessageCircle, CreditCard, RefreshCw)
-- Posle dobavleniya FAQ obnovit' JSON-LD v `head()` route `/` dobavit' `FAQPage` schema
-
-## Chto ne menyaem
-- AI-input i ego stilizatsiya (rabotaet horosho)
-- Logika `ExploreTabs` na desktope
-- Karochki gorodov (uje pochineny)
-- Spotlight banner
+## Out of scope
+- Десктопная сетка/раскладка.
+- Tabs (ExploreTabs) — на мобиле уже не показываются.
+- Контент/тексты карточек.
