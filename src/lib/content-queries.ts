@@ -141,6 +141,69 @@ export type GuidePost = {
   postedAt: string | null;
 };
 
+export type LatestPost = GuidePost & { guideId: string; guideSlug: string; guideName: string };
+
+export function useLatestPosts(limit = 12) {
+  return useQuery({
+    queryKey: ["latest-posts", limit],
+    queryFn: async (): Promise<LatestPost[]> => {
+      const { data, error } = await supabase
+        .from("guide_posts")
+        .select("id, platform, url, thumbnail_url, caption, posted_at, guide_id, guides(slug, name)")
+        .eq("visible", true)
+        .order("posted_at", { ascending: false, nullsFirst: false })
+        .limit(limit);
+      if (error) throw error;
+      return (data ?? [])
+        .filter((p: any) => p.guides)
+        .map((p: any) => ({
+          id: p.id,
+          platform: p.platform as GuidePost["platform"],
+          url: p.url,
+          thumbnailUrl: p.thumbnail_url,
+          caption: p.caption ?? "",
+          postedAt: p.posted_at,
+          guideId: p.guide_id,
+          guideSlug: p.guides.slug,
+          guideName: p.guides.name,
+        }));
+    },
+  });
+}
+
+export type FeaturedReview = {
+  id: string;
+  rating: number;
+  comment: string;
+  authorName: string;
+  guideName: string | null;
+};
+
+export function useFeaturedReviews() {
+  return useQuery({
+    queryKey: ["featured-reviews"],
+    queryFn: async (): Promise<FeaturedReview[]> => {
+      const { data, error } = await supabase
+        .from("reviews")
+        .select("id, rating, comment, user_id, guides(name)")
+        .eq("rating", 5)
+        .order("created_at", { ascending: false })
+        .limit(20);
+      if (error) throw error;
+      return (data ?? [])
+        .filter((r: any) => (r.comment ?? "").trim().length >= 40)
+        .slice(0, 3)
+        .map((r: any) => ({
+          id: r.id,
+          rating: r.rating,
+          comment: r.comment,
+          authorName: "Traveler",
+          guideName: r.guides?.name ?? null,
+        }));
+    },
+  });
+}
+
 export function useGuidePosts(guideId: string | undefined) {
   return useQuery({
     queryKey: ["guide-posts", guideId],

@@ -5,6 +5,13 @@ import { ArrowUp, Mic } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { CategoryIcon } from "@/components/CategoryIcon";
+import { TrustBar } from "@/components/home/TrustBar";
+import { HowItWorks } from "@/components/home/HowItWorks";
+import { FeaturedGuides } from "@/components/home/FeaturedGuides";
+import { PopularCities } from "@/components/home/PopularCities";
+import { LatestPosts } from "@/components/home/LatestPosts";
+import { FeaturedReviews } from "@/components/home/FeaturedReviews";
+import { BecomeGuideCTA } from "@/components/home/BecomeGuideCTA";
 import { supabase } from "@/integrations/supabase/client";
 import hamrohH from "@/assets/hamroh-h.png.asset.json";
 import { createThread } from "@/lib/ai-threads.functions";
@@ -14,19 +21,50 @@ import { useI18n } from "@/lib/i18n";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Hamroh — What's up? with AI" },
-      { name: "description", content: "Chat with Hamroh AI to find a verified local guide. Tell us your trip, get matched in seconds." },
+      { title: "Hamroh — Find your verified local guide with AI" },
+      { name: "description", content: "Chat with Hamroh AI to find a verified local guide in Uzbekistan and beyond. Tell us your trip, get matched in seconds, book and chat directly." },
+      { property: "og:title", content: "Hamroh — Find your verified local guide with AI" },
+      { property: "og:description", content: "Chat with Hamroh AI to find a verified local guide. Tell us your trip, get matched in seconds." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://hamroh-local-guide.lovable.app/" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Hamroh — Find your verified local guide with AI" },
+      { name: "twitter:description", content: "Tell us your trip, get matched with a verified local guide in seconds." },
+    ],
+    links: [
+      { rel: "canonical", href: "https://hamroh-local-guide.lovable.app/" },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "Hamroh",
+          url: "https://hamroh-local-guide.lovable.app/",
+          potentialAction: {
+            "@type": "SearchAction",
+            target: "https://hamroh-local-guide.lovable.app/guides?q={query}",
+            "query-input": "required name=query",
+          },
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "Hamroh",
+          url: "https://hamroh-local-guide.lovable.app/",
+          description: "AI-powered marketplace for verified local guides.",
+        }),
+      },
     ],
   }),
   component: Home,
 });
 
-const SUGGESTIONS = [
-  "Korean-speaking food guide",
-  "Sunset photography tour",
-  "Family-friendly history walk",
-  "Half-day artisan workshop",
-];
+const SUGGEST_KEYS = ["hero.suggest.1", "hero.suggest.2", "hero.suggest.3", "hero.suggest.4"] as const;
 
 function Home() {
   const navigate = useNavigate();
@@ -105,10 +143,10 @@ function Home() {
     <div className="min-h-screen flex flex-col bg-background">
       <SiteHeader />
 
-      <main className="flex-1 flex items-center justify-center px-6 py-16 md:py-24">
+      <main className="flex items-center justify-center px-6 py-10 md:py-24">
         <div className="w-full max-w-3xl mx-auto flex flex-col items-center">
           {/* Brand icon with ambient glow */}
-          <div className="relative mb-10 md:mb-12">
+          <div className="relative mb-8 md:mb-12">
             <div className="absolute inset-0 blur-2xl opacity-30 bg-gradient-to-br from-[#62A1B1] to-[#D5A08D] scale-150 rounded-full" />
             <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-[2rem] bg-gradient-to-br from-[#62A1B1] via-[#8BB5A9] to-[#D5A08D] flex items-center justify-center shadow-2xl shadow-slate-900/10 ring-1 ring-white/40">
               <img src={hamrohH.url} alt="Hamroh brand logo" className="h-12 md:h-14 w-auto" />
@@ -116,13 +154,14 @@ function Home() {
           </div>
 
           {/* Headline */}
-          <div className="text-center space-y-5 md:space-y-6 mb-12 md:mb-16">
-            <h1 className="font-display md:text-7xl font-semibold tracking-tight text-slate-900 leading-[1.05] text-3xl">
+          <div className="text-center space-y-5 md:space-y-6 mb-10 md:mb-14">
+            <h1 className="font-display text-4xl md:text-7xl font-semibold tracking-tight text-slate-900 leading-[1.05]">
               {t("hero.title")}
             </h1>
             <p className="text-base md:text-lg text-slate-500 max-w-lg mx-auto leading-relaxed font-light">
               {t("hero.subtitle")}
             </p>
+            <TrustBar />
           </div>
 
           {/* AI Input with hover glow */}
@@ -173,33 +212,42 @@ function Home() {
             </div>
           </form>
 
+          {/* Tagline under input */}
+          <p className="mt-3 text-xs text-slate-400">{t("hero.tagline")}</p>
+
           {/* Suggestions */}
-          <div className="flex flex-wrap justify-center gap-2.5 mt-8 max-w-2xl">
-            {SUGGESTIONS.map((s) => (
-              <button
-                key={s}
-                onClick={() => submit(s)}
-                disabled={submitting}
-                className="px-4 py-2 rounded-full border border-slate-200/70 bg-white/50 text-sm text-slate-500 hover:border-slate-300 hover:text-slate-800 hover:bg-white transition-all"
-              >
-                {s}
-              </button>
-            ))}
+          <div className="flex flex-wrap justify-center gap-2.5 mt-6 max-w-2xl">
+            {SUGGEST_KEYS.map((k) => {
+              const label = t(k);
+              return (
+                <button
+                  key={k}
+                  onClick={() => submit(label)}
+                  disabled={submitting}
+                  className="px-4 py-2 rounded-full border border-slate-200/70 bg-white/50 text-sm text-slate-500 hover:border-slate-300 hover:text-slate-800 hover:bg-white transition-all"
+                >
+                  {label}
+                </button>
+              );
+            })}
           </div>
 
           {/* Secondary action */}
           <Link
             to="/guides"
-            className="mt-12 text-sm text-slate-400 hover:text-slate-900 transition-colors border-b border-slate-200 hover:border-slate-400 pb-0.5"
+            className="mt-10 text-sm text-slate-400 hover:text-slate-900 transition-colors border-b border-slate-200 hover:border-slate-400 pb-0.5"
           >
             {t("hero.browse")}
           </Link>
         </div>
       </main>
 
+      <HowItWorks />
+      <FeaturedGuides />
+
       {/* Browse by interest */}
       {categories.length > 0 && (
-        <section className="px-6 pb-20 md:pb-28">
+        <section className="px-6 py-16 md:py-20">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-10">
               <h2 className="font-display text-2xl md:text-3xl font-semibold text-slate-900">{t("browse.title")}</h2>
@@ -226,6 +274,11 @@ function Home() {
           </div>
         </section>
       )}
+
+      <PopularCities />
+      <LatestPosts />
+      <FeaturedReviews />
+      <BecomeGuideCTA />
 
       <SiteFooter />
     </div>
