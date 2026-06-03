@@ -31,6 +31,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MessagesIndexRouteImport } from './routes/messages.index'
+import { Route as BookIndexRouteImport } from './routes/book.index'
 import { Route as ToursSlugRouteImport } from './routes/tours_.$slug'
 import { Route as MessagesBookingIdRouteImport } from './routes/messages.$bookingId'
 import { Route as GuidesGuideIdRouteImport } from './routes/guides_.$guideId'
@@ -160,6 +161,11 @@ const MessagesIndexRoute = MessagesIndexRouteImport.update({
   path: '/',
   getParentRoute: () => MessagesRoute,
 } as any)
+const BookIndexRoute = BookIndexRouteImport.update({
+  id: '/book/',
+  path: '/book/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ToursSlugRoute = ToursSlugRouteImport.update({
   id: '/tours_/$slug',
   path: '/tours/$slug',
@@ -288,6 +294,7 @@ export interface FileRoutesByFullPath {
   '/guides/$guideId': typeof GuidesGuideIdRoute
   '/messages/$bookingId': typeof MessagesBookingIdRoute
   '/tours/$slug': typeof ToursSlugRoute
+  '/book/': typeof BookIndexRoute
   '/messages/': typeof MessagesIndexRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
@@ -329,6 +336,7 @@ export interface FileRoutesByTo {
   '/guides/$guideId': typeof GuidesGuideIdRoute
   '/messages/$bookingId': typeof MessagesBookingIdRoute
   '/tours/$slug': typeof ToursSlugRoute
+  '/book': typeof BookIndexRoute
   '/messages': typeof MessagesIndexRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
@@ -372,6 +380,7 @@ export interface FileRoutesById {
   '/guides_/$guideId': typeof GuidesGuideIdRoute
   '/messages/$bookingId': typeof MessagesBookingIdRoute
   '/tours_/$slug': typeof ToursSlugRoute
+  '/book/': typeof BookIndexRoute
   '/messages/': typeof MessagesIndexRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
@@ -416,6 +425,7 @@ export interface FileRouteTypes {
     | '/guides/$guideId'
     | '/messages/$bookingId'
     | '/tours/$slug'
+    | '/book/'
     | '/messages/'
     | '/lovable/email/suppression'
     | '/api/public/hooks/booking-reminders'
@@ -457,6 +467,7 @@ export interface FileRouteTypes {
     | '/guides/$guideId'
     | '/messages/$bookingId'
     | '/tours/$slug'
+    | '/book'
     | '/messages'
     | '/lovable/email/suppression'
     | '/api/public/hooks/booking-reminders'
@@ -499,6 +510,7 @@ export interface FileRouteTypes {
     | '/guides_/$guideId'
     | '/messages/$bookingId'
     | '/tours_/$slug'
+    | '/book/'
     | '/messages/'
     | '/lovable/email/suppression'
     | '/api/public/hooks/booking-reminders'
@@ -539,6 +551,7 @@ export interface RootRouteChildren {
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   GuidesGuideIdRoute: typeof GuidesGuideIdRoute
   ToursSlugRoute: typeof ToursSlugRoute
+  BookIndexRoute: typeof BookIndexRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   ApiPublicHooksBookingRemindersRoute: typeof ApiPublicHooksBookingRemindersRoute
   ApiPublicHooksBookingReviewsRoute: typeof ApiPublicHooksBookingReviewsRoute
@@ -706,6 +719,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/messages/'
       preLoaderRoute: typeof MessagesIndexRouteImport
       parentRoute: typeof MessagesRoute
+    }
+    '/book/': {
+      id: '/book/'
+      path: '/book'
+      fullPath: '/book/'
+      preLoaderRoute: typeof BookIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/tours_/$slug': {
       id: '/tours_/$slug'
@@ -898,6 +918,7 @@ const rootRouteChildren: RootRouteChildren = {
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   GuidesGuideIdRoute: GuidesGuideIdRoute,
   ToursSlugRoute: ToursSlugRoute,
+  BookIndexRoute: BookIndexRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   ApiPublicHooksBookingRemindersRoute: ApiPublicHooksBookingRemindersRoute,
   ApiPublicHooksBookingReviewsRoute: ApiPublicHooksBookingReviewsRoute,
