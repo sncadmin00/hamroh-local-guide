@@ -270,6 +270,7 @@ function Home() {
 
       
       <FeaturedGuides />
+      <TopTours />
 
       {/* Browse by interest */}
       {categories.length > 0 && (
