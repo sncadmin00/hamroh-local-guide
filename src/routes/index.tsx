@@ -247,33 +247,31 @@ function Home() {
 
       {/* Browse by interest */}
       {categories.length > 0 && (
-        <section className="px-6 py-16 md:py-20">
-          <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-10">
+        <section className="py-12 md:py-16">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-6 md:mb-8 px-6">
               <h2 className="font-display text-2xl md:text-3xl font-semibold text-slate-900">{t("browse.title")}</h2>
               <p className="mt-2 text-sm text-slate-500">{t("browse.subtitle")}</p>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-3 md:gap-4">
+            <div className="flex gap-2.5 overflow-x-auto scroll-smooth px-6 pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
               {categories.map((c) => (
                 <Link
                   key={c.id}
                   to="/guides"
                   search={{ category: c.slug }}
-                  className="group flex flex-col items-center text-center p-5 rounded-2xl bg-white border border-slate-100 hover:border-slate-200 hover:shadow-lg hover:-translate-y-0.5 transition-all"
+                  className="group shrink-0 inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-white border border-slate-200/70 hover:border-slate-300 hover:bg-slate-50 transition-colors"
                 >
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#62A1B1]/15 to-[#D5A08D]/15 flex items-center justify-center text-slate-700 group-hover:scale-110 transition-transform">
-                    <CategoryIcon name={c.icon} className="h-6 w-6" strokeWidth={1.75} />
-                  </div>
-                  <div className="mt-3 text-sm font-medium text-slate-800">{c.name}</div>
-                  {c.description && (
-                    <div className="mt-1 text-xs text-slate-400 line-clamp-2">{c.description}</div>
-                  )}
+                  <span className="w-7 h-7 rounded-full bg-gradient-to-br from-[#62A1B1]/15 to-[#D5A08D]/15 flex items-center justify-center text-slate-700">
+                    <CategoryIcon name={c.icon} className="h-4 w-4" strokeWidth={1.75} />
+                  </span>
+                  <span className="text-sm font-medium text-slate-800 whitespace-nowrap">{c.name}</span>
                 </Link>
               ))}
             </div>
           </div>
         </section>
       )}
+
 
       <PopularCities />
       <LatestPosts />
