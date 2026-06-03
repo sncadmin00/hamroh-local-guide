@@ -135,6 +135,12 @@ export function SiteHeader() {
                 <SheetTitle className="text-left">{t("common.menu")}</SheetTitle>
               </SheetHeader>
               <nav className="mt-6 flex flex-col">
+                <Link
+                  to="/book"
+                  className="mb-2 px-3 py-3 rounded-lg text-base font-semibold bg-gradient-to-r from-[#62A1B1] to-[#8BB5A9] text-white inline-flex items-center gap-2"
+                >
+                  <Compass className="h-4 w-4" /> {t("book.cta")}
+                </Link>
                 {menuLinks.map((link) => (
                   <Link
                     key={link.to}
