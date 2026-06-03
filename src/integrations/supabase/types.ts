@@ -1057,6 +1057,63 @@ export type Database = {
         }
         Relationships: []
       }
+      spotlights: {
+        Row: {
+          created_at: string
+          description_en: string
+          description_ru: string
+          description_uz: string
+          expires_at: string | null
+          href: string
+          id: string
+          image_url: string | null
+          is_active: boolean
+          kind: string
+          published_at: string
+          sort_order: number
+          title_en: string
+          title_ru: string
+          title_uz: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description_en?: string
+          description_ru?: string
+          description_uz?: string
+          expires_at?: string | null
+          href?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          kind?: string
+          published_at?: string
+          sort_order?: number
+          title_en?: string
+          title_ru?: string
+          title_uz?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description_en?: string
+          description_ru?: string
+          description_uz?: string
+          expires_at?: string | null
+          href?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          kind?: string
+          published_at?: string
+          sort_order?: number
+          title_en?: string
+          title_ru?: string
+          title_uz?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       suppressed_emails: {
         Row: {
           created_at: string
@@ -1123,6 +1180,93 @@ export type Database = {
           telegram_username?: string | null
           updated_at?: string
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      tour_categories: {
+        Row: {
+          category_id: string
+          tour_id: string
+        }
+        Insert: {
+          category_id: string
+          tour_id: string
+        }
+        Update: {
+          category_id?: string
+          tour_id?: string
+        }
+        Relationships: []
+      }
+      tour_guides: {
+        Row: {
+          guide_id: string
+          tour_id: string
+        }
+        Insert: {
+          guide_id: string
+          tour_id: string
+        }
+        Update: {
+          guide_id?: string
+          tour_id?: string
+        }
+        Relationships: []
+      }
+      tours: {
+        Row: {
+          city_id: string
+          cover_url: string | null
+          created_at: string
+          description_md: string
+          duration_hours: number
+          highlights: string[]
+          id: string
+          included: string[]
+          not_included: string[]
+          price_from: number
+          published: boolean
+          short_description: string
+          slug: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          city_id: string
+          cover_url?: string | null
+          created_at?: string
+          description_md?: string
+          duration_hours?: number
+          highlights?: string[]
+          id?: string
+          included?: string[]
+          not_included?: string[]
+          price_from?: number
+          published?: boolean
+          short_description?: string
+          slug: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          city_id?: string
+          cover_url?: string | null
+          created_at?: string
+          description_md?: string
+          duration_hours?: number
+          highlights?: string[]
+          id?: string
+          included?: string[]
+          not_included?: string[]
+          price_from?: number
+          published?: boolean
+          short_description?: string
+          slug?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
         }
         Relationships: []
       }
