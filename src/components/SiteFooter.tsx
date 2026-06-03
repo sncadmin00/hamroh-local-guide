@@ -16,7 +16,6 @@ export function SiteFooter() {
 
           <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
             <Link to="/about" className="hover:text-foreground">{t("footer.about")}</Link>
-            <Link to="/how-it-works" className="hover:text-foreground">{t("nav.howItWorks")}</Link>
             <Link to="/faq" className="hover:text-foreground">{t("nav.faq")}</Link>
             <Link to="/contact" className="hover:text-foreground">{t("footer.contact")}</Link>
             <Link to="/terms" className="hover:text-foreground">{t("footer.terms")}</Link>

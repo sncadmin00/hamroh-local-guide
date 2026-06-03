@@ -53,7 +53,6 @@ export function SiteHeader() {
     { to: "/tours", label: t("nav.tours") },
     { to: "/book", label: t("book.cta") },
     { to: "/become-a-guide", label: t("nav.becomeGuide") },
-    { to: "/how-it-works", label: t("nav.howItWorks") },
     { to: "/faq", label: t("nav.faq") },
   ] as const;
   const navLinks = menuLinks.slice(0, 4);
