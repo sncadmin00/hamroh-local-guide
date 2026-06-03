@@ -9,6 +9,7 @@ import { TrustBar } from "@/components/home/TrustBar";
 import { SpotlightBanner } from "@/components/home/SpotlightBanner";
 
 import { FeaturedGuides } from "@/components/home/FeaturedGuides";
+import { TopTours } from "@/components/home/TopTours";
 import { PopularCities } from "@/components/home/PopularCities";
 import { LatestPosts } from "@/components/home/LatestPosts";
 import { FeaturedReviews } from "@/components/home/FeaturedReviews";
