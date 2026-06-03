@@ -1,10 +1,9 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
 import { ArrowUp, Mic } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { CategoryIcon } from "@/components/CategoryIcon";
 import { TrustBar } from "@/components/home/TrustBar";
 import { SpotlightBanner } from "@/components/home/SpotlightBanner";
 
@@ -15,7 +14,6 @@ import { BecomeGuideCTA } from "@/components/home/BecomeGuideCTA";
 import { supabase } from "@/integrations/supabase/client";
 
 import { createThread } from "@/lib/ai-threads.functions";
-import { useCategories } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/")({
