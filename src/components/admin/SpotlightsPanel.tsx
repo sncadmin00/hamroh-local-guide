@@ -1,12 +1,21 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSpotlightsAdmin, SPOTLIGHT_KINDS } from "@/lib/content-queries";
-import type { SpotlightKind, SpotlightRow } from "@/lib/spotlights";
+import type { SpotlightBadge, SpotlightKind, SpotlightRow } from "@/lib/spotlights";
 import { toast } from "sonner";
 import { Trash2, Plus, Upload } from "lucide-react";
 
+const BADGE_OPTIONS: { value: SpotlightBadge | ""; label: string }[] = [
+  { value: "", label: "No badge" },
+  { value: "new", label: "New" },
+  { value: "featured", label: "Featured" },
+  { value: "trending", label: "Trending" },
+  { value: "limited", label: "Limited availability" },
+];
+
 const EMPTY: Partial<SpotlightRow> = {
   kind: "news",
+  badge: null,
   title_en: "",
   title_uz: "",
   title_ru: "",
