@@ -46,7 +46,7 @@ export function SpotlightBanner() {
     touchStartX.current = null;
   };
 
-  const pick = (s: typeof items[number]) => ({
+  const pick = (s: SpotlightRow) => ({
     title: lang === "ru" ? s.title_ru : lang === "uz" ? s.title_uz : s.title_en,
     desc: lang === "ru" ? s.description_ru : lang === "uz" ? s.description_uz : s.description_en,
   });
