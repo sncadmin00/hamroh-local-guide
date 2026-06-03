@@ -66,9 +66,9 @@ export function SpotlightBanner() {
           const active = i === index;
           const { title, desc } = pick(s);
           return (
-            <Link
+            <a
               key={s.id}
-              to={s.href}
+              href={s.href}
               aria-hidden={!active}
               tabIndex={active ? 0 : -1}
               className={`${active ? "relative opacity-100" : "absolute inset-0 opacity-0 pointer-events-none"} flex items-center gap-4 p-3 sm:p-4 transition-opacity duration-500`}
@@ -88,7 +88,7 @@ export function SpotlightBanner() {
                 </div>
               </div>
               <ArrowUpRight className="h-5 w-5 shrink-0 text-slate-400 group-hover:text-slate-700 transition-colors" />
-            </Link>
+            </a>
           );
         })}
       </div>
