@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Guide } from "@/data/guides";
 import type { CityInfo } from "@/data/cities";
+import type { SpotlightRow, SpotlightKind } from "@/lib/spotlights";
 
 export type CityRow = CityInfo & { id: string; slug: string; sort_order: number };
 
