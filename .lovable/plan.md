@@ -1,41 +1,62 @@
 
-# Spotlight news carousel with photos
+# Tours kak otdelnyy razdel + Spotlight banner v adminke
 
-Replace the small spotlight pill with a wider, more visual banner that rotates through multiple announcements (new guides, new routes, news). Users can swipe / click arrows to browse older ones.
+Dve nezavisimye chasti. Mozhno delat parallelno ili po ocheredi — skazhi, esli xochesh tolko odno snachala.
 
-## Layout
+---
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│  [photo]   NEW GUIDE                              ●●○○○     │
-│  [ 80px ]  Aziz from Nukus — tours to the Aral Sea          │
-│  [round ]  "First guide covering the dried seabed"     →    │
-└─────────────────────────────────────────────────────────────┘
-        ← prev                                       next →
-```
+## Chast 1. Tours kak otdelnaya sushnost
 
-- Full width of the hero container, ~96–110px tall on desktop, stacked / 88px on mobile (≤640px).
-- Left: round/rounded-square photo of the guide or destination (64–80px).
-- Middle: tiny uppercase label ("NEW GUIDE" / "NEW ROUTE" / "NEWS") + bold one-line title + muted one-line description.
-- Right: arrow icon. Whole banner is clickable → guide profile or article.
-- Bottom: row of dot indicators showing how many items + which is active.
-- Auto-rotates every ~6s, pauses on hover/focus. Arrow buttons on hover (desktop) and swipe gesture (mobile, touch drag).
-- Subtle gradient background (`from-[#8BB5A9]/10 to-[#D5A08D]/10`), soft border, rounded-2xl, gentle shadow.
-- Crossfade transition between slides (200–300ms opacity + slight translate).
+Sejchas v proekte est `guides`, `cities`, `places`, `articles`, `categories` (eto tegi dlya gidov: food, history...). **Net otdelnoy tablitsy turov** — to chto vyglyadit kak "tur", lezhit v `guide_experiences` (privyazany k odnomu gidu: title, duration, price).
 
-## Data
+Predlagayu sdelat **Tours** polnotsennoy sushnostyu:
 
-Hardcode 3–4 spotlight items in `src/lib/spotlights.ts` for now (id, label key, title, description, image, href). All text via i18n keys so EN/UZ/RU work. Photos: use existing guide photos from `src/assets/` if available, otherwise placeholder gradients.
+### Baza dannyx — novaya migratsiya
+- Tablitsa `tours`: `id`, `slug`, `title`, `short_description`, `description_md`, `cover_url`, `city_id` (FK), `guide_id` (FK, nullable — tur mozhet vesti odin iz neskolkix gidov), `duration_hours`, `price_from`, `category_ids` (cherez stykovuyu tablitsu), `highlights[]`, `included[]`, `not_included[]`, `published`, `sort_order`, `created_at`, `updated_at`.
+- Stykovaya tablitsa `tour_guides` (mnogo-ko-mnogim: odin tur mogut vesti neskolko gidov).
+- Stykovaya tablitsa `tour_categories` (privyazka k sushestvuyushim `categories`).
+- RLS: publichnoe chtenie tolko published, admin — vse, GRANT-y dlya `anon`/`authenticated`/`service_role` po pravilam proekta.
 
-Later we can swap this list for a Supabase query (`spotlights` table with `is_active`, `published_at`).
+### Frontend
+- **`/tours`** — spisok turov s filtrami po gorodu i kategorii (kartochki s foto, dlitelnost, tsena ot, gorod).
+- **`/tours/$slug`** — stranitsa tura: opisanie, fotografii, gid(y), chto vklyucheno, knopka "Zabronirovat" → veduet na `/book/$guideId?tour=$slug` (ili sobstvennyy flow bronirovaniya tura).
+- Ssylka **Tours** v `SiteHeader` ryadom s Guides/Cities.
+- Na glavnoy: blok "Populyarnye tury" (3-4 kartochki) — mozhno dobavit potom.
+- i18n klyuchi EN/UZ/RU.
 
-## Files
+### Admin
+- `/admin` → novaya vkladka "Tours": spisok, sozdat/redaktirovat/udalit, zagruzka foto v storage bucket `tour-photos`, privyazka gidov i kategoriy, toggle `published`.
 
-- **New** `src/components/home/SpotlightBanner.tsx` — carousel component (no external deps; plain React state + setInterval + touch handlers).
-- **New** `src/lib/spotlights.ts` — static data array.
-- **`src/routes/index.tsx`** — replace the current spotlight `<Link>` (lines 158–168) with `<SpotlightBanner />`. Keep the stats line under the headline as is.
-- **`src/lib/i18n.tsx`** — add keys for 3–4 spotlight items (label + title + description) in EN/UZ/RU. Drop now-unused `hero.spotlight.label` / `hero.spotlight.text` keys.
+### Vne skoupa (poka)
+- Otdelnyy flow bookinga turov (ispolzuem sushestvuyushiy `/book/$guideId` s parametrom tura). Polnotsennyy tour booking — sleduyushaya iteratsiya.
 
-## Out of scope
-- No backend table yet (static array). Easy to wire later.
-- Stats line, mini-steps, AI input, and other sections stay untouched.
+---
+
+## Chast 2. Spotlight banner v adminke
+
+Sejchas spotlight items zaxardkozheny v `src/lib/spotlights.ts`. Perenosim v BD.
+
+### Baza dannyx — novaya migratsiya
+- Tablitsa `spotlights`: `id`, `kind` (enum: `new_guide` | `new_route` | `news` | `new_tour`), `title` (text), `description` (text), `image_url`, `href` (text — vnutrenniy URL kuda vedet), `is_active` (bool), `sort_order`, `published_at`, `expires_at` (nullable), `created_at`, `updated_at`.
+- (Opitsionalno) tablitsa `spotlight_translations` dlya EN/UZ/RU — ili prosto polya `title_en/uz/ru`, `description_en/uz/ru`. **Rekomenduyu vtoroy variant** — proshe.
+- RLS: publichnoe chtenie tolko aktivnyx i ne istekshix, admin — vse.
+
+### Frontend
+- `src/lib/spotlights.ts` udalit, zamenit na hook `useSpotlights()` v `content-queries.ts` (Supabase select aktivnyx, otsortirovannyx po `sort_order`).
+- `SpotlightBanner.tsx` chitaet iz hooka, beret `title/description` po tekushemu lokalu (`title_ru` / `title_en` / `title_uz`), label po `kind`.
+- Esli spiska net — banner ne pokazyvaetsya.
+
+### Admin
+- `/admin` → novaya vkladka "Spotlight" (ili "Banner novostei"):
+  - Spisok vsex spotlight, drag-and-drop sort_order ili strelki.
+  - Sozdat/redaktirovat: kind (vybor iz 4), 3 yazyka tit/desc, image upload v bucket `spotlights`, href (vybor iz guides / cities / tours / custom URL), is_active toggle, expires_at (opisalno).
+  - Udalit.
+
+---
+
+## Voprosy pered startom
+
+1. **Delaem obe chasti seychas, ili tolko odnu?** (Tours + Spotlight admin / tolko Tours / tolko Spotlight)
+2. **Tours i guides — kakaya svyaz?** Variant A: tur privyazan k 1 gidu (proshe). Variant B: mnogo gidov mogut vesti odin tur (gibche, no slozhnee admin).
+3. **Booking tura** — poka veduem na bronirovanie gida (s pomekoy "tur: ..."), ili nuzhen otdelnyy flow s privyazkoy k touru? *Rekomenduyu pervoe poka.*
+4. **Spotlight perevod** — 3 polya na yazyk v odnoy tablitse (proshe), ili otdelnaya tablitsa `spotlight_translations`? *Rekomenduyu pervoe.*
