@@ -61,7 +61,22 @@ export function SpotlightBanner() {
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
-      <div className="relative overflow-hidden rounded-3xl border border-slate-200/70 bg-gradient-to-br from-[#8BB5A9]/10 to-[#D5A08D]/10 shadow-[0_12px_40px_-15px_rgba(0,0,0,0.12)]">
+      {/* Header strip */}
+      <div className="mb-2 flex items-center justify-between px-1">
+        <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+          <span aria-hidden>🔥</span>
+          <span>{t("spot.whatsNew")}</span>
+        </div>
+        {count > 1 && (
+          <div className="text-[11px] font-medium tabular-nums text-slate-400">
+            {index + 1} / {count}
+          </div>
+        )}
+      </div>
+
+      <div className="relative overflow-hidden rounded-3xl border border-orange-200/50 bg-gradient-to-br from-amber-50 via-orange-50/60 to-[#D5A08D]/15 shadow-[0_12px_40px_-15px_rgba(234,88,12,0.18)]">
+        {/* Top accent line */}
+        <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-orange-400/60 to-transparent" />
         {items.map((s, i) => {
           const active = i === index;
           const { title, desc } = pick(s);
@@ -75,9 +90,16 @@ export function SpotlightBanner() {
             >
               <div className="relative h-28 w-28 sm:h-36 sm:w-36 shrink-0 overflow-hidden rounded-2xl ring-1 ring-white/60 shadow-md">
                 <img src={s.image_url || PLACEHOLDER} alt="" className="h-full w-full object-cover" loading="lazy" />
+                <span className="absolute left-1.5 top-1.5 rounded-full bg-orange-500 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white shadow-sm">
+                  New
+                </span>
               </div>
               <div className="min-w-0 flex-1 text-left">
-                <div className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-[#5e8a7e]">
+                <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-[#5e8a7e]">
+                  <span aria-hidden className="relative flex h-1.5 w-1.5">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-orange-400 opacity-75" />
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-orange-500" />
+                  </span>
                   {t(KIND_LABEL_KEY[s.kind])}
                 </div>
                 <div className="mt-1 line-clamp-2 text-base sm:text-xl font-semibold text-slate-800 leading-snug">
@@ -92,6 +114,7 @@ export function SpotlightBanner() {
           );
         })}
       </div>
+
 
       {count > 1 && (
         <>

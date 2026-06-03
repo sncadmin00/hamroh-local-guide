@@ -1,28 +1,23 @@
+## Goal
 
-## Цель
-Увеличить баннер в hero ~2x, не убирая логотип H.
+Make the top banner feel like a feed of fresh updates ("новинки с огоньком"), and remove the Hamroh H logo block that sits above it and competes for attention.
 
-## Идея решения
-Сейчас логотип большой (80–96px + glow), а баннер компактный «листинг» (image 64–80px). Чтобы освободить место под крупный баннер и при этом сохранить бренд, делаем три вещи:
+## Changes
 
-1. **Сжимаем логотип** — с 80–96px до 56–64px, уменьшаем blur-glow и отступ снизу (mb-8/12 → mb-4/6). Логотип остаётся как фирменный «якорь», но не доминирует.
+### 1. `src/routes/index.tsx`
+- Remove the brand H logo block (lines 152–157) — the circular gradient tile with the H image. The SpotlightBanner becomes the first visual element in the hero.
 
-2. **Увеличиваем баннер** — превращаем `SpotlightBanner` из узкой строки в полноценную карточку:
-   - Картинка слева 112–128px (sm: 144–160px), скруглённая, занимает всю высоту карточки.
-   - Текстовый блок: label (uppercase tag), крупный заголовок (text-lg / sm:text-xl), описание в 2 строки (line-clamp-2 вместо 1), CTA-стрелка крупнее.
-   - Внутренние отступы p-4 / sm:p-5, высота карточки ~120–140px (раньше ~88–104px) — почти 2x по визуальной массе.
-   - Ширина остаётся max-w-2xl (на мобиле full-width), чтобы не ломать сетку.
+### 2. `src/components/home/SpotlightBanner.tsx`
+Give the banner a clear "fresh / hot" feel without making it loud:
 
-3. **Альтернативный вариант компоновки (опционально, если захочешь)** — поставить логотип и баннер в один ряд на десктопе: слева компактный логотип-«пилюля», справа крупный баннер. На мобиле — друг под другом как сейчас. Это даёт ещё больше воздуха крупному баннеру, не жертвуя брендом.
+- **Header strip above slides**: small inline label "🔥 What's new" (i18n: use existing-style key like `spot.whatsNew`) on the left + slide counter (`1 / N`) on the right. Soft uppercase tracking, muted color.
+- **Kind label gets a fire dot**: prepend a small pulsing orange dot (`bg-orange-500 animate-pulse`) before the existing kind label (NEW GUIDE / NEW ROUTE / NEWS / NEW TOUR). Keeps the teal text, just adds a "live" cue.
+- **Warmer accent**: shift the card's background gradient from teal→peach to a slightly warmer peach/amber tint so it visually reads as "new", and add a thin top accent line (1px gradient) to separate it from the page.
+- **Subtle "NEW" ribbon** on the image (top-left corner of the thumbnail): tiny rounded pill `NEW` in white-on-orange, only ~10px font, so it's noticeable but not loud.
+- Keep autoplay, swipe, dots, arrows, and overall layout unchanged.
 
-## Что меняется в коде
-- `src/routes/index.tsx`: уменьшить размеры логотипа и отступ под ним.
-- `src/components/home/SpotlightBanner.tsx`: увеличить картинку, типографику, padding, line-clamp описания.
+No new dependencies. No copy or data-model changes beyond one i18n key for "What's new".
 
-## Что НЕ трогаем
-- Логику автоплея, свайпов, переключателей.
-- БД и контент.
-- Остальные секции главной.
-
-## Вопрос
-Делаем вариант **A** (логотип чуть меньше + крупный баннер под ним, как сейчас по вертикали) или **B** (на десктопе логотип слева + баннер справа в один ряд)?
+## Out of scope
+- No changes to how spotlights are fetched or rendered (still `useSpotlights`).
+- No layout shift of the AI search field or "How it works" steps.
