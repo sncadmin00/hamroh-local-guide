@@ -32,7 +32,17 @@ export function TopTours() {
 
         <div className="-mx-6 px-6">
           <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 [scrollbar-width:thin]">
-            {top.map((tour) => (
+            {isLoading
+              ? Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="w-72 shrink-0 snap-start rounded-2xl border border-border bg-card overflow-hidden">
+                    <Skeleton className="aspect-[4/3] w-full rounded-none" />
+                    <div className="p-4 space-y-2">
+                      <Skeleton className="h-4 w-3/4" />
+                      <Skeleton className="h-3 w-1/2" />
+                    </div>
+                  </div>
+                ))
+              : top.map((tour) => (
               <Link
                 key={tour.id}
                 to="/tours/$slug"
