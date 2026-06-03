@@ -154,17 +154,9 @@ function Home() {
             </div>
           </div>
 
-          {/* Spotlight banner */}
-          <Link
-            to="/guides"
-            className="mb-5 inline-flex max-w-full items-center gap-2 rounded-full bg-[#8BB5A9]/10 hover:bg-[#8BB5A9]/15 px-4 py-1.5 text-sm text-slate-700 transition-colors"
-          >
-            <span aria-hidden>🔥</span>
-            <span className="font-medium text-[#5e8a7e] shrink-0">{t("hero.spotlight.label")}</span>
-            <span className="text-slate-400" aria-hidden>·</span>
-            <span className="truncate text-slate-600">{t("hero.spotlight.text")}</span>
-            <span className="text-slate-400 shrink-0" aria-hidden>→</span>
-          </Link>
+          {/* Spotlight carousel */}
+          <SpotlightBanner />
+
 
           {/* Headline */}
           <div className="text-center space-y-5 md:space-y-6 mb-10 md:mb-14">
