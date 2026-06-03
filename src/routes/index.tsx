@@ -15,7 +15,7 @@ import { LatestPosts } from "@/components/home/LatestPosts";
 import { FeaturedReviews } from "@/components/home/FeaturedReviews";
 import { BecomeGuideCTA } from "@/components/home/BecomeGuideCTA";
 import { supabase } from "@/integrations/supabase/client";
-import hamrohH from "@/assets/hamroh-h.png.asset.json";
+
 import { createThread } from "@/lib/ai-threads.functions";
 import { useCategories } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
