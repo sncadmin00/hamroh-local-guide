@@ -51,7 +51,7 @@ export const translations: Dict = {
   "hero.stats.cities": { en: "cities", uz: "shahar", ru: "городов" },
   "hero.stats.travelers": { en: "happy travelers", uz: "mamnun sayohatchi", ru: "довольных путешественников" },
 
- "spot.whatsNew": { en: "What's new", uz: "Yangiliklar", ru: "Что нового" },
+ "spot.whatsNew": { en: "What's new", uz: "Yangilik", ru: "Что нового" },
  "spot.newExperience.label": { en: "New experience", uz: "Yangi tajriba", ru: "Новинка" },
  "spot.newGuide.label": { en: "New experience", uz: "Yangi tajriba", ru: "Новинка" },
  "spot.newRoute.label": { en: "New experience", uz: "Yangi tajriba", ru: "Новинка" },
