@@ -2,6 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { Clock } from "lucide-react";
 import { useTours } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
+import { WishlistHeart } from "@/components/WishlistHeart";
+
 
 export function TopTours() {
   const { t } = useI18n();
