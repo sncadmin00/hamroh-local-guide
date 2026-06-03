@@ -77,6 +77,14 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <Link
+            to="/book"
+            className="inline-flex h-9 items-center gap-1.5 rounded-full bg-gradient-to-r from-[#62A1B1] to-[#8BB5A9] px-3 md:px-4 text-xs md:text-sm font-semibold text-white shadow-sm shadow-slate-900/10 hover:opacity-95 transition-opacity"
+          >
+            <Compass className="h-4 w-4" />
+            <span className="hidden sm:inline">{t("book.cta")}</span>
+            <span className="sm:hidden">{t("book.city")}</span>
+          </Link>
           <LanguageSwitcher />
           <a
             href="https://t.me/yourtelegram"
