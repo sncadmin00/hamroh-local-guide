@@ -142,34 +142,21 @@ function Home() {
     <div className="min-h-screen flex flex-col bg-background">
       <SiteHeader />
 
-      <main className="flex items-center justify-center px-6 py-10 md:py-24">
+      <main className="flex items-center justify-center px-6 py-6 md:py-16">
         <div className="w-full max-w-3xl mx-auto flex flex-col items-center">
           {/* Spotlight carousel */}
           <SpotlightBanner />
 
-
-          {/* Stats + trust */}
-          <div className="text-center space-y-4 mb-6 md:mb-8">
-            <p className="text-sm text-slate-500 flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
-              <span><span className="font-semibold text-slate-700">1,240</span> {t("hero.stats.guides")}</span>
-              <span className="text-slate-300" aria-hidden>·</span>
-              <span><span className="font-semibold text-slate-700">47</span> {t("hero.stats.cities")}</span>
-              <span className="text-slate-300" aria-hidden>·</span>
-              <span><span className="font-semibold text-slate-700">12,000</span> {t("hero.stats.travelers")}</span>
+          {/* H1 + subtitle */}
+          <div className="text-center mt-2 mb-6 md:mb-8">
+            <h1 className="font-display text-3xl md:text-5xl font-semibold tracking-tight text-foreground leading-[1.1]">
+              {t("hero.h1")}
+            </h1>
+            <p className="mt-3 md:mt-4 text-sm md:text-lg text-slate-500 max-w-xl mx-auto">
+              {t("hero.h1sub")}
             </p>
-            <TrustBar />
-
-            {/* How it works — moved above AI input */}
-            <div className="flex items-center justify-center gap-2 sm:gap-3 text-sm text-slate-500 flex-wrap pt-1">
-              {[t("how.step1.title"), t("how.step2.title"), t("how.step3.title")].map((label, i) => (
-                <div key={i} className="flex items-center gap-2 sm:gap-3">
-                  {i > 0 && <span className="hidden sm:block w-6 h-px bg-slate-200" aria-hidden />}
-                  <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-[#8BB5A9]/15 text-[#5e8a7e] text-[11px] font-semibold">{i + 1}</span>
-                  <span>{label}</span>
-                </div>
-              ))}
-            </div>
           </div>
+
 
 
           {/* AI Input with hover glow */}
