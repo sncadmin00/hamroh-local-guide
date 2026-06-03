@@ -147,6 +147,7 @@ function SpotlightEditor({
     setSaving(true);
     const payload = {
       kind: form.kind ?? "news",
+      badge: form.badge ?? null,
       title_en: form.title_en ?? "",
       title_uz: form.title_uz ?? "",
       title_ru: form.title_ru ?? "",
