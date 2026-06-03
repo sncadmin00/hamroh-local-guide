@@ -1,24 +1,28 @@
-## Top Tours na glavnoy
 
-### Chto delaem
-Sozdayem `src/components/home/TopTours.tsx` po obraztsu `FeaturedGuides.tsx`, no **gorizontalnaya karusel i na mobile, i na desktop** (kak prosili).
+## Цель
+Увеличить баннер в hero ~2x, не убирая логотип H.
 
-- Berem dannye iz sushchestvuyushchego `useTours()` hooka, filtruem `published`, sortiruem po `sort_order`, beryom top 8.
-- Kazhdaya kartochka: `cover_url`, title, gorod, dlitelnost (`X ch`), cena (`ot $Y`), --> `Link to="/tours/$slug"`.
-- Karusel: `flex snap-x snap-mandatory gap-4 overflow-x-auto`, kartochka `w-72 shrink-0`. Tonkiy scrollbar.
-- Zagolovok "Top tours" + ssylka "Smotret vse →" na `/tours`.
-- Esli turov net — komponent vozvrashchaet `null` (kak FeaturedGuides).
+## Идея решения
+Сейчас логотип большой (80–96px + glow), а баннер компактный «листинг» (image 64–80px). Чтобы освободить место под крупный баннер и при этом сохранить бренд, делаем три вещи:
 
-### i18n
-Dobavlyaem klyuchi v `src/lib/i18n.tsx`:
-- `topTours.title` (Top tury / Top tours / Top turlar)
-- `topTours.subtitle`
-- `topTours.viewAll`
-- `topTours.from` ("ot")
-- `topTours.hours` ("ch" / "h" / "soat")
+1. **Сжимаем логотип** — с 80–96px до 56–64px, уменьшаем blur-glow и отступ снизу (mb-8/12 → mb-4/6). Логотип остаётся как фирменный «якорь», но не доминирует.
 
-### Vstavka v glavnuyu
-V `src/routes/index.tsx` dobavlyaem `<TopTours />` **srazu posle** `<FeaturedGuides />`.
+2. **Увеличиваем баннер** — превращаем `SpotlightBanner` из узкой строки в полноценную карточку:
+   - Картинка слева 112–128px (sm: 144–160px), скруглённая, занимает всю высоту карточки.
+   - Текстовый блок: label (uppercase tag), крупный заголовок (text-lg / sm:text-xl), описание в 2 строки (line-clamp-2 вместо 1), CTA-стрелка крупнее.
+   - Внутренние отступы p-4 / sm:p-5, высота карточки ~120–140px (раньше ~88–104px) — почти 2x по визуальной массе.
+   - Ширина остаётся max-w-2xl (на мобиле full-width), чтобы не ломать сетку.
 
-### Chto NE delaem
-Ne menyaem `FeaturedGuides`, ne trogaem `/tours` stranicu, ne menyaem schemu BD.
+3. **Альтернативный вариант компоновки (опционально, если захочешь)** — поставить логотип и баннер в один ряд на десктопе: слева компактный логотип-«пилюля», справа крупный баннер. На мобиле — друг под другом как сейчас. Это даёт ещё больше воздуха крупному баннеру, не жертвуя брендом.
+
+## Что меняется в коде
+- `src/routes/index.tsx`: уменьшить размеры логотипа и отступ под ним.
+- `src/components/home/SpotlightBanner.tsx`: увеличить картинку, типографику, padding, line-clamp описания.
+
+## Что НЕ трогаем
+- Логику автоплея, свайпов, переключателей.
+- БД и контент.
+- Остальные секции главной.
+
+## Вопрос
+Делаем вариант **A** (логотип чуть меньше + крупный баннер под ним, как сейчас по вертикали) или **B** (на десктопе логотип слева + баннер справа в один ряд)?
