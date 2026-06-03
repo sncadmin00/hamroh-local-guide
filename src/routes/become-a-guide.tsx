@@ -86,7 +86,7 @@ function BecomeAGuidePage() {
       });
     supabase
       .from("categories")
-      .select("id, name, icon")
+      .select("id, slug, name, icon")
       .order("sort_order")
       .then(({ data }) => {
         if (data) setCategories(data);
