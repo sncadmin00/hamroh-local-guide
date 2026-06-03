@@ -1,4 +1,4 @@
-import { BadgeCheck, MessageCircle, ShieldCheck } from "lucide-react";
+import { BadgeCheck, MessageCircle, ShieldCheck, Star } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 
 export function TrustBar() {

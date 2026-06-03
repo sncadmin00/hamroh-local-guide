@@ -82,6 +82,7 @@ export const translations: Dict = {
   "trust.verified": { en: "Verified locals", uz: "Tasdiqlangan mahalliylar", ru: "Проверенные местные" },
   "trust.directChat": { en: "Direct chat", uz: "To'g'ridan-to'g'ri chat", ru: "Чат напрямую" },
   "trust.secureBooking": { en: "Secure booking", uz: "Xavfsiz bron", ru: "Безопасная бронь" },
+  "trust.rated": { en: "Rated by travelers", uz: "Sayohatchilar baholagan", ru: "Оценено путешественниками" },
 
   "how.title": { en: "How it works", uz: "Qanday ishlaydi", ru: "Как это работает" },
   "how.subtitle": { en: "Three steps to your local guide", uz: "Hamrohingizgacha uch qadam", ru: "Три шага до вашего гида" },
