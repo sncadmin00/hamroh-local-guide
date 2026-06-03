@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight, ArrowUpRight } from "lucide-react";
 import { useSpotlights } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
-import type { SpotlightKind } from "@/lib/spotlights";
+import type { SpotlightKind, SpotlightRow } from "@/lib/spotlights";
 
 const AUTOPLAY_MS = 6000;
 
