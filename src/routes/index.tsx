@@ -67,8 +67,8 @@ export const Route = createFileRoute("/")({
 function Home() {
   const navigate = useNavigate();
   const create = useServerFn(createThread);
-  const { t, tCategory } = useI18n();
-  const { data: categories = [] } = useCategories();
+  const { t } = useI18n();
+
 
   const [input, setInput] = useState("");
   const [submitting, setSubmitting] = useState(false);
