@@ -1,17 +1,32 @@
 import { Link } from "@tanstack/react-router";
-import { MapPin, Navigation } from "lucide-react";
+import { Navigation, Clock } from "lucide-react";
 import { useMemo } from "react";
-import { useCities, useGuides } from "@/lib/content-queries";
+import { useCities, useGuides, useTours } from "@/lib/content-queries";
 import { useDetectedLocation } from "@/hooks/useDetectedLocation";
 import { nearestCityNames } from "@/data/cities";
 import { useI18n } from "@/lib/i18n";
 import { WishlistHeart } from "@/components/WishlistHeart";
+import tashkentImg from "@/assets/city-tashkent.jpg";
+import samarkandImg from "@/assets/city-samarkand.jpg";
+import bukharaImg from "@/assets/city-bukhara.jpg";
 
+const CITY_META: Record<string, { image: string; tagline: string }> = {
+  tashkent: { image: tashkentImg, tagline: "Capital of contrasts — modern skyline meets ancient madrasas" },
+  samarkand: { image: samarkandImg, tagline: "Jewel of the Silk Road, home of the Registan" },
+  bukhara: { image: bukharaImg, tagline: "Living museum of 2,000 years of Islamic art" },
+};
+
+const COMING_SOON = [
+  { name: "Khiva", tagline: "Walled open-air museum of Khorezm" },
+  { name: "Fergana", tagline: "Lush valley of silk and ceramics" },
+  { name: "Nukus", tagline: "Desert gateway to the Aral & Savitsky art" },
+];
 
 export function PopularCities() {
   const { t } = useI18n();
   const { data: cities = [] } = useCities();
   const { data: guides = [] } = useGuides();
+  const { data: tours = [] } = useTours();
   const { data: geo } = useDetectedLocation();
 
   const nearestName = useMemo(() => {
@@ -22,8 +37,12 @@ export function PopularCities() {
 
   if (cities.length === 0) return null;
 
-  const counts = guides.reduce<Record<string, number>>((acc, g) => {
+  const guideCounts = guides.reduce<Record<string, number>>((acc, g) => {
     acc[g.cityId] = (acc[g.cityId] ?? 0) + 1;
+    return acc;
+  }, {});
+  const tourCounts = tours.reduce<Record<string, number>>((acc, tour) => {
+    if (tour.city_id) acc[tour.city_id] = (acc[tour.city_id] ?? 0) + 1;
     return acc;
   }, {});
 
@@ -31,8 +50,8 @@ export function PopularCities() {
 
   return (
     <section className="px-6 py-16 md:py-20">
-      <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-8">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-10">
           <h2 className="font-display text-2xl md:text-3xl font-semibold text-foreground">
             {t("cities.title")}
           </h2>
@@ -40,7 +59,7 @@ export function PopularCities() {
         </div>
 
         {nearestCity && (
-          <div className="mb-5 flex justify-center">
+          <div className="mb-8 flex justify-center">
             <Link
               to="/book"
               search={{ city: nearestCity.slug }}
@@ -53,27 +72,66 @@ export function PopularCities() {
           </div>
         )}
 
-        <div className="flex flex-wrap justify-center gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {cities.map((c) => {
-            const count = counts[c.id] ?? 0;
+            const meta = CITY_META[c.slug];
+            const gCount = guideCounts[c.id] ?? 0;
+            const tCount = tourCounts[c.id] ?? 0;
             return (
-              <div
+              <Link
                 key={c.id}
-                className="group inline-flex items-center gap-1 rounded-full bg-card ring-1 ring-border pl-4 pr-1.5 py-1.5 text-sm font-medium text-foreground hover:ring-primary/40 hover:shadow-sm transition-all"
+                to="/guides"
+                search={{ city: c.name }}
+                className="group relative block overflow-hidden rounded-2xl bg-card ring-1 ring-border hover:shadow-lg transition-all"
               >
-                <Link to="/guides" search={{ city: c.name }} className="inline-flex items-center gap-2 py-1">
-                  <MapPin className="h-3.5 w-3.5 text-primary" />
-                  {c.name}
-                  {count > 0 && (
-                    <span className="text-xs text-muted-foreground">· {count}</span>
+                <div className="relative aspect-[4/5] overflow-hidden bg-secondary">
+                  {meta?.image && (
+                    <img
+                      src={meta.image}
+                      alt={c.name}
+                      loading="lazy"
+                      width={1024}
+                      height={1280}
+                      className="h-full w-full object-cover group-hover:scale-[1.04] transition-transform duration-500"
+                    />
                   )}
-                </Link>
-                <WishlistHeart type="city" id={c.id} size="sm" variant="ghost" />
-              </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                  <WishlistHeart type="city" id={c.id} className="absolute right-3 top-3" />
+
+                  <div className="absolute inset-x-0 bottom-0 p-5 text-white">
+                    <h3 className="font-display text-2xl font-semibold">{c.name}</h3>
+                    {meta?.tagline && (
+                      <p className="mt-1 text-sm text-white/85 line-clamp-2">{meta.tagline}</p>
+                    )}
+                    <div className="mt-3 flex items-center gap-3 text-xs text-white/90">
+                      {gCount > 0 && <span>{gCount} {gCount === 1 ? "guide" : "guides"}</span>}
+                      {gCount > 0 && tCount > 0 && <span className="opacity-60">·</span>}
+                      {tCount > 0 && <span>{tCount} {tCount === 1 ? "tour" : "tours"}</span>}
+                    </div>
+                  </div>
+                </div>
+              </Link>
             );
           })}
-        </div>
 
+          {COMING_SOON.map((c) => (
+            <div
+              key={c.name}
+              className="relative overflow-hidden rounded-2xl ring-1 ring-dashed ring-border bg-secondary/40"
+            >
+              <div className="relative aspect-[4/5] flex flex-col items-center justify-center p-6 text-center">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-background/80 ring-1 ring-border px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+                  <Clock className="h-3 w-3" />
+                  Coming soon
+                </span>
+                <h3 className="mt-4 font-display text-2xl font-semibold text-foreground/70">
+                  {c.name}
+                </h3>
+                <p className="mt-2 text-sm text-muted-foreground max-w-[20ch]">{c.tagline}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
