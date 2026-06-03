@@ -79,6 +79,16 @@ export const translations: Dict = {
 
   "browse.title": { en: "Browse by interest", uz: "Qiziqish bo'yicha izlash", ru: "По интересам" },
   "browse.subtitle": { en: "Find a guide for what you love", uz: "Sevimli mavzuingiz bo'yicha hamroh toping", ru: "Найдите гида под ваши интересы" },
+
+  "cat.locals-favourite": { en: "Local's favourite", uz: "Mahalliylar tanlovi", ru: "Выбор местных" },
+  "cat.people": { en: "People", uz: "Insonlar", ru: "Люди" },
+  "cat.gastro": { en: "Gastro", uz: "Gastronomiya", ru: "Гастрономия" },
+  "cat.mountains": { en: "Mountains & Nature", uz: "Tog'lar va tabiat", ru: "Горы и природа" },
+  "cat.city": { en: "City & History", uz: "Shahar va tarix", ru: "Город и история" },
+  "cat.crafts": { en: "Crafts & Bazaars", uz: "Hunarmandchilik va bozorlar", ru: "Ремёсла и базары" },
+  "cat.culture": { en: "Culture & Art", uz: "Madaniyat va san'at", ru: "Культура и искусство" },
+  "cat.photo": { en: "Photo Tours", uz: "Foto sayohatlar", ru: "Фототуры" },
+
   "footer.about": { en: "About", uz: "Biz haqimizda", ru: "О нас" },
   "footer.contact": { en: "Contact", uz: "Aloqa", ru: "Контакты" },
   "footer.terms": { en: "Terms", uz: "Shartlar", ru: "Условия" },
