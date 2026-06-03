@@ -148,14 +148,6 @@ function Home() {
 
       <main className="flex items-center justify-center px-6 py-10 md:py-24">
         <div className="w-full max-w-3xl mx-auto flex flex-col items-center">
-          {/* Brand icon with ambient glow */}
-          <div className="relative mb-4 md:mb-6">
-            <div className="absolute inset-0 blur-xl opacity-25 bg-gradient-to-br from-[#62A1B1] to-[#D5A08D] scale-125 rounded-full" />
-            <div className="relative w-14 h-14 md:w-16 md:h-16 rounded-[1.4rem] bg-gradient-to-br from-[#62A1B1] via-[#8BB5A9] to-[#D5A08D] flex items-center justify-center shadow-xl shadow-slate-900/10 ring-1 ring-white/40">
-              <img src={hamrohH.url} alt="Hamroh brand logo" className="h-8 md:h-9 w-auto" />
-            </div>
-          </div>
-
           {/* Spotlight carousel */}
           <SpotlightBanner />
 
