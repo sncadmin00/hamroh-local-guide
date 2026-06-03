@@ -8,6 +8,7 @@ type Dict = Record<string, { en: string; uz: string; ru: string }>;
 export const translations: Dict = {
   "nav.findGuide": { en: "Find a guide", uz: "Hamroh toping", ru: "Найти гида" },
   "nav.cities": { en: "Cities", uz: "Shaharlar", ru: "Города" },
+  "nav.tours": { en: "Tours", uz: "Sayohatlar", ru: "Туры" },
   "nav.explore": { en: "Explore", uz: "Kashf eting", ru: "Обзор" },
   "nav.howItWorks": { en: "How it works", uz: "Qanday ishlaydi", ru: "Как это работает" },
   "nav.becomeGuide": { en: "Become a guide", uz: "Hamroh bo'ling", ru: "Стать гидом" },
@@ -53,6 +54,7 @@ export const translations: Dict = {
   "spot.newGuide.label": { en: "New guide", uz: "Yangi hamroh", ru: "Новый гид" },
   "spot.newRoute.label": { en: "New route", uz: "Yangi yo'nalish", ru: "Новый маршрут" },
   "spot.news.label": { en: "News", uz: "Yangiliklar", ru: "Новости" },
+  "spot.newTour.label": { en: "New tour", uz: "Yangi sayohat", ru: "Новый тур" },
   "spot.aral.title": { en: "Aral Sea tours from Nukus", uz: "Nukusdan Orol dengiziga sayohatlar", ru: "Туры к Аральскому морю из Нукуса" },
   "spot.aral.desc": { en: "First guide covering the dried seabed and ship graveyard", uz: "Qurigan dengiz tubi va kemalar qabristoni bo'ylab birinchi hamroh", ru: "Первый гид по высохшему дну и кладбищу кораблей" },
   "spot.samarkand.title": { en: "Sunset photography in Samarkand", uz: "Samarqandda quyosh botishi fotosessiyasi", ru: "Фототур на закате в Самарканде" },
@@ -111,6 +113,20 @@ export const translations: Dict = {
   "footer.privacy": { en: "Privacy", uz: "Maxfiylik", ru: "Конфиденциальность" },
   "footer.refunds": { en: "Refunds", uz: "Pulni qaytarish", ru: "Возвраты" },
   "footer.tagline": { en: "Operated by Ark Labs LLC", uz: "Ark Labs LLC tomonidan boshqariladi", ru: "Оператор — Ark Labs LLC" },
+
+  "tours.title": { en: "Tours", uz: "Sayohatlar", ru: "Туры" },
+  "tours.subtitle": { en: "Curated routes led by verified local guides", uz: "Tasdiqlangan mahalliy hamrohlar olib boradigan tanlangan yo'nalishlar", ru: "Подборка маршрутов с проверенными местными гидами" },
+  "tours.priceFrom": { en: "from", uz: "boshlab", ru: "от" },
+  "tours.duration": { en: "Duration", uz: "Davomiyligi", ru: "Длительность" },
+  "tours.hours": { en: "h", uz: "soat", ru: "ч" },
+  "tours.guides": { en: "Guides", uz: "Hamrohlar", ru: "Гиды" },
+  "tours.included": { en: "What's included", uz: "Nimani o'z ichiga oladi", ru: "Что включено" },
+  "tours.notIncluded": { en: "Not included", uz: "Kirmaydi", ru: "Не включено" },
+  "tours.highlights": { en: "Highlights", uz: "Asosiy joylari", ru: "Главное" },
+  "tours.book": { en: "Book this tour", uz: "Sayohatni bron qilish", ru: "Забронировать тур" },
+  "tours.allCities": { en: "All cities", uz: "Barcha shaharlar", ru: "Все города" },
+  "tours.empty": { en: "No tours yet. Check back soon.", uz: "Hozircha sayohatlar yo'q.", ru: "Туров пока нет. Загляните позже." },
+  "tours.backToList": { en: "← All tours", uz: "← Barcha sayohatlar", ru: "← Все туры" },
 };
 
 const I18nContext = createContext<{ lang: Lang; setLang: (l: Lang) => void; t: (k: keyof typeof translations) => string; tCategory: (slug: string, fallback?: string) => string }>({

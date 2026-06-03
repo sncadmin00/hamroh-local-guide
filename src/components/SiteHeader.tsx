@@ -50,6 +50,7 @@ export function SiteHeader() {
   };
   const menuLinks = [
     { to: "/guides", label: t("nav.findGuide") },
+    { to: "/tours", label: t("nav.tours") },
     { to: "/explore", label: t("nav.explore") },
     { to: "/how-it-works", label: t("nav.howItWorks") },
     { to: "/become-a-guide", label: t("nav.becomeGuide") },
