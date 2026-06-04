@@ -20,5 +20,5 @@ export interface Guide {
   verified: boolean;
   instantBook: boolean;
   categories: { slug: string; name: string; icon: string }[];
-  experiences: { title: string; duration: string; price: number }[];
+  experiences: { title: string; duration: string; price: number; priceByLanguage: Record<string, number> }[];
 }

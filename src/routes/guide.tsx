@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Calendar, Plus, Trash2, Check, X, LogOut, Loader2, Copy, Link2, Image as ImageIcon } from "lucide-react";
+import { Calendar, Plus, Trash2, Check, X, LogOut, Loader2, Copy, Link2, Image as ImageIcon, Compass, Pencil } from "lucide-react";
 import {
   getMyGuide,
   listMySlots,
@@ -11,6 +11,9 @@ import {
   deleteSlot,
   listMyBookings,
   updateBookingStatus,
+  listMyExperiences,
+  upsertExperience,
+  deleteExperience,
 } from "@/lib/guide-portal.functions";
 import { GuidePostsPanel } from "@/components/GuidePostsPanel";
 
@@ -51,7 +54,7 @@ function GuidePortal() {
   const [guide, setGuide] = useState<{ id: string; name: string; slug: string; tagline: string; referral_code: string | null; referral_clicks: number; cities?: { name: string } | null } | null>(null);
   const [slots, setSlots] = useState<Slot[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [tab, setTab] = useState<"availability" | "bookings" | "posts" | "referral">("availability");
+  const [tab, setTab] = useState<"availability" | "bookings" | "tours" | "posts" | "referral">("availability");
 
   const fetchGuide = useServerFn(getMyGuide);
   const fetchSlots = useServerFn(listMySlots);
@@ -126,6 +129,9 @@ function GuidePortal() {
           <TabBtn active={tab === "availability"} onClick={() => setTab("availability")}>
             <Calendar className="h-4 w-4" /> Availability
           </TabBtn>
+          <TabBtn active={tab === "tours"} onClick={() => setTab("tours")}>
+            <Compass className="h-4 w-4" /> Tours & prices
+          </TabBtn>
           <TabBtn active={tab === "bookings"} onClick={() => setTab("bookings")}>
             Bookings ({bookings.length})
           </TabBtn>
@@ -169,6 +175,8 @@ function GuidePortal() {
             }}
           />
         )}
+
+        {tab === "tours" && <ToursPanel />}
 
         {tab === "posts" && <GuidePostsPanel />}
 
@@ -342,4 +350,222 @@ function StatusPill({ status }: { status: string }) {
     cancelled: "bg-muted text-muted-foreground",
   };
   return <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium ${map[status] ?? "bg-muted"}`}>{status}</span>;
+}
+
+type Experience = {
+  id: string;
+  title: string;
+  duration: string;
+  price: number;
+  price_by_language: Record<string, number>;
+  sort_order: number;
+};
+
+function ToursPanel() {
+  const [languages, setLanguages] = useState<string[]>([]);
+  const [items, setItems] = useState<Experience[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState<Experience | null>(null);
+  const [creating, setCreating] = useState(false);
+
+  const fetchList = useServerFn(listMyExperiences);
+  const upsertFn = useServerFn(upsertExperience);
+  const deleteFn = useServerFn(deleteExperience);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetchList();
+      setLanguages((res as { languages: string[]; experiences: Experience[] }).languages);
+      setItems((res as { languages: string[]; experiences: Experience[] }).experiences);
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  }, [fetchList]);
+
+  useEffect(() => { load(); }, [load]);
+
+  if (loading) {
+    return <div className="rounded-3xl bg-card p-6 ring-1 ring-border text-sm text-muted-foreground inline-flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Loading…</div>;
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="rounded-3xl bg-card p-6 ring-1 ring-border">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h2 className="font-display text-lg font-semibold">Your tours</h2>
+            <p className="text-sm text-muted-foreground mt-1">Set a price per language. Travellers will see the price for the language they choose at checkout.</p>
+          </div>
+          <button
+            onClick={() => setCreating(true)}
+            className="h-10 px-4 rounded-full bg-foreground text-background text-sm font-medium inline-flex items-center gap-2"
+          >
+            <Plus className="h-4 w-4" /> Add tour
+          </button>
+        </div>
+        {languages.length === 0 && (
+          <p className="mt-4 text-sm text-amber-700 bg-amber-500/10 rounded-xl p-3">
+            Add languages to your profile first (ask an administrator) so you can set per-language prices.
+          </p>
+        )}
+      </div>
+
+      {items.length === 0 ? (
+        <div className="rounded-3xl bg-card p-6 ring-1 ring-border text-sm text-muted-foreground">No tours yet. Click "Add tour" to create one.</div>
+      ) : (
+        <div className="space-y-3">
+          {items.map((it) => (
+            <div key={it.id} className="rounded-2xl bg-card p-5 ring-1 ring-border">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="font-medium">{it.title}</p>
+                  <p className="text-xs text-muted-foreground">{it.duration} · base ${it.price}</p>
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    {languages.map((lng) => {
+                      const p = it.price_by_language[lng];
+                      return (
+                        <span key={lng} className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs ring-1 ${p ? "bg-primary/10 text-primary ring-primary/20" : "bg-muted text-muted-foreground ring-border"}`}>
+                          <span className="font-medium">{lng}</span>
+                          <span className="tabular-nums">${p ?? it.price}</span>
+                        </span>
+                      );
+                    })}
+                  </div>
+                </div>
+                <div className="flex gap-1 shrink-0">
+                  <button onClick={() => setEditing(it)} className="h-9 w-9 grid place-items-center rounded-full text-muted-foreground hover:bg-muted">
+                    <Pencil className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={async () => {
+                      if (!confirm(`Delete "${it.title}"?`)) return;
+                      try { await deleteFn({ data: { id: it.id } }); toast.success("Deleted"); load(); }
+                      catch (e) { toast.error((e as Error).message); }
+                    }}
+                    className="h-9 w-9 grid place-items-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {(editing || creating) && (
+        <ExperienceEditor
+          languages={languages}
+          initial={editing}
+          onClose={() => { setEditing(null); setCreating(false); }}
+          onSave={async (payload) => {
+            try {
+              await upsertFn({ data: payload });
+              toast.success("Saved");
+              setEditing(null);
+              setCreating(false);
+              load();
+            } catch (e) { toast.error((e as Error).message); }
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+function ExperienceEditor({
+  languages, initial, onClose, onSave,
+}: {
+  languages: string[];
+  initial: Experience | null;
+  onClose: () => void;
+  onSave: (payload: { id?: string; title: string; duration: string; price: number; price_by_language: Record<string, number>; sort_order: number }) => void;
+}) {
+  const [title, setTitle] = useState(initial?.title ?? "");
+  const [duration, setDuration] = useState(initial?.duration ?? "2 hours");
+  const [price, setPrice] = useState<number>(initial?.price ?? 0);
+  const [prices, setPrices] = useState<Record<string, string>>(() => {
+    const base: Record<string, string> = {};
+    languages.forEach((l) => {
+      const v = initial?.price_by_language?.[l];
+      base[l] = v ? String(v) : "";
+    });
+    return base;
+  });
+
+  return (
+    <div className="fixed inset-0 z-50 grid place-items-center bg-black/40 p-4" onClick={onClose}>
+      <div onClick={(e) => e.stopPropagation()} className="w-full max-w-lg rounded-3xl bg-background p-6 ring-1 ring-border shadow-xl">
+        <div className="flex items-center justify-between">
+          <h3 className="font-display text-lg font-semibold">{initial ? "Edit tour" : "New tour"}</h3>
+          <button onClick={onClose} className="h-9 w-9 grid place-items-center rounded-full hover:bg-muted"><X className="h-4 w-4" /></button>
+        </div>
+        <div className="mt-4 space-y-4">
+          <label className="block text-sm">
+            <span className="text-xs text-muted-foreground">Title</span>
+            <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Old Tashkent walking tour" className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
+          </label>
+          <div className="grid grid-cols-2 gap-3">
+            <label className="block text-sm">
+              <span className="text-xs text-muted-foreground">Duration</span>
+              <input value={duration} onChange={(e) => setDuration(e.target.value)} placeholder="3 hours" className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
+            </label>
+            <label className="block text-sm">
+              <span className="text-xs text-muted-foreground">Base price ($)</span>
+              <input type="number" min={0} value={price} onChange={(e) => setPrice(Number(e.target.value) || 0)} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
+            </label>
+          </div>
+          <div>
+            <p className="text-sm font-medium">Price per language ($)</p>
+            <p className="text-xs text-muted-foreground mt-0.5">Leave empty to use the base price.</p>
+            {languages.length === 0 ? (
+              <p className="mt-2 text-xs text-muted-foreground">No languages on your profile yet.</p>
+            ) : (
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                {languages.map((lng) => (
+                  <label key={lng} className="flex items-center gap-2 rounded-xl border border-input bg-background px-3 h-11 text-sm">
+                    <span className="w-20 truncate font-medium">{lng}</span>
+                    <span className="text-muted-foreground">$</span>
+                    <input
+                      type="number"
+                      min={0}
+                      value={prices[lng] ?? ""}
+                      onChange={(e) => setPrices({ ...prices, [lng]: e.target.value })}
+                      placeholder={String(price || 0)}
+                      className="flex-1 h-9 bg-transparent outline-none text-sm tabular-nums"
+                    />
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="mt-6 flex justify-end gap-2">
+          <button onClick={onClose} className="h-10 px-4 rounded-full bg-muted text-sm font-medium">Cancel</button>
+          <button
+            disabled={!title.trim() || !duration.trim()}
+            onClick={() => {
+              const pbl: Record<string, number> = {};
+              for (const [k, v] of Object.entries(prices)) {
+                const n = Number(v);
+                if (Number.isFinite(n) && n > 0) pbl[k] = n;
+              }
+              onSave({
+                id: initial?.id,
+                title: title.trim(),
+                duration: duration.trim(),
+                price,
+                price_by_language: pbl,
+                sort_order: initial?.sort_order ?? 0,
+              });
+            }}
+            className="h-10 px-5 rounded-full bg-foreground text-background text-sm font-medium disabled:opacity-50"
+          >Save</button>
+        </div>
+      </div>
+    </div>
+  );
 }

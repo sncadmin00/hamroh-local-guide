@@ -43,7 +43,7 @@ type GuideRow = {
   instant_book: boolean;
   sort_order: number;
   cities: { name: string } | null;
-  guide_experiences: { title: string; duration: string; price: number; sort_order: number }[];
+  guide_experiences: { title: string; duration: string; price: number; price_by_language: Record<string, number> | null; sort_order: number }[];
   guide_categories: { categories: { slug: string; name: string; icon: string } | null }[];
 };
 
@@ -72,12 +72,20 @@ function mapGuide(row: GuideRow): Guide {
       .filter((c): c is { slug: string; name: string; icon: string } => !!c),
     experiences: [...(row.guide_experiences ?? [])]
       .sort((a, b) => a.sort_order - b.sort_order)
-      .map((e) => ({ title: e.title, duration: e.duration, price: Number(e.price) })),
+      .map((e) => {
+        const pbl = e.price_by_language ?? {};
+        const normalized: Record<string, number> = {};
+        for (const [k, v] of Object.entries(pbl)) {
+          const n = Number(v);
+          if (Number.isFinite(n) && n > 0) normalized[k] = n;
+        }
+        return { title: e.title, duration: e.duration, price: Number(e.price), priceByLanguage: normalized };
+      }),
   };
 }
 
 const GUIDE_SELECT =
-  "id, slug, name, city_id, photo_url, tagline, bio, languages, specialties, price_per_day, rating, reviews, verified, instant_book, sort_order, cities(name), guide_experiences(title, duration, price, sort_order), guide_categories(categories(slug, name, icon))";
+  "id, slug, name, city_id, photo_url, tagline, bio, languages, specialties, price_per_day, rating, reviews, verified, instant_book, sort_order, cities(name), guide_experiences(title, duration, price, price_by_language, sort_order), guide_categories(categories(slug, name, icon))";
 
 async function fetchGuides(): Promise<Guide[]> {
   const { data, error } = await supabase

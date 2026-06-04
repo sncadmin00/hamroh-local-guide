@@ -598,6 +598,7 @@ export type Database = {
           guide_id: string
           id: string
           price: number
+          price_by_language: Json
           sort_order: number
           title: string
         }
@@ -607,6 +608,7 @@ export type Database = {
           guide_id: string
           id?: string
           price?: number
+          price_by_language?: Json
           sort_order?: number
           title: string
         }
@@ -616,6 +618,7 @@ export type Database = {
           guide_id?: string
           id?: string
           price?: number
+          price_by_language?: Json
           sort_order?: number
           title?: string
         }

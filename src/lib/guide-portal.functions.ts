@@ -179,3 +179,90 @@ export const updateBookingStatus = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+// ---------- Experiences (tours) ----------
+
+export const listMyExperiences = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
+    const { data: guide } = await supabase
+      .from("guides").select("id, languages").eq("user_id", userId).maybeSingle();
+    if (!guide) return { languages: [] as string[], experiences: [] as Array<{ id: string; title: string; duration: string; price: number; price_by_language: Record<string, number>; sort_order: number }> };
+    const { data, error } = await supabase
+      .from("guide_experiences")
+      .select("id, title, duration, price, price_by_language, sort_order")
+      .eq("guide_id", guide.id)
+      .order("sort_order", { ascending: true });
+    if (error) throw new Error(error.message);
+    return {
+      languages: (guide.languages ?? []) as string[],
+      experiences: (data ?? []).map((e) => ({
+        id: e.id as string,
+        title: e.title as string,
+        duration: e.duration as string,
+        price: Number(e.price),
+        price_by_language: ((e.price_by_language ?? {}) as Record<string, number>),
+        sort_order: Number(e.sort_order),
+      })),
+    };
+  });
+
+const upsertExperienceSchema = z.object({
+  id: z.string().uuid().optional(),
+  title: z.string().trim().min(1).max(200),
+  duration: z.string().trim().min(1).max(60),
+  price: z.number().min(0).max(100000),
+  price_by_language: z.record(z.string().min(1).max(40), z.number().min(0).max(100000)).default({}),
+  sort_order: z.number().int().min(0).max(1000).default(0),
+});
+
+export const upsertExperience = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) => upsertExperienceSchema.parse(input))
+  .handler(async ({ context, data }) => {
+    const { supabase, userId } = context;
+    const { data: guide } = await supabase
+      .from("guides").select("id").eq("user_id", userId).maybeSingle();
+    if (!guide) throw new Error("You are not linked to a guide profile yet.");
+    const cleaned: Record<string, number> = {};
+    for (const [k, v] of Object.entries(data.price_by_language)) {
+      if (v > 0) cleaned[k] = v;
+    }
+    if (data.id) {
+      const { error } = await supabase.from("guide_experiences").update({
+        title: data.title,
+        duration: data.duration,
+        price: data.price,
+        price_by_language: cleaned,
+        sort_order: data.sort_order,
+      }).eq("id", data.id).eq("guide_id", guide.id);
+      if (error) throw new Error(error.message);
+      return { ok: true, id: data.id };
+    }
+    const { data: inserted, error } = await supabase.from("guide_experiences").insert({
+      guide_id: guide.id,
+      title: data.title,
+      duration: data.duration,
+      price: data.price,
+      price_by_language: cleaned,
+      sort_order: data.sort_order,
+    }).select("id").single();
+    if (error) throw new Error(error.message);
+    return { ok: true, id: inserted.id as string };
+  });
+
+export const deleteExperience = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) => z.object({ id: z.string().uuid() }).parse(input))
+  .handler(async ({ context, data }) => {
+    const { supabase, userId } = context;
+    const { data: guide } = await supabase
+      .from("guides").select("id").eq("user_id", userId).maybeSingle();
+    if (!guide) throw new Error("You are not linked to a guide profile yet.");
+    const { error } = await supabase
+      .from("guide_experiences").delete().eq("id", data.id).eq("guide_id", guide.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+

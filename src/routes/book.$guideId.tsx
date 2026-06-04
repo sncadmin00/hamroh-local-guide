@@ -50,7 +50,7 @@ function BookPage() {
 
   useEffect(() => {
     if (!guide) return;
-    fetchSlots({ data: { guide_id: guide.id } })
+    fetchSlots({ data: { guide_id: guide.dbId } })
       .then((rows) => setSlots(rows as typeof slots))
       .catch(() => setSlots([]));
   }, [guide, fetchSlots]);
@@ -90,11 +90,14 @@ function BookPage() {
     );
   }
 
-  const experiences = guide.experiences.length > 0 ? guide.experiences : [{ title: "Full day with guide", duration: "8 hours", price: guide.pricePerDay }];
+  const experiences = guide.experiences.length > 0
+    ? guide.experiences
+    : [{ title: "Full day with guide", duration: "8 hours", price: guide.pricePerDay, priceByLanguage: {} as Record<string, number> }];
   const currentExperience = form.experience || experiences[0].title;
   const hasInstantSlots = slots.length > 0;
   const isInstantMode = hasInstantSlots && !!selectedSlot;
   const chosenSlot = slots.find((s) => s.id === selectedSlot) ?? null;
+  const currentLanguage = form.language || guide.languages[0] || "";
 
   const handleFieldChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -102,6 +105,12 @@ function BookPage() {
   const setGuests = (n: number) => {
     setForm((f) => ({ ...f, guests: Math.min(12, Math.max(1, n)) }));
   };
+
+  const selectedExperience = experiences.find((e) => e.title === currentExperience) ?? experiences[0];
+  const unitPrice = (currentLanguage && selectedExperience.priceByLanguage[currentLanguage]) || selectedExperience.price;
+  const total = unitPrice * form.guests;
+  const fee = Math.round(total * 0.08);
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (submitting) return;
@@ -118,10 +127,10 @@ function BookPage() {
     try {
       await createBookingFn({
         data: {
-          guide_id: guide.id,
+          guide_id: guide.dbId,
           slot_id: chosenSlot?.id ?? null,
           user_id: userData.user?.id ?? null,
-          experience: currentExperience,
+          experience: currentLanguage ? `${currentExperience} (${currentLanguage})` : currentExperience,
           date: chosenSlot?.date ?? form.date,
           start_time: chosenSlot?.start_time,
           duration_minutes: chosenSlot?.duration_minutes,
@@ -138,7 +147,7 @@ function BookPage() {
         },
       });
       setConfirmed(true);
-      trackEvent("booking_created", { guide_id: guide.id, instant: !!chosenSlot, total: total + fee });
+      trackEvent("booking_created", { guide_id: guide.dbId, instant: !!chosenSlot, total: total + fee });
       window.scrollTo({ top: 0 });
     } catch (err) {
       toast.error((err as Error).message);
@@ -146,10 +155,6 @@ function BookPage() {
       setSubmitting(false);
     }
   };
-
-  const selectedExperience = experiences.find((e) => e.title === currentExperience) ?? experiences[0];
-  const total = selectedExperience.price * form.guests;
-  const fee = Math.round(total * 0.08);
 
   if (confirmed) {
     return (
@@ -227,7 +232,7 @@ function BookPage() {
               </div>
             )}
 
-            <div className={`grid gap-4 ${guide.languages.length > 1 ? "sm:grid-cols-2" : ""}`}>
+            <div className={`grid gap-4 ${guide.languages.length > 0 ? "sm:grid-cols-2" : ""}`}>
               <div>
                 <label className="text-sm font-medium">Guests</label>
                 <div className="mt-2 inline-flex h-12 items-center rounded-xl border border-input bg-background">
@@ -236,20 +241,22 @@ function BookPage() {
                   <button type="button" onClick={() => setGuests(form.guests + 1)} disabled={form.guests >= 12} className="h-12 w-12 text-lg font-medium text-muted-foreground hover:text-foreground disabled:opacity-40">+</button>
                 </div>
               </div>
-              {guide.languages.length > 1 && (
+              {guide.languages.length > 0 && (
                 <div>
                   <label className="text-sm font-medium">Language</label>
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     {guide.languages.map((lng) => {
-                      const active = (form.language || guide.languages[0]) === lng;
+                      const active = currentLanguage === lng;
+                      const langPrice = selectedExperience.priceByLanguage[lng] ?? selectedExperience.price;
                       return (
                         <button
                           key={lng}
                           type="button"
                           onClick={() => setForm({ ...form, language: lng })}
-                          className={`h-9 px-3 rounded-full text-sm ring-1 transition ${active ? "bg-foreground text-background ring-foreground" : "bg-background ring-border hover:bg-muted"}`}
+                          className={`inline-flex items-center gap-1.5 h-9 px-3 rounded-full text-sm ring-1 transition ${active ? "bg-foreground text-background ring-foreground" : "bg-background ring-border hover:bg-muted"}`}
                         >
-                          {lng}
+                          <span>{lng}</span>
+                          <span className={`tabular-nums ${active ? "text-background/80" : "text-muted-foreground"}`}>${Math.round(langPrice)}</span>
                         </button>
                       );
                     })}
@@ -310,10 +317,16 @@ function BookPage() {
               </div>
 
               <div className="mt-6 space-y-3 border-t border-border/60 pt-5 text-sm">
-                <div className="flex justify-between"><span className="text-muted-foreground">{selectedExperience.title}</span><span>${selectedExperience.price}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">× {form.guests} guests</span><span>${total}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Service fee</span><span>${fee}</span></div>
-                <div className="flex justify-between border-t border-border/60 pt-3 text-base font-semibold"><span>Total</span><span>${total + fee}</span></div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">
+                    {selectedExperience.title}
+                    {currentLanguage && <span className="text-foreground/70"> · {currentLanguage}</span>}
+                  </span>
+                  <span className="tabular-nums">${unitPrice}</span>
+                </div>
+                <div className="flex justify-between"><span className="text-muted-foreground">× {form.guests} {form.guests === 1 ? "guest" : "guests"}</span><span className="tabular-nums">${total}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Service fee</span><span className="tabular-nums">${fee}</span></div>
+                <div className="flex justify-between border-t border-border/60 pt-3 text-base font-semibold"><span>Total</span><span className="tabular-nums">${total + fee}</span></div>
               </div>
               <div className="mt-5 border-t border-border/60 pt-4">
                 <PaymentMethods variant="checkout" />
