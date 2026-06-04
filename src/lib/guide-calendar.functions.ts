@@ -93,6 +93,26 @@ export const createCalendarEvent = createServerFn({ method: "POST" })
       .single();
 
     if (error) throw new Error(error.message);
+
+    // Mirror to Google Calendar (best-effort)
+    try {
+      const googleEventId = await pushEventToGoogle(guide.id, {
+        title: data.title,
+        starts_at: data.starts_at,
+        ends_at: data.ends_at,
+        location: data.location,
+        notes: data.notes,
+      });
+      if (googleEventId && event) {
+        await supabaseAdmin
+          .from("calendar_events")
+          .update({ google_event_id: googleEventId } as never)
+          .eq("id", (event as { id: string }).id);
+      }
+    } catch (e) {
+      console.error("[calendar] google push failed:", e);
+    }
+
     return event;
   });
 
