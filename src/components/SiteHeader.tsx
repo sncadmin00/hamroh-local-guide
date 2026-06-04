@@ -49,8 +49,8 @@ export function SiteHeader() {
     navigate({ to: "/", replace: true });
   };
   const menuLinks = [
-    { to: "/guides", label: t("nav.findGuide") },
     { to: "/tours", label: t("nav.tours") },
+    { to: "/guides", label: t("nav.findGuide") },
     { to: "/book", label: t("book.cta") },
     { to: "/become-a-guide", label: t("nav.becomeGuide") },
     { to: "/faq", label: t("nav.faq") },
