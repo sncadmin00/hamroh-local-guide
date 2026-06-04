@@ -586,12 +586,36 @@ function GuidesPanel({
             onChange={setSpecialties}
             placeholder="Food, History, Architecture"
           />
-          <Field
-            label="Languages (comma separated)"
-            value={languages}
-            onChange={setLanguages}
-            placeholder="English, Russian, Uzbek"
-          />
+          <div>
+            <label className="text-xs font-medium text-muted-foreground">Languages</label>
+            {languageList.length === 0 ? (
+              <p className="mt-1 text-xs text-muted-foreground">No languages yet. Add some in the Languages tab.</p>
+            ) : (
+              <div className="mt-1 flex flex-wrap gap-2">
+                {languageList.map((lng) => {
+                  const on = selectedLangs.includes(lng.name);
+                  return (
+                    <button
+                      key={lng.id}
+                      type="button"
+                      onClick={() =>
+                        setSelectedLangs((s) =>
+                          s.includes(lng.name) ? s.filter((x) => x !== lng.name) : [...s, lng.name],
+                        )
+                      }
+                      className={`px-3 h-8 rounded-full text-xs font-medium ring-1 transition ${
+                        on
+                          ? "bg-primary text-primary-foreground ring-primary"
+                          : "bg-card ring-border/60 text-muted-foreground hover:bg-secondary/60"
+                      }`}
+                    >
+                      {lng.name}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
           <div className="flex items-center gap-6 pt-1">
             <label className="inline-flex items-center gap-2 text-sm">
               <input type="checkbox" checked={verified} onChange={(e) => setVerified(e.target.checked)} />
