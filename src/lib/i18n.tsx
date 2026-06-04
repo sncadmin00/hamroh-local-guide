@@ -103,7 +103,8 @@ export const translations: Dict = {
   "featured.viewAll": { en: "View all guides", uz: "Hammasini ko'rish", ru: "Все гиды" },
   "topTours.title": { en: "Top tours", uz: "Top sayohatlar", ru: "Топ туры" },
   "topTours.subtitle": { en: "Curated routes with verified local guides", uz: "Tasdiqlangan hamrohlar bilan tanlangan yo'nalishlar", ru: "Подборка маршрутов с проверенными гидами" },
-  "topTours.viewAll": { en: "View all tours", uz: "Barcha sayohatlar", ru: "Все туры" },
+ "topTours.viewAll": { en: "View all tours", uz: "Barcha sayohatlar", ru: "Все туры" },
+ "topTours.all": { en: "All", uz: "Hammasi", ru: "Все" },
 
   "cities.title": { en: "Popular cities", uz: "Mashhur shaharlar", ru: "Популярные города" },
   "cities.subtitle": { en: "Pick a destination and meet your guide", uz: "Yo'nalishni tanlang va hamroh toping", ru: "Выберите город и найдите гида" },
