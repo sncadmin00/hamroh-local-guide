@@ -143,6 +143,30 @@ export const updateCalendarEvent = createServerFn({ method: "POST" })
       .single();
 
     if (error) throw new Error(error.message);
+
+    // Mirror update to Google Calendar
+    try {
+      const ev = event as {
+        google_event_id: string | null;
+        title: string;
+        starts_at: string;
+        ends_at: string;
+        location: string;
+        notes: string;
+      } | null;
+      if (ev?.google_event_id) {
+        await updateEventOnGoogle(guide.id, ev.google_event_id, {
+          title: ev.title,
+          starts_at: ev.starts_at,
+          ends_at: ev.ends_at,
+          location: ev.location,
+          notes: ev.notes,
+        });
+      }
+    } catch (e) {
+      console.error("[calendar] google update failed:", e);
+    }
+
     return event;
   });
 
