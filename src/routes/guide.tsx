@@ -585,8 +585,12 @@ function TourEditor({
     cover_url: string | null;
     city_id: string;
     duration_hours: number;
-    price_from: number;
-    price_by_language: Record<string, number>;
+    pricing_mode: "fixed" | "by_group";
+    fixed_price: number;
+    group_prices: Partial<Record<(typeof GROUP_KEYS)[number], number>>;
+    base_language: string;
+    language_multipliers: Record<string, number>;
+    children_free_under: number;
     languages: string[];
     transport_included: boolean;
     highlights: string[];
