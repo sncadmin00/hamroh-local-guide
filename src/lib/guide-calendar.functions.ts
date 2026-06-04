@@ -1,6 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import {
+  pushEventToGoogle,
+  updateEventOnGoogle,
+  deleteEventOnGoogle,
+} from "@/lib/google-calendar.server";
 
 const EventTypeSchema = z.enum(["personal", "block", "reminder"]);
 

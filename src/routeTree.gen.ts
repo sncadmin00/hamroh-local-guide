@@ -49,6 +49,7 @@ import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/e
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as ApiPublicTelegramWebhookRouteImport } from './routes/api/public/telegram/webhook'
+import { Route as ApiPublicHooksGoogleOauthCallbackRouteImport } from './routes/api/public/hooks/google-oauth-callback'
 import { Route as ApiPublicHooksExpireBookingsRouteImport } from './routes/api/public/hooks/expire-bookings'
 import { Route as ApiPublicHooksDailyBriefRouteImport } from './routes/api/public/hooks/daily-brief'
 import { Route as ApiPublicHooksChatNotificationsRouteImport } from './routes/api/public/hooks/chat-notifications'
@@ -259,6 +260,12 @@ const ApiPublicTelegramWebhookRoute =
     path: '/api/public/telegram/webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksGoogleOauthCallbackRoute =
+  ApiPublicHooksGoogleOauthCallbackRouteImport.update({
+    id: '/api/public/hooks/google-oauth-callback',
+    path: '/api/public/hooks/google-oauth-callback',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksExpireBookingsRoute =
   ApiPublicHooksExpireBookingsRouteImport.update({
     id: '/api/public/hooks/expire-bookings',
@@ -330,6 +337,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/chat-notifications': typeof ApiPublicHooksChatNotificationsRoute
   '/api/public/hooks/daily-brief': typeof ApiPublicHooksDailyBriefRoute
   '/api/public/hooks/expire-bookings': typeof ApiPublicHooksExpireBookingsRoute
+  '/api/public/hooks/google-oauth-callback': typeof ApiPublicHooksGoogleOauthCallbackRoute
   '/api/public/telegram/webhook': typeof ApiPublicTelegramWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -376,6 +384,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/chat-notifications': typeof ApiPublicHooksChatNotificationsRoute
   '/api/public/hooks/daily-brief': typeof ApiPublicHooksDailyBriefRoute
   '/api/public/hooks/expire-bookings': typeof ApiPublicHooksExpireBookingsRoute
+  '/api/public/hooks/google-oauth-callback': typeof ApiPublicHooksGoogleOauthCallbackRoute
   '/api/public/telegram/webhook': typeof ApiPublicTelegramWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -424,6 +433,7 @@ export interface FileRoutesById {
   '/api/public/hooks/chat-notifications': typeof ApiPublicHooksChatNotificationsRoute
   '/api/public/hooks/daily-brief': typeof ApiPublicHooksDailyBriefRoute
   '/api/public/hooks/expire-bookings': typeof ApiPublicHooksExpireBookingsRoute
+  '/api/public/hooks/google-oauth-callback': typeof ApiPublicHooksGoogleOauthCallbackRoute
   '/api/public/telegram/webhook': typeof ApiPublicTelegramWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -473,6 +483,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/chat-notifications'
     | '/api/public/hooks/daily-brief'
     | '/api/public/hooks/expire-bookings'
+    | '/api/public/hooks/google-oauth-callback'
     | '/api/public/telegram/webhook'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -519,6 +530,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/chat-notifications'
     | '/api/public/hooks/daily-brief'
     | '/api/public/hooks/expire-bookings'
+    | '/api/public/hooks/google-oauth-callback'
     | '/api/public/telegram/webhook'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -566,6 +578,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/chat-notifications'
     | '/api/public/hooks/daily-brief'
     | '/api/public/hooks/expire-bookings'
+    | '/api/public/hooks/google-oauth-callback'
     | '/api/public/telegram/webhook'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -610,6 +623,7 @@ export interface RootRouteChildren {
   ApiPublicHooksChatNotificationsRoute: typeof ApiPublicHooksChatNotificationsRoute
   ApiPublicHooksDailyBriefRoute: typeof ApiPublicHooksDailyBriefRoute
   ApiPublicHooksExpireBookingsRoute: typeof ApiPublicHooksExpireBookingsRoute
+  ApiPublicHooksGoogleOauthCallbackRoute: typeof ApiPublicHooksGoogleOauthCallbackRoute
   ApiPublicTelegramWebhookRoute: typeof ApiPublicTelegramWebhookRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
@@ -900,6 +914,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicTelegramWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/google-oauth-callback': {
+      id: '/api/public/hooks/google-oauth-callback'
+      path: '/api/public/hooks/google-oauth-callback'
+      fullPath: '/api/public/hooks/google-oauth-callback'
+      preLoaderRoute: typeof ApiPublicHooksGoogleOauthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/expire-bookings': {
       id: '/api/public/hooks/expire-bookings'
       path: '/api/public/hooks/expire-bookings'
@@ -1009,6 +1030,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksChatNotificationsRoute: ApiPublicHooksChatNotificationsRoute,
   ApiPublicHooksDailyBriefRoute: ApiPublicHooksDailyBriefRoute,
   ApiPublicHooksExpireBookingsRoute: ApiPublicHooksExpireBookingsRoute,
+  ApiPublicHooksGoogleOauthCallbackRoute:
+    ApiPublicHooksGoogleOauthCallbackRoute,
   ApiPublicTelegramWebhookRoute: ApiPublicTelegramWebhookRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
