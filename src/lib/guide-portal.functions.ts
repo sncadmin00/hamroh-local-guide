@@ -206,6 +206,83 @@ export const updateBookingStatus = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+
+export const proposeBookingTime = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) =>
+    z.object({
+      id: z.string().uuid(),
+      date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+      time: z.string().regex(/^\d{2}:\d{2}(:\d{2})?$/),
+      note: z.string().trim().max(500).optional(),
+    }).parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const { supabase } = context;
+
+    const { data: prior, error: loadErr } = await supabase
+      .from("bookings")
+      .select("id, status, customer_email, customer_telegram_chat_id, customer_name, experience, locale, guide_id")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (loadErr) throw new Error(loadErr.message);
+    if (!prior) throw new Error("Booking not found");
+    if (!["pending", "confirmed"].includes(prior.status as string)) {
+      throw new Error("Cannot propose new time for this booking");
+    }
+
+    const { error } = await supabase
+      .from("bookings")
+      .update({
+        proposed_date: data.date,
+        proposed_time: data.time,
+        proposed_note: data.note ?? null,
+        proposed_at: new Date().toISOString(),
+        status: "pending",
+      })
+      .eq("id", data.id);
+    if (error) throw new Error(error.message);
+
+    try {
+      const { data: guide } = await supabaseAdmin
+        .from("guides").select("name").eq("id", prior.guide_id).maybeSingle();
+      if (prior.customer_email) {
+        await enqueueTransactionalEmail({
+          supabase: supabaseAdmin,
+          templateName: "booking-status-update-client",
+          recipientEmail: prior.customer_email,
+          templateData: {
+            customerName: prior.customer_name,
+            guideName: guide?.name ?? undefined,
+            experience: prior.experience,
+            date: data.date,
+            startTime: data.time,
+            reason: data.note ? `Proposed new time. ${data.note}` : "Proposed new time",
+            bookingUrl: `${APP_BASE_URL}/my-bookings`,
+            status: "pending",
+            locale: normalizeLocale(prior.locale),
+          },
+          idempotencyKey: `booking-propose-${data.id}-${data.date}-${data.time}`,
+        });
+      }
+      await sendTelegramMessage(prior.customer_telegram_chat_id, bookingDetailsText({
+        title: "Guide proposed a new time",
+        guideName: guide?.name ?? undefined,
+        customerName: prior.customer_name,
+        experience: prior.experience,
+        date: data.date,
+        startTime: data.time,
+        status: "pending",
+        reason: data.note,
+        url: `${APP_BASE_URL}/my-bookings`,
+      }));
+    } catch (e) {
+      console.error("Failed to notify client of proposed time", e);
+    }
+
+    return { ok: true };
+  });
+
 // ---------- Tours (guide-owned) ----------
 
 function slugify(input: string): string {
