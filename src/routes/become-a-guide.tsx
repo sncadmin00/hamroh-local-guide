@@ -147,7 +147,7 @@ function BecomeAGuidePage() {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const parsed = schema.safeParse(form);
+    const parsed = schema.safeParse({ ...form, languages: selectedLanguages });
     if (!parsed.success) {
       toast.error(parsed.error.issues[0]?.message ?? "Please check the form");
       return;
@@ -155,10 +155,7 @@ function BecomeAGuidePage() {
     setSaving(true);
     try {
       const { data: userData } = await supabase.auth.getUser();
-      const languages = parsed.data.languages
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean);
+      const languages = parsed.data.languages;
 
       let portrait_url: string | null = null;
       let video_url: string | null = null;
