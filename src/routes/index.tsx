@@ -181,6 +181,17 @@ function Home() {
 
 
 
+          {/* Steps above the search */}
+          <div className="flex items-center justify-center gap-2 sm:gap-3 text-sm text-slate-500 flex-wrap mb-5 md:mb-6">
+            {[t("how.step1.title"), t("how.step2.title"), t("how.step3.title")].map((label, i) => (
+              <div key={i} className="flex items-center gap-2 sm:gap-3">
+                {i > 0 && <span className="hidden sm:block w-6 h-px bg-slate-200" aria-hidden />}
+                <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-[#8BB5A9]/15 text-[#5e8a7e] text-[11px] font-semibold">{i + 1}</span>
+                <span>{label}</span>
+              </div>
+            ))}
+          </div>
+
           {/* AI Input with hover glow */}
           <form
             onSubmit={(e) => { e.preventDefault(); submit(input); }}
@@ -232,7 +243,7 @@ function Home() {
           {/* Tagline under input */}
           <p className="mt-3 text-xs text-slate-400">{t("hero.tagline")}</p>
 
-          {/* Stats + trust + steps moved below input */}
+          {/* Stats + trust below input */}
           <div className="text-center space-y-4 mt-8 md:mt-10">
             <p className="text-sm text-slate-500 flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
               <span><span className="font-semibold text-slate-700">1,240</span> {t("hero.stats.guides")}</span>
@@ -242,16 +253,8 @@ function Home() {
               <span><span className="font-semibold text-slate-700">12,000</span> {t("hero.stats.travelers")}</span>
             </p>
             <TrustBar />
-            <div className="flex items-center justify-center gap-2 sm:gap-3 text-sm text-slate-500 flex-wrap pt-1">
-              {[t("how.step1.title"), t("how.step2.title"), t("how.step3.title")].map((label, i) => (
-                <div key={i} className="flex items-center gap-2 sm:gap-3">
-                  {i > 0 && <span className="hidden sm:block w-6 h-px bg-slate-200" aria-hidden />}
-                  <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-[#8BB5A9]/15 text-[#5e8a7e] text-[11px] font-semibold">{i + 1}</span>
-                  <span>{label}</span>
-                </div>
-              ))}
-            </div>
           </div>
+
         </div>
       </main>
 
