@@ -156,6 +156,9 @@ function GuidePortal() {
           <TabBtn active={tab === "calendar"} onClick={() => setTab("calendar")}>
             <CalendarDays className="h-4 w-4" /> Calendar
           </TabBtn>
+          <TabBtn active={tab === "ai"} onClick={() => setTab("ai")}>
+            <Sparkles className="h-4 w-4" /> AI
+          </TabBtn>
           <TabBtn active={tab === "availability"} onClick={() => setTab("availability")}>
             <Calendar className="h-4 w-4" /> Availability
           </TabBtn>
