@@ -342,8 +342,11 @@ function normalizeTour(row: any): TourRow {
     highlights: row.highlights ?? [],
     included: row.included ?? [],
     not_included: row.not_included ?? [],
+    rating: Number(row.rating ?? 5),
+    reviews_count: Number(row.reviews_count ?? 0),
   };
 }
+
 
 export function useTours(opts?: { citySlug?: string; categorySlug?: string }) {
   return useQuery({
