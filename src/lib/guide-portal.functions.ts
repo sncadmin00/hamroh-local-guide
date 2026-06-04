@@ -267,7 +267,7 @@ const upsertTourSchema = z.object({
   fixed_price: z.number().min(0).max(100000).default(0),
   group_prices: z
     .record(z.enum(GROUP_KEYS), z.number().min(0).max(100000))
-    .default({}),
+    .default(() => ({}) as Record<(typeof GROUP_KEYS)[number], number>),
   base_language: z.string().trim().min(1).max(40).default("Russian"),
   language_multipliers: z
     .record(z.string().min(1).max(40), z.number().min(-50).max(500))
