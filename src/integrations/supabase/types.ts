@@ -322,6 +322,75 @@ export type Database = {
           },
         ]
       }
+      calendar_events: {
+        Row: {
+          all_day: boolean
+          booking_id: string | null
+          color: string
+          created_at: string
+          ends_at: string
+          google_event_id: string | null
+          guide_id: string
+          id: string
+          location: string
+          notes: string
+          source: string
+          starts_at: string
+          title: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          all_day?: boolean
+          booking_id?: string | null
+          color?: string
+          created_at?: string
+          ends_at: string
+          google_event_id?: string | null
+          guide_id: string
+          id?: string
+          location?: string
+          notes?: string
+          source?: string
+          starts_at: string
+          title: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          all_day?: boolean
+          booking_id?: string | null
+          color?: string
+          created_at?: string
+          ends_at?: string
+          google_event_id?: string | null
+          guide_id?: string
+          id?: string
+          location?: string
+          notes?: string
+          source?: string
+          starts_at?: string
+          title?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calendar_events_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "calendar_events_guide_id_fkey"
+            columns: ["guide_id"]
+            isOneToOne: false
+            referencedRelation: "guides"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       categories: {
         Row: {
           created_at: string
@@ -505,6 +574,38 @@ export type Database = {
         }
         Relationships: []
       }
+      guide_ai_threads: {
+        Row: {
+          created_at: string
+          guide_id: string
+          id: string
+          messages: Json
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          guide_id: string
+          id?: string
+          messages?: Json
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          guide_id?: string
+          id?: string
+          messages?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guide_ai_threads_guide_id_fkey"
+            columns: ["guide_id"]
+            isOneToOne: true
+            referencedRelation: "guides"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       guide_applications: {
         Row: {
           about: string
@@ -626,6 +727,103 @@ export type Database = {
             foreignKeyName: "guide_categories_guide_id_fkey"
             columns: ["guide_id"]
             isOneToOne: false
+            referencedRelation: "guides"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      guide_client_notes: {
+        Row: {
+          client_email: string | null
+          client_name: string
+          client_user_id: string | null
+          created_at: string
+          guide_id: string
+          id: string
+          last_tour_at: string | null
+          notes: string
+          tags: string[]
+          updated_at: string
+        }
+        Insert: {
+          client_email?: string | null
+          client_name?: string
+          client_user_id?: string | null
+          created_at?: string
+          guide_id: string
+          id?: string
+          last_tour_at?: string | null
+          notes?: string
+          tags?: string[]
+          updated_at?: string
+        }
+        Update: {
+          client_email?: string | null
+          client_name?: string
+          client_user_id?: string | null
+          created_at?: string
+          guide_id?: string
+          id?: string
+          last_tour_at?: string | null
+          notes?: string
+          tags?: string[]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guide_client_notes_guide_id_fkey"
+            columns: ["guide_id"]
+            isOneToOne: false
+            referencedRelation: "guides"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      guide_google_calendar: {
+        Row: {
+          access_token: string
+          calendar_id: string
+          created_at: string
+          expires_at: string
+          google_email: string | null
+          guide_id: string
+          id: string
+          last_synced_at: string | null
+          refresh_token: string
+          sync_token: string | null
+          updated_at: string
+        }
+        Insert: {
+          access_token: string
+          calendar_id?: string
+          created_at?: string
+          expires_at: string
+          google_email?: string | null
+          guide_id: string
+          id?: string
+          last_synced_at?: string | null
+          refresh_token: string
+          sync_token?: string | null
+          updated_at?: string
+        }
+        Update: {
+          access_token?: string
+          calendar_id?: string
+          created_at?: string
+          expires_at?: string
+          google_email?: string | null
+          guide_id?: string
+          id?: string
+          last_synced_at?: string | null
+          refresh_token?: string
+          sync_token?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guide_google_calendar_guide_id_fkey"
+            columns: ["guide_id"]
+            isOneToOne: true
             referencedRelation: "guides"
             referencedColumns: ["id"]
           },
