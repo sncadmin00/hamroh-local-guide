@@ -205,9 +205,9 @@ function GuidePortal() {
             }}
             onPropose={async (bookingId, date, time, note) => {
               try {
-                const body = `Proposing another time: ${date} at ${time}.${note ? ` Note: ${note}` : ""}`;
-                await sendMessageFn({ data: { booking_id: bookingId, body } });
+                await proposeTimeFn({ data: { id: bookingId, date, time, note: note || undefined } });
                 toast.success("Proposal sent to client");
+                await load();
               } catch (e) { toast.error((e as Error).message); }
             }}
           />
