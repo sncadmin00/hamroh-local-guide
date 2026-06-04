@@ -14,7 +14,7 @@ export const listMyBookings = createServerFn({ method: "GET" })
     const { supabase, userId } = context;
     const { data, error } = await supabase
       .from("bookings")
-      .select("id, experience, date, start_time, duration_minutes, guests, status, total, created_at, cancellation_reason, guides(name, slug, photo_url)")
+      .select("id, experience, date, start_time, duration_minutes, guests, status, total, created_at, cancellation_reason, proposed_date, proposed_time, proposed_note, proposed_at, slot_id, guides(name, slug, photo_url)")
       .eq("user_id", userId)
       .order("date", { ascending: false });
     if (error) throw new Error(error.message);
