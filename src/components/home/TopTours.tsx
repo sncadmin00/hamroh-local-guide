@@ -47,7 +47,42 @@ export function TopTours() {
           </Link>
         </div>
 
+        {availableCategories.length > 0 && (
+          <div className="-mx-6 px-6 mb-4">
+            <div className="flex gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+              <button
+                type="button"
+                onClick={() => setActive(null)}
+                className={`shrink-0 px-3.5 py-1.5 rounded-full text-sm font-medium border transition-colors ${
+                  active === null
+                    ? "bg-foreground text-background border-foreground"
+                    : "bg-card text-foreground/70 border-border hover:bg-secondary"
+                }`}
+              >
+                {t("topTours.all")}
+              </button>
+              {availableCategories.map((c) => (
+                <button
+                  key={c.id}
+                  type="button"
+                  onClick={() => setActive(c.slug)}
+                  className={`shrink-0 px-3.5 py-1.5 rounded-full text-sm font-medium border transition-colors whitespace-nowrap ${
+                    active === c.slug
+                      ? "bg-foreground text-background border-foreground"
+                      : "bg-card text-foreground/70 border-border hover:bg-secondary"
+                  }`}
+                >
+                  {tCategory(c.slug, c.name)}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="-mx-6 px-6">
+          {!isLoading && top.length === 0 ? (
+            <p className="text-sm text-muted-foreground py-6">—</p>
+          ) : null}
           <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 [scrollbar-width:thin]">
             {isLoading
               ? Array.from({ length: 4 }).map((_, i) => (
