@@ -316,13 +316,16 @@ export type TourRow = {
   price_by_language: Record<string, number>;
   transport_included: boolean;
   languages: string[];
+  rating: number;
+  reviews_count: number;
   cities?: { name: string; slug: string } | null;
   guides?: { id: string; slug: string; name: string; photo_url: string | null; rating: number; reviews: number; languages: string[] } | null;
   tour_categories?: { category_id: string; categories: { slug: string; name: string; icon: string } | null }[];
 };
 
 const TOUR_SELECT =
-  "id, slug, title, short_description, description_md, cover_url, city_id, duration_hours, price_from, highlights, included, not_included, published, sort_order, guide_id, price_by_language, transport_included, languages, cities(name, slug), guides(id, slug, name, photo_url, rating, reviews, languages), tour_categories(category_id, categories(slug, name, icon))";
+  "id, slug, title, short_description, description_md, cover_url, city_id, duration_hours, price_from, highlights, included, not_included, published, sort_order, guide_id, price_by_language, transport_included, languages, rating, reviews_count, cities(name, slug), guides(id, slug, name, photo_url, rating, reviews, languages), tour_categories(category_id, categories(slug, name, icon))";
+
 
 function normalizeTour(row: any): TourRow {
   const raw = row.price_by_language ?? {};
