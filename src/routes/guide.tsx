@@ -759,6 +759,7 @@ function TourEditor({
                 not_included: textToArr(notIncluded),
                 published,
                 sort_order: initial?.sort_order ?? 0,
+                category_ids: selectedCats,
               });
             }}
             className="h-10 px-5 rounded-full bg-foreground text-background text-sm font-medium disabled:opacity-50"
