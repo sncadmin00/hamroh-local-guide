@@ -4,8 +4,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { listMyBookings, cancelBookingAsClient } from "@/lib/my-bookings.functions";
-import { Calendar, Users, ArrowLeft, MessageSquare, X } from "lucide-react";
+import { listMyBookings, cancelBookingAsClient, respondToProposal } from "@/lib/my-bookings.functions";
+import { Calendar, Users, ArrowLeft, MessageSquare, X, CalendarClock, Check } from "lucide-react";
 import { ReviewForm } from "@/components/ReviewForm";
 
 
