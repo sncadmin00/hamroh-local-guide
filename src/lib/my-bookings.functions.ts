@@ -14,7 +14,7 @@ export const listMyBookings = createServerFn({ method: "GET" })
     const { supabase, userId } = context;
     const { data, error } = await supabase
       .from("bookings")
-      .select("id, experience, date, start_time, duration_minutes, guests, status, total, created_at, cancellation_reason, guides(name, slug, photo_url)")
+      .select("id, experience, date, start_time, duration_minutes, guests, status, total, created_at, cancellation_reason, proposed_date, proposed_time, proposed_note, proposed_at, slot_id, guides(name, slug, photo_url)")
       .eq("user_id", userId)
       .order("date", { ascending: false });
     if (error) throw new Error(error.message);
@@ -101,4 +101,112 @@ export const cancelBookingAsClient = createServerFn({ method: "POST" })
     }
 
     return { ok: true };
+  });
+
+// Client accepts or declines a guide's proposed alternative time
+export const respondToProposal = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) =>
+    z.object({
+      id: z.string().uuid(),
+      accept: z.boolean(),
+    }).parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const { supabase, userId } = context;
+
+    const { data: booking, error: loadErr } = await supabase
+      .from("bookings")
+      .select("id, user_id, guide_id, status, slot_id, proposed_date, proposed_time, experience, date, start_time, customer_name, locale")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (loadErr) throw new Error(loadErr.message);
+    if (!booking) throw new Error("Booking not found");
+    if (booking.user_id !== userId) throw new Error("Forbidden");
+    if (!booking.proposed_date || !booking.proposed_time) {
+      throw new Error("No proposal to respond to");
+    }
+
+    if (data.accept) {
+      // Free the old slot if any (proposed time is custom; no auto-slot binding)
+      if (booking.slot_id) {
+        await supabaseAdmin
+          .from("guide_availability_slots")
+          .update({ is_booked: false, booking_id: null })
+          .eq("id", booking.slot_id);
+      }
+      const { error: updErr } = await supabase
+        .from("bookings")
+        .update({
+          date: booking.proposed_date,
+          start_time: booking.proposed_time,
+          slot_id: null,
+          status: "confirmed",
+          proposed_date: null,
+          proposed_time: null,
+          proposed_note: null,
+          proposed_at: null,
+        })
+        .eq("id", data.id);
+      if (updErr) throw new Error(updErr.message);
+    } else {
+      const { error: updErr } = await supabase
+        .from("bookings")
+        .update({
+          proposed_date: null,
+          proposed_time: null,
+          proposed_note: null,
+          proposed_at: null,
+        })
+        .eq("id", data.id);
+      if (updErr) throw new Error(updErr.message);
+    }
+
+    // Notify guide
+    try {
+      const { data: guide } = await supabaseAdmin
+        .from("guides").select("name, user_id, locale").eq("id", booking.guide_id).maybeSingle();
+      if (guide?.user_id) {
+        const { data: guideUser } = await supabaseAdmin.auth.admin.getUserById(guide.user_id);
+        const guideEmail = guideUser?.user?.email;
+        if (guideEmail) {
+          await enqueueTransactionalEmail({
+            supabase: supabaseAdmin,
+            templateName: "booking-status-update-client",
+            recipientEmail: guideEmail,
+            templateData: {
+              customerName: booking.customer_name,
+              guideName: guide.name ?? undefined,
+              experience: booking.experience,
+              date: data.accept ? booking.proposed_date! : booking.date,
+              startTime: data.accept ? booking.proposed_time! : booking.start_time,
+              reason: data.accept ? "Client accepted the proposed time" : "Client declined the proposed time",
+              bookingUrl: `${APP_BASE_URL}/guide`,
+              status: data.accept ? "confirmed" : "pending",
+              locale: normalizeLocale(guide.locale),
+            },
+            idempotencyKey: `proposal-${data.id}-${data.accept ? "accept" : "decline"}`,
+          });
+        }
+        const { data: guideTelegram } = await supabaseAdmin
+          .from("telegram_accounts")
+          .select("telegram_chat_id")
+          .eq("user_id", guide.user_id)
+          .maybeSingle();
+        await sendTelegramMessage(guideTelegram?.telegram_chat_id, bookingDetailsText({
+          title: data.accept ? "Client accepted proposed time" : "Client declined proposed time",
+          customerName: booking.customer_name,
+          guideName: guide.name ?? undefined,
+          experience: booking.experience,
+          date: data.accept ? booking.proposed_date! : booking.date,
+          startTime: data.accept ? booking.proposed_time! : booking.start_time,
+          status: data.accept ? "confirmed" : "pending",
+          url: `${APP_BASE_URL}/guide`,
+        }));
+      }
+    } catch (e) {
+      console.error("Failed to notify guide of proposal response", e);
+    }
+
+    return { ok: true, accepted: data.accept };
   });

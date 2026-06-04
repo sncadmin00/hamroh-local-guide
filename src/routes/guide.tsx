@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Calendar, CalendarClock, Plus, Trash2, Check, X, LogOut, Loader2, Copy, Link2, Image as ImageIcon, Compass, Pencil, MapPin } from "lucide-react";
-import { sendMessage } from "@/lib/messages.functions";
+
 import {
   getMyGuide,
   listMySlots,
@@ -12,6 +12,7 @@ import {
   deleteSlot,
   listMyBookings,
   updateBookingStatus,
+  proposeBookingTime,
   listMyTours,
   upsertTour,
   deleteTour,
@@ -51,6 +52,10 @@ type Booking = {
   notes: string;
   created_at: string;
   slot_id: string | null;
+  proposed_date?: string | null;
+  proposed_time?: string | null;
+  proposed_note?: string | null;
+  proposed_at?: string | null;
 };
 
 type MyGuide = {
@@ -80,7 +85,7 @@ function GuidePortal() {
   const addSlotFn = useServerFn(addSlot);
   const deleteSlotFn = useServerFn(deleteSlot);
   const updateStatusFn = useServerFn(updateBookingStatus);
-  const sendMessageFn = useServerFn(sendMessage);
+  const proposeTimeFn = useServerFn(proposeBookingTime);
 
   const load = useCallback(async () => {
     const [g, s, b] = await Promise.all([fetchGuide(), fetchSlots(), fetchBookings()]);
@@ -200,9 +205,9 @@ function GuidePortal() {
             }}
             onPropose={async (bookingId, date, time, note) => {
               try {
-                const body = `Proposing another time: ${date} at ${time}.${note ? ` Note: ${note}` : ""}`;
-                await sendMessageFn({ data: { booking_id: bookingId, body } });
+                await proposeTimeFn({ data: { id: bookingId, date, time, note: note || undefined } });
                 toast.success("Proposal sent to client");
+                await load();
               } catch (e) { toast.error((e as Error).message); }
             }}
           />
@@ -375,6 +380,12 @@ function BookingsPanel({
                 {b.duration_minutes && <> · {b.duration_minutes} min</>}
               </p>
               {b.notes && <p className="text-sm text-muted-foreground mt-1">"{b.notes}"</p>}
+              {b.proposed_date && b.proposed_time && (
+                <p className="mt-2 text-xs inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-amber-500/15 text-amber-700">
+                  <CalendarClock className="h-3.5 w-3.5" />
+                  Awaiting client response: {b.proposed_date} · {b.proposed_time.slice(0, 5)}
+                </p>
+              )}
               <p className="text-xs text-muted-foreground mt-2">
                 Status: <StatusPill status={b.status} /> · ${Number(b.total).toFixed(0)} · {b.slot_id ? "Instant" : "Request"}
               </p>
