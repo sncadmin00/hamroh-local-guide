@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { useTour } from "@/lib/content-queries";
+import { useTour, useTours } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
 import { Clock, MapPin, Check, X, Car, Star } from "lucide-react";
 import { WishlistHeart } from "@/components/WishlistHeart";
