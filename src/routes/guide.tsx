@@ -209,6 +209,13 @@ function GuidePortal() {
           />
         )}
 
+        {tab === "languages" && (
+          <LanguagesPanel
+            current={guide.languages ?? []}
+            onSaved={() => load()}
+          />
+        )}
+
         {tab === "posts" && <GuidePostsPanel />}
 
         {tab === "referral" && (
