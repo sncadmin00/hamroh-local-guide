@@ -28,19 +28,30 @@ export function SiteHeader() {
   const navigate = useNavigate();
   const [signedIn, setSignedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [displayName, setDisplayName] = useState<string | null>(null);
   useEffect(() => {
     const checkAdmin = async (userId: string | undefined) => {
       if (!userId) { setIsAdmin(false); return; }
       const { data } = await supabase.from("user_roles").select("role").eq("user_id", userId);
       setIsAdmin((data ?? []).some((r) => r.role === "admin"));
     };
+    const applyUser = (user: { user_metadata?: Record<string, unknown>; email?: string | null } | null | undefined) => {
+      const meta = (user?.user_metadata ?? {}) as Record<string, unknown>;
+      const pic = (meta.avatar_url as string) || (meta.picture as string) || null;
+      const name = (meta.full_name as string) || (meta.name as string) || user?.email || null;
+      setAvatarUrl(pic ?? null);
+      setDisplayName(name ?? null);
+    };
     supabase.auth.getSession().then(({ data }) => {
       setSignedIn(!!data.session);
       checkAdmin(data.session?.user.id);
+      applyUser(data.session?.user);
     });
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
       setSignedIn(!!session);
       checkAdmin(session?.user.id);
+      applyUser(session?.user);
     });
     return () => sub.subscription.unsubscribe();
   }, []);
@@ -99,8 +110,22 @@ export function SiteHeader() {
                 className="inline-flex items-center gap-2 h-10 pl-2.5 pr-1.5 rounded-full ring-1 ring-border/70 bg-card/80 hover:shadow-md transition-shadow"
               >
                 <Menu className="h-4 w-4 text-foreground/70" />
-                <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-secondary text-foreground/70">
-                  <User className="h-4 w-4" />
+                <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-secondary text-foreground/70 overflow-hidden">
+                  {avatarUrl ? (
+                    <img
+                      src={avatarUrl}
+                      alt=""
+                      className="h-full w-full object-cover"
+                      referrerPolicy="no-referrer"
+                      onError={() => setAvatarUrl(null)}
+                    />
+                  ) : displayName ? (
+                    <span className="text-xs font-semibold text-foreground/80">
+                      {displayName.trim().charAt(0).toUpperCase()}
+                    </span>
+                  ) : (
+                    <User className="h-4 w-4" />
+                  )}
                 </span>
               </button>
             </SheetTrigger>
