@@ -471,7 +471,7 @@ function ToursPanel() {
         </div>
         {languages.length === 0 && (
           <p className="mt-4 text-sm text-amber-700 bg-amber-500/10 rounded-xl p-3">
-            Add languages to your profile first (ask an administrator) so you can set per-language prices.
+            Add languages on the Languages tab first so you can set per-language prices.
           </p>
         )}
       </div>
