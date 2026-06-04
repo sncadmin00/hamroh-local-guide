@@ -32,11 +32,15 @@ export function HorizontalCarousel({
     const onScroll = () => updateButtons();
     el.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", updateButtons);
+    const ro = new ResizeObserver(() => updateButtons());
+    ro.observe(el);
+    if (el.firstElementChild) ro.observe(el.firstElementChild);
     return () => {
       el.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", updateButtons);
+      ro.disconnect();
     };
-  }, []);
+  }, [children]);
 
   const scrollBy = (dir: 1 | -1) => {
     const el = scrollerRef.current;
