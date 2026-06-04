@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Clock } from "lucide-react";
+import { Clock, Car } from "lucide-react";
 import { useTours } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
 import { WishlistHeart } from "@/components/WishlistHeart";
@@ -42,46 +42,66 @@ export function TopTours() {
                     </div>
                   </div>
                 ))
-              : top.map((tour) => (
-              <Link
-                key={tour.id}
-                to="/tours/$slug"
-                params={{ slug: tour.slug }}
-                className="group w-60 md:w-72 shrink-0 snap-start rounded-2xl border border-border bg-card overflow-hidden hover:shadow-md transition-shadow"
-              >
-                <div className="relative aspect-[4/3] bg-secondary overflow-hidden">
-                  {tour.cover_url ? (
-                    <img
-                      src={tour.cover_url}
-                      alt={tour.title}
-                      loading="lazy"
-                      className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform"
-                    />
-                  ) : null}
-                  <WishlistHeart type="tour" id={tour.id} className="absolute right-3 top-3" />
-                </div>
+              : top.map((tour) => {
+                  const langPrices = tour.languages
+                    .map((lng) => ({ lng, price: tour.price_by_language[lng] ?? Number(tour.price_from) }))
+                    .filter((x) => x.price > 0);
+                  return (
+                    <Link
+                      key={tour.id}
+                      to="/tours/$slug"
+                      params={{ slug: tour.slug }}
+                      className="group w-60 md:w-72 shrink-0 snap-start rounded-2xl border border-border bg-card overflow-hidden hover:shadow-md transition-shadow"
+                    >
+                      <div className="relative aspect-[4/3] bg-secondary overflow-hidden">
+                        {tour.cover_url ? (
+                          <img
+                            src={tour.cover_url}
+                            alt={tour.title}
+                            loading="lazy"
+                            className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform"
+                          />
+                        ) : null}
+                        {tour.transport_included && (
+                          <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-background/95 px-2 py-1 text-[10px] font-medium text-primary backdrop-blur">
+                            <Car className="size-3" /> transport
+                          </span>
+                        )}
+                        <WishlistHeart type="tour" id={tour.id} className="absolute right-3 top-3" />
+                      </div>
 
-                <div className="p-4">
-                  <h3 className="font-display text-base font-semibold text-foreground line-clamp-2">
-                    {tour.title}
-                  </h3>
-                  {tour.cities?.name ? (
-                    <p className="mt-1 text-xs text-muted-foreground">{tour.cities.name}</p>
-                  ) : null}
-                  <div className="mt-3 flex items-center justify-between text-sm">
-                    <span className="inline-flex items-center gap-1 text-muted-foreground">
-                      <Clock className="size-3.5" />
-                      {Number(tour.duration_hours)} {t("tours.hours")}
-                    </span>
-                    {Number(tour.price_from) > 0 ? (
-                      <span className="font-medium text-foreground">
-                        {t("tours.priceFrom")} ${Number(tour.price_from)}
-                      </span>
-                    ) : null}
-                  </div>
-                </div>
-              </Link>
-            ))}
+                      <div className="p-4">
+                        <h3 className="font-display text-base font-semibold text-foreground line-clamp-2">
+                          {tour.title}
+                        </h3>
+                        {tour.cities?.name ? (
+                          <p className="mt-1 text-xs text-muted-foreground">{tour.cities.name}</p>
+                        ) : null}
+                        <div className="mt-3 flex items-center justify-between text-sm">
+                          <span className="inline-flex items-center gap-1 text-muted-foreground">
+                            <Clock className="size-3.5" />
+                            {Number(tour.duration_hours)} {t("tours.hours")}
+                          </span>
+                          {Number(tour.price_from) > 0 ? (
+                            <span className="font-medium text-foreground">
+                              {t("tours.priceFrom")} ${Number(tour.price_from)}
+                            </span>
+                          ) : null}
+                        </div>
+                        {langPrices.length > 0 && (
+                          <div className="mt-3 flex flex-wrap gap-1">
+                            {langPrices.slice(0, 3).map(({ lng, price }) => (
+                              <span key={lng} className="inline-flex items-center gap-1 rounded-md bg-secondary px-1.5 py-0.5 text-[10px]">
+                                <span className="font-medium">{lng}</span>
+                                <span className="text-muted-foreground tabular-nums">${Math.round(price)}</span>
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </Link>
+                  );
+                })}
           </div>
         </div>
 
