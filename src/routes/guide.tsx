@@ -396,6 +396,7 @@ type Tour = {
   not_included: string[];
   published: boolean;
   sort_order: number;
+  category_ids: string[];
 };
 
 function ToursPanel() {
