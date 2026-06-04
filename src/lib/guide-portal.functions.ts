@@ -16,7 +16,7 @@ export const getMyGuide = createServerFn({ method: "GET" })
     const { supabase, userId } = context;
     const { data, error } = await supabase
       .from("guides")
-      .select("id, name, slug, photo_url, tagline, price_per_day, referral_code, cities(name)")
+      .select("id, name, slug, photo_url, tagline, price_per_day, referral_code, city_id, extra_city_ids, languages, cities(name)")
       .eq("user_id", userId)
       .maybeSingle();
     if (error) throw new Error(error.message);
@@ -26,6 +26,21 @@ export const getMyGuide = createServerFn({ method: "GET" })
       .select("*", { count: "exact", head: true })
       .eq("guide_id", data.id);
     return { ...data, referral_clicks: count ?? 0 };
+  });
+
+export const updateMyCities = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) => z.object({
+    extra_city_ids: z.array(z.string().uuid()).max(20),
+  }).parse(input))
+  .handler(async ({ context, data }) => {
+    const { supabase, userId } = context;
+    const { error } = await supabase
+      .from("guides")
+      .update({ extra_city_ids: data.extra_city_ids })
+      .eq("user_id", userId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
   });
 
 export const listMySlots = createServerFn({ method: "GET" })
@@ -94,7 +109,7 @@ export const listMyBookings = createServerFn({ method: "GET" })
     if (!guide) return [];
     const { data, error } = await supabase
       .from("bookings")
-      .select("id, customer_name, customer_email, customer_telegram_username, experience, date, start_time, duration_minutes, guests, total, status, notes, created_at, slot_id")
+      .select("id, customer_name, customer_email, customer_telegram_username, experience, language, date, start_time, duration_minutes, guests, total, status, notes, created_at, slot_id")
       .eq("guide_id", guide.id)
       .order("date", { ascending: false });
     if (error) throw new Error(error.message);
@@ -113,7 +128,6 @@ export const updateBookingStatus = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     const { supabase } = context;
 
-    // Load prior state to detect transition + recipient
     const { data: prior } = await supabase
       .from("bookings")
       .select("id, status, customer_email, customer_telegram_chat_id, customer_name, experience, date, start_time, locale, guide_id")
@@ -132,8 +146,6 @@ export const updateBookingStatus = createServerFn({ method: "POST" })
       .eq("id", data.id);
     if (error) throw new Error(error.message);
 
-
-    // Notify client (skip if no state change)
     if (prior && prior.status !== data.status) {
       try {
         const { data: guide } = await supabaseAdmin
@@ -179,79 +191,130 @@ export const updateBookingStatus = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-// ---------- Experiences (tours) ----------
+// ---------- Tours (guide-owned) ----------
 
-export const listMyExperiences = createServerFn({ method: "GET" })
+function slugify(input: string): string {
+  return input
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 60) || "tour";
+}
+
+export const listMyTours = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
     const { data: guide } = await supabase
-      .from("guides").select("id, languages").eq("user_id", userId).maybeSingle();
-    if (!guide) return { languages: [] as string[], experiences: [] as Array<{ id: string; title: string; duration: string; price: number; price_by_language: Record<string, number>; sort_order: number }> };
-    const { data, error } = await supabase
-      .from("guide_experiences")
-      .select("id, title, duration, price, price_by_language, sort_order")
-      .eq("guide_id", guide.id)
-      .order("sort_order", { ascending: true });
+      .from("guides")
+      .select("id, languages, city_id, extra_city_ids")
+      .eq("user_id", userId)
+      .maybeSingle();
+    if (!guide) {
+      return {
+        guide: null,
+        cities: [] as Array<{ id: string; name: string }>,
+        tours: [] as any[],
+      };
+    }
+    const cityIds = [guide.city_id, ...((guide.extra_city_ids ?? []) as string[])];
+    const [{ data: cityRows }, { data: tourRows, error }] = await Promise.all([
+      supabase.from("cities").select("id, name").in("id", cityIds),
+      supabase
+        .from("tours")
+        .select("id, slug, title, short_description, cover_url, city_id, duration_hours, price_from, price_by_language, transport_included, languages, highlights, included, not_included, published, sort_order")
+        .eq("guide_id", guide.id)
+        .order("sort_order", { ascending: true }),
+    ]);
     if (error) throw new Error(error.message);
     return {
-      languages: (guide.languages ?? []) as string[],
-      experiences: (data ?? []).map((e) => ({
-        id: e.id as string,
-        title: e.title as string,
-        duration: e.duration as string,
-        price: Number(e.price),
-        price_by_language: ((e.price_by_language ?? {}) as Record<string, number>),
-        sort_order: Number(e.sort_order),
-      })),
+      guide: { languages: (guide.languages ?? []) as string[], city_id: guide.city_id },
+      cities: (cityRows ?? []) as Array<{ id: string; name: string }>,
+      tours: (tourRows ?? []) as any[],
     };
   });
 
-const upsertExperienceSchema = z.object({
+const upsertTourSchema = z.object({
   id: z.string().uuid().optional(),
   title: z.string().trim().min(1).max(200),
-  duration: z.string().trim().min(1).max(60),
-  price: z.number().min(0).max(100000),
+  short_description: z.string().trim().max(500).default(""),
+  cover_url: z.string().trim().max(2000).optional().nullable(),
+  city_id: z.string().uuid(),
+  duration_hours: z.number().min(0.5).max(72),
+  price_from: z.number().min(0).max(100000),
   price_by_language: z.record(z.string().min(1).max(40), z.number().min(0).max(100000)).default({}),
+  languages: z.array(z.string().min(1).max(40)).max(20).default([]),
+  transport_included: z.boolean().default(false),
+  highlights: z.array(z.string().trim().min(1).max(300)).max(30).default([]),
+  included: z.array(z.string().trim().min(1).max(300)).max(30).default([]),
+  not_included: z.array(z.string().trim().min(1).max(300)).max(30).default([]),
+  published: z.boolean().default(true),
   sort_order: z.number().int().min(0).max(1000).default(0),
 });
 
-export const upsertExperience = createServerFn({ method: "POST" })
+export const upsertTour = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input) => upsertExperienceSchema.parse(input))
+  .inputValidator((input) => upsertTourSchema.parse(input))
   .handler(async ({ context, data }) => {
     const { supabase, userId } = context;
     const { data: guide } = await supabase
-      .from("guides").select("id").eq("user_id", userId).maybeSingle();
+      .from("guides").select("id, slug").eq("user_id", userId).maybeSingle();
     if (!guide) throw new Error("You are not linked to a guide profile yet.");
-    const cleaned: Record<string, number> = {};
+
+    const cleanedPbl: Record<string, number> = {};
     for (const [k, v] of Object.entries(data.price_by_language)) {
-      if (v > 0) cleaned[k] = v;
+      if (v > 0) cleanedPbl[k] = v;
     }
+
+    const payload = {
+      title: data.title,
+      short_description: data.short_description,
+      description_md: "",
+      cover_url: data.cover_url || null,
+      city_id: data.city_id,
+      duration_hours: data.duration_hours,
+      price_from: data.price_from,
+      price_by_language: cleanedPbl,
+      languages: data.languages,
+      transport_included: data.transport_included,
+      highlights: data.highlights,
+      included: data.included,
+      not_included: data.not_included,
+      published: data.published,
+      sort_order: data.sort_order,
+    };
+
     if (data.id) {
-      const { error } = await supabase.from("guide_experiences").update({
-        title: data.title,
-        duration: data.duration,
-        price: data.price,
-        price_by_language: cleaned,
-        sort_order: data.sort_order,
-      }).eq("id", data.id).eq("guide_id", guide.id);
+      const { error } = await supabase
+        .from("tours")
+        .update(payload)
+        .eq("id", data.id)
+        .eq("guide_id", guide.id);
       if (error) throw new Error(error.message);
       return { ok: true, id: data.id };
     }
-    const { data: inserted, error } = await supabase.from("guide_experiences").insert({
-      guide_id: guide.id,
-      title: data.title,
-      duration: data.duration,
-      price: data.price,
-      price_by_language: cleaned,
-      sort_order: data.sort_order,
-    }).select("id").single();
+
+    // Generate unique slug from guide slug + title
+    const base = `${guide.slug}-${slugify(data.title)}`;
+    let slug = base;
+    for (let i = 0; i < 5; i++) {
+      const { data: existing } = await supabase
+        .from("tours").select("id").eq("slug", slug).maybeSingle();
+      if (!existing) break;
+      slug = `${base}-${Math.random().toString(36).slice(2, 6)}`;
+    }
+
+    const { data: inserted, error } = await supabase
+      .from("tours")
+      .insert({ ...payload, slug, guide_id: guide.id })
+      .select("id")
+      .single();
     if (error) throw new Error(error.message);
     return { ok: true, id: inserted.id as string };
   });
 
-export const deleteExperience = createServerFn({ method: "POST" })
+export const deleteTour = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ context, data }) => {
@@ -260,9 +323,7 @@ export const deleteExperience = createServerFn({ method: "POST" })
       .from("guides").select("id").eq("user_id", userId).maybeSingle();
     if (!guide) throw new Error("You are not linked to a guide profile yet.");
     const { error } = await supabase
-      .from("guide_experiences").delete().eq("id", data.id).eq("guide_id", guide.id);
+      .from("tours").delete().eq("id", data.id).eq("guide_id", guide.id);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
-
-

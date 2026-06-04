@@ -8,7 +8,6 @@ import { getOptionalUserId } from "@/lib/optional-auth.server";
 
 const APP_BASE_URL = "https://hamrohim.com";
 
-
 // Public: list available slots for a guide on a specific date (or upcoming)
 export const getGuideSlots = createServerFn({ method: "GET" })
   .inputValidator((input) =>
@@ -33,20 +32,19 @@ export const getGuideSlots = createServerFn({ method: "GET" })
   });
 
 const bookingSchema = z.object({
-  guide_id: z.string().uuid(),
+  tour_id: z.string().uuid(),
   slot_id: z.string().uuid().nullable().optional(),
-  experience: z.string().min(1).max(255),
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   start_time: z.string().regex(/^\d{2}:\d{2}(:\d{2})?$/).optional(),
   duration_minutes: z.number().int().min(30).max(720).optional(),
   guests: z.number().int().min(1).max(50),
+  language: z.string().min(1).max(40).optional(),
   customer_name: z.string().min(1).max(200),
   customer_email: z.string().email().optional().or(z.literal("")),
   customer_telegram_user_id: z.number().int().positive().optional(),
   customer_telegram_chat_id: z.number().int().optional(),
   customer_telegram_username: z.string().max(255).optional(),
   notes: z.string().max(2000).optional(),
-  total: z.number().min(0),
   source: z.string().max(64).optional(),
   locale: z.enum(["ru", "uz", "en"]).optional(),
 }).refine((data) => data.customer_email || data.customer_telegram_chat_id, {
@@ -57,17 +55,36 @@ export const createBooking = createServerFn({ method: "POST" })
   .inputValidator((input) => bookingSchema.parse(input))
   .handler(async ({ data }) => {
     const clientLocale = normalizeLocale(data.locale);
-    // Resolve the user from the bearer token; never trust client input.
     const authedUserId = await getOptionalUserId();
-    // Instant booking if slot picked, otherwise pending request
+
+    // Load tour authoritatively — never trust client-side price.
+    const { data: tour, error: tourErr } = await supabaseAdmin
+      .from("tours")
+      .select("id, guide_id, title, price_from, price_by_language, duration_hours, published")
+      .eq("id", data.tour_id)
+      .maybeSingle();
+    if (tourErr) throw new Error(tourErr.message);
+    if (!tour || !tour.published) throw new Error("Tour not available");
+
+    const pbl = (tour.price_by_language ?? {}) as Record<string, number>;
+    const langPrice = data.language ? Number(pbl[data.language] ?? 0) : 0;
+    const unit = langPrice > 0 ? langPrice : Number(tour.price_from);
+    const subtotal = unit * data.guests;
+    const fee = Math.round(subtotal * 0.08);
+    const total = subtotal + fee;
+
     const isInstant = !!data.slot_id;
+    const experienceLabel = data.language ? `${tour.title} (${data.language})` : tour.title;
+
     const insertPayload = {
-      guide_id: data.guide_id,
+      tour_id: tour.id,
+      guide_id: tour.guide_id,
       slot_id: data.slot_id ?? null,
-      experience: data.experience,
+      experience: experienceLabel,
+      language: data.language ?? null,
       date: data.date,
       start_time: data.start_time ?? null,
-      duration_minutes: data.duration_minutes ?? 120,
+      duration_minutes: data.duration_minutes ?? Math.round(Number(tour.duration_hours) * 60) ?? 120,
       guests: data.guests,
       customer_name: data.customer_name,
       customer_email: data.customer_email || null,
@@ -75,7 +92,7 @@ export const createBooking = createServerFn({ method: "POST" })
       customer_telegram_chat_id: data.customer_telegram_chat_id ?? null,
       customer_telegram_username: data.customer_telegram_username ?? null,
       notes: data.notes ?? "",
-      total: data.total,
+      total,
       source: data.source ?? "web",
       user_id: authedUserId,
       status: isInstant ? "confirmed" : "pending",
@@ -88,12 +105,12 @@ export const createBooking = createServerFn({ method: "POST" })
       .single();
     if (error) throw new Error(error.message);
 
-    // Fire-and-forget transactional emails
+    // Fire-and-forget transactional emails / telegram notifications
     try {
       const { data: guide } = await supabaseAdmin
         .from("guides")
         .select("name, user_id, locale")
-        .eq("id", data.guide_id)
+        .eq("id", tour.guide_id)
         .maybeSingle();
 
       const guideName = guide?.name ?? undefined;
@@ -117,11 +134,11 @@ export const createBooking = createServerFn({ method: "POST" })
           templateData: {
             customerName: data.customer_name,
             guideName,
-            experience: data.experience,
+            experience: experienceLabel,
             date: data.date,
             startTime: data.start_time,
             guests: data.guests,
-            total: data.total,
+            total,
             bookingUrl: `${APP_BASE_URL}/my-bookings`,
             status,
             locale: clientLocale,
@@ -142,7 +159,7 @@ export const createBooking = createServerFn({ method: "POST" })
       await sendTelegramMessage(clientChatId, bookingDetailsText({
         title: status === "confirmed" ? "Booking confirmed" : "Booking request received",
         guideName,
-        experience: data.experience,
+        experience: experienceLabel,
         date: data.date,
         startTime: data.start_time,
         guests: data.guests,
@@ -150,11 +167,8 @@ export const createBooking = createServerFn({ method: "POST" })
         url: `${APP_BASE_URL}/my-bookings`,
       }));
 
-      // Notify guide
       if (guide?.user_id) {
-        const { data: guideUser } = await supabaseAdmin.auth.admin.getUserById(
-          guide.user_id,
-        );
+        const { data: guideUser } = await supabaseAdmin.auth.admin.getUserById(guide.user_id);
         const guideEmail = guideUser?.user?.email;
         if (guideEmail) {
           await enqueueTransactionalEmail({
@@ -165,11 +179,11 @@ export const createBooking = createServerFn({ method: "POST" })
               guideName,
               customerName: data.customer_name,
               customerEmail: data.customer_email || "Telegram",
-              experience: data.experience,
+              experience: experienceLabel,
               date: data.date,
               startTime: data.start_time,
               guests: data.guests,
-              total: data.total,
+              total,
               notes: data.notes,
               bookingUrl: `${APP_BASE_URL}/guide`,
               status,
@@ -178,21 +192,21 @@ export const createBooking = createServerFn({ method: "POST" })
             idempotencyKey: `booking-guide-${row.id}`,
           });
         }
-          const { data: guideTelegram } = await supabaseAdmin
-            .from("telegram_accounts")
-            .select("telegram_chat_id")
-            .eq("user_id", guide.user_id)
-            .maybeSingle();
-          await sendTelegramMessage(guideTelegram?.telegram_chat_id, bookingDetailsText({
-            title: "New booking request",
-            customerName: data.customer_name,
-            experience: data.experience,
-            date: data.date,
-            startTime: data.start_time,
-            guests: data.guests,
-            status,
-            url: `${APP_BASE_URL}/guide`,
-          }));
+        const { data: guideTelegram } = await supabaseAdmin
+          .from("telegram_accounts")
+          .select("telegram_chat_id")
+          .eq("user_id", guide.user_id)
+          .maybeSingle();
+        await sendTelegramMessage(guideTelegram?.telegram_chat_id, bookingDetailsText({
+          title: "New booking request",
+          customerName: data.customer_name,
+          experience: experienceLabel,
+          date: data.date,
+          startTime: data.start_time,
+          guests: data.guests,
+          status,
+          url: `${APP_BASE_URL}/guide`,
+        }));
       }
     } catch (e) {
       console.error("Booking email enqueue failed", e);
