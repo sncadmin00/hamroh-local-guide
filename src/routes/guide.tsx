@@ -80,6 +80,7 @@ function GuidePortal() {
   const addSlotFn = useServerFn(addSlot);
   const deleteSlotFn = useServerFn(deleteSlot);
   const updateStatusFn = useServerFn(updateBookingStatus);
+  const sendMessageFn = useServerFn(sendMessage);
 
   const load = useCallback(async () => {
     const [g, s, b] = await Promise.all([fetchGuide(), fetchSlots(), fetchBookings()]);
