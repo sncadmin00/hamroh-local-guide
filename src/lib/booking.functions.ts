@@ -5,6 +5,7 @@ import { enqueueTransactionalEmail } from "@/lib/email/enqueue.server";
 import { normalizeLocale } from "@/lib/email-templates/_i18n";
 import { bookingDetailsText, sendTelegramMessage } from "@/lib/telegram-notifications.server";
 import { getOptionalUserId } from "@/lib/optional-auth.server";
+import { mirrorBookingToGoogle } from "@/lib/google-calendar.server";
 
 const APP_BASE_URL = "https://hamrohim.com";
 
@@ -258,6 +259,15 @@ export const createBooking = createServerFn({ method: "POST" })
       }
     } catch (e) {
       console.error("Booking email enqueue failed", e);
+    }
+
+    // Mirror confirmed bookings to Google Calendar (best-effort)
+    try {
+      if ((row.status as string) === "confirmed") {
+        await mirrorBookingToGoogle(row.id);
+      }
+    } catch (e) {
+      console.error("[booking] google mirror failed", e);
     }
 
     return row;

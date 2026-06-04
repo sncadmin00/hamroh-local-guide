@@ -5,6 +5,7 @@ import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { enqueueTransactionalEmail } from "@/lib/email/enqueue.server";
 import { normalizeLocale } from "@/lib/email-templates/_i18n";
 import { bookingDetailsText, sendTelegramMessage } from "@/lib/telegram-notifications.server";
+import { mirrorBookingToGoogle } from "@/lib/google-calendar.server";
 
 const APP_BASE_URL = "https://hamrohim.com";
 
@@ -201,6 +202,13 @@ export const updateBookingStatus = createServerFn({ method: "POST" })
       } catch (e) {
         console.error("Failed to notify client of status change", e);
       }
+    }
+
+    // Mirror booking change to Google Calendar (best-effort)
+    try {
+      await mirrorBookingToGoogle(data.id);
+    } catch (e) {
+      console.error("[booking-status] google mirror failed", e);
     }
 
     return { ok: true };

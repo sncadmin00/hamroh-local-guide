@@ -253,3 +253,92 @@ export async function deleteEventOnGoogle(
     console.error("[google-calendar] delete failed:", res.status, await res.text());
   }
 }
+
+/**
+ * Mirror a booking-derived calendar_events row to Google Calendar.
+ * - If the local event exists and has no google_event_id → create it on Google.
+ * - If it exists and has a google_event_id → update on Google.
+ * - If the local event no longer exists (booking cancelled/declined) → delete on Google.
+ *
+ * Uses the most recent google_event_id stored on any row for this booking,
+ * falling back to a tracking map in `guide_google_calendar_bookings` if needed.
+ */
+export async function mirrorBookingToGoogle(bookingId: string): Promise<void> {
+  // Lookup the calendar_events row (created by DB trigger sync_booking_to_calendar)
+  const { data: evRow } = await supabaseAdmin
+    .from("calendar_events")
+    .select("id, guide_id, title, starts_at, ends_at, location, notes, google_event_id")
+    .eq("booking_id", bookingId)
+    .maybeSingle();
+
+  // Lookup any previously stored google_event_id for this booking
+  const { data: track } = await supabaseAdmin
+    .from("booking_google_events")
+    .select("guide_id, google_event_id")
+    .eq("booking_id", bookingId)
+    .maybeSingle();
+  const tracked = track as unknown as
+    | { guide_id: string; google_event_id: string }
+    | null;
+
+  if (!evRow) {
+    // Booking event was removed → delete on Google if we have a mapping
+    if (tracked?.google_event_id && tracked.guide_id) {
+      await deleteEventOnGoogle(tracked.guide_id, tracked.google_event_id);
+      await supabaseAdmin
+        .from("booking_google_events")
+        .delete()
+        .eq("booking_id", bookingId);
+    }
+    return;
+  }
+
+  const ev = evRow as unknown as {
+    id: string;
+    guide_id: string;
+    title: string;
+    starts_at: string;
+    ends_at: string;
+    location: string | null;
+    notes: string | null;
+    google_event_id: string | null;
+  };
+
+  const payload = {
+    title: ev.title,
+    starts_at: ev.starts_at,
+    ends_at: ev.ends_at,
+    location: ev.location ?? "",
+    notes: ev.notes ?? "",
+  };
+
+  const existingGoogleId = ev.google_event_id ?? tracked?.google_event_id ?? null;
+
+  if (existingGoogleId) {
+    await updateEventOnGoogle(ev.guide_id, existingGoogleId, payload);
+    if (!ev.google_event_id) {
+      await supabaseAdmin
+        .from("calendar_events")
+        .update({ google_event_id: existingGoogleId } as never)
+        .eq("id", ev.id);
+    }
+  } else {
+    const googleId = await pushEventToGoogle(ev.guide_id, payload);
+    if (googleId) {
+      await supabaseAdmin
+        .from("calendar_events")
+        .update({ google_event_id: googleId } as never)
+        .eq("id", ev.id);
+      await supabaseAdmin
+        .from("booking_google_events")
+        .upsert(
+          {
+            booking_id: bookingId,
+            guide_id: ev.guide_id,
+            google_event_id: googleId,
+          } as never,
+          { onConflict: "booking_id" },
+        );
+    }
+  }
+}
