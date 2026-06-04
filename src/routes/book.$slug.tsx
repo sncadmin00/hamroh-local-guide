@@ -217,38 +217,79 @@ function BookPage() {
               </div>
             )}
 
-            <div className={`grid gap-4 ${availableLanguages.length > 0 ? "sm:grid-cols-2" : ""}`}>
+            <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label className="text-sm font-medium">Guests</label>
+                <label className="text-sm font-medium">Adults</label>
                 <div className="mt-2 inline-flex h-12 items-center rounded-xl border border-input bg-background">
-                  <button type="button" onClick={() => setGuests(form.guests - 1)} disabled={form.guests <= 1} className="h-12 w-12 text-lg font-medium text-muted-foreground hover:text-foreground disabled:opacity-40">−</button>
-                  <span className="w-10 text-center text-sm font-medium tabular-nums">{form.guests}</span>
-                  <button type="button" onClick={() => setGuests(form.guests + 1)} disabled={form.guests >= 12} className="h-12 w-12 text-lg font-medium text-muted-foreground hover:text-foreground disabled:opacity-40">+</button>
+                  <button type="button" onClick={() => setAdults(form.adults - 1)} disabled={form.adults <= 1} className="h-12 w-12 text-lg font-medium text-muted-foreground hover:text-foreground disabled:opacity-40">−</button>
+                  <span className="w-10 text-center text-sm font-medium tabular-nums">{form.adults}</span>
+                  <button type="button" onClick={() => setAdults(form.adults + 1)} className="h-12 w-12 text-lg font-medium text-muted-foreground hover:text-foreground">+</button>
                 </div>
               </div>
-              {availableLanguages.length > 0 && (
-                <div>
-                  <label className="text-sm font-medium">Language</label>
-                  <div className="mt-2 flex flex-wrap gap-1.5">
-                    {availableLanguages.map((lng) => {
-                      const active = currentLanguage === lng;
-                      const langPrice = tour.price_by_language[lng] ?? Number(tour.price_from);
-                      return (
-                        <button
-                          key={lng}
-                          type="button"
-                          onClick={() => setForm({ ...form, language: lng })}
-                          className={`inline-flex items-center gap-1.5 h-9 px-3 rounded-full text-sm ring-1 transition ${active ? "bg-foreground text-background ring-foreground" : "bg-background ring-border hover:bg-muted"}`}
-                        >
-                          <span>{lng}</span>
-                          <span className={`tabular-nums ${active ? "text-background/80" : "text-muted-foreground"}`}>${Math.round(langPrice)}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
+              <div>
+                <label className="text-sm font-medium">Children (under {tour.children_free_under})</label>
+                <div className="mt-2 inline-flex h-12 items-center rounded-xl border border-input bg-background">
+                  <button type="button" onClick={() => setChildren(form.children - 1)} disabled={form.children <= 0} className="h-12 w-12 text-lg font-medium text-muted-foreground hover:text-foreground disabled:opacity-40">−</button>
+                  <span className="w-10 text-center text-sm font-medium tabular-nums">{form.children}</span>
+                  <button type="button" onClick={() => setChildren(form.children + 1)} className="h-12 w-12 text-lg font-medium text-muted-foreground hover:text-foreground">+</button>
                 </div>
-              )}
+                <p className="mt-1 text-xs text-muted-foreground">Don't count toward the group size.</p>
+              </div>
             </div>
+
+            {tour.pricing_mode === "by_group" && categories.length > 0 && (
+              <div>
+                <label className="text-sm font-medium">Group size</label>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {categories.map((c) => {
+                    const active = selectedCategory === c;
+                    const tooSmall = GROUP_CATEGORY_MAX[c] < form.adults;
+                    return (
+                      <button
+                        key={c}
+                        type="button"
+                        disabled={tooSmall}
+                        onClick={() => setForm({ ...form, category: c })}
+                        className={`inline-flex items-center gap-1.5 h-9 px-3 rounded-full text-sm ring-1 transition ${active ? "bg-foreground text-background ring-foreground" : "bg-background ring-border hover:bg-muted"} ${tooSmall ? "opacity-40 cursor-not-allowed" : ""}`}
+                      >
+                        <span>{GROUP_CATEGORY_LABEL[c]}</span>
+                        <span className={`tabular-nums ${active ? "text-background/80" : "text-muted-foreground"}`}>${tour.group_prices[c]}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                {adultsExceedAll && (
+                  <p className="mt-2 text-sm text-amber-700 bg-amber-500/10 rounded-xl p-3">
+                    Your group is larger than the offered sizes. Please contact the guide to arrange a custom booking.
+                  </p>
+                )}
+              </div>
+            )}
+
+            {availableLanguages.length > 0 && (
+              <div>
+                <label className="text-sm font-medium">Language</label>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {availableLanguages.map((lng) => {
+                    const active = currentLanguage === lng;
+                    const isBase = lng === tour.base_language;
+                    const mult = tour.language_multipliers[lng] ?? 0;
+                    return (
+                      <button
+                        key={lng}
+                        type="button"
+                        onClick={() => setForm({ ...form, language: lng })}
+                        className={`inline-flex items-center gap-1.5 h-9 px-3 rounded-full text-sm ring-1 transition ${active ? "bg-foreground text-background ring-foreground" : "bg-background ring-border hover:bg-muted"}`}
+                      >
+                        <span>{lng}</span>
+                        <span className={`tabular-nums ${active ? "text-background/80" : "text-muted-foreground"}`}>{isBase ? "base" : mult > 0 ? `+${mult}%` : mult < 0 ? `${mult}%` : "+0%"}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
