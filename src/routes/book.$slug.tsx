@@ -356,10 +356,13 @@ function BookPage() {
                   <span className="text-muted-foreground">
                     {tour.title}
                     {currentLanguage && <span className="text-foreground/70"> · {currentLanguage}</span>}
+                    {tour.pricing_mode === "by_group" && selectedCategory && (
+                      <span className="text-foreground/70"> · {GROUP_CATEGORY_LABEL[selectedCategory]}</span>
+                    )}
                   </span>
-                  <span className="tabular-nums">${unitPrice}</span>
+                  <span className="tabular-nums">${total}</span>
                 </div>
-                <div className="flex justify-between"><span className="text-muted-foreground">× {form.guests} {form.guests === 1 ? "guest" : "guests"}</span><span className="tabular-nums">${total}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">{form.adults} {form.adults === 1 ? "adult" : "adults"}{form.children > 0 ? `, ${form.children} ${form.children === 1 ? "child" : "children"}` : ""}</span><span className="tabular-nums" /></div>
                 <div className="flex justify-between"><span className="text-muted-foreground">Service fee</span><span className="tabular-nums">${fee}</span></div>
                 <div className="flex justify-between border-t border-border/60 pt-3 text-base font-semibold"><span>Total</span><span className="tabular-nums">${total + fee}</span></div>
               </div>
