@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Calendar, CalendarClock, Plus, Trash2, Check, X, LogOut, Loader2, Copy, Link2, Image as ImageIcon, Compass, Pencil, MapPin } from "lucide-react";
-import { sendMessage } from "@/lib/messages.functions";
+
 import {
   getMyGuide,
   listMySlots,
