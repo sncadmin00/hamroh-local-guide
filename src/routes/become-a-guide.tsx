@@ -289,10 +289,6 @@ function BecomeAGuidePage() {
                 </div>
               )}
             </FormField>
-              <FormField label="Years of experience">
-                <input required type="number" min={0} max={80} value={form.experience_years} onChange={set("experience_years")} className={inputCls} placeholder="3" />
-              </FormField>
-            </div>
             <FormField label="Specialization">
               <input required value={form.specialization} onChange={set("specialization")} className={inputCls} placeholder="Food tours, history, architecture…" />
             </FormField>
