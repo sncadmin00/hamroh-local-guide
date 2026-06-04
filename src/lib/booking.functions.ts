@@ -37,7 +37,9 @@ const bookingSchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   start_time: z.string().regex(/^\d{2}:\d{2}(:\d{2})?$/).optional(),
   duration_minutes: z.number().int().min(30).max(720).optional(),
-  guests: z.number().int().min(1).max(50),
+  adults: z.number().int().min(1).max(50),
+  children: z.number().int().min(0).max(50).default(0),
+  group_category: z.enum(["private", "small", "group", "large"]).nullable().optional(),
   language: z.string().min(1).max(40).optional(),
   customer_name: z.string().min(1).max(200),
   customer_email: z.string().email().optional().or(z.literal("")),
@@ -50,6 +52,13 @@ const bookingSchema = z.object({
 }).refine((data) => data.customer_email || data.customer_telegram_chat_id, {
   message: "Email or Telegram contact is required",
 });
+
+const GROUP_MAX: Record<"private" | "small" | "group" | "large", number> = {
+  private: 2,
+  small: 6,
+  group: 12,
+  large: 25,
+};
 
 export const createBooking = createServerFn({ method: "POST" })
   .inputValidator((input) => bookingSchema.parse(input))
