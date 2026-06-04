@@ -192,7 +192,7 @@ function AdminPage() {
   const [languages, setLanguages] = useState<Language[]>([]);
 
   const loadData = useCallback(async () => {
-    const [c, g, a, e, b, ap, cat, gc, p, pg, ps] = await Promise.all([
+    const [c, g, a, e, b, ap, cat, gc, p, pg, ps, lg] = await Promise.all([
       supabase.from("cities").select("*").order("sort_order"),
       supabase.from("guides").select("*").order("sort_order"),
       supabase.from("articles").select("*").order("sort_order").order("created_at", { ascending: false }),
@@ -204,6 +204,7 @@ function AdminPage() {
       supabase.from("places").select("*").order("sort_order").order("created_at", { ascending: false }),
       supabase.from("place_guides").select("place_id, guide_id"),
       supabase.from("place_suggestions").select("*").eq("status", "pending").order("created_at", { ascending: false }),
+      supabase.from("languages").select("*").order("sort_order"),
     ]);
     if (c.data) setCities(c.data as City[]);
     if (g.data) setGuides(g.data as Guide[]);
@@ -216,6 +217,7 @@ function AdminPage() {
     if (p.data) setPlaces(p.data as Place[]);
     if (pg.data) setPlaceGuides(pg.data as PlaceGuideLink[]);
     if (ps.data) setSuggestions(ps.data as PlaceSuggestion[]);
+    if (lg.data) setLanguages(lg.data as Language[]);
   }, []);
 
   useEffect(() => {
