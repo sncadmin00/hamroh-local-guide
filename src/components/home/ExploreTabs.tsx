@@ -16,7 +16,7 @@ import { useI18n } from "@/lib/i18n";
 export function ExploreTabs() {
   const isMobile = useIsMobile();
   const { t } = useI18n();
-  const [tab, setTab] = useState("guides");
+  const [tab, setTab] = useState("tours");
   const { data: guides = [] } = useGuides();
   const { data: tours = [] } = useTours();
 
