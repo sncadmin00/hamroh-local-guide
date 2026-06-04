@@ -3,6 +3,7 @@ import { GuideCard } from "@/components/GuideCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGuides } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
+import { HorizontalCarousel } from "@/components/home/HorizontalCarousel";
 
 function GuideSkeleton() {
   return (
@@ -22,7 +23,7 @@ export function FeaturedGuides() {
   if (!isLoading && guides.length === 0) return null;
   const featured = [...guides]
     .sort((a, b) => b.rating - a.rating)
-    .slice(0, 6);
+    .slice(0, 20);
 
   return (
     <section className="px-6 py-10 md:py-20 bg-secondary/40">
@@ -42,30 +43,11 @@ export function FeaturedGuides() {
           </Link>
         </div>
 
-        {/* Mobile: horizontal scroll */}
-        <div className="md:hidden -mx-6 px-6">
-          <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:thin]">
-            {isLoading
-              ? Array.from({ length: 3 }).map((_, i) => (
-                  <div key={i} className="w-60 shrink-0 snap-start">
-                    <GuideSkeleton />
-                  </div>
-                ))
-              : featured.map((g) => (
-                  <div key={g.id} className="w-60 shrink-0 snap-start">
-                    <GuideCard guide={g} />
-                  </div>
-                ))}
-          </div>
-        </div>
-
-        {/* Desktop: grid */}
-        <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 gap-6">
+        <HorizontalCarousel itemClassName="w-[240px] md:w-[260px]" twoRowsDesktop>
           {isLoading
-            ? Array.from({ length: 6 }).map((_, i) => <GuideSkeleton key={i} />)
+            ? Array.from({ length: 8 }).map((_, i) => <GuideSkeleton key={i} />)
             : featured.map((g) => <GuideCard key={g.id} guide={g} />)}
-        </div>
-
+        </HorizontalCarousel>
 
         <div className="md:hidden mt-6 text-center">
           <Link to="/guides" className="text-sm font-medium text-primary hover:underline">
