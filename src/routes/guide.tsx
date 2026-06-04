@@ -607,17 +607,30 @@ function TourEditor({
   const [coverUrl, setCoverUrl] = useState(initial?.cover_url ?? "");
   const [cityId, setCityId] = useState(initial?.city_id ?? defaultCityId);
   const [durationHours, setDurationHours] = useState<number>(initial?.duration_hours ?? 2);
-  const [basePrice, setBasePrice] = useState<number>(initial?.price_from ?? 0);
+  const [pricingMode, setPricingMode] = useState<"fixed" | "by_group">(initial?.pricing_mode ?? "fixed");
+  const [fixedPrice, setFixedPrice] = useState<number>(
+    initial?.pricing_mode === "by_group" ? 0 : Number(initial?.group_prices?.fixed ?? initial?.price_from ?? 0),
+  );
+  const [groupPricesText, setGroupPricesText] = useState<Record<string, string>>(() => {
+    const out: Record<string, string> = {};
+    GROUP_KEYS.forEach((k) => {
+      const v = initial?.group_prices?.[k];
+      out[k] = v ? String(v) : "";
+    });
+    return out;
+  });
+  const [baseLanguage, setBaseLanguage] = useState<string>(initial?.base_language ?? languages[0] ?? "Russian");
+  const [langMultsText, setLangMultsText] = useState<Record<string, string>>(() => {
+    const out: Record<string, string> = {};
+    languages.forEach((l) => {
+      const v = initial?.language_multipliers?.[l];
+      out[l] = v !== undefined ? String(v) : "";
+    });
+    return out;
+  });
+  const [childrenFreeUnder, setChildrenFreeUnder] = useState<number>(initial?.children_free_under ?? 16);
   const [transportIncluded, setTransportIncluded] = useState<boolean>(initial?.transport_included ?? false);
   const [tourLangs, setTourLangs] = useState<string[]>(initial?.languages ?? languages);
-  const [pricesText, setPricesText] = useState<Record<string, string>>(() => {
-    const base: Record<string, string> = {};
-    languages.forEach((l) => {
-      const v = initial?.price_by_language?.[l];
-      base[l] = v ? String(v) : "";
-    });
-    return base;
-  });
   const [highlights, setHighlights] = useState(arrToText(initial?.highlights ?? []));
   const [included, setIncluded] = useState(arrToText(initial?.included ?? []));
   const [notIncluded, setNotIncluded] = useState(arrToText(initial?.not_included ?? []));
