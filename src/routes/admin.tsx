@@ -344,10 +344,11 @@ function AdminPage() {
         {tab === "bookings" && <BookingsPanel bookings={bookings} reload={loadData} />}
         {tab === "applications" && <ApplicationsPanel applications={applications} reload={loadData} />}
         {tab === "cities" && <CitiesPanel cities={cities} reload={loadData} />}
-        {tab === "guides" && <GuidesPanel guides={guides} cities={cities} categories={categories} guideCategories={guideCategories} reload={loadData} />}
+        {tab === "guides" && <GuidesPanel guides={guides} cities={cities} categories={categories} guideCategories={guideCategories} languages={languages} reload={loadData} />}
         {tab === "tours" && <ToursPanel />}
         {tab === "spotlights" && <SpotlightsPanel />}
         {tab === "categories" && <CategoriesPanel categories={categories} reload={loadData} />}
+        {tab === "languages" && <LanguagesPanel languages={languages} reload={loadData} />}
         {tab === "places" && <PlacesPanel places={places} cities={cities} guides={guides} placeGuides={placeGuides} reload={loadData} />}
         {tab === "suggestions" && <SuggestionsPanel suggestions={suggestions} cities={cities} reload={loadData} />}
         {tab === "articles" && <ArticlesPanel articles={articles} cities={cities} reload={loadData} />}
