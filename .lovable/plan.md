@@ -1,97 +1,170 @@
-# Pricing model: group categories + language %
 
-## Model
+# Hamroh Guide Assistant — polnyi MVP
 
-Each tour has:
-- **Base language** (e.g. Russian) = 100%
-- **Language multipliers**: e.g. `{ "English": 25, "French": 50 }` (means +25%, +50%)
-- **Pricing mode**: `fixed` (one price for any group) OR `by_group` (per category)
-- **Group prices** (only if `by_group`): fixed price per category
-  - `private` — up to 2
-  - `small` — up to 6
-  - `group` — up to 12
-  - `large` — up to 25
-  - Guide picks which categories to offer (1 or more)
-- **Children rule**: `children_free_under` (default 16). Children below this don't count toward group size.
+Stroim **vse tri sloya odnovremenno**: vizualnyi kalendar (Today/Week), AI chat-assistant, Google Calendar 2-way sync. Mobile-first PWA, ustanavlivaetsya na home screen, rabotaet plavno bez native app.
 
-Final price formula:
+---
+
+## Chto poluchit gid
+
+1. **Today screen** — vertikalnyi timeline na segodnya (auto-tury + manualnye eventy + free time)
+2. **Week screen** — horizontal scroll po dnyam + mesyac heat-map
+3. **AI chat** — "Zavtra v 10 vstrecha", "Skolko zarabotal v mae", "Zablokirui pyatnicu" — na russkom/uzbekskom/anglyiskom
+4. **Daily brief** — utrom v 7:00 v Telegram: tury, pogoda, svobodnoe vremya
+5. **Google Calendar sync** — lichnye eventy iz Google avtomaticheski poyavlyayutsya kak "busy", tury iz Hamroh push'atsya v Google
+6. **CRM na evente** — tap na booking → kartochka klienta (istoria turov, $, otzyvy, zametki)
+7. **Income tracker** — avtomaticheski schitaet zarabotok po mesyacam
+8. **PWA installation** — "Add to Home Screen", ikonka kak u app
+
+---
+
+## Razdely raboty
+
+### 1. Database (1 migration)
+
+```text
+calendar_events           # universalnyi event (booking | personal | block | reminder)
+  ├─ guide_id, type, title, starts_at, ends_at, all_day
+  ├─ booking_id (nullable, link na bookings)
+  ├─ google_event_id (nullable, dlya sync)
+  ├─ location, notes, color
+  └─ created_at, updated_at
+
+guide_google_calendar     # OAuth tokeny per gid
+  ├─ guide_id, access_token, refresh_token, expires_at
+  ├─ calendar_id, sync_token (incremental sync)
+  └─ last_synced_at
+
+guide_client_notes        # zametki po klientam (CRM)
+  ├─ guide_id, client_user_id
+  ├─ notes, tags, last_tour_at
+  └─ created_at, updated_at
+
+guide_ai_threads          # AI chat history
+  └─ guide_id, messages (jsonb)
 ```
-final = base_price_for_selected_category × (1 + language_multiplier / 100)
-```
 
-If adults > max in all offered categories → show "Contact guide" button (opens chat / Telegram).
+Plus extension `bookings` view → automatic insertion в `calendar_events` cherez trigger kogda booking confirmed.
 
-## Database changes
+### 2. Server functions (TanStack)
 
-`tours` table — new columns:
-- `pricing_mode text default 'fixed'` — `'fixed' | 'by_group'`
-- `base_language text` — the 100% reference language (e.g. `'Russian'`)
-- `language_multipliers jsonb default '{}'` — `{ "English": 25 }` meaning +25%
-- `group_prices jsonb default '{}'` — `{ "private": 80, "small": 120, "group": 200 }` (USD, in base language)
-- `children_free_under integer default 16`
+- `guide-calendar.functions.ts` — list/create/update/delete events, get day/week view
+- `guide-google-sync.functions.ts` — OAuth flow, pull events from Google, push tours to Google
+- `guide-ai-assistant.functions.ts` — chat endpoint cherez Lovable AI Gateway (`google/gemini-3-flash-preview`) s tool calling:
+  - `create_event`, `delete_event`, `block_time`
+  - `get_schedule(date)`, `get_income(period)`
+  - `get_client_info(client_id)`
+- `guide-daily-brief.functions.ts` — utrenniy push v Telegram (cron 7:00 po city timezone)
+- `guide-crm.functions.ts` — agregaciya history klienta + notes
 
-Keep `price_from` (used as min/display price). Drop reliance on `price_by_language` — migrate existing values into the new shape, leave the old column for now (we can remove later).
+### 3. UI (mobile-first)
 
-`bookings` table — new columns:
-- `adults integer default 1`
-- `children integer default 0`
-- `group_category text` — `'private' | 'small' | 'group' | 'large' | null` (null = fixed)
+**Routes:**
+- `/guide` — uje est, dobavlyaem 4 tab'a: **Today** / **Week** / **AI** / **Me**
+- `/guide/event/$eventId` — bottom sheet: detali + edit + CRM klienta
+- `/guide/ai` — full-screen chat (AI Elements: Conversation, Message, PromptInput, Tool, Shimmer)
+- `/guide/settings/google-calendar` — connect/disconnect Google
 
-`guests` becomes a computed display value (adults + children) but kept for back-compat.
+**Komponenty:**
+- `TodayTimeline.tsx` — vertikalnyi spisok po chasam s color-coded events
+- `WeekStrip.tsx` — horizontal swipe po 7 dnyam + month heat-map snizu
+- `EventSheet.tsx` — vaul bottom sheet s edit form
+- `ClientCRMCard.tsx` — history + notes per klient
+- `AIChatWindow.tsx` — AI Elements primitives
+- `DailyBriefCard.tsx` — utrenniy summary na Today
 
-## Server changes
+**Design:**
+- Mobile-first (>=320px), max-width 640px na desktop
+- Bottom nav (4 ikonki), vsegda na ekrane
+- Swipe gestures cherez `@use-gesture/react`
+- Plavnye perehody cherez Framer Motion
+- Touch targets >=44px, vse semanticheskie tokeny iz `styles.css`
 
-**`upsertTour`** (`src/lib/guide-portal.functions.ts`):
-- Accept `pricing_mode`, `base_language`, `language_multipliers`, `group_prices`, `children_free_under`.
-- Validation: if `by_group`, at least one group price > 0; multipliers in [-50, 500].
-- Compute `price_from` = minimum of group_prices (or single fixed price) in base language.
+### 4. PWA setup
 
-**`createBooking`** (`src/lib/booking.functions.ts`):
-- Accept `adults`, `children`, `group_category`, `language`.
-- Recompute price server-side:
-  - Get `base_price` from `group_prices[category]` (or fixed price).
-  - Get multiplier from `language_multipliers[language]` (0 if base language).
-  - `total = round(base_price × (1 + mult/100))`.
-  - Validate: `adults <= max_for_category`. If not → reject with "Contact guide".
-- Save `adults`, `children`, `group_category`.
+- `vite-plugin-pwa` s `generateSW`, `registerType: "autoUpdate"`
+- Manifest s ikonkoi Hamroh, theme color, `display: "standalone"`
+- Single registration wrapper s preview guards (skip esli iframe, `id-preview--*`, `?sw=off`)
+- NetworkFirst dlya HTML, CacheFirst dlya hashed assets
+- Apple touch icons + meta tags
 
-## UI changes
+### 5. Google Calendar integration
 
-**Guide tour editor** (`src/components/admin/ToursPanel.tsx` + `src/lib/guide-portal.functions.ts` form on `/guide`):
-- Radio: "Fixed price" / "Price by group size"
-- If fixed: one price field (in base language)
-- If by group: 4 checkboxes for categories, each enabled checkbox shows a price field
-- Base language dropdown
-- Language multipliers: row per additional language with `+ %` field
-- Children-free-under number input (default 16)
+Tak kak **kajdyi gid podklyuchaet svoy lichnyi calendar** (a ne nash workspace) — **per-user OAuth**, ne connector:
+- Sozdaem OAuth credentials v Google Cloud Console
+- User secrets: `GOOGLE_OAUTH_CLIENT_ID`, `GOOGLE_OAUTH_CLIENT_SECRET`
+- Flow: `/api/public/google/oauth/start` → Google consent → `/api/public/google/oauth/callback` → save tokens v `guide_google_calendar`
+- Sync: incremental cherez `syncToken`, krushok kajdye 15 min cherez `pg_cron`
+- Konflikty: Hamroh tury = master (zashishyenye); Google eventy = "busy" sloy (chitayem, ne pishem)
 
-**Tour detail page** (`src/routes/tours_.$slug.tsx`):
-- Show pricing block:
-  - If fixed: "From $X" + language switcher recalculates
-  - If by group: table of categories with prices, language switcher applies %
-- Booking form: adults / children / category / language pickers; show computed total.
-- If adults exceed all offered categories → "Contact guide" CTA.
+### 6. AI assistant
 
-**Tour cards** (`src/components/home/TopTours.tsx`): use `price_from` as today.
+- Provider: Lovable AI Gateway (`google/gemini-3-flash-preview` — bystryi, deshyovyi, dostatochno umnyi dlya 6 tools)
+- System prompt na 3 yazykah (RU/UZ/EN), s instructions po formatu otvetov i tone of voice
+- Tools (AI SDK `tool()` s zod schemami):
+  - `createEvent({ date, time, title, duration })`
+  - `deleteEvent({ eventId })`
+  - `blockTime({ from, to, reason })`
+  - `getSchedule({ date })`
+  - `getIncome({ period: "week" | "month" | "year" })`
+  - `getClientInfo({ clientId | name })`
+- Voice input: Web Speech API (knopka mikrofona v PromptInput)
+- Tools render cherez `Tool`/`ToolHeader`/`ToolContent`, collapsed by default
+- History per gid v `guide_ai_threads` (one conversation, dlya prostoty — gid ne nuzhdaetsya v threads)
 
-**My bookings** (`src/routes/my-bookings.tsx`, `src/routes/guide.tsx`): show `adults + children` and category badge.
+### 7. Daily brief
 
-## Migration of existing data
+- pg_cron job v 7:00 (local guide timezone) → server route `/api/public/hooks/daily-brief`
+- Dlya kajdogo gida s eventami segodnya:
+  - Sobiraem: tury, vstrechi, pogoda (Open-Meteo API, besplatno), free time
+  - Format: kratkii Telegram message + push (esli installed PWA)
 
-For existing tours: set `pricing_mode = 'fixed'`, `base_language` from `languages[0]` or `'Russian'`, copy `price_from` into a fallback. Existing `price_by_language` values stay readable; new bookings ignore them.
+---
 
-## Files touched
+## Etapy realizacii (poryadok kommitov)
 
-- New migration: tours columns + bookings columns
-- `src/lib/guide-portal.functions.ts` — upsertTour schema/logic
-- `src/lib/booking.functions.ts` — createBooking price computation
-- `src/lib/content-queries.ts` — include new fields in TOUR_SELECT
-- `src/routes/guide.tsx` (or wherever the guide tour form lives) — UI
-- `src/routes/tours_.$slug.tsx` — pricing display + booking form
-- `src/routes/book.$slug.tsx` — booking form
-- `src/routes/my-bookings.tsx`, `src/routes/guide.tsx` — display adults/children/category
+1. **Migration + types** — vse tablicy + RLS + grants + triggery
+2. **PWA infrastructure** — manifest, service worker s guards, install prompt
+3. **Today + Week UI** — bez AI poka, no s manualnymi eventami i auto-bookings
+4. **EventSheet + CRM** — tap → bottom sheet + client history
+5. **Google Calendar OAuth + sync** — connect flow + 2-way sync + cron
+6. **AI chat** — server fn + AI Elements UI + 6 tools + voice
+7. **Daily brief** — cron + Telegram + push
+8. **Income tracker** — page v "Me" tab + AI tool
 
-## Out of scope
+---
 
-- Removing the old `price_by_language` column (defer until UI fully migrated).
-- Per-person pricing (we chose fixed-per-group).
+## Chestnye trade-offs
+
+- **iOS push** rabotaet tolko esli polzovatel sdelal "Add to Home Screen" (iOS 16.4+). Dlya nadejnosti dubliruem v Telegram bot.
+- **Background voice** ("Hey Hamroh") — nevozmojno bez native app. Mikrofon tolko kogda chat otkryt.
+- **Gemini Flash i russkii/uzbekskii** — srednyaya kachestvo. System prompt + few-shot examples na 3 yazykah, no inogda budet smeshno otvechat. Esli ploho → swap na `google/gemini-3-pro-preview` (dorozhe v 5x, no luchshe yazyk).
+- **Google OAuth setup** — trebuet od menya tvoego soglasiya na Google Cloud Console: ya popro'su API keys cherez `add_secret` posle sozdaniya credentials. Esli ne hochesh seichas — propuskaem etap 5, dobavlyaem pozje.
+- **Phase 3 (Logistics AI s real-time GPS, busyness analytics, demand prediction)** — ne v etot MVP. Eto sleduyushaya volna posle togo, kak budet 50+ aktivnyh gidov dlya dannyh.
+
+---
+
+## Tehnicheskie detali
+
+**Stack additions:**
+- `vite-plugin-pwa` (PWA)
+- `@use-gesture/react` (swipe)
+- `framer-motion` (uje est? proverim)
+- AI Elements: `bun x ai-elements@latest add conversation message prompt-input shimmer tool`
+- Google OAuth: napishem rukami cherez `fetch` (legkii flow, ne stoit dependency)
+
+**Secrets (popro'shu cherez add_secret kogda dojdyom do etapa):**
+- `GOOGLE_OAUTH_CLIENT_ID`
+- `GOOGLE_OAUTH_CLIENT_SECRET`
+
+**Razmer raboty:** ~10-12 fayilov novih + edits k 4-5 sushestvuyushim. Vse pomestitsya v odin bolshoy commit (po etapam, sekvenchialno).
+
+---
+
+## Vopros pered startom
+
+1. **Google Calendar seichas ili pozje?** Esli seichas — nujno chto by ty sozdal OAuth credentials v Google Cloud Console (~5 min, ya raspishu po shagam). Esli pozje — propuskaem etap 5, vse ostalnoe rabotaet.
+
+2. **AI yazyk po umolchaniyu — russkii?** Ili avtoopredelyat po profilyu gida?
+
+3. **Gotov chto by ya nachal s migration + PWA + Today/Week (etapy 1-3)?** Eto ~30-40 min raboty, daet rabochii kalendar bez AI. Potom srazu prodolju s AI i Google.
