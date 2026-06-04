@@ -704,6 +704,30 @@ function TourEditor({
             </label>
           </div>
 
+          <div>
+            <p className="text-sm font-medium">Categories</p>
+            <p className="text-xs text-muted-foreground mt-0.5">Pick the categories that best describe this tour. Travellers filter by these.</p>
+            {categories.length === 0 ? (
+              <p className="mt-2 text-xs text-muted-foreground">No categories available yet.</p>
+            ) : (
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {categories.map((c) => {
+                  const on = selectedCats.includes(c.id);
+                  return (
+                    <button
+                      key={c.id}
+                      type="button"
+                      onClick={() => toggleCat(c.id)}
+                      className={`px-3 h-8 rounded-full text-sm transition ${on ? "bg-foreground text-background" : "bg-secondary text-foreground hover:bg-secondary/80"}`}
+                    >
+                      {c.name}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
           <label className="inline-flex items-center gap-2 text-sm">
             <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} className="h-4 w-4" />
             <span>Published (visible to travellers)</span>
