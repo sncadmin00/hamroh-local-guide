@@ -24,8 +24,8 @@ export function ExploreTabs() {
   if (isMobile) {
     return (
       <>
-        <FeaturedGuides />
         <TopTours />
+        <FeaturedGuides />
         <PopularCities />
       </>
     );
