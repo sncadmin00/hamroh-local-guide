@@ -152,6 +152,9 @@ function GuidePortal() {
 
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="flex gap-2 mb-6 flex-wrap">
+          <TabBtn active={tab === "calendar"} onClick={() => setTab("calendar")}>
+            <CalendarDays className="h-4 w-4" /> Calendar
+          </TabBtn>
           <TabBtn active={tab === "availability"} onClick={() => setTab("availability")}>
             <Calendar className="h-4 w-4" /> Availability
           </TabBtn>
