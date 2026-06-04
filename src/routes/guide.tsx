@@ -52,6 +52,10 @@ type Booking = {
   notes: string;
   created_at: string;
   slot_id: string | null;
+  proposed_date?: string | null;
+  proposed_time?: string | null;
+  proposed_note?: string | null;
+  proposed_at?: string | null;
 };
 
 type MyGuide = {
