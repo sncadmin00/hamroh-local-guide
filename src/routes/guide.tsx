@@ -198,6 +198,13 @@ function GuidePortal() {
                 await load();
               } catch (e) { toast.error((e as Error).message); }
             }}
+            onPropose={async (bookingId, date, time, note) => {
+              try {
+                const body = `Proposing another time: ${date} at ${time}.${note ? ` Note: ${note}` : ""}`;
+                await sendMessageFn({ data: { booking_id: bookingId, body } });
+                toast.success("Proposal sent to client");
+              } catch (e) { toast.error((e as Error).message); }
+            }}
           />
         )}
 
