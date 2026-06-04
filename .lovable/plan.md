@@ -1,23 +1,27 @@
-## Status
+## Rekomendacii poxojyx turov
 
-Admin uje umeet privyazyvat tur k kategoriyam (`ToursPanel.tsx` — chipy + zapis v `tour_categories`). U gida v kabinete (`src/routes/guide.tsx`) etogo net.
+Dobavit blok "Poxojiye tury" vnizu stranicy `/tours/<slug>`.
 
-## Chto delaem
+### Logika podbora
+1. Sperva ishchem tury s **toy je kategoriey** (lubaya iz kategoriy tekushchego tura).
+2. Esli nedostatochno — dobavlyaem tury iz **togo je goroda**.
+3. Isklyuchaem tekushchiy tur, berem do 4 sht.
 
-**`src/lib/guide-portal.functions.ts`**
-- `listMyTours` — dobavit v select `tour_categories(category_id)` i v vozvrat polu `category_ids: string[]` u kajdogo tura.
-- `upsertTourSchema` — dobavit `category_ids: z.array(z.string().uuid()).max(20).default([])`.
-- `upsertTour.handler` — posle insert/update tura: `delete from tour_categories where tour_id = X`, zatem `insert` parami `{tour_id, category_id}` dlya kajdogo iz `category_ids`. RLS na `tour_categories` tol'ko dlya adminov — poetomu dlya etoy chasti ispolzuem `supabaseAdmin` (vladelets tura uje proveren ranshe v handlere).
+### Izmeneniya v kode
 
-**`src/routes/guide.tsx` (`TourEditor`)**
-- Pokazat kategorii cherez `useCategories()` v vide chipov (kak v admin-panele).
-- Lokalnyy state `selectedCats: string[]`, init iz `initial?.category_ids`.
-- V `onSave` peredavat `category_ids: selectedCats`.
-- Tip `Tour` rasshirit `category_ids: string[]`.
+**`src/lib/content-queries.ts`** — dobavit hook `useSimilarTours(tour)`:
+- Zapros vseh published turov (libo perebrat `useTours()` i otfiltrovat na kliyente).
+- Score: +2 za sovpadenie kategorii, +1 za sovpadenie goroda.
+- Sortirovka po score, slice(0, 4).
 
-## Vne plana
+**`src/routes/tours_.$slug.tsx`** — pod osnovnym kontentom (posle `</div>` zakryvayushchego grid, pered `</main>`) dobavit sekciyu:
+- Zagolovok "Poxojiye tury" / `t("tours.similar")`.
+- Setka 2 kolonki na mobile, 4 na desktop.
+- Karty v tom je stile, chto i na `/tours` (kompaktnye: foto, gorod, dlitelnost, nazvanie, cena ot).
+- Esli rekomendaciy net — sekciya ne renderitsya.
 
-- Migraciya RLS dlya `tour_categories` chtoby vladelets tura mog pisat napryamuyu — ne delaem; ispolzuem `supabaseAdmin` v server-fn (proshe i bezopasno).
-- Skripty avtomaticheskogo razlojeniya sushestvuyushchih 20 turov po kategoriyam — vruchnuyu cherez UI.
+**`src/lib/i18n.ts`** — dobavit klyuch `tours.similar` (ru/en/uz).
 
-OK?
+### Tehnicheskiye detali
+- Vynesti razmetku karty turu v melkiy lokalnyy komponent `TourCard` vnutri faila marshruta (ili pereispolzovat sushchestvuyushchuyu razmetku iz `tours.tsx` kopiey — kratkoy, bez vynesenia v shared, chtoby ne menyat drugiye fayly).
+- RLS i zaprosy ne zatragivayutsya.
