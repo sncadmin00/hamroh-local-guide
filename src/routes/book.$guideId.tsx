@@ -90,11 +90,14 @@ function BookPage() {
     );
   }
 
-  const experiences = guide.experiences.length > 0 ? guide.experiences : [{ title: "Full day with guide", duration: "8 hours", price: guide.pricePerDay }];
+  const experiences = guide.experiences.length > 0
+    ? guide.experiences
+    : [{ title: "Full day with guide", duration: "8 hours", price: guide.pricePerDay, priceByLanguage: {} as Record<string, number> }];
   const currentExperience = form.experience || experiences[0].title;
   const hasInstantSlots = slots.length > 0;
   const isInstantMode = hasInstantSlots && !!selectedSlot;
   const chosenSlot = slots.find((s) => s.id === selectedSlot) ?? null;
+  const currentLanguage = form.language || guide.languages[0] || "";
 
   const handleFieldChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -102,6 +105,12 @@ function BookPage() {
   const setGuests = (n: number) => {
     setForm((f) => ({ ...f, guests: Math.min(12, Math.max(1, n)) }));
   };
+
+  const selectedExperience = experiences.find((e) => e.title === currentExperience) ?? experiences[0];
+  const unitPrice = (currentLanguage && selectedExperience.priceByLanguage[currentLanguage]) || selectedExperience.price;
+  const total = unitPrice * form.guests;
+  const fee = Math.round(total * 0.08);
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (submitting) return;
@@ -118,10 +127,10 @@ function BookPage() {
     try {
       await createBookingFn({
         data: {
-          guide_id: guide.id,
+          guide_id: guide.dbId,
           slot_id: chosenSlot?.id ?? null,
           user_id: userData.user?.id ?? null,
-          experience: currentExperience,
+          experience: currentLanguage ? `${currentExperience} (${currentLanguage})` : currentExperience,
           date: chosenSlot?.date ?? form.date,
           start_time: chosenSlot?.start_time,
           duration_minutes: chosenSlot?.duration_minutes,
@@ -138,7 +147,7 @@ function BookPage() {
         },
       });
       setConfirmed(true);
-      trackEvent("booking_created", { guide_id: guide.id, instant: !!chosenSlot, total: total + fee });
+      trackEvent("booking_created", { guide_id: guide.dbId, instant: !!chosenSlot, total: total + fee });
       window.scrollTo({ top: 0 });
     } catch (err) {
       toast.error((err as Error).message);
@@ -146,10 +155,6 @@ function BookPage() {
       setSubmitting(false);
     }
   };
-
-  const selectedExperience = experiences.find((e) => e.title === currentExperience) ?? experiences[0];
-  const total = selectedExperience.price * form.guests;
-  const fee = Math.round(total * 0.08);
 
   if (confirmed) {
     return (
