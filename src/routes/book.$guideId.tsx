@@ -49,7 +49,7 @@ function BookPage() {
 
   useEffect(() => {
     if (!guide) return;
-    fetchSlots({ data: { guide.id } as { guide_id: string } })
+    fetchSlots({ data: { guide_id: guide.id } })
       .then((rows) => setSlots(rows as typeof slots))
       .catch(() => setSlots([]));
   }, [guide, fetchSlots]);
