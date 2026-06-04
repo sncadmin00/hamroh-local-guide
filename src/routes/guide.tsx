@@ -854,10 +854,16 @@ function TourEditor({
           <button
             disabled={!title.trim() || !cityId}
             onClick={() => {
-              const pbl: Record<string, number> = {};
-              for (const [k, v] of Object.entries(pricesText)) {
+              const gp: Partial<Record<(typeof GROUP_KEYS)[number], number>> = {};
+              for (const k of GROUP_KEYS) {
+                const n = Number(groupPricesText[k] ?? "");
+                if (Number.isFinite(n) && n > 0) gp[k] = n;
+              }
+              const mults: Record<string, number> = {};
+              for (const [k, v] of Object.entries(langMultsText)) {
+                if (k === baseLanguage) continue;
                 const n = Number(v);
-                if (Number.isFinite(n) && n > 0) pbl[k] = n;
+                if (Number.isFinite(n) && v !== "") mults[k] = n;
               }
               onSave({
                 id: initial?.id,
@@ -866,8 +872,12 @@ function TourEditor({
                 cover_url: coverUrl.trim() || null,
                 city_id: cityId,
                 duration_hours: durationHours,
-                price_from: basePrice,
-                price_by_language: pbl,
+                pricing_mode: pricingMode,
+                fixed_price: fixedPrice,
+                group_prices: gp,
+                base_language: baseLanguage,
+                language_multipliers: mults,
+                children_free_under: childrenFreeUnder,
                 languages: tourLangs,
                 transport_included: transportIncluded,
                 highlights: textToArr(highlights),
