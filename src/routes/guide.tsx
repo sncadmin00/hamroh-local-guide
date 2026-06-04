@@ -178,6 +178,8 @@ function GuidePortal() {
           </TabBtn>
         </div>
 
+        {tab === "calendar" && <CalendarPanel />}
+
         {tab === "availability" && (
           <AvailabilityPanel
             slots={slots}
