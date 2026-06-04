@@ -116,15 +116,15 @@
 
 @keyframes step-sequence {
   0%   { opacity: 0; transform: translate(-50%, 8px); }
-  4%   { opacity: 1; transform: translate(-50%, 0); }
-  28%  { opacity: 1; transform: translate(-50%, 0); }
-  33%  { opacity: 0; transform: translate(-50%, -8px); }
+  7%   { opacity: 1; transform: translate(-50%, 0); }
+  40%  { opacity: 1; transform: translate(-50%, 0); }
+  47%  { opacity: 0; transform: translate(-50%, -8px); }
   100% { opacity: 0; transform: translate(-50%, -8px); }
 }
 
 .step-sequence-item {
   opacity: 0;
-  animation: step-sequence 14.4s ease-out infinite both;
+  animation: step-sequence 9s ease-out infinite both;
   animation-delay: var(--step-delay, 0ms);
 }
 
