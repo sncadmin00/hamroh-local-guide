@@ -124,7 +124,7 @@ export const listMyBookings = createServerFn({ method: "GET" })
     if (!guide) return [];
     const { data, error } = await supabase
       .from("bookings")
-      .select("id, customer_name, customer_email, customer_telegram_username, experience, language, date, start_time, duration_minutes, guests, total, status, notes, created_at, slot_id")
+      .select("id, customer_name, customer_email, customer_telegram_username, experience, language, date, start_time, duration_minutes, guests, total, status, notes, created_at, slot_id, proposed_date, proposed_time, proposed_note, proposed_at")
       .eq("guide_id", guide.id)
       .order("date", { ascending: false });
     if (error) throw new Error(error.message);
