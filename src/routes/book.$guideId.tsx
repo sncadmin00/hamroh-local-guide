@@ -49,10 +49,17 @@ function BookPage() {
 
   useEffect(() => {
     if (!guide) return;
-    fetchSlots({ data: { guide_id: guide.id } })
+    fetchSlots({ data: { guide.id } as { guide_id: string } })
       .then((rows) => setSlots(rows as typeof slots))
       .catch(() => setSlots([]));
   }, [guide, fetchSlots]);
+
+  // Pre-select experience from URL (e.g. when arriving from tour page)
+  useEffect(() => {
+    if (!guide || !experienceFromUrl) return;
+    const match = guide.experiences.find((e) => e.title === experienceFromUrl);
+    if (match) setForm((f) => ({ ...f, experience: match.title }));
+  }, [guide, experienceFromUrl]);
 
   const loadTelegramContact = async () => {
     const { data: userData } = await supabase.auth.getUser();
