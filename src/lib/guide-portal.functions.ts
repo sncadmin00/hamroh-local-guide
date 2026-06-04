@@ -223,15 +223,19 @@ export const listMyTours = createServerFn({ method: "GET" })
       supabase.from("cities").select("id, name").in("id", cityIds),
       supabase
         .from("tours")
-        .select("id, slug, title, short_description, cover_url, city_id, duration_hours, price_from, price_by_language, transport_included, languages, highlights, included, not_included, published, sort_order")
+        .select("id, slug, title, short_description, cover_url, city_id, duration_hours, price_from, price_by_language, transport_included, languages, highlights, included, not_included, published, sort_order, tour_categories(category_id)")
         .eq("guide_id", guide.id)
         .order("sort_order", { ascending: true }),
     ]);
     if (error) throw new Error(error.message);
+    const tours = (tourRows ?? []).map((t: any) => ({
+      ...t,
+      category_ids: ((t.tour_categories ?? []) as Array<{ category_id: string }>).map((tc) => tc.category_id),
+    }));
     return {
       guide: { languages: (guide.languages ?? []) as string[], city_id: guide.city_id },
       cities: (cityRows ?? []) as Array<{ id: string; name: string }>,
-      tours: (tourRows ?? []) as any[],
+      tours,
     };
   });
 
@@ -251,6 +255,7 @@ const upsertTourSchema = z.object({
   not_included: z.array(z.string().trim().min(1).max(300)).max(30).default([]),
   published: z.boolean().default(true),
   sort_order: z.number().int().min(0).max(1000).default(0),
+  category_ids: z.array(z.string().uuid()).max(20).default([]),
 });
 
 export const upsertTour = createServerFn({ method: "POST" })
@@ -285,6 +290,7 @@ export const upsertTour = createServerFn({ method: "POST" })
       sort_order: data.sort_order,
     };
 
+    let tourId: string;
     if (data.id) {
       const { error } = await supabase
         .from("tours")
@@ -292,26 +298,42 @@ export const upsertTour = createServerFn({ method: "POST" })
         .eq("id", data.id)
         .eq("guide_id", guide.id);
       if (error) throw new Error(error.message);
-      return { ok: true, id: data.id };
+      tourId = data.id;
+    } else {
+      // Generate unique slug from guide slug + title
+      const base = `${guide.slug}-${slugify(data.title)}`;
+      let slug = base;
+      for (let i = 0; i < 5; i++) {
+        const { data: existing } = await supabase
+          .from("tours").select("id").eq("slug", slug).maybeSingle();
+        if (!existing) break;
+        slug = `${base}-${Math.random().toString(36).slice(2, 6)}`;
+      }
+
+      const { data: inserted, error } = await supabase
+        .from("tours")
+        .insert({ ...payload, slug, guide_id: guide.id })
+        .select("id")
+        .single();
+      if (error) throw new Error(error.message);
+      tourId = inserted.id as string;
     }
 
-    // Generate unique slug from guide slug + title
-    const base = `${guide.slug}-${slugify(data.title)}`;
-    let slug = base;
-    for (let i = 0; i < 5; i++) {
-      const { data: existing } = await supabase
-        .from("tours").select("id").eq("slug", slug).maybeSingle();
-      if (!existing) break;
-      slug = `${base}-${Math.random().toString(36).slice(2, 6)}`;
+    // Sync tour_categories (table RLS only allows admins, so use supabaseAdmin;
+    // tour ownership was already verified above)
+    {
+      const { error: delErr } = await supabaseAdmin
+        .from("tour_categories").delete().eq("tour_id", tourId);
+      if (delErr) throw new Error(delErr.message);
+      if (data.category_ids.length > 0) {
+        const rows = data.category_ids.map((cid) => ({ tour_id: tourId, category_id: cid }));
+        const { error: insErr } = await supabaseAdmin
+          .from("tour_categories").insert(rows);
+        if (insErr) throw new Error(insErr.message);
+      }
     }
 
-    const { data: inserted, error } = await supabase
-      .from("tours")
-      .insert({ ...payload, slug, guide_id: guide.id })
-      .select("id")
-      .single();
-    if (error) throw new Error(error.message);
-    return { ok: true, id: inserted.id as string };
+    return { ok: true, id: tourId };
   });
 
 export const deleteTour = createServerFn({ method: "POST" })

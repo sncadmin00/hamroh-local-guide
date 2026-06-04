@@ -1,25 +1,23 @@
-## Ideya
+## Status
 
-V sekciyu `TopTours` na glavnoy dobavit gorizontal'nyy ryad chipov-kategoriy nad spiskom turov. Klik po chipu — filtruet karusel klient-saydno (po `tour.tour_categories[].categories.slug`). Chip "Vse" sbrasyvaet.
+Admin uje umeet privyazyvat tur k kategoriyam (`ToursPanel.tsx` — chipy + zapis v `tour_categories`). U gida v kabinete (`src/routes/guide.tsx`) etogo net.
 
 ## Chto delaem
 
-**`src/components/home/TopTours.tsx`**
-- Dergaem `useCategories()` ryadom s `useTours()`.
-- Lokal'nyy state `active: string | null` (null = "Vse").
-- Pokazyvaem tol'ko te kategorii, u kotoryh est' hotya by odin opublikovannyy tur (chto by ne bylo pustyh chipov).
-- Chipy v gorizontal'nom skrolle (kak v `BrowseByInterest`), aktivnyy — tyomnyy fon.
-- Filtruem `tours` po `active`, berem `slice(0, 8)`. Esli posle filtra pusto — pokazat' nebol'shuyu zaglushku "v etoy kategorii poka net turov".
-- Sortirovka kak sejchas (po `sort_order`, kotoryy uje delaet zapros) — "luchshie" zadayut admin/gid cherez sort. Otdel'nyy rating-sort ne vvodim.
+**`src/lib/guide-portal.functions.ts`**
+- `listMyTours` — dobavit v select `tour_categories(category_id)` i v vozvrat polu `category_ids: string[]` u kajdogo tura.
+- `upsertTourSchema` — dobavit `category_ids: z.array(z.string().uuid()).max(20).default([])`.
+- `upsertTour.handler` — posle insert/update tura: `delete from tour_categories where tour_id = X`, zatem `insert` parami `{tour_id, category_id}` dlya kajdogo iz `category_ids`. RLS na `tour_categories` tol'ko dlya adminov — poetomu dlya etoy chasti ispolzuem `supabaseAdmin` (vladelets tura uje proveren ranshe v handlere).
 
-**i18n**
-- Dobavit klyuch `topTours.all` ("Vse" / "Hammasi" / "All") dlya chipa-sbros.
-- Imena kategoriy — cherez `tCategory(slug, name)` kak v `BrowseByInterest`.
+**`src/routes/guide.tsx` (`TourEditor`)**
+- Pokazat kategorii cherez `useCategories()` v vide chipov (kak v admin-panele).
+- Lokalnyy state `selectedCats: string[]`, init iz `initial?.category_ids`.
+- V `onSave` peredavat `category_ids: selectedCats`.
+- Tip `Tour` rasshirit `category_ids: string[]`.
 
 ## Vne plana
 
-- Sortirovka po reytingu/populyarnosti — net (pole `rating` na turah otsutstvuet).
-- Filtr na desktop-tabe "Tours" v `ExploreTabs` — ne trogaem, tam vsego 6 kartochek.
-- Server-side filtr ili otdel'nye URL — net, vse v pamyati, dannye uje zagrujeny.
+- Migraciya RLS dlya `tour_categories` chtoby vladelets tura mog pisat napryamuyu — ne delaem; ispolzuem `supabaseAdmin` v server-fn (proshe i bezopasno).
+- Skripty avtomaticheskogo razlojeniya sushestvuyushchih 20 turov po kategoriyam — vruchnuyu cherez UI.
 
 OK?

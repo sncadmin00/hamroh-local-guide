@@ -16,7 +16,7 @@ import {
   deleteTour,
   updateMyCities,
 } from "@/lib/guide-portal.functions";
-import { useCities } from "@/lib/content-queries";
+import { useCities, useCategories } from "@/lib/content-queries";
 import { GuidePostsPanel } from "@/components/GuidePostsPanel";
 
 export const Route = createFileRoute("/guide")({
@@ -396,6 +396,7 @@ type Tour = {
   not_included: string[];
   published: boolean;
   sort_order: number;
+  category_ids: string[];
 };
 
 function ToursPanel() {
@@ -425,6 +426,7 @@ function ToursPanel() {
         highlights: t.highlights ?? [],
         included: t.included ?? [],
         not_included: t.not_included ?? [],
+        category_ids: t.category_ids ?? [],
       })));
     } catch (e) {
       toast.error((e as Error).message);
@@ -555,8 +557,10 @@ function TourEditor({
     not_included: string[];
     published: boolean;
     sort_order: number;
+    category_ids: string[];
   }) => void;
 }) {
+  const { data: categories = [] } = useCategories();
   const [title, setTitle] = useState(initial?.title ?? "");
   const [shortDesc, setShortDesc] = useState(initial?.short_description ?? "");
   const [coverUrl, setCoverUrl] = useState(initial?.cover_url ?? "");
@@ -577,7 +581,9 @@ function TourEditor({
   const [included, setIncluded] = useState(arrToText(initial?.included ?? []));
   const [notIncluded, setNotIncluded] = useState(arrToText(initial?.not_included ?? []));
   const [published, setPublished] = useState(initial?.published ?? true);
+  const [selectedCats, setSelectedCats] = useState<string[]>(initial?.category_ids ?? []);
   const [uploading, setUploading] = useState(false);
+  const toggleCat = (id: string) => setSelectedCats((s) => s.includes(id) ? s.filter((x) => x !== id) : [...s, id]);
 
   const toggleLang = (lng: string) => {
     setTourLangs((cur) => cur.includes(lng) ? cur.filter((x) => x !== lng) : [...cur, lng]);
@@ -698,6 +704,30 @@ function TourEditor({
             </label>
           </div>
 
+          <div>
+            <p className="text-sm font-medium">Categories</p>
+            <p className="text-xs text-muted-foreground mt-0.5">Pick the categories that best describe this tour. Travellers filter by these.</p>
+            {categories.length === 0 ? (
+              <p className="mt-2 text-xs text-muted-foreground">No categories available yet.</p>
+            ) : (
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {categories.map((c) => {
+                  const on = selectedCats.includes(c.id);
+                  return (
+                    <button
+                      key={c.id}
+                      type="button"
+                      onClick={() => toggleCat(c.id)}
+                      className={`px-3 h-8 rounded-full text-sm transition ${on ? "bg-foreground text-background" : "bg-secondary text-foreground hover:bg-secondary/80"}`}
+                    >
+                      {c.name}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
           <label className="inline-flex items-center gap-2 text-sm">
             <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} className="h-4 w-4" />
             <span>Published (visible to travellers)</span>
@@ -729,6 +759,7 @@ function TourEditor({
                 not_included: textToArr(notIncluded),
                 published,
                 sort_order: initial?.sort_order ?? 0,
+                category_ids: selectedCats,
               });
             }}
             className="h-10 px-5 rounded-full bg-foreground text-background text-sm font-medium disabled:opacity-50"
