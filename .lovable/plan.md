@@ -1,7 +1,12 @@
-Заменить классы анимации на inline `style` с `animation` shorthand и `both` fill-mode, чтобы шаги 1, 2, 3 гарантированно появлялись по очереди.
+## Plan
 
-В `src/routes/index.tsx` (блок «Steps above the search»):
-- Убрать `opacity-0 animate-fade-in` из className
-- Заменить inline style на: `{ animation: \`fade-in 0.6s ease-out ${i * 400}ms both\` }`
+1. Make the steps animate with a reliable CSS class instead of inline animation shorthand.
+2. Add a dedicated `.step-sequence-item` animation in `src/styles.css` that starts hidden and keeps its final visible state.
+3. Apply staggered CSS delays to the three step items in `src/routes/index.tsx` so `1`, then `2`, then `3` appear one after another.
+4. Respect reduced-motion settings so the steps remain visible for users who disable animations.
 
-Keyframes `fade-in` уже добавлены в `src/styles.css` — проверить и при необходимости передобавить.
+## Technical details
+
+- Replace `style={{ animation: ... }}` with CSS variables like `--step-delay` to avoid inline shorthand issues.
+- Use `animation-fill-mode: both` and an initial `opacity: 0` in the CSS class.
+- Keep the existing layout/text unchanged.
