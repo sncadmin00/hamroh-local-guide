@@ -110,8 +110,22 @@ export function SiteHeader() {
                 className="inline-flex items-center gap-2 h-10 pl-2.5 pr-1.5 rounded-full ring-1 ring-border/70 bg-card/80 hover:shadow-md transition-shadow"
               >
                 <Menu className="h-4 w-4 text-foreground/70" />
-                <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-secondary text-foreground/70">
-                  <User className="h-4 w-4" />
+                <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-secondary text-foreground/70 overflow-hidden">
+                  {avatarUrl ? (
+                    <img
+                      src={avatarUrl}
+                      alt=""
+                      className="h-full w-full object-cover"
+                      referrerPolicy="no-referrer"
+                      onError={() => setAvatarUrl(null)}
+                    />
+                  ) : displayName ? (
+                    <span className="text-xs font-semibold text-foreground/80">
+                      {displayName.trim().charAt(0).toUpperCase()}
+                    </span>
+                  ) : (
+                    <User className="h-4 w-4" />
+                  )}
                 </span>
               </button>
             </SheetTrigger>
