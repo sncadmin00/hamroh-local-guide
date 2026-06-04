@@ -183,6 +183,7 @@ function GuidePortal() {
         </div>
 
         {tab === "calendar" && <CalendarPanel />}
+        {tab === "ai" && <GuideAIPanel />}
 
         {tab === "availability" && (
           <AvailabilityPanel
