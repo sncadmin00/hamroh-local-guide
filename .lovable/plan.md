@@ -1,64 +1,97 @@
+# Pricing model: group categories + language %
 
-## Tsel
+## Model
 
-Klient ostavlyaet otzyv na **tur** (a ne na gida). Sredniy reyting tura = po ego otzyvam. Sredniy reyting gida = po vsem otzyvam vsex ego turov.
+Each tour has:
+- **Base language** (e.g. Russian) = 100%
+- **Language multipliers**: e.g. `{ "English": 25, "French": 50 }` (means +25%, +50%)
+- **Pricing mode**: `fixed` (one price for any group) OR `by_group` (per category)
+- **Group prices** (only if `by_group`): fixed price per category
+  - `private` — up to 2
+  - `small` — up to 6
+  - `group` — up to 12
+  - `large` — up to 25
+  - Guide picks which categories to offer (1 or more)
+- **Children rule**: `children_free_under` (default 16). Children below this don't count toward group size.
 
-## Izmeneniya v baze
+Final price formula:
+```
+final = base_price_for_selected_category × (1 + language_multiplier / 100)
+```
 
-1. **Ochistit `reviews`** — udalit vse starye zapisi.
-2. **`reviews` table:**
-   - Dobavit `tour_id uuid NOT NULL` (chto na kakoy tur otzyv).
-   - Ostavit `guide_id` (denormalizatsiya dlya bystryx zaprosov i agregatsii).
-   - Ostavit `booking_id` (svyaz s konkretnym bookingom — odin booking = odin otzyv).
-   - Unique constraint: `(booking_id)` — odin otzyv na booking.
-3. **`tours` table:** dobavit `rating numeric DEFAULT 5` i `reviews_count integer DEFAULT 0`.
-4. **RLS reviews INSERT policy** — obnovit: trebovat chto `tour_id` sovpadaet s `bookings.tour_id`, booking prinadlezhit polzovatelyu i v statuse `completed`.
-5. **Funktsii / triggery:**
-   - `recompute_tour_rating(_tour_id)` — peresechet `tours.rating` i `tours.reviews_count`.
-   - `recompute_guide_rating(_guide_id)` — uzhe est, ostavit (schitaet po `reviews.guide_id`, vse otzyvy gida).
-   - Trigger `reviews_after_change` — rasshirit: vyzyvat **oba** pererascheta (tour + guide).
+If adults > max in all offered categories → show "Contact guide" button (opens chat / Telegram).
 
-## Server functions
+## Database changes
 
-- `submitTourReview({ bookingId, rating, comment })` — proverit ownership + completed status, vstavit otzyv s `tour_id` i `guide_id` iz bookinga.
-- `getTourReviews(tourId)` — spisok otzyvov tura (publichno).
-- `getGuideReviews(guideId)` — spisok vsex otzyvov gida s ukazaniem `tour.title` dlya kazhdogo.
+`tours` table — new columns:
+- `pricing_mode text default 'fixed'` — `'fixed' | 'by_group'`
+- `base_language text` — the 100% reference language (e.g. `'Russian'`)
+- `language_multipliers jsonb default '{}'` — `{ "English": 25 }` meaning +25%
+- `group_prices jsonb default '{}'` — `{ "private": 80, "small": 120, "group": 200 }` (USD, in base language)
+- `children_free_under integer default 16`
 
-## UI
+Keep `price_from` (used as min/display price). Drop reliance on `price_by_language` — migrate existing values into the new shape, leave the old column for now (we can remove later).
 
-1. **Stranica tura** (`/tours/{slug}`):
-   - Blok "Reyting tura" — zvezdy + kolichestvo.
-   - Spisok otzyvov pod opisaniem tura.
-   - Knopka "Ostavit otzyv" — vidna polzovatelyu u kotorogo est completed booking na etot tur i eshyo net otzyva.
+`bookings` table — new columns:
+- `adults integer default 1`
+- `children integer default 0`
+- `group_category text` — `'private' | 'small' | 'group' | 'large' | null` (null = fixed)
 
-2. **Stranica gida** (`/guides/{slug}`):
-   - Sushestvuyushiy obshiy reyting (uzhe est) — ostaetsya.
-   - Spisok otzyvov rasshirit: pokazyvat *"Otzyv na tur: {tour.title}"* nad kazhdym otzyvom (klikabelnaya ssylka na tur).
+`guests` becomes a computed display value (adults + children) but kept for back-compat.
 
-3. **Kartochka tura** (na glavnoy / `/tours` / poiske):
-   - Pokazyvat zvezdy + kolichestvo otzyvov tura.
+## Server changes
 
-4. **Lichnyy kabinet klienta** (`/bookings`):
-   - Dlya kazhdogo `completed` bookinga bez otzyva — knopka "Ostavit otzyv o ture".
-   - Modal s zvezdami (1–5) + tekstom.
+**`upsertTour`** (`src/lib/guide-portal.functions.ts`):
+- Accept `pricing_mode`, `base_language`, `language_multipliers`, `group_prices`, `children_free_under`.
+- Validation: if `by_group`, at least one group price > 0; multipliers in [-50, 500].
+- Compute `price_from` = minimum of group_prices (or single fixed price) in base language.
 
-5. **Admin** (`/admin` → Reviews) i **Guide portal** (`/guide`):
-   - Pokazyvat k kakomu turu otnositsya otzyv.
+**`createBooking`** (`src/lib/booking.functions.ts`):
+- Accept `adults`, `children`, `group_category`, `language`.
+- Recompute price server-side:
+  - Get `base_price` from `group_prices[category]` (or fixed price).
+  - Get multiplier from `language_multipliers[language]` (0 if base language).
+  - `total = round(base_price × (1 + mult/100))`.
+  - Validate: `adults <= max_for_category`. If not → reject with "Contact guide".
+- Save `adults`, `children`, `group_category`.
 
-## Tehnicheskie detali
+## UI changes
 
-- `reviews.guide_id` ostaetsya — dlya skorosti i sushestvuyushix zaprosov.
-- Uravnenie: kazhdyy review imeet `(booking_id, tour_id, guide_id)`, gde poslednie dva berutsya iz bookinga.
-- Trigger pri INSERT/UPDATE/DELETE reviews → peresechet `tours.rating/reviews_count` **i** `guides.rating/reviews`.
-- Starye reviews udalyayutsya, posle migratsii vse `tours.rating = 5`, `reviews_count = 0` i `guides.rating` peresechitaetsya.
+**Guide tour editor** (`src/components/admin/ToursPanel.tsx` + `src/lib/guide-portal.functions.ts` form on `/guide`):
+- Radio: "Fixed price" / "Price by group size"
+- If fixed: one price field (in base language)
+- If by group: 4 checkboxes for categories, each enabled checkbox shows a price field
+- Base language dropdown
+- Language multipliers: row per additional language with `+ %` field
+- Children-free-under number input (default 16)
 
-## Files to edit/create
+**Tour detail page** (`src/routes/tours_.$slug.tsx`):
+- Show pricing block:
+  - If fixed: "From $X" + language switcher recalculates
+  - If by group: table of categories with prices, language switcher applies %
+- Booking form: adults / children / category / language pickers; show computed total.
+- If adults exceed all offered categories → "Contact guide" CTA.
 
-- Migration: ochistit reviews, alter `tours` + `reviews`, nove funktsii/triggery, obnovit RLS.
-- `src/lib/reviews.functions.ts` (novyy) — submit / list server fns.
-- `src/routes/tours.$slug.tsx` — blok reytinga + spisok otzyvov + CTA.
-- `src/routes/guides.$slug.tsx` — pokazyvat nazvanie tura nad kazhdym otzyvom.
-- `src/routes/bookings.tsx` (ili gde lichnyy kabinet) — knopka + modal "Ostavit otzyv".
-- `src/components/ReviewForm.tsx` (novyy) — pereispolzuemaya forma.
-- Kartochki turov (`TourCard` ili analog) — dobavit zvezdy.
-- `src/routes/admin.tsx`, `src/routes/guide.tsx` — pokazat tour.title v spiske otzyvov.
+**Tour cards** (`src/components/home/TopTours.tsx`): use `price_from` as today.
+
+**My bookings** (`src/routes/my-bookings.tsx`, `src/routes/guide.tsx`): show `adults + children` and category badge.
+
+## Migration of existing data
+
+For existing tours: set `pricing_mode = 'fixed'`, `base_language` from `languages[0]` or `'Russian'`, copy `price_from` into a fallback. Existing `price_by_language` values stay readable; new bookings ignore them.
+
+## Files touched
+
+- New migration: tours columns + bookings columns
+- `src/lib/guide-portal.functions.ts` — upsertTour schema/logic
+- `src/lib/booking.functions.ts` — createBooking price computation
+- `src/lib/content-queries.ts` — include new fields in TOUR_SELECT
+- `src/routes/guide.tsx` (or wherever the guide tour form lives) — UI
+- `src/routes/tours_.$slug.tsx` — pricing display + booking form
+- `src/routes/book.$slug.tsx` — booking form
+- `src/routes/my-bookings.tsx`, `src/routes/guide.tsx` — display adults/children/category
+
+## Out of scope
+
+- Removing the old `price_by_language` column (defer until UI fully migrated).
+- Per-person pricing (we chose fixed-per-group).
