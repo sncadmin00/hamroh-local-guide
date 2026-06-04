@@ -129,6 +129,14 @@ type Place = {
 
 type PlaceGuideLink = { place_id: string; guide_id: string };
 
+type Language = {
+  id: string;
+  name: string;
+  code: string | null;
+  sort_order: number;
+  is_active: boolean;
+};
+
 type PlaceSuggestion = {
   id: string;
   city_id: string | null;
@@ -169,7 +177,7 @@ function sourceBadgeClass(s: string): string {
 function AdminPage() {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
-  const [tab, setTab] = useState<"bookings" | "applications" | "cities" | "guides" | "tours" | "spotlights" | "categories" | "places" | "suggestions" | "articles" | "social" | "users">("bookings");
+  const [tab, setTab] = useState<"bookings" | "applications" | "cities" | "guides" | "tours" | "spotlights" | "categories" | "languages" | "places" | "suggestions" | "articles" | "social" | "users">("bookings");
   const [cities, setCities] = useState<City[]>([]);
   const [guides, setGuides] = useState<Guide[]>([]);
   const [articles, setArticles] = useState<Article[]>([]);
@@ -181,9 +189,10 @@ function AdminPage() {
   const [places, setPlaces] = useState<Place[]>([]);
   const [placeGuides, setPlaceGuides] = useState<PlaceGuideLink[]>([]);
   const [suggestions, setSuggestions] = useState<PlaceSuggestion[]>([]);
+  const [languages, setLanguages] = useState<Language[]>([]);
 
   const loadData = useCallback(async () => {
-    const [c, g, a, e, b, ap, cat, gc, p, pg, ps] = await Promise.all([
+    const [c, g, a, e, b, ap, cat, gc, p, pg, ps, lg] = await Promise.all([
       supabase.from("cities").select("*").order("sort_order"),
       supabase.from("guides").select("*").order("sort_order"),
       supabase.from("articles").select("*").order("sort_order").order("created_at", { ascending: false }),
@@ -195,6 +204,7 @@ function AdminPage() {
       supabase.from("places").select("*").order("sort_order").order("created_at", { ascending: false }),
       supabase.from("place_guides").select("place_id, guide_id"),
       supabase.from("place_suggestions").select("*").eq("status", "pending").order("created_at", { ascending: false }),
+      supabase.from("languages").select("*").order("sort_order"),
     ]);
     if (c.data) setCities(c.data as City[]);
     if (g.data) setGuides(g.data as Guide[]);
@@ -207,6 +217,7 @@ function AdminPage() {
     if (p.data) setPlaces(p.data as Place[]);
     if (pg.data) setPlaceGuides(pg.data as PlaceGuideLink[]);
     if (ps.data) setSuggestions(ps.data as PlaceSuggestion[]);
+    if (lg.data) setLanguages(lg.data as Language[]);
   }, []);
 
   useEffect(() => {
@@ -293,6 +304,12 @@ function AdminPage() {
             Categories ({categories.length})
           </button>
           <button
+            onClick={() => setTab("languages")}
+            className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "languages" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+          >
+            Languages ({languages.length})
+          </button>
+          <button
             onClick={() => setTab("places")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "places" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
@@ -327,10 +344,11 @@ function AdminPage() {
         {tab === "bookings" && <BookingsPanel bookings={bookings} reload={loadData} />}
         {tab === "applications" && <ApplicationsPanel applications={applications} reload={loadData} />}
         {tab === "cities" && <CitiesPanel cities={cities} reload={loadData} />}
-        {tab === "guides" && <GuidesPanel guides={guides} cities={cities} categories={categories} guideCategories={guideCategories} reload={loadData} />}
+        {tab === "guides" && <GuidesPanel guides={guides} cities={cities} categories={categories} guideCategories={guideCategories} languages={languages} reload={loadData} />}
         {tab === "tours" && <ToursPanel />}
         {tab === "spotlights" && <SpotlightsPanel />}
         {tab === "categories" && <CategoriesPanel categories={categories} reload={loadData} />}
+        {tab === "languages" && <LanguagesPanel languages={languages} reload={loadData} />}
         {tab === "places" && <PlacesPanel places={places} cities={cities} guides={guides} placeGuides={placeGuides} reload={loadData} />}
         {tab === "suggestions" && <SuggestionsPanel suggestions={suggestions} cities={cities} reload={loadData} />}
         {tab === "articles" && <ArticlesPanel articles={articles} cities={cities} reload={loadData} />}
@@ -445,12 +463,14 @@ function GuidesPanel({
   cities,
   categories,
   guideCategories,
+  languages: languageList,
   reload,
 }: {
   guides: Guide[];
   cities: City[];
   categories: Category[];
   guideCategories: GuideCategoryLink[];
+  languages: Language[];
   reload: () => Promise<void>;
 }) {
   const [name, setName] = useState("");
@@ -461,7 +481,7 @@ function GuidesPanel({
   const [price, setPrice] = useState("");
   const [photo, setPhoto] = useState("");
   const [specialties, setSpecialties] = useState("");
-  const [languages, setLanguages] = useState("");
+  const [selectedLangs, setSelectedLangs] = useState<string[]>([]);
   const [verified, setVerified] = useState(true);
   const [instantBook, setInstantBook] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -484,9 +504,7 @@ function GuidesPanel({
       specialties: specialties
         ? specialties.split(",").map((s) => s.trim()).filter(Boolean)
         : [],
-      languages: languages
-        ? languages.split(",").map((s) => s.trim()).filter(Boolean)
-        : [],
+      languages: selectedLangs,
       verified,
       instant_book: instantBook,
       sort_order: guides.length,
@@ -504,7 +522,7 @@ function GuidesPanel({
     setPrice("");
     setPhoto("");
     setSpecialties("");
-    setLanguages("");
+    setSelectedLangs([]);
     await reload();
   };
 
@@ -568,12 +586,36 @@ function GuidesPanel({
             onChange={setSpecialties}
             placeholder="Food, History, Architecture"
           />
-          <Field
-            label="Languages (comma separated)"
-            value={languages}
-            onChange={setLanguages}
-            placeholder="English, Russian, Uzbek"
-          />
+          <div>
+            <label className="text-xs font-medium text-muted-foreground">Languages</label>
+            {languageList.length === 0 ? (
+              <p className="mt-1 text-xs text-muted-foreground">No languages yet. Add some in the Languages tab.</p>
+            ) : (
+              <div className="mt-1 flex flex-wrap gap-2">
+                {languageList.map((lng) => {
+                  const on = selectedLangs.includes(lng.name);
+                  return (
+                    <button
+                      key={lng.id}
+                      type="button"
+                      onClick={() =>
+                        setSelectedLangs((s) =>
+                          s.includes(lng.name) ? s.filter((x) => x !== lng.name) : [...s, lng.name],
+                        )
+                      }
+                      className={`px-3 h-8 rounded-full text-xs font-medium ring-1 transition ${
+                        on
+                          ? "bg-primary text-primary-foreground ring-primary"
+                          : "bg-card ring-border/60 text-muted-foreground hover:bg-secondary/60"
+                      }`}
+                    >
+                      {lng.name}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
           <div className="flex items-center gap-6 pt-1">
             <label className="inline-flex items-center gap-2 text-sm">
               <input type="checkbox" checked={verified} onChange={(e) => setVerified(e.target.checked)} />
@@ -662,9 +704,130 @@ function GuidesPanel({
                     })}
                   </div>
                 )}
+                {languageList.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5">
+                    {languageList.map((lng) => {
+                      const on = (g.languages ?? []).includes(lng.name);
+                      return (
+                        <button
+                          key={lng.id}
+                          onClick={async () => {
+                            const next = on
+                              ? (g.languages ?? []).filter((x) => x !== lng.name)
+                              : [...(g.languages ?? []), lng.name];
+                            const { error } = await supabase
+                              .from("guides")
+                              .update({ languages: next })
+                              .eq("id", g.id);
+                            if (error) toast.error(error.message);
+                            else await reload();
+                          }}
+                          className={`inline-flex items-center px-2.5 h-7 rounded-full text-xs font-medium ring-1 transition ${
+                            on
+                              ? "bg-primary text-primary-foreground ring-primary"
+                              : "bg-card ring-border/60 text-muted-foreground hover:bg-secondary/60"
+                          }`}
+                        >
+                          {lng.name}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
               </li>
             );
           })}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function LanguagesPanel({
+  languages,
+  reload,
+}: {
+  languages: Language[];
+  reload: () => Promise<void>;
+}) {
+  const [name, setName] = useState("");
+  const [code, setCode] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const add = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim()) {
+      toast.error("Name required");
+      return;
+    }
+    setSaving(true);
+    const { error } = await supabase.from("languages").insert({
+      name: name.trim(),
+      code: code.trim() || null,
+      sort_order: languages.length,
+    });
+    setSaving(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success("Language added");
+    setName("");
+    setCode("");
+    await reload();
+  };
+
+  const remove = async (id: string) => {
+    if (!confirm("Delete this language?")) return;
+    const { error } = await supabase.from("languages").delete().eq("id", id);
+    if (error) toast.error(error.message);
+    else {
+      toast.success("Deleted");
+      await reload();
+    }
+  };
+
+  return (
+    <div className="mt-6 grid gap-6 lg:grid-cols-2">
+      <form onSubmit={add} className="rounded-3xl bg-card p-6 ring-1 ring-border/60 h-fit">
+        <h2 className="font-display text-lg font-semibold">Add a language</h2>
+        <div className="mt-4 space-y-3">
+          <Field label="Name" value={name} onChange={setName} placeholder="French" />
+          <Field label="Code (optional)" value={code} onChange={setCode} placeholder="fr" />
+        </div>
+        <button
+          type="submit"
+          disabled={saving}
+          className="mt-5 inline-flex items-center gap-2 h-11 px-6 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-60"
+        >
+          <Plus className="h-4 w-4" /> {saving ? "Saving…" : "Add language"}
+        </button>
+      </form>
+
+      <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
+        <h2 className="font-display text-lg font-semibold">Languages</h2>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Guides pick from this list on their profile and applications.
+        </p>
+        <ul className="mt-4 divide-y divide-border/60">
+          {languages.length === 0 && (
+            <li className="py-4 text-sm text-muted-foreground">No languages yet.</li>
+          )}
+          {languages.map((l) => (
+            <li key={l.id} className="py-3 flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <p className="font-medium truncate">{l.name}</p>
+                <p className="text-xs text-muted-foreground truncate">{l.code ?? "—"}</p>
+              </div>
+              <button
+                onClick={() => remove(l.id)}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                aria-label="Delete"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </li>
+          ))}
         </ul>
       </div>
     </div>

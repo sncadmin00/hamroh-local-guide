@@ -30,7 +30,7 @@ const schema = z.object({
   email: z.string().trim().email("Invalid email").max(255),
   phone: z.string().trim().min(5, "Please enter a phone number").max(40),
   city: z.string().trim().min(1, "Select or type your city").max(80),
-  languages: z.string().trim().min(2, "List at least one language").max(200),
+  languages: z.array(z.string().min(1)).min(1, "Pick at least one language").max(20),
   specialization: z.string().trim().min(2, "Tell us what you specialize in").max(200),
   experience_years: z.coerce.number().int().min(0).max(80),
   about: z.string().trim().min(20, "Please write at least a couple of sentences").max(2000),
@@ -58,8 +58,10 @@ function BecomeAGuidePage() {
 
   const [cities, setCities] = useState<{ id: string; name: string }[]>([]);
   const [categories, setCategories] = useState<{ id: string; slug: string; name: string; icon: string }[]>([]);
+  const [allLanguages, setAllLanguages] = useState<{ id: string; name: string }[]>([]);
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
   const [submitted, setSubmitted] = useState(false);
   const [saving, setSaving] = useState(false);
   const [portrait, setPortrait] = useState<File | null>(null);
@@ -70,7 +72,6 @@ function BecomeAGuidePage() {
     email: "",
     phone: "",
     city: "",
-    languages: "",
     specialization: "",
     experience_years: "",
     about: "",
@@ -91,7 +92,18 @@ function BecomeAGuidePage() {
       .then(({ data }) => {
         if (data) setCategories(data);
       });
+    supabase
+      .from("languages")
+      .select("id, name")
+      .eq("is_active", true)
+      .order("sort_order")
+      .then(({ data }) => {
+        if (data) setAllLanguages(data);
+      });
   }, []);
+
+  const toggleLanguage = (name: string) =>
+    setSelectedLanguages((s) => (s.includes(name) ? s.filter((x) => x !== name) : [...s, name]));
 
   const toggleCategory = (id: string) =>
     setSelectedCategories((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
@@ -135,7 +147,7 @@ function BecomeAGuidePage() {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const parsed = schema.safeParse(form);
+    const parsed = schema.safeParse({ ...form, languages: selectedLanguages });
     if (!parsed.success) {
       toast.error(parsed.error.issues[0]?.message ?? "Please check the form");
       return;
@@ -143,10 +155,7 @@ function BecomeAGuidePage() {
     setSaving(true);
     try {
       const { data: userData } = await supabase.auth.getUser();
-      const languages = parsed.data.languages
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean);
+      const languages = parsed.data.languages;
 
       let portrait_url: string | null = null;
       let video_url: string | null = null;
@@ -251,13 +260,35 @@ function BecomeAGuidePage() {
                   <input required value={form.city} onChange={set("city")} className={inputCls} placeholder="Samarkand" />
                 )}
               </FormField>
-              <FormField label="Languages (comma-separated)">
-                <input required value={form.languages} onChange={set("languages")} className={inputCls} placeholder="English, Russian, Uzbek" />
-              </FormField>
               <FormField label="Years of experience">
                 <input required type="number" min={0} max={80} value={form.experience_years} onChange={set("experience_years")} className={inputCls} placeholder="3" />
               </FormField>
             </div>
+            <FormField label="Languages (pick all that apply)">
+              {allLanguages.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No languages available yet.</p>
+              ) : (
+                <div className="mt-1 flex flex-wrap gap-2">
+                  {allLanguages.map((lng) => {
+                    const active = selectedLanguages.includes(lng.name);
+                    return (
+                      <button
+                        type="button"
+                        key={lng.id}
+                        onClick={() => toggleLanguage(lng.name)}
+                        className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
+                          active
+                            ? "border-primary bg-primary text-primary-foreground"
+                            : "border-input bg-background text-foreground hover:bg-secondary/40"
+                        }`}
+                      >
+                        {lng.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </FormField>
             <FormField label="Specialization">
               <input required value={form.specialization} onChange={set("specialization")} className={inputCls} placeholder="Food tours, history, architecture…" />
             </FormField>

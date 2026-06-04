@@ -15,6 +15,7 @@ import {
   upsertTour,
   deleteTour,
   updateMyCities,
+  updateMyLanguages,
 } from "@/lib/guide-portal.functions";
 import { useCities, useCategories } from "@/lib/content-queries";
 import { GuidePostsPanel } from "@/components/GuidePostsPanel";
@@ -70,7 +71,7 @@ function GuidePortal() {
   const [guide, setGuide] = useState<MyGuide | null>(null);
   const [slots, setSlots] = useState<Slot[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [tab, setTab] = useState<"availability" | "bookings" | "tours" | "cities" | "posts" | "referral">("availability");
+  const [tab, setTab] = useState<"availability" | "bookings" | "tours" | "cities" | "languages" | "posts" | "referral">("availability");
 
   const fetchGuide = useServerFn(getMyGuide);
   const fetchSlots = useServerFn(listMySlots);
@@ -154,6 +155,9 @@ function GuidePortal() {
           <TabBtn active={tab === "cities"} onClick={() => setTab("cities")}>
             <MapPin className="h-4 w-4" /> Cities
           </TabBtn>
+          <TabBtn active={tab === "languages"} onClick={() => setTab("languages")}>
+            Languages
+          </TabBtn>
           <TabBtn active={tab === "posts"} onClick={() => setTab("posts")}>
             <ImageIcon className="h-4 w-4" /> Posts
           </TabBtn>
@@ -201,6 +205,13 @@ function GuidePortal() {
           <CitiesPanel
             guideCityId={guide.city_id}
             currentExtra={guide.extra_city_ids ?? []}
+            onSaved={() => load()}
+          />
+        )}
+
+        {tab === "languages" && (
+          <LanguagesPanel
+            current={guide.languages ?? []}
             onSaved={() => load()}
           />
         )}
@@ -460,7 +471,7 @@ function ToursPanel() {
         </div>
         {languages.length === 0 && (
           <p className="mt-4 text-sm text-amber-700 bg-amber-500/10 rounded-xl p-3">
-            Add languages to your profile first (ask an administrator) so you can set per-language prices.
+            Add languages on the Languages tab first so you can set per-language prices.
           </p>
         )}
       </div>
@@ -836,6 +847,85 @@ function CitiesPanel({
         className="h-10 px-5 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-50"
       >
         {saving ? "Saving…" : "Save cities"}
+      </button>
+    </div>
+  );
+}
+
+function LanguagesPanel({
+  current,
+  onSaved,
+}: {
+  current: string[];
+  onSaved: () => void;
+}) {
+  const updateFn = useServerFn(updateMyLanguages);
+  const [options, setOptions] = useState<Array<{ id: string; name: string }>>([]);
+  const [selected, setSelected] = useState<string[]>(current);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => { setSelected(current); }, [current]);
+
+  useEffect(() => {
+    supabase
+      .from("languages")
+      .select("id, name")
+      .eq("is_active", true)
+      .order("sort_order")
+      .then(({ data }) => {
+        if (data) setOptions(data);
+      });
+  }, []);
+
+  const toggle = (name: string) => {
+    setSelected((s) => s.includes(name) ? s.filter((x) => x !== name) : [...s, name]);
+  };
+
+  const save = async () => {
+    setSaving(true);
+    try {
+      await updateFn({ data: { languages: selected } });
+      toast.success("Saved");
+      onSaved();
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="rounded-3xl bg-card p-6 ring-1 ring-border space-y-4">
+      <div>
+        <h2 className="font-display text-lg font-semibold">Languages you speak</h2>
+        <p className="text-sm text-muted-foreground mt-1">
+          Pick the languages in which you can run tours. The list is curated by the team.
+        </p>
+      </div>
+      {options.length === 0 ? (
+        <p className="text-sm text-muted-foreground">No languages available yet.</p>
+      ) : (
+        <div className="flex flex-wrap gap-2">
+          {options.map((l) => {
+            const on = selected.includes(l.name);
+            return (
+              <button
+                key={l.id}
+                onClick={() => toggle(l.name)}
+                className={`px-3 h-9 rounded-full text-sm transition ${on ? "bg-foreground text-background" : "bg-secondary text-foreground hover:bg-secondary/80"}`}
+              >
+                {l.name}
+              </button>
+            );
+          })}
+        </div>
+      )}
+      <button
+        onClick={save}
+        disabled={saving}
+        className="h-10 px-5 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-50"
+      >
+        {saving ? "Saving…" : "Save languages"}
       </button>
     </div>
   );
