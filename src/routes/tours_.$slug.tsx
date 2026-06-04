@@ -268,3 +268,108 @@ function TourDetailPage() {
     </div>
   );
 }
+
+function TourReviewsSection({ tourId, tourTitle }: { tourId: string; tourTitle: string }) {
+  const fetchReviews = useServerFn(listTourReviews);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [eligibleBookingId, setEligibleBookingId] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const { data: u } = await supabase.auth.getUser();
+      if (cancelled) return;
+      if (!u.user) {
+        setUserId(null);
+        return;
+      }
+      setUserId(u.user.id);
+      // find a completed booking for this tour without a review yet
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const { data: bookings } = await supabase
+        .from("bookings")
+        .select("id, status, date, tour_id")
+        .eq("user_id", u.user.id)
+        .eq("tour_id", tourId);
+      if (cancelled) return;
+      const candidates = (bookings ?? []).filter((b) => {
+        const okStatus = ["confirmed", "completed"].includes(String(b.status));
+        const okDate = new Date(b.date as string).getTime() <= today.getTime();
+        return okStatus && okDate;
+      });
+      if (candidates.length === 0) {
+        setEligibleBookingId(null);
+        return;
+      }
+      const ids = candidates.map((b) => b.id);
+      const { data: existing } = await supabase
+        .from("reviews")
+        .select("booking_id")
+        .in("booking_id", ids)
+        .eq("user_id", u.user.id);
+      const reviewed = new Set((existing ?? []).map((r) => r.booking_id));
+      const first = candidates.find((b) => !reviewed.has(b.id));
+      setEligibleBookingId(first?.id ?? null);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [tourId]);
+
+  const q = useQuery({
+    queryKey: ["tour-reviews", tourId],
+    queryFn: () => fetchReviews({ data: { tourId } }),
+  });
+
+  const reviews = q.data ?? [];
+
+  return (
+    <section className="mt-10">
+      <h2 className="font-display text-2xl font-semibold">Reviews</h2>
+
+      {eligibleBookingId && (
+        <div className="mt-4 rounded-2xl bg-card ring-1 ring-border/60 p-4">
+          <p className="text-sm font-medium">You went on this tour — share your experience</p>
+          <ReviewForm bookingId={eligibleBookingId} guideName={tourTitle} />
+        </div>
+      )}
+
+      {!eligibleBookingId && userId === null && (
+        <p className="mt-3 text-sm text-muted-foreground">
+          <Link to="/login" className="text-primary hover:underline">Sign in</Link> after your tour to leave a review.
+        </p>
+      )}
+
+      {q.isLoading ? (
+        <p className="mt-4 text-sm text-muted-foreground">Loading reviews…</p>
+      ) : reviews.length === 0 ? (
+        <p className="mt-4 text-sm text-muted-foreground">No reviews yet. Be the first to share your experience.</p>
+      ) : (
+        <ul className="mt-4 space-y-4">
+          {reviews.map((r) => (
+            <li key={r.id} className="rounded-2xl bg-card ring-1 ring-border/60 p-4">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-medium">{r.authorName}</p>
+                <div className="flex items-center gap-0.5">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`h-4 w-4 ${i < r.rating ? "fill-amber-400 text-amber-400" : "text-muted-foreground/40"}`}
+                    />
+                  ))}
+                </div>
+              </div>
+              {r.comment && (
+                <p className="mt-2 text-sm text-foreground/80 whitespace-pre-line">{r.comment}</p>
+              )}
+              <p className="mt-2 text-xs text-muted-foreground">
+                {new Date(r.createdAt).toLocaleDateString()}
+              </p>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
