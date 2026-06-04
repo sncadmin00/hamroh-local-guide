@@ -31,6 +31,7 @@ type GuideRow = {
   slug: string;
   name: string;
   city_id: string;
+  extra_city_ids: string[] | null;
   photo_url: string | null;
   tagline: string;
   bio: string;
@@ -43,7 +44,6 @@ type GuideRow = {
   instant_book: boolean;
   sort_order: number;
   cities: { name: string } | null;
-  guide_experiences: { title: string; duration: string; price: number; price_by_language: Record<string, number> | null; sort_order: number }[];
   guide_categories: { categories: { slug: string; name: string; icon: string } | null }[];
 };
 
@@ -57,6 +57,7 @@ function mapGuide(row: GuideRow): Guide {
     name: row.name,
     city: row.cities?.name ?? "",
     cityId: row.city_id,
+    extraCityIds: row.extra_city_ids ?? [],
     photo: row.photo_url || PLACEHOLDER_PHOTO,
     tagline: row.tagline,
     bio: row.bio,
@@ -70,22 +71,11 @@ function mapGuide(row: GuideRow): Guide {
     categories: (row.guide_categories ?? [])
       .map((gc) => gc.categories)
       .filter((c): c is { slug: string; name: string; icon: string } => !!c),
-    experiences: [...(row.guide_experiences ?? [])]
-      .sort((a, b) => a.sort_order - b.sort_order)
-      .map((e) => {
-        const pbl = e.price_by_language ?? {};
-        const normalized: Record<string, number> = {};
-        for (const [k, v] of Object.entries(pbl)) {
-          const n = Number(v);
-          if (Number.isFinite(n) && n > 0) normalized[k] = n;
-        }
-        return { title: e.title, duration: e.duration, price: Number(e.price), priceByLanguage: normalized };
-      }),
   };
 }
 
 const GUIDE_SELECT =
-  "id, slug, name, city_id, photo_url, tagline, bio, languages, specialties, price_per_day, rating, reviews, verified, instant_book, sort_order, cities(name), guide_experiences(title, duration, price, price_by_language, sort_order), guide_categories(categories(slug, name, icon))";
+  "id, slug, name, city_id, extra_city_ids, photo_url, tagline, bio, languages, specialties, price_per_day, rating, reviews, verified, instant_book, sort_order, cities(name), guide_categories(categories(slug, name, icon))";
 
 async function fetchGuides(): Promise<Guide[]> {
   const { data, error } = await supabase
@@ -322,13 +312,35 @@ export type TourRow = {
   not_included: string[];
   published: boolean;
   sort_order: number;
+  guide_id: string;
+  price_by_language: Record<string, number>;
+  transport_included: boolean;
+  languages: string[];
   cities?: { name: string; slug: string } | null;
-  tour_guides?: { guide_id: string; guides: { id: string; slug: string; name: string; photo_url: string | null } | null }[];
+  guides?: { id: string; slug: string; name: string; photo_url: string | null; rating: number; reviews: number; languages: string[] } | null;
   tour_categories?: { category_id: string; categories: { slug: string; name: string; icon: string } | null }[];
 };
 
 const TOUR_SELECT =
-  "id, slug, title, short_description, description_md, cover_url, city_id, duration_hours, price_from, highlights, included, not_included, published, sort_order, cities(name, slug), tour_guides(guide_id, guides(id, slug, name, photo_url)), tour_categories(category_id, categories(slug, name, icon))";
+  "id, slug, title, short_description, description_md, cover_url, city_id, duration_hours, price_from, highlights, included, not_included, published, sort_order, guide_id, price_by_language, transport_included, languages, cities(name, slug), guides(id, slug, name, photo_url, rating, reviews, languages), tour_categories(category_id, categories(slug, name, icon))";
+
+function normalizeTour(row: any): TourRow {
+  const raw = row.price_by_language ?? {};
+  const pbl: Record<string, number> = {};
+  for (const [k, v] of Object.entries(raw)) {
+    const n = Number(v);
+    if (Number.isFinite(n) && n > 0) pbl[k] = n;
+  }
+  return {
+    ...row,
+    price_by_language: pbl,
+    languages: row.languages ?? [],
+    transport_included: !!row.transport_included,
+    highlights: row.highlights ?? [],
+    included: row.included ?? [],
+    not_included: row.not_included ?? [],
+  };
+}
 
 export function useTours(opts?: { citySlug?: string; categorySlug?: string }) {
   return useQuery({
@@ -340,7 +352,7 @@ export function useTours(opts?: { citySlug?: string; categorySlug?: string }) {
         .eq("published", true)
         .order("sort_order", { ascending: true });
       if (error) throw error;
-      let rows = (data ?? []) as TourRow[];
+      let rows = ((data ?? []) as any[]).map(normalizeTour);
       if (opts?.citySlug) rows = rows.filter((r) => r.cities?.slug === opts.citySlug);
       if (opts?.categorySlug) rows = rows.filter((r) => r.tour_categories?.some((tc) => tc.categories?.slug === opts.categorySlug));
       return rows;
@@ -357,7 +369,7 @@ export function useToursAdmin() {
         .select(TOUR_SELECT)
         .order("sort_order", { ascending: true });
       if (error) throw error;
-      return (data ?? []) as TourRow[];
+      return ((data ?? []) as any[]).map(normalizeTour);
     },
   });
 }
@@ -374,10 +386,26 @@ export function useTour(slug: string) {
         .eq("published", true)
         .maybeSingle();
       if (error) throw error;
-      return (data as TourRow | null) ?? null;
+      return data ? normalizeTour(data) : null;
+    },
+  });
+}
+
+export function useGuideTours(guideId: string | undefined) {
+  return useQuery({
+    queryKey: ["tours-by-guide", guideId],
+    enabled: !!guideId,
+    queryFn: async (): Promise<TourRow[]> => {
+      const { data, error } = await (supabase as any)
+        .from("tours")
+        .select(TOUR_SELECT)
+        .eq("guide_id", guideId!)
+        .eq("published", true)
+        .order("sort_order", { ascending: true });
+      if (error) throw error;
+      return ((data ?? []) as any[]).map(normalizeTour);
     },
   });
 }
 
 export const SPOTLIGHT_KINDS: SpotlightKind[] = ["new_guide", "new_route", "news", "new_tour"];
-

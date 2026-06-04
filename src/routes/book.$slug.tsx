@@ -1,13 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { Star, BadgeCheck, Zap, ArrowLeft, Check } from "lucide-react";
+import { Star, BadgeCheck, Zap, ArrowLeft, Check, Car, Clock, MapPin } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { PaymentMethods } from "@/components/PaymentMethods";
-import { useGuide } from "@/lib/content-queries";
+import { useTour } from "@/lib/content-queries";
 import { getBookingSource } from "@/hooks/useTrackSource";
 import { getGuideSlots, createBooking } from "@/lib/booking.functions";
 import { useI18n } from "@/lib/i18n";
@@ -15,18 +15,14 @@ import { trackEvent } from "@/lib/analytics";
 import { getMyTelegramAccount } from "@/lib/telegram.functions";
 import { TelegramLoginButton } from "@/components/TelegramLoginButton";
 
-export const Route = createFileRoute("/book/$guideId")({
-  head: () => ({ meta: [{ title: "Book a guide — Hamroh" }] }),
-  validateSearch: (search: Record<string, unknown>) => ({
-    experience: typeof search.experience === "string" ? search.experience : undefined,
-  }),
+export const Route = createFileRoute("/book/$slug")({
+  head: () => ({ meta: [{ title: "Book a tour — Hamroh" }] }),
   component: BookPage,
 });
 
 function BookPage() {
-  const { guideId } = Route.useParams();
-  const { experience: experienceFromUrl } = Route.useSearch();
-  const { data: guide, isLoading } = useGuide(guideId);
+  const { slug } = Route.useParams();
+  const { data: tour, isLoading } = useTour(slug);
   const navigate = useNavigate();
   const { lang } = useI18n();
   const [confirmed, setConfirmed] = useState(false);
@@ -37,7 +33,6 @@ function BookPage() {
   const [form, setForm] = useState({
     date: "",
     guests: 2,
-    experience: "",
     language: "",
     name: "",
     email: "",
@@ -49,18 +44,11 @@ function BookPage() {
   const fetchTelegram = useServerFn(getMyTelegramAccount);
 
   useEffect(() => {
-    if (!guide) return;
-    fetchSlots({ data: { guide_id: guide.dbId } })
+    if (!tour) return;
+    fetchSlots({ data: { guide_id: tour.guide_id } })
       .then((rows) => setSlots(rows as typeof slots))
       .catch(() => setSlots([]));
-  }, [guide, fetchSlots]);
-
-  // Pre-select experience from URL (e.g. when arriving from tour page)
-  useEffect(() => {
-    if (!guide || !experienceFromUrl) return;
-    const match = guide.experiences.find((e) => e.title === experienceFromUrl);
-    if (match) setForm((f) => ({ ...f, experience: match.title }));
-  }, [guide, experienceFromUrl]);
+  }, [tour, fetchSlots]);
 
   const loadTelegramContact = async () => {
     const { data: userData } = await supabase.auth.getUser();
@@ -80,7 +68,7 @@ function BookPage() {
     loadTelegramContact();
   }, []);
 
-  if (isLoading || !guide) {
+  if (isLoading || !tour) {
     return (
       <div className="min-h-screen">
         <SiteHeader />
@@ -90,14 +78,12 @@ function BookPage() {
     );
   }
 
-  const experiences = guide.experiences.length > 0
-    ? guide.experiences
-    : [{ title: "Full day with guide", duration: "8 hours", price: guide.pricePerDay, priceByLanguage: {} as Record<string, number> }];
-  const currentExperience = form.experience || experiences[0].title;
+  const guide = tour.guides;
   const hasInstantSlots = slots.length > 0;
   const isInstantMode = hasInstantSlots && !!selectedSlot;
   const chosenSlot = slots.find((s) => s.id === selectedSlot) ?? null;
-  const currentLanguage = form.language || guide.languages[0] || "";
+  const availableLanguages = tour.languages.length > 0 ? tour.languages : (guide?.languages ?? []);
+  const currentLanguage = form.language || availableLanguages[0] || "";
 
   const handleFieldChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -106,8 +92,7 @@ function BookPage() {
     setForm((f) => ({ ...f, guests: Math.min(12, Math.max(1, n)) }));
   };
 
-  const selectedExperience = experiences.find((e) => e.title === currentExperience) ?? experiences[0];
-  const unitPrice = (currentLanguage && selectedExperience.priceByLanguage[currentLanguage]) || selectedExperience.price;
+  const unitPrice = (currentLanguage && tour.price_by_language[currentLanguage]) || Number(tour.price_from);
   const total = unitPrice * form.guests;
   const fee = Math.round(total * 0.08);
 
@@ -123,14 +108,12 @@ function BookPage() {
       return;
     }
     setSubmitting(true);
-    const { data: userData } = await supabase.auth.getUser();
     try {
       await createBookingFn({
         data: {
-          guide_id: guide.dbId,
+          tour_id: tour.id,
           slot_id: chosenSlot?.id ?? null,
-          user_id: userData.user?.id ?? null,
-          experience: currentLanguage ? `${currentExperience} (${currentLanguage})` : currentExperience,
+          language: currentLanguage || undefined,
           date: chosenSlot?.date ?? form.date,
           start_time: chosenSlot?.start_time,
           duration_minutes: chosenSlot?.duration_minutes,
@@ -141,13 +124,12 @@ function BookPage() {
           customer_telegram_chat_id: telegramContact?.telegram_chat_id ?? undefined,
           customer_telegram_username: telegramContact?.telegram_username ?? undefined,
           notes: form.notes,
-          total: total + fee,
           source: getBookingSource(),
           locale: lang,
         },
       });
       setConfirmed(true);
-      trackEvent("booking_created", { guide_id: guide.dbId, instant: !!chosenSlot, total: total + fee });
+      trackEvent("booking_created", { tour_id: tour.id, guide_id: tour.guide_id, instant: !!chosenSlot, total: total + fee });
       window.scrollTo({ top: 0 });
     } catch (err) {
       toast.error((err as Error).message);
@@ -166,12 +148,12 @@ function BookPage() {
           </div>
           <h1 className="mt-6 font-display text-4xl font-semibold">You're booked!</h1>
           <p className="mt-3 text-muted-foreground">
-            {guide.name} will meet you in {guide.city} on{" "}
-            <span className="font-medium text-foreground">{form.date}</span>. We've sent a confirmation to{" "}
+            {guide?.name ?? "Your guide"} will meet you on{" "}
+            <span className="font-medium text-foreground">{chosenSlot?.date ?? form.date}</span>. We've sent a confirmation to{" "}
             <span className="font-medium text-foreground">{form.email || "Telegram"}</span>.
           </p>
           <div className="mt-8 flex gap-3">
-            <Link to="/guides" className="rounded-full border border-input px-5 py-2.5 text-sm font-medium">Browse more</Link>
+            <Link to="/tours" className="rounded-full border border-input px-5 py-2.5 text-sm font-medium">Browse more tours</Link>
             <Link to="/" className="rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground">Back home</Link>
           </div>
         </section>
@@ -184,8 +166,8 @@ function BookPage() {
     <div className="min-h-screen">
       <SiteHeader />
       <div className="container mx-auto px-4 pt-6">
-        <button onClick={() => navigate({ to: "/guides/$guideId", params: { guideId: guide.id } })} className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
-          <ArrowLeft className="h-4 w-4" /> Back to profile
+        <button onClick={() => navigate({ to: "/tours/$slug", params: { slug: tour.slug } })} className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
+          <ArrowLeft className="h-4 w-4" /> Back to tour
         </button>
       </div>
 
@@ -195,15 +177,6 @@ function BookPage() {
 
         <div className="mt-10 grid gap-8 lg:grid-cols-[1.4fr_1fr]">
           <form onSubmit={handleSubmit} className="space-y-6 rounded-3xl bg-card p-6 ring-1 ring-border/60 md:p-8">
-            <div>
-              <label className="text-sm font-medium">Experience</label>
-              <select value={currentExperience} onChange={handleFieldChange} name="experience" className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring">
-                {experiences.map((e) => (
-                  <option key={e.title} value={e.title}>{e.title} — ${e.price} · {e.duration}</option>
-                ))}
-              </select>
-            </div>
-
             {hasInstantSlots ? (
               <div>
                 <label className="text-sm font-medium inline-flex items-center gap-1.5">
@@ -219,7 +192,7 @@ function BookPage() {
                         onClick={() => setSelectedSlot(s.id)}
                         className={`px-3 h-10 rounded-full text-sm ring-1 transition ${on ? "bg-accent text-accent-foreground ring-accent" : "bg-background ring-border hover:bg-muted"}`}
                       >
-                        {s.date} · {s.start_time.slice(0,5)} · {s.duration_minutes}m
+                        {s.date} · {s.start_time.slice(0, 5)} · {s.duration_minutes}m
                       </button>
                     );
                   })}
@@ -232,7 +205,7 @@ function BookPage() {
               </div>
             )}
 
-            <div className={`grid gap-4 ${guide.languages.length > 0 ? "sm:grid-cols-2" : ""}`}>
+            <div className={`grid gap-4 ${availableLanguages.length > 0 ? "sm:grid-cols-2" : ""}`}>
               <div>
                 <label className="text-sm font-medium">Guests</label>
                 <div className="mt-2 inline-flex h-12 items-center rounded-xl border border-input bg-background">
@@ -241,13 +214,13 @@ function BookPage() {
                   <button type="button" onClick={() => setGuests(form.guests + 1)} disabled={form.guests >= 12} className="h-12 w-12 text-lg font-medium text-muted-foreground hover:text-foreground disabled:opacity-40">+</button>
                 </div>
               </div>
-              {guide.languages.length > 0 && (
+              {availableLanguages.length > 0 && (
                 <div>
                   <label className="text-sm font-medium">Language</label>
                   <div className="mt-2 flex flex-wrap gap-1.5">
-                    {guide.languages.map((lng) => {
+                    {availableLanguages.map((lng) => {
                       const active = currentLanguage === lng;
-                      const langPrice = selectedExperience.priceByLanguage[lng] ?? selectedExperience.price;
+                      const langPrice = tour.price_by_language[lng] ?? Number(tour.price_from);
                       return (
                         <button
                           key={lng}
@@ -303,23 +276,32 @@ function BookPage() {
 
           <aside className="lg:sticky lg:top-24 lg:self-start">
             <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60 shadow-[var(--shadow-card)]">
-              <div className="flex gap-4">
-                <img src={guide.photo} alt={guide.name} width={80} height={80} loading="lazy" className="h-20 w-20 rounded-xl object-cover" />
-                <div>
-                  <h3 className="font-display text-xl font-semibold">{guide.name}</h3>
-                  <p className="text-sm text-muted-foreground">{guide.city}</p>
-                  <p className="mt-1 inline-flex items-center gap-1 text-sm"><Star className="h-3.5 w-3.5 fill-accent text-accent" />{guide.rating} · {guide.reviews} reviews</p>
-                </div>
+              <div className="font-display text-xl font-semibold">{tour.title}</div>
+              <div className="mt-2 flex flex-wrap gap-3 text-xs text-muted-foreground">
+                {tour.cities?.name && <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" />{tour.cities.name}</span>}
+                {tour.duration_hours > 0 && <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" />{Number(tour.duration_hours)}h</span>}
+                {tour.transport_included && <span className="inline-flex items-center gap-1 text-primary"><Car className="h-3 w-3" />transport</span>}
               </div>
+
+              {guide && (
+                <div className="mt-4 flex gap-3 border-t border-border/60 pt-4">
+                  <img src={guide.photo_url ?? ""} alt={guide.name} width={56} height={56} loading="lazy" className="h-14 w-14 rounded-xl object-cover bg-secondary" />
+                  <div>
+                    <div className="font-medium">{guide.name}</div>
+                    <p className="inline-flex items-center gap-1 text-sm"><Star className="h-3.5 w-3.5 fill-accent text-accent" />{Number(guide.rating).toFixed(1)} · {guide.reviews} reviews</p>
+                  </div>
+                </div>
+              )}
+
               <div className="mt-5 flex flex-wrap gap-2">
-                {guide.verified && <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary"><BadgeCheck className="h-3.5 w-3.5" /> Verified</span>}
                 {hasInstantSlots && <span className="inline-flex items-center gap-1 rounded-full bg-accent/15 px-2.5 py-1 text-xs font-medium text-accent"><Zap className="h-3.5 w-3.5" /> Instant</span>}
+                {tour.transport_included && <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary"><BadgeCheck className="h-3.5 w-3.5" /> Transport included</span>}
               </div>
 
               <div className="mt-6 space-y-3 border-t border-border/60 pt-5 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">
-                    {selectedExperience.title}
+                    {tour.title}
                     {currentLanguage && <span className="text-foreground/70"> · {currentLanguage}</span>}
                   </span>
                   <span className="tabular-nums">${unitPrice}</span>

@@ -1,15 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Star, BadgeCheck, Zap, MapPin, Globe2, Clock, ArrowLeft } from "lucide-react";
+import { Star, BadgeCheck, Zap, MapPin, Globe2, Clock, ArrowLeft, Car, CarTaxiFront } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { useGuide } from "@/lib/content-queries";
+import { useGuide, useGuideTours, useCities } from "@/lib/content-queries";
 import { supabase } from "@/integrations/supabase/client";
 import { GuideReviews } from "@/components/GuideReviews";
 import { GuidePostsFeed } from "@/components/GuidePostsFeed";
 import { WishlistHeart } from "@/components/WishlistHeart";
 
-
 const SITE_URL = "https://hamroh-local-guide.lovable.app";
+const PLACEHOLDER =
+  "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 3'><rect width='4' height='3' fill='%23e5e7eb'/></svg>";
 
 export const Route = createFileRoute("/guides_/$guideId")({
   loader: async ({ params }) => {
@@ -60,6 +61,8 @@ export const Route = createFileRoute("/guides_/$guideId")({
 function GuidePage() {
   const { guideId } = Route.useParams();
   const { data: guide, isLoading } = useGuide(guideId);
+  const { data: tours = [] } = useGuideTours(guide?.dbId);
+  const { data: cities = [] } = useCities();
 
   if (isLoading) {
     return (
@@ -85,6 +88,12 @@ function GuidePage() {
       </div>
     );
   }
+
+  const allCityIds = [guide.cityId, ...guide.extraCityIds];
+  const cityNames = cities
+    .filter((c) => allCityIds.includes(c.id))
+    .map((c) => c.name);
+  if (cityNames.length === 0 && guide.city) cityNames.push(guide.city);
 
   return (
     <div className="min-h-screen">
@@ -114,9 +123,11 @@ function GuidePage() {
                   <Zap className="h-3.5 w-3.5" /> Instant book
                 </span>
               )}
-              <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-3 py-1 text-xs font-medium">
-                <MapPin className="h-3.5 w-3.5" /> {guide.city}
-              </span>
+              {cityNames.map((name) => (
+                <span key={name} className="inline-flex items-center gap-1 rounded-full bg-secondary px-3 py-1 text-xs font-medium">
+                  <MapPin className="h-3.5 w-3.5" /> {name}
+                </span>
+              ))}
             </div>
             <h1 className="mt-4 font-display text-4xl font-semibold md:text-5xl">{guide.name}</h1>
             <p className="mt-2 text-lg text-muted-foreground">{guide.tagline}</p>
@@ -127,6 +138,51 @@ function GuidePage() {
             </div>
 
             <div className="mt-8 space-y-8">
+              <div>
+                <h2 className="font-display text-2xl font-semibold">Tours offered by {guide.name}</h2>
+                {tours.length === 0 ? (
+                  <p className="mt-3 text-sm text-muted-foreground">No tours published yet.</p>
+                ) : (
+                  <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                    {tours.map((t) => {
+                      const langPrices = t.languages
+                        .map((lng) => ({ lng, price: t.price_by_language[lng] ?? Number(t.price_from) }))
+                        .filter((x) => x.price > 0);
+                      return (
+                        <Link
+                          key={t.id}
+                          to="/tours/$slug"
+                          params={{ slug: t.slug }}
+                          className="group flex flex-col overflow-hidden rounded-2xl bg-card ring-1 ring-border/60 hover:shadow-md transition-shadow"
+                        >
+                          <div className="aspect-[4/3] w-full overflow-hidden bg-secondary">
+                            <img src={t.cover_url || PLACEHOLDER} alt={t.title} className="h-full w-full object-cover group-hover:scale-105 transition-transform" loading="lazy" />
+                          </div>
+                          <div className="p-4">
+                            <h3 className="font-semibold leading-snug">{t.title}</h3>
+                            <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
+                              {t.cities?.name && <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" />{t.cities.name}</span>}
+                              {t.duration_hours > 0 && <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" />{Number(t.duration_hours)}h</span>}
+                              {t.transport_included && <span className="inline-flex items-center gap-1 text-primary"><Car className="h-3 w-3" />transport</span>}
+                            </div>
+                            {langPrices.length > 0 && (
+                              <div className="mt-3 flex flex-wrap gap-1">
+                                {langPrices.slice(0, 4).map(({ lng, price }) => (
+                                  <span key={lng} className="inline-flex items-center gap-1 rounded-md bg-secondary px-2 py-0.5 text-xs">
+                                    <span className="font-medium">{lng}</span>
+                                    <span className="text-muted-foreground tabular-nums">${Math.round(price)}</span>
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
               <div>
                 <h2 className="font-display text-2xl font-semibold">Latest from {guide.name}</h2>
                 <p className="mt-1 text-sm text-muted-foreground">Posts, videos and stories from social channels.</p>
@@ -162,43 +218,6 @@ function GuidePage() {
               </div>
 
               <div>
-                <h2 className="font-display text-2xl font-semibold">Experiences</h2>
-                <div className="mt-4 space-y-3">
-                  {guide.experiences.map((e) => {
-                    const langPrices = guide.languages
-                      .map((lng) => ({ lng, price: e.priceByLanguage[lng] ?? e.price }))
-                      .filter((x) => x.price > 0);
-                    return (
-                      <div key={e.title} className="rounded-2xl bg-card p-5 ring-1 ring-border/60">
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="min-w-0">
-                            <h4 className="font-medium">{e.title}</h4>
-                            <p className="mt-1 inline-flex items-center gap-1 text-sm text-muted-foreground">
-                              <Clock className="h-3.5 w-3.5" /> {e.duration}
-                            </p>
-                          </div>
-                          <div className="text-right shrink-0">
-                            <div className="font-display text-xl font-semibold">${e.price}</div>
-                            <div className="text-xs text-muted-foreground">per person</div>
-                          </div>
-                        </div>
-                        {langPrices.length > 0 && (
-                          <div className="mt-3 flex flex-wrap gap-1.5">
-                            {langPrices.map(({ lng, price }) => (
-                              <span key={lng} className="inline-flex items-center gap-1 rounded-md bg-secondary px-2 py-1 text-xs">
-                                <span className="font-medium text-secondary-foreground">{lng}</span>
-                                <span className="text-muted-foreground tabular-nums">${Math.round(price)}</span>
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div>
                 <h2 className="font-display text-2xl font-semibold">
                   Reviews <span className="text-base font-normal text-muted-foreground">· {guide.reviews}</span>
                 </h2>
@@ -211,27 +230,35 @@ function GuidePage() {
 
           <aside className="lg:sticky lg:top-24 lg:self-start">
             <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60 shadow-[var(--shadow-elegant)]">
-              <div className="flex items-baseline justify-between">
-                <div>
-                  <span className="font-display text-3xl font-semibold">${guide.pricePerDay}</span>
-                  <span className="text-muted-foreground"> / day</span>
-                </div>
-                <span className="inline-flex items-center gap-1 text-sm">
-                  <Star className="h-4 w-4 fill-accent text-accent" /> {guide.rating}
-                </span>
-              </div>
-              <p className="mt-2 text-sm text-muted-foreground">Free cancellation up to 24 hours before.</p>
-              <Link
-                to="/book/$guideId"
-                params={{ guideId: guide.id }}
-                className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.02]"
-              >
-                {guide.instantBook ? "Book instantly" : "Request to book"}
-              </Link>
+              <h3 className="font-display text-lg font-semibold">Book a tour with {guide.name}</h3>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Choose a tour below to see prices per language and pick a date.
+              </p>
+              {tours.length === 0 ? (
+                <p className="mt-5 text-sm text-muted-foreground">No tours available yet.</p>
+              ) : (
+                <ul className="mt-5 space-y-2">
+                  {tours.map((t) => (
+                    <li key={t.id}>
+                      <Link
+                        to="/tours/$slug"
+                        params={{ slug: t.slug }}
+                        className="flex items-center justify-between gap-3 rounded-xl bg-secondary/60 hover:bg-secondary px-3 py-2.5 text-sm transition"
+                      >
+                        <span className="truncate font-medium">{t.title}</span>
+                        <span className="shrink-0 inline-flex items-center gap-1 text-xs text-muted-foreground">
+                          {t.transport_included && <CarTaxiFront className="h-3.5 w-3.5 text-primary" />}
+                          from ${Math.round(Number(t.price_from))}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
               <div className="mt-5 space-y-3 border-t border-border/60 pt-5 text-sm">
                 <div className="flex items-center gap-2 text-muted-foreground"><BadgeCheck className="h-4 w-4 text-primary" /> Identity & license verified</div>
                 <div className="flex items-center gap-2 text-muted-foreground"><Globe2 className="h-4 w-4 text-primary" /> Speaks {guide.languages.length} languages</div>
-                <div className="flex items-center gap-2 text-muted-foreground"><MapPin className="h-4 w-4 text-primary" /> Based in {guide.city}</div>
+                <div className="flex items-center gap-2 text-muted-foreground"><MapPin className="h-4 w-4 text-primary" /> Works in {cityNames.length} {cityNames.length === 1 ? "city" : "cities"}</div>
               </div>
             </div>
           </aside>

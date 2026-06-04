@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Calendar, Plus, Trash2, Check, X, LogOut, Loader2, Copy, Link2, Image as ImageIcon, Compass, Pencil } from "lucide-react";
+import { Calendar, Plus, Trash2, Check, X, LogOut, Loader2, Copy, Link2, Image as ImageIcon, Compass, Pencil, MapPin } from "lucide-react";
 import {
   getMyGuide,
   listMySlots,
@@ -11,10 +11,12 @@ import {
   deleteSlot,
   listMyBookings,
   updateBookingStatus,
-  listMyExperiences,
-  upsertExperience,
-  deleteExperience,
+  listMyTours,
+  upsertTour,
+  deleteTour,
+  updateMyCities,
 } from "@/lib/guide-portal.functions";
+import { useCities } from "@/lib/content-queries";
 import { GuidePostsPanel } from "@/components/GuidePostsPanel";
 
 export const Route = createFileRoute("/guide")({
@@ -37,6 +39,7 @@ type Booking = {
   customer_email: string | null;
   customer_telegram_username: string | null;
   experience: string;
+  language?: string | null;
   date: string;
   start_time: string | null;
   duration_minutes: number | null;
@@ -48,13 +51,26 @@ type Booking = {
   slot_id: string | null;
 };
 
+type MyGuide = {
+  id: string;
+  name: string;
+  slug: string;
+  tagline: string;
+  referral_code: string | null;
+  referral_clicks: number;
+  city_id: string;
+  extra_city_ids: string[] | null;
+  languages: string[] | null;
+  cities?: { name: string } | null;
+};
+
 function GuidePortal() {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
-  const [guide, setGuide] = useState<{ id: string; name: string; slug: string; tagline: string; referral_code: string | null; referral_clicks: number; cities?: { name: string } | null } | null>(null);
+  const [guide, setGuide] = useState<MyGuide | null>(null);
   const [slots, setSlots] = useState<Slot[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [tab, setTab] = useState<"availability" | "bookings" | "tours" | "posts" | "referral">("availability");
+  const [tab, setTab] = useState<"availability" | "bookings" | "tours" | "cities" | "posts" | "referral">("availability");
 
   const fetchGuide = useServerFn(getMyGuide);
   const fetchSlots = useServerFn(listMySlots);
@@ -65,7 +81,7 @@ function GuidePortal() {
 
   const load = useCallback(async () => {
     const [g, s, b] = await Promise.all([fetchGuide(), fetchSlots(), fetchBookings()]);
-    setGuide(g as typeof guide);
+    setGuide(g as MyGuide | null);
     setSlots(s as Slot[]);
     setBookings(b as Booking[]);
   }, [fetchGuide, fetchSlots, fetchBookings]);
@@ -130,10 +146,13 @@ function GuidePortal() {
             <Calendar className="h-4 w-4" /> Availability
           </TabBtn>
           <TabBtn active={tab === "tours"} onClick={() => setTab("tours")}>
-            <Compass className="h-4 w-4" /> Tours & prices
+            <Compass className="h-4 w-4" /> My tours
           </TabBtn>
           <TabBtn active={tab === "bookings"} onClick={() => setTab("bookings")}>
             Bookings ({bookings.length})
+          </TabBtn>
+          <TabBtn active={tab === "cities"} onClick={() => setTab("cities")}>
+            <MapPin className="h-4 w-4" /> Cities
           </TabBtn>
           <TabBtn active={tab === "posts"} onClick={() => setTab("posts")}>
             <ImageIcon className="h-4 w-4" /> Posts
@@ -177,6 +196,14 @@ function GuidePortal() {
         )}
 
         {tab === "tours" && <ToursPanel />}
+
+        {tab === "cities" && (
+          <CitiesPanel
+            guideCityId={guide.city_id}
+            currentExtra={guide.extra_city_ids ?? []}
+            onSaved={() => load()}
+          />
+        )}
 
         {tab === "posts" && <GuidePostsPanel />}
 
@@ -352,32 +379,53 @@ function StatusPill({ status }: { status: string }) {
   return <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium ${map[status] ?? "bg-muted"}`}>{status}</span>;
 }
 
-type Experience = {
+type Tour = {
   id: string;
+  slug: string;
   title: string;
-  duration: string;
-  price: number;
+  short_description: string;
+  cover_url: string | null;
+  city_id: string;
+  duration_hours: number;
+  price_from: number;
   price_by_language: Record<string, number>;
+  languages: string[];
+  transport_included: boolean;
+  highlights: string[];
+  included: string[];
+  not_included: string[];
+  published: boolean;
   sort_order: number;
 };
 
 function ToursPanel() {
   const [languages, setLanguages] = useState<string[]>([]);
-  const [items, setItems] = useState<Experience[]>([]);
+  const [cities, setCities] = useState<Array<{ id: string; name: string }>>([]);
+  const [defaultCityId, setDefaultCityId] = useState<string>("");
+  const [items, setItems] = useState<Tour[]>([]);
   const [loading, setLoading] = useState(true);
-  const [editing, setEditing] = useState<Experience | null>(null);
+  const [editing, setEditing] = useState<Tour | null>(null);
   const [creating, setCreating] = useState(false);
 
-  const fetchList = useServerFn(listMyExperiences);
-  const upsertFn = useServerFn(upsertExperience);
-  const deleteFn = useServerFn(deleteExperience);
+  const fetchList = useServerFn(listMyTours);
+  const upsertFn = useServerFn(upsertTour);
+  const deleteFn = useServerFn(deleteTour);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetchList();
-      setLanguages((res as { languages: string[]; experiences: Experience[] }).languages);
-      setItems((res as { languages: string[]; experiences: Experience[] }).experiences);
+      const res = await fetchList() as { guide: { languages: string[]; city_id: string } | null; cities: Array<{ id: string; name: string }>; tours: Tour[] };
+      setLanguages(res.guide?.languages ?? []);
+      setCities(res.cities ?? []);
+      setDefaultCityId(res.guide?.city_id ?? "");
+      setItems(res.tours.map((t) => ({
+        ...t,
+        price_by_language: (t.price_by_language ?? {}) as Record<string, number>,
+        languages: t.languages ?? [],
+        highlights: t.highlights ?? [],
+        included: t.included ?? [],
+        not_included: t.not_included ?? [],
+      })));
     } catch (e) {
       toast.error((e as Error).message);
     } finally {
@@ -397,7 +445,9 @@ function ToursPanel() {
         <div className="flex items-start justify-between gap-3">
           <div>
             <h2 className="font-display text-lg font-semibold">Your tours</h2>
-            <p className="text-sm text-muted-foreground mt-1">Set a price per language. Travellers will see the price for the language they choose at checkout.</p>
+            <p className="text-sm text-muted-foreground mt-1">
+              Create the tours you offer. Travellers see your prices per language and pick a date.
+            </p>
           </div>
           <button
             onClick={() => setCreating(true)}
@@ -421,15 +471,15 @@ function ToursPanel() {
             <div key={it.id} className="rounded-2xl bg-card p-5 ring-1 ring-border">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="font-medium">{it.title}</p>
-                  <p className="text-xs text-muted-foreground">{it.duration} · base ${it.price}</p>
+                  <p className="font-medium">{it.title} {!it.published && <span className="text-[10px] uppercase text-muted-foreground ml-1">draft</span>}</p>
+                  <p className="text-xs text-muted-foreground">{Number(it.duration_hours)}h · base ${it.price_from} {it.transport_included && "· transport"}</p>
                   <div className="mt-3 flex flex-wrap gap-1.5">
-                    {languages.map((lng) => {
+                    {it.languages.map((lng) => {
                       const p = it.price_by_language[lng];
                       return (
                         <span key={lng} className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs ring-1 ${p ? "bg-primary/10 text-primary ring-primary/20" : "bg-muted text-muted-foreground ring-border"}`}>
                           <span className="font-medium">{lng}</span>
-                          <span className="tabular-nums">${p ?? it.price}</span>
+                          <span className="tabular-nums">${p ?? it.price_from}</span>
                         </span>
                       );
                     })}
@@ -457,8 +507,10 @@ function ToursPanel() {
       )}
 
       {(editing || creating) && (
-        <ExperienceEditor
+        <TourEditor
           languages={languages}
+          cities={cities}
+          defaultCityId={defaultCityId}
           initial={editing}
           onClose={() => { setEditing(null); setCreating(false); }}
           onSave={async (payload) => {
@@ -476,18 +528,44 @@ function ToursPanel() {
   );
 }
 
-function ExperienceEditor({
-  languages, initial, onClose, onSave,
+function arrToText(a: string[]) { return a.join("\n"); }
+function textToArr(s: string) { return s.split("\n").map((x) => x.trim()).filter(Boolean); }
+
+function TourEditor({
+  languages, cities, defaultCityId, initial, onClose, onSave,
 }: {
   languages: string[];
-  initial: Experience | null;
+  cities: Array<{ id: string; name: string }>;
+  defaultCityId: string;
+  initial: Tour | null;
   onClose: () => void;
-  onSave: (payload: { id?: string; title: string; duration: string; price: number; price_by_language: Record<string, number>; sort_order: number }) => void;
+  onSave: (payload: {
+    id?: string;
+    title: string;
+    short_description: string;
+    cover_url: string | null;
+    city_id: string;
+    duration_hours: number;
+    price_from: number;
+    price_by_language: Record<string, number>;
+    languages: string[];
+    transport_included: boolean;
+    highlights: string[];
+    included: string[];
+    not_included: string[];
+    published: boolean;
+    sort_order: number;
+  }) => void;
 }) {
   const [title, setTitle] = useState(initial?.title ?? "");
-  const [duration, setDuration] = useState(initial?.duration ?? "2 hours");
-  const [price, setPrice] = useState<number>(initial?.price ?? 0);
-  const [prices, setPrices] = useState<Record<string, string>>(() => {
+  const [shortDesc, setShortDesc] = useState(initial?.short_description ?? "");
+  const [coverUrl, setCoverUrl] = useState(initial?.cover_url ?? "");
+  const [cityId, setCityId] = useState(initial?.city_id ?? defaultCityId);
+  const [durationHours, setDurationHours] = useState<number>(initial?.duration_hours ?? 2);
+  const [basePrice, setBasePrice] = useState<number>(initial?.price_from ?? 0);
+  const [transportIncluded, setTransportIncluded] = useState<boolean>(initial?.transport_included ?? false);
+  const [tourLangs, setTourLangs] = useState<string[]>(initial?.languages ?? languages);
+  const [pricesText, setPricesText] = useState<Record<string, string>>(() => {
     const base: Record<string, string> = {};
     languages.forEach((l) => {
       const v = initial?.price_by_language?.[l];
@@ -495,10 +573,30 @@ function ExperienceEditor({
     });
     return base;
   });
+  const [highlights, setHighlights] = useState(arrToText(initial?.highlights ?? []));
+  const [included, setIncluded] = useState(arrToText(initial?.included ?? []));
+  const [notIncluded, setNotIncluded] = useState(arrToText(initial?.not_included ?? []));
+  const [published, setPublished] = useState(initial?.published ?? true);
+  const [uploading, setUploading] = useState(false);
+
+  const toggleLang = (lng: string) => {
+    setTourLangs((cur) => cur.includes(lng) ? cur.filter((x) => x !== lng) : [...cur, lng]);
+  };
+
+  const upload = async (file: File) => {
+    setUploading(true);
+    const ext = file.name.split(".").pop() || "jpg";
+    const path = `tours/${crypto.randomUUID()}.${ext}`;
+    const { error } = await supabase.storage.from("guide-photos").upload(path, file, { upsert: true });
+    setUploading(false);
+    if (error) { toast.error(error.message); return; }
+    const { data } = supabase.storage.from("guide-photos").getPublicUrl(path);
+    setCoverUrl(data.publicUrl);
+  };
 
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-black/40 p-4" onClick={onClose}>
-      <div onClick={(e) => e.stopPropagation()} className="w-full max-w-lg rounded-3xl bg-background p-6 ring-1 ring-border shadow-xl">
+    <div className="fixed inset-0 z-50 grid place-items-center bg-black/40 p-4 overflow-y-auto" onClick={onClose}>
+      <div onClick={(e) => e.stopPropagation()} className="w-full max-w-2xl rounded-3xl bg-background p-6 ring-1 ring-border shadow-xl my-8">
         <div className="flex items-center justify-between">
           <h3 className="font-display text-lg font-semibold">{initial ? "Edit tour" : "New tour"}</h3>
           <button onClick={onClose} className="h-9 w-9 grid place-items-center rounded-full hover:bg-muted"><X className="h-4 w-4" /></button>
@@ -508,57 +606,128 @@ function ExperienceEditor({
             <span className="text-xs text-muted-foreground">Title</span>
             <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Old Tashkent walking tour" className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
           </label>
-          <div className="grid grid-cols-2 gap-3">
+          <label className="block text-sm">
+            <span className="text-xs text-muted-foreground">Short description (shown on the card)</span>
+            <input value={shortDesc} onChange={(e) => setShortDesc(e.target.value)} placeholder="2-3 hour stroll through the old town" className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
+          </label>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <label className="block text-sm">
-              <span className="text-xs text-muted-foreground">Duration</span>
-              <input value={duration} onChange={(e) => setDuration(e.target.value)} placeholder="3 hours" className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
+              <span className="text-xs text-muted-foreground">City</span>
+              <select value={cityId} onChange={(e) => setCityId(e.target.value)} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm">
+                {cities.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+              </select>
+            </label>
+            <label className="block text-sm">
+              <span className="text-xs text-muted-foreground">Duration (h)</span>
+              <input type="number" min={0.5} step={0.5} value={durationHours} onChange={(e) => setDurationHours(Number(e.target.value) || 0)} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
             </label>
             <label className="block text-sm">
               <span className="text-xs text-muted-foreground">Base price ($)</span>
-              <input type="number" min={0} value={price} onChange={(e) => setPrice(Number(e.target.value) || 0)} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
+              <input type="number" min={0} value={basePrice} onChange={(e) => setBasePrice(Number(e.target.value) || 0)} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
+            </label>
+            <label className="block text-sm">
+              <span className="text-xs text-muted-foreground">&nbsp;</span>
+              <label className="mt-1 h-11 w-full inline-flex items-center gap-2 rounded-xl border border-input bg-background px-3 text-sm cursor-pointer">
+                <input type="checkbox" checked={transportIncluded} onChange={(e) => setTransportIncluded(e.target.checked)} className="h-4 w-4" />
+                Transport included
+              </label>
             </label>
           </div>
+
+          <div className="space-y-2">
+            <p className="text-sm font-medium">Cover image</p>
+            <div className="flex items-center gap-3">
+              {coverUrl ? (
+                <img src={coverUrl} alt="" className="h-20 w-28 rounded-lg object-cover ring-1 ring-border" />
+              ) : (
+                <div className="h-20 w-28 rounded-lg bg-secondary" />
+              )}
+              <label className="inline-flex items-center gap-2 h-9 px-3 rounded-full bg-secondary text-sm cursor-pointer hover:bg-secondary/80">
+                {uploading ? "Uploading…" : "Upload"}
+                <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) upload(f); }} />
+              </label>
+              {coverUrl && <button onClick={() => setCoverUrl("")} className="text-xs text-destructive">Remove</button>}
+            </div>
+          </div>
+
           <div>
-            <p className="text-sm font-medium">Price per language ($)</p>
-            <p className="text-xs text-muted-foreground mt-0.5">Leave empty to use the base price.</p>
+            <p className="text-sm font-medium">Tour languages & price per language</p>
+            <p className="text-xs text-muted-foreground mt-0.5">Tick the languages you offer this tour in. Leave the price empty to use the base price.</p>
             {languages.length === 0 ? (
               <p className="mt-2 text-xs text-muted-foreground">No languages on your profile yet.</p>
             ) : (
-              <div className="mt-3 grid grid-cols-2 gap-2">
-                {languages.map((lng) => (
-                  <label key={lng} className="flex items-center gap-2 rounded-xl border border-input bg-background px-3 h-11 text-sm">
-                    <span className="w-20 truncate font-medium">{lng}</span>
-                    <span className="text-muted-foreground">$</span>
-                    <input
-                      type="number"
-                      min={0}
-                      value={prices[lng] ?? ""}
-                      onChange={(e) => setPrices({ ...prices, [lng]: e.target.value })}
-                      placeholder={String(price || 0)}
-                      className="flex-1 h-9 bg-transparent outline-none text-sm tabular-nums"
-                    />
-                  </label>
-                ))}
+              <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {languages.map((lng) => {
+                  const enabled = tourLangs.includes(lng);
+                  return (
+                    <div key={lng} className="flex items-center gap-2 rounded-xl border border-input bg-background px-3 h-11 text-sm">
+                      <label className="inline-flex items-center gap-2 flex-1 cursor-pointer">
+                        <input type="checkbox" checked={enabled} onChange={() => toggleLang(lng)} className="h-4 w-4" />
+                        <span className="font-medium">{lng}</span>
+                      </label>
+                      <span className="text-muted-foreground">$</span>
+                      <input
+                        type="number"
+                        min={0}
+                        value={pricesText[lng] ?? ""}
+                        onChange={(e) => setPricesText({ ...pricesText, [lng]: e.target.value })}
+                        placeholder={String(basePrice || 0)}
+                        disabled={!enabled}
+                        className="w-20 h-9 bg-transparent outline-none text-sm tabular-nums disabled:opacity-50"
+                      />
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <label className="block text-sm">
+              <span className="text-xs text-muted-foreground">Highlights (one per line)</span>
+              <textarea value={highlights} onChange={(e) => setHighlights(e.target.value)} rows={4} className="mt-1 w-full rounded-xl border border-input bg-background p-2 text-sm" />
+            </label>
+            <label className="block text-sm">
+              <span className="text-xs text-muted-foreground">Included</span>
+              <textarea value={included} onChange={(e) => setIncluded(e.target.value)} rows={4} className="mt-1 w-full rounded-xl border border-input bg-background p-2 text-sm" />
+            </label>
+            <label className="block text-sm">
+              <span className="text-xs text-muted-foreground">Not included</span>
+              <textarea value={notIncluded} onChange={(e) => setNotIncluded(e.target.value)} rows={4} className="mt-1 w-full rounded-xl border border-input bg-background p-2 text-sm" />
+            </label>
+          </div>
+
+          <label className="inline-flex items-center gap-2 text-sm">
+            <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} className="h-4 w-4" />
+            <span>Published (visible to travellers)</span>
+          </label>
         </div>
         <div className="mt-6 flex justify-end gap-2">
           <button onClick={onClose} className="h-10 px-4 rounded-full bg-muted text-sm font-medium">Cancel</button>
           <button
-            disabled={!title.trim() || !duration.trim()}
+            disabled={!title.trim() || !cityId}
             onClick={() => {
               const pbl: Record<string, number> = {};
-              for (const [k, v] of Object.entries(prices)) {
+              for (const [k, v] of Object.entries(pricesText)) {
                 const n = Number(v);
                 if (Number.isFinite(n) && n > 0) pbl[k] = n;
               }
               onSave({
                 id: initial?.id,
                 title: title.trim(),
-                duration: duration.trim(),
-                price,
+                short_description: shortDesc.trim(),
+                cover_url: coverUrl.trim() || null,
+                city_id: cityId,
+                duration_hours: durationHours,
+                price_from: basePrice,
                 price_by_language: pbl,
+                languages: tourLangs,
+                transport_included: transportIncluded,
+                highlights: textToArr(highlights),
+                included: textToArr(included),
+                not_included: textToArr(notIncluded),
+                published,
                 sort_order: initial?.sort_order ?? 0,
               });
             }}
@@ -566,6 +735,77 @@ function ExperienceEditor({
           >Save</button>
         </div>
       </div>
+    </div>
+  );
+}
+
+function CitiesPanel({
+  guideCityId, currentExtra, onSaved,
+}: {
+  guideCityId: string;
+  currentExtra: string[];
+  onSaved: () => void;
+}) {
+  const { data: cities = [] } = useCities();
+  const updateFn = useServerFn(updateMyCities);
+  const [selected, setSelected] = useState<string[]>(currentExtra);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => { setSelected(currentExtra); }, [currentExtra]);
+
+  const toggle = (id: string) => {
+    if (id === guideCityId) return;
+    setSelected((s) => s.includes(id) ? s.filter((x) => x !== id) : [...s, id]);
+  };
+
+  const save = async () => {
+    setSaving(true);
+    try {
+      await updateFn({ data: { extra_city_ids: selected } });
+      toast.success("Saved");
+      onSaved();
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const homeCity = cities.find((c) => c.id === guideCityId);
+
+  return (
+    <div className="rounded-3xl bg-card p-6 ring-1 ring-border space-y-4">
+      <div>
+        <h2 className="font-display text-lg font-semibold">Cities you work in</h2>
+        <p className="text-sm text-muted-foreground mt-1">Your home city is set by an administrator. Tick any additional cities where you also offer tours.</p>
+      </div>
+      {homeCity && (
+        <div className="text-sm">
+          <span className="text-muted-foreground">Home city:</span>{" "}
+          <span className="font-medium">{homeCity.name}</span>
+        </div>
+      )}
+      <div className="flex flex-wrap gap-2">
+        {cities.filter((c) => c.id !== guideCityId).map((c) => {
+          const on = selected.includes(c.id);
+          return (
+            <button
+              key={c.id}
+              onClick={() => toggle(c.id)}
+              className={`px-3 h-9 rounded-full text-sm transition ${on ? "bg-foreground text-background" : "bg-secondary text-foreground hover:bg-secondary/80"}`}
+            >
+              {c.name}
+            </button>
+          );
+        })}
+      </div>
+      <button
+        onClick={save}
+        disabled={saving}
+        className="h-10 px-5 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-50"
+      >
+        {saving ? "Saving…" : "Save cities"}
+      </button>
     </div>
   );
 }

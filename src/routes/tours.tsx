@@ -4,7 +4,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { useTours, useCities } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
-import { Clock, MapPin } from "lucide-react";
+import { Clock, MapPin, Car } from "lucide-react";
 
 export const Route = createFileRoute("/tours")({
   head: () => ({
@@ -65,41 +65,61 @@ function ToursPage() {
           <p className="mt-10 text-sm text-muted-foreground">{t("tours.empty")}</p>
         ) : (
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((tr) => (
-              <Link
-                key={tr.id}
-                to="/tours/$slug"
-                params={{ slug: tr.slug }}
-                className="group overflow-hidden rounded-2xl bg-card ring-1 ring-border/60 hover:shadow-lg transition-shadow"
-              >
-                <div className="aspect-[4/3] w-full overflow-hidden bg-secondary">
-                  <img
-                    src={tr.cover_url || PLACEHOLDER}
-                    alt={tr.title}
-                    className="h-full w-full object-cover group-hover:scale-105 transition-transform"
-                    loading="lazy"
-                  />
-                </div>
-                <div className="p-4">
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    {tr.cities?.name && (
-                      <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" />{tr.cities.name}</span>
-                    )}
-                    {tr.duration_hours > 0 && (
-                      <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" />{tr.duration_hours}{t("tours.hours")}</span>
+            {filtered.map((tr) => {
+              const langPrices = tr.languages
+                .map((lng) => ({ lng, price: tr.price_by_language[lng] ?? Number(tr.price_from) }))
+                .filter((x) => x.price > 0);
+              return (
+                <Link
+                  key={tr.id}
+                  to="/tours/$slug"
+                  params={{ slug: tr.slug }}
+                  className="group overflow-hidden rounded-2xl bg-card ring-1 ring-border/60 hover:shadow-lg transition-shadow"
+                >
+                  <div className="relative aspect-[4/3] w-full overflow-hidden bg-secondary">
+                    <img
+                      src={tr.cover_url || PLACEHOLDER}
+                      alt={tr.title}
+                      className="h-full w-full object-cover group-hover:scale-105 transition-transform"
+                      loading="lazy"
+                    />
+                    {tr.transport_included && (
+                      <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-background/95 px-2 py-1 text-[10px] font-medium text-primary backdrop-blur">
+                        <Car className="h-3 w-3" /> transport
+                      </span>
                     )}
                   </div>
-                  <h3 className="mt-1 font-semibold leading-snug">{tr.title}</h3>
-                  {tr.short_description && (
-                    <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{tr.short_description}</p>
-                  )}
-                  <div className="mt-3 text-sm">
-                    <span className="text-muted-foreground">{t("tours.priceFrom")} </span>
-                    <span className="font-semibold">${Number(tr.price_from).toFixed(0)}</span>
+                  <div className="p-4">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      {tr.cities?.name && (
+                        <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" />{tr.cities.name}</span>
+                      )}
+                      {tr.duration_hours > 0 && (
+                        <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" />{Number(tr.duration_hours)}{t("tours.hours")}</span>
+                      )}
+                    </div>
+                    <h3 className="mt-1 font-semibold leading-snug">{tr.title}</h3>
+                    {tr.short_description && (
+                      <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{tr.short_description}</p>
+                    )}
+                    {langPrices.length > 0 && (
+                      <div className="mt-3 flex flex-wrap gap-1">
+                        {langPrices.slice(0, 4).map(({ lng, price }) => (
+                          <span key={lng} className="inline-flex items-center gap-1 rounded-md bg-secondary px-2 py-0.5 text-[10px]">
+                            <span className="font-medium">{lng}</span>
+                            <span className="text-muted-foreground tabular-nums">${Math.round(price)}</span>
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    <div className="mt-3 text-sm">
+                      <span className="text-muted-foreground">{t("tours.priceFrom")} </span>
+                      <span className="font-semibold">${Number(tr.price_from).toFixed(0)}</span>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         )}
       </main>

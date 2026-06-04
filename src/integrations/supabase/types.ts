@@ -214,6 +214,7 @@ export type Database = {
           guests: number
           guide_id: string
           id: string
+          language: string | null
           locale: string
           notes: string
           slot_id: string | null
@@ -221,6 +222,7 @@ export type Database = {
           start_time: string | null
           status: string
           total: number
+          tour_id: string | null
           updated_at: string
           user_id: string | null
         }
@@ -238,6 +240,7 @@ export type Database = {
           guests?: number
           guide_id: string
           id?: string
+          language?: string | null
           locale?: string
           notes?: string
           slot_id?: string | null
@@ -245,6 +248,7 @@ export type Database = {
           start_time?: string | null
           status?: string
           total?: number
+          tour_id?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -262,6 +266,7 @@ export type Database = {
           guests?: number
           guide_id?: string
           id?: string
+          language?: string | null
           locale?: string
           notes?: string
           slot_id?: string | null
@@ -269,6 +274,7 @@ export type Database = {
           start_time?: string | null
           status?: string
           total?: number
+          tour_id?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -278,6 +284,13 @@ export type Database = {
             columns: ["guide_id"]
             isOneToOne: false
             referencedRelation: "guides"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_tour_id_fkey"
+            columns: ["tour_id"]
+            isOneToOne: false
+            referencedRelation: "tours"
             referencedColumns: ["id"]
           },
         ]
@@ -591,47 +604,6 @@ export type Database = {
           },
         ]
       }
-      guide_experiences: {
-        Row: {
-          created_at: string
-          duration: string
-          guide_id: string
-          id: string
-          price: number
-          price_by_language: Json
-          sort_order: number
-          title: string
-        }
-        Insert: {
-          created_at?: string
-          duration: string
-          guide_id: string
-          id?: string
-          price?: number
-          price_by_language?: Json
-          sort_order?: number
-          title: string
-        }
-        Update: {
-          created_at?: string
-          duration?: string
-          guide_id?: string
-          id?: string
-          price?: number
-          price_by_language?: Json
-          sort_order?: number
-          title?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "guide_experiences_guide_id_fkey"
-            columns: ["guide_id"]
-            isOneToOne: false
-            referencedRelation: "guides"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       guide_posts: {
         Row: {
           caption: string
@@ -687,6 +659,7 @@ export type Database = {
           bio: string
           city_id: string
           created_at: string
+          extra_city_ids: string[]
           id: string
           instant_book: boolean
           languages: string[]
@@ -709,6 +682,7 @@ export type Database = {
           bio?: string
           city_id: string
           created_at?: string
+          extra_city_ids?: string[]
           id?: string
           instant_book?: boolean
           languages?: string[]
@@ -731,6 +705,7 @@ export type Database = {
           bio?: string
           city_id?: string
           created_at?: string
+          extra_city_ids?: string[]
           id?: string
           instant_book?: boolean
           languages?: string[]
@@ -1219,36 +1194,6 @@ export type Database = {
           },
         ]
       }
-      tour_guides: {
-        Row: {
-          guide_id: string
-          tour_id: string
-        }
-        Insert: {
-          guide_id: string
-          tour_id: string
-        }
-        Update: {
-          guide_id?: string
-          tour_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tour_guides_guide_id_fkey"
-            columns: ["guide_id"]
-            isOneToOne: false
-            referencedRelation: "guides"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tour_guides_tour_id_fkey"
-            columns: ["tour_id"]
-            isOneToOne: false
-            referencedRelation: "tours"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       tours: {
         Row: {
           city_id: string
@@ -1256,16 +1201,20 @@ export type Database = {
           created_at: string
           description_md: string
           duration_hours: number
+          guide_id: string
           highlights: string[]
           id: string
           included: string[]
+          languages: string[]
           not_included: string[]
+          price_by_language: Json
           price_from: number
           published: boolean
           short_description: string
           slug: string
           sort_order: number
           title: string
+          transport_included: boolean
           updated_at: string
         }
         Insert: {
@@ -1274,16 +1223,20 @@ export type Database = {
           created_at?: string
           description_md?: string
           duration_hours?: number
+          guide_id: string
           highlights?: string[]
           id?: string
           included?: string[]
+          languages?: string[]
           not_included?: string[]
+          price_by_language?: Json
           price_from?: number
           published?: boolean
           short_description?: string
           slug: string
           sort_order?: number
           title: string
+          transport_included?: boolean
           updated_at?: string
         }
         Update: {
@@ -1292,16 +1245,20 @@ export type Database = {
           created_at?: string
           description_md?: string
           duration_hours?: number
+          guide_id?: string
           highlights?: string[]
           id?: string
           included?: string[]
+          languages?: string[]
           not_included?: string[]
+          price_by_language?: Json
           price_from?: number
           published?: boolean
           short_description?: string
           slug?: string
           sort_order?: number
           title?: string
+          transport_included?: boolean
           updated_at?: string
         }
         Relationships: [
@@ -1310,6 +1267,13 @@ export type Database = {
             columns: ["city_id"]
             isOneToOne: false
             referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tours_guide_id_fkey"
+            columns: ["guide_id"]
+            isOneToOne: false
+            referencedRelation: "guides"
             referencedColumns: ["id"]
           },
         ]

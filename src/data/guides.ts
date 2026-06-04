@@ -1,14 +1,15 @@
-// Shared types for guides & cities. Data is now fetched from the database
+// Shared types for guides & cities. Data is fetched from the database
 // via hooks in `@/lib/content-queries`.
 
 export type City = string;
 
 export interface Guide {
   id: string;          // slug (stable, URL-friendly)
-  dbId: string;        // database UUID (for admin operations)
+  dbId: string;        // database UUID
   name: string;
   city: City;
   cityId: string;
+  extraCityIds: string[];
   photo: string;
   tagline: string;
   bio: string;
@@ -20,5 +21,4 @@ export interface Guide {
   verified: boolean;
   instantBook: boolean;
   categories: { slug: string; name: string; icon: string }[];
-  experiences: { title: string; duration: string; price: number; priceByLanguage: Record<string, number> }[];
 }
