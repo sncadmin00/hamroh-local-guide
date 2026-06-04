@@ -103,13 +103,14 @@ export const updateCalendarEvent = createServerFn({ method: "POST" })
     if (!guide) throw new Error("Guide profile not found");
 
     const { id, ...patch } = data;
-    const cleaned = Object.fromEntries(
-      Object.entries(patch).filter(([, v]) => v !== undefined),
-    );
+    const cleaned: Record<string, string> = {};
+    for (const [k, v] of Object.entries(patch)) {
+      if (v !== undefined) cleaned[k] = v as string;
+    }
 
     const { data: event, error } = await supabase
       .from("calendar_events")
-      .update(cleaned)
+      .update(cleaned as never)
       .eq("id", id)
       .eq("guide_id", guide.id)
       .select()
