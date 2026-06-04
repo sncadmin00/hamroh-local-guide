@@ -38,6 +38,7 @@ function BookPage() {
     date: "",
     guests: 2,
     experience: "",
+    language: "",
     name: "",
     email: "",
     notes: "",
