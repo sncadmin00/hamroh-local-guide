@@ -189,6 +189,7 @@ function AdminPage() {
   const [places, setPlaces] = useState<Place[]>([]);
   const [placeGuides, setPlaceGuides] = useState<PlaceGuideLink[]>([]);
   const [suggestions, setSuggestions] = useState<PlaceSuggestion[]>([]);
+  const [languages, setLanguages] = useState<Language[]>([]);
 
   const loadData = useCallback(async () => {
     const [c, g, a, e, b, ap, cat, gc, p, pg, ps] = await Promise.all([
