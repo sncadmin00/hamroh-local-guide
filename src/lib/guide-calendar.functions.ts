@@ -30,12 +30,8 @@ const RangeSchema = z.object({
   to: z.string(),
 });
 
-async function getMyGuideId(supabase: ReturnType<typeof requireSupabaseAuth>["_output"] extends never ? never : never, userId: string): Promise<string | null> {
-  // helper not used; left for ts inference clarity
-  return null;
-}
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-void getMyGuideId;
+
+
 
 export const listMyCalendarEvents = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
