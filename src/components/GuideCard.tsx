@@ -47,19 +47,61 @@ export function GuideCard({ guide }: { guide: Guide }) {
           <MapPin className="h-3.5 w-3.5" /> {guide.city}
         </p>
         <p className="mt-3 text-sm text-foreground/80">{guide.tagline}</p>
-        <div className="mt-4 flex flex-wrap gap-1.5">
-          {guide.languages.slice(0, 3).map((l) => (
-            <span key={l} className="rounded-full bg-secondary px-2.5 py-1 text-xs text-secondary-foreground">{l}</span>
-          ))}
-        </div>
-        <div className="mt-5 flex items-end justify-between border-t border-border/60 pt-4">
+
+        <LanguagePriceChips guide={guide} />
+
+        <div className="mt-auto pt-4 flex items-end justify-between border-t border-border/60">
           <div>
-            <span className="font-display text-2xl font-semibold">${guide.pricePerDay}</span>
-            <span className="text-sm text-muted-foreground"> / day</span>
+            <span className="text-xs text-muted-foreground">from</span>{" "}
+            <span className="font-display text-2xl font-semibold">${minPrice(guide)}</span>
           </div>
           <span className="text-sm font-medium text-primary group-hover:underline">View profile →</span>
         </div>
       </div>
     </Link>
+  );
+}
+
+function minPrice(guide: Guide): number {
+  const prices: number[] = [];
+  for (const e of guide.experiences) {
+    prices.push(e.price);
+    for (const v of Object.values(e.priceByLanguage)) prices.push(v);
+  }
+  const positive = prices.filter((n) => n > 0);
+  if (positive.length === 0) return Math.round(guide.pricePerDay);
+  return Math.round(Math.min(...positive));
+}
+
+function LanguagePriceChips({ guide }: { guide: Guide }) {
+  // Aggregate min price per language across all experiences.
+  // If no per-language price exists, fall back to the experience's base price.
+  const byLang = new Map<string, number>();
+  for (const lng of guide.languages) {
+    let best: number | null = null;
+    for (const e of guide.experiences) {
+      const candidate = e.priceByLanguage[lng] ?? e.price;
+      if (candidate > 0 && (best === null || candidate < best)) best = candidate;
+    }
+    if (best !== null) byLang.set(lng, best);
+  }
+  if (byLang.size === 0) {
+    return (
+      <div className="mt-4 flex flex-wrap gap-1.5">
+        {guide.languages.slice(0, 3).map((l) => (
+          <span key={l} className="rounded-full bg-secondary px-2.5 py-1 text-xs text-secondary-foreground">{l}</span>
+        ))}
+      </div>
+    );
+  }
+  return (
+    <div className="mt-4 flex flex-wrap gap-1.5">
+      {[...byLang.entries()].slice(0, 4).map(([lng, p]) => (
+        <span key={lng} className="inline-flex items-center gap-1 rounded-md bg-secondary px-2 py-1 text-xs">
+          <span className="font-medium text-secondary-foreground">{lng}</span>
+          <span className="text-muted-foreground tabular-nums">${Math.round(p)}</span>
+        </span>
+      ))}
+    </div>
   );
 }
