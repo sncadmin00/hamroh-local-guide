@@ -30,7 +30,7 @@ const schema = z.object({
   email: z.string().trim().email("Invalid email").max(255),
   phone: z.string().trim().min(5, "Please enter a phone number").max(40),
   city: z.string().trim().min(1, "Select or type your city").max(80),
-  languages: z.string().trim().min(2, "List at least one language").max(200),
+  languages: z.array(z.string().min(1)).min(1, "Pick at least one language").max(20),
   specialization: z.string().trim().min(2, "Tell us what you specialize in").max(200),
   experience_years: z.coerce.number().int().min(0).max(80),
   about: z.string().trim().min(20, "Please write at least a couple of sentences").max(2000),
