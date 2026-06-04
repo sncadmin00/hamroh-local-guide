@@ -255,6 +255,7 @@ const upsertTourSchema = z.object({
   not_included: z.array(z.string().trim().min(1).max(300)).max(30).default([]),
   published: z.boolean().default(true),
   sort_order: z.number().int().min(0).max(1000).default(0),
+  category_ids: z.array(z.string().uuid()).max(20).default([]),
 });
 
 export const upsertTour = createServerFn({ method: "POST" })
