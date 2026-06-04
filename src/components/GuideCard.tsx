@@ -5,6 +5,11 @@ import { WishlistHeart } from "@/components/WishlistHeart";
 import { useCities } from "@/lib/content-queries";
 
 export function GuideCard({ guide }: { guide: Guide }) {
+  const { data: cities } = useCities();
+  const extraNames = (guide.extraCityIds ?? [])
+    .map((id) => cities?.find((c) => c.id === id)?.name)
+    .filter(Boolean) as string[];
+  const allCities = [guide.city, ...extraNames].filter(Boolean);
   return (
     <Link
       to="/guides/$guideId"
