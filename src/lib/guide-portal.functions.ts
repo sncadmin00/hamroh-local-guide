@@ -223,15 +223,19 @@ export const listMyTours = createServerFn({ method: "GET" })
       supabase.from("cities").select("id, name").in("id", cityIds),
       supabase
         .from("tours")
-        .select("id, slug, title, short_description, cover_url, city_id, duration_hours, price_from, price_by_language, transport_included, languages, highlights, included, not_included, published, sort_order")
+        .select("id, slug, title, short_description, cover_url, city_id, duration_hours, price_from, price_by_language, transport_included, languages, highlights, included, not_included, published, sort_order, tour_categories(category_id)")
         .eq("guide_id", guide.id)
         .order("sort_order", { ascending: true }),
     ]);
     if (error) throw new Error(error.message);
+    const tours = (tourRows ?? []).map((t: any) => ({
+      ...t,
+      category_ids: ((t.tour_categories ?? []) as Array<{ category_id: string }>).map((tc) => tc.category_id),
+    }));
     return {
       guide: { languages: (guide.languages ?? []) as string[], city_id: guide.city_id },
       cities: (cityRows ?? []) as Array<{ id: string; name: string }>,
-      tours: (tourRows ?? []) as any[],
+      tours,
     };
   });
 
