@@ -155,6 +155,9 @@ function GuidePortal() {
           <TabBtn active={tab === "cities"} onClick={() => setTab("cities")}>
             <MapPin className="h-4 w-4" /> Cities
           </TabBtn>
+          <TabBtn active={tab === "languages"} onClick={() => setTab("languages")}>
+            Languages
+          </TabBtn>
           <TabBtn active={tab === "posts"} onClick={() => setTab("posts")}>
             <ImageIcon className="h-4 w-4" /> Posts
           </TabBtn>
