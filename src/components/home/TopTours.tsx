@@ -5,6 +5,7 @@ import { useTours, useCategories } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
 import { WishlistHeart } from "@/components/WishlistHeart";
 import { Skeleton } from "@/components/ui/skeleton";
+import { HorizontalCarousel } from "@/components/home/HorizontalCarousel";
 
 
 export function TopTours() {
