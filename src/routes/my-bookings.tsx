@@ -121,6 +121,42 @@ function MyBookingsPage() {
                     <span className="inline-flex items-center gap-1"><Users className="h-3.5 w-3.5" />{b.guests} {b.guests === 1 ? "guest" : "guests"}</span>
                     <span className="font-medium text-foreground">${Number(b.total).toFixed(0)}</span>
                   </div>
+                  {(() => {
+                    const bb = b as { proposed_date?: string | null; proposed_time?: string | null; proposed_note?: string | null };
+                    if (!bb.proposed_date || !bb.proposed_time) return null;
+                    return (
+                      <div className="mt-3 rounded-xl bg-amber-500/10 ring-1 ring-amber-500/30 p-3">
+                        <div className="flex items-start gap-2">
+                          <CalendarClock className="h-4 w-4 text-amber-700 mt-0.5 shrink-0" />
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm font-medium text-amber-900">Guide proposed a new time</p>
+                            <p className="text-sm text-amber-900 mt-0.5">
+                              {bb.proposed_date} · {String(bb.proposed_time).slice(0, 5)}
+                            </p>
+                            {bb.proposed_note && (
+                              <p className="text-xs text-amber-900/80 mt-1">"{bb.proposed_note}"</p>
+                            )}
+                            <div className="mt-2 flex gap-2">
+                              <button
+                                onClick={() => proposalMut.mutate({ id: b.id, accept: true })}
+                                disabled={proposalMut.isPending}
+                                className="h-8 px-3 rounded-full bg-foreground text-background text-xs font-medium inline-flex items-center gap-1 disabled:opacity-50"
+                              >
+                                <Check className="h-3.5 w-3.5" /> Accept
+                              </button>
+                              <button
+                                onClick={() => proposalMut.mutate({ id: b.id, accept: false })}
+                                disabled={proposalMut.isPending}
+                                className="h-8 px-3 rounded-full bg-background ring-1 ring-border text-xs font-medium inline-flex items-center gap-1 disabled:opacity-50"
+                              >
+                                <X className="h-3.5 w-3.5" /> Decline
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })()}
                   <div className="mt-2 flex flex-wrap items-center gap-3">
                     <Link
                       to="/messages/$bookingId"
