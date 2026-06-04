@@ -182,14 +182,13 @@ function Home() {
 
 
           {/* Steps above the search */}
-          <div className="flex items-center justify-center gap-2 sm:gap-3 text-sm text-slate-500 flex-wrap mb-5 md:mb-6">
+          <div className="relative h-6 mb-5 md:mb-6 text-sm text-slate-500">
             {[t("how.step1.title"), t("how.step2.title"), t("how.step3.title")].map((label, i) => (
               <div
                 key={i}
-                className="step-sequence-item flex items-center gap-2 sm:gap-3"
-                style={{ ["--step-delay" as any]: `${i * 1200}ms` }}
+                className="step-sequence-item absolute left-1/2 top-0 flex items-center gap-2 whitespace-nowrap"
+                style={{ ["--step-delay" as any]: `${i * 4800}ms` }}
               >
-                {i > 0 && <span className="hidden sm:block w-6 h-px bg-slate-200" aria-hidden />}
                 <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-[#8BB5A9]/15 text-[#5e8a7e] text-[11px] font-semibold">{i + 1}</span>
                 <span>{label}</span>
               </div>
