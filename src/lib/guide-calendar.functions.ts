@@ -187,13 +187,14 @@ export const deleteCalendarEvent = createServerFn({ method: "POST" })
     // Only allow deleting manual/personal/block events, not bookings
     const { data: existing } = await supabase
       .from("calendar_events")
-      .select("source, type")
+      .select("source, type, google_event_id")
       .eq("id", data.id)
       .eq("guide_id", guide.id)
       .maybeSingle();
 
     if (!existing) throw new Error("Event not found");
-    if (existing.source === "booking") {
+    const ex = existing as unknown as { source: string; google_event_id: string | null };
+    if (ex.source === "booking") {
       throw new Error("Cancel the booking instead to remove this event");
     }
 
@@ -204,5 +205,15 @@ export const deleteCalendarEvent = createServerFn({ method: "POST" })
       .eq("guide_id", guide.id);
 
     if (error) throw new Error(error.message);
+
+    // Mirror delete to Google Calendar
+    if (ex.google_event_id) {
+      try {
+        await deleteEventOnGoogle(guide.id, ex.google_event_id);
+      } catch (e) {
+        console.error("[calendar] google delete failed:", e);
+      }
+    }
+
     return { ok: true };
   });
