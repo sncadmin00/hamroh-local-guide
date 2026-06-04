@@ -115,16 +115,16 @@
 .animate-fade-in { animation: fade-in 0.5s ease-out both; }
 
 @keyframes step-sequence {
-  0%   { opacity: 0; transform: translate(-50%, 8px); }
-  7%   { opacity: 1; transform: translate(-50%, 0); }
-  40%  { opacity: 1; transform: translate(-50%, 0); }
-  47%  { opacity: 0; transform: translate(-50%, -8px); }
-  100% { opacity: 0; transform: translate(-50%, -8px); }
+  0%   { opacity: 0; transform: translate(-50%, 6px); }
+  6%   { opacity: 1; transform: translate(-50%, 0); }
+  28%  { opacity: 1; transform: translate(-50%, 0); }
+  33%  { opacity: 0; transform: translate(-50%, -6px); }
+  100% { opacity: 0; transform: translate(-50%, -6px); }
 }
 
 .step-sequence-item {
   opacity: 0;
-  animation: step-sequence 9s ease-out infinite both;
+  animation: step-sequence 9s cubic-bezier(0.4, 0, 0.2, 1) infinite both;
   animation-delay: var(--step-delay, 0ms);
 }
 
