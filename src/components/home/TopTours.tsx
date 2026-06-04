@@ -1,16 +1,33 @@
+import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Clock, Car } from "lucide-react";
-import { useTours } from "@/lib/content-queries";
+import { useTours, useCategories } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
 import { WishlistHeart } from "@/components/WishlistHeart";
 import { Skeleton } from "@/components/ui/skeleton";
 
 
 export function TopTours() {
-  const { t } = useI18n();
+  const { t, tCategory } = useI18n();
   const { data: tours = [], isLoading } = useTours();
+  const { data: categories = [] } = useCategories();
+  const [active, setActive] = useState<string | null>(null);
+
+  const availableCategories = useMemo(() => {
+    const slugs = new Set<string>();
+    for (const tr of tours) {
+      for (const tc of tr.tour_categories ?? []) {
+        if (tc.categories?.slug) slugs.add(tc.categories.slug);
+      }
+    }
+    return categories.filter((c) => slugs.has(c.slug));
+  }, [tours, categories]);
+
+  const filtered = active
+    ? tours.filter((tr) => (tr.tour_categories ?? []).some((tc) => tc.categories?.slug === active))
+    : tours;
   if (!isLoading && tours.length === 0) return null;
-  const top = tours.slice(0, 8);
+  const top = filtered.slice(0, 8);
 
   return (
     <section className="px-6 py-10 md:py-20">
