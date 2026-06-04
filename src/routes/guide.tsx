@@ -380,6 +380,12 @@ function BookingsPanel({
                 {b.duration_minutes && <> · {b.duration_minutes} min</>}
               </p>
               {b.notes && <p className="text-sm text-muted-foreground mt-1">"{b.notes}"</p>}
+              {b.proposed_date && b.proposed_time && (
+                <p className="mt-2 text-xs inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-amber-500/15 text-amber-700">
+                  <CalendarClock className="h-3.5 w-3.5" />
+                  Awaiting client response: {b.proposed_date} · {b.proposed_time.slice(0, 5)}
+                </p>
+              )}
               <p className="text-xs text-muted-foreground mt-2">
                 Status: <StatusPill status={b.status} /> · ${Number(b.total).toFixed(0)} · {b.slot_id ? "Instant" : "Request"}
               </p>
