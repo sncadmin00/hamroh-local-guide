@@ -56,6 +56,7 @@ type Booking = {
   proposed_time?: string | null;
   proposed_note?: string | null;
   proposed_at?: string | null;
+  expires_at?: string | null;
 };
 
 type MyGuide = {
