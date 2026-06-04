@@ -297,6 +297,23 @@ export function useSpotlightsAdmin() {
 }
 
 // ============ Tours ============
+export type PricingMode = "fixed" | "by_group";
+export type GroupCategory = "private" | "small" | "group" | "large";
+
+export const GROUP_CATEGORY_MAX: Record<GroupCategory, number> = {
+  private: 2,
+  small: 6,
+  group: 12,
+  large: 25,
+};
+
+export const GROUP_CATEGORY_LABEL: Record<GroupCategory, string> = {
+  private: "Private (up to 2)",
+  small: "Small group (up to 6)",
+  group: "Group (up to 12)",
+  large: "Large group (up to 25)",
+};
+
 export type TourRow = {
   id: string;
   slug: string;
@@ -314,6 +331,11 @@ export type TourRow = {
   sort_order: number;
   guide_id: string;
   price_by_language: Record<string, number>;
+  pricing_mode: PricingMode;
+  base_language: string;
+  language_multipliers: Record<string, number>;
+  group_prices: Partial<Record<GroupCategory | "fixed", number>>;
+  children_free_under: number;
   transport_included: boolean;
   languages: string[];
   rating: number;
@@ -324,7 +346,7 @@ export type TourRow = {
 };
 
 const TOUR_SELECT =
-  "id, slug, title, short_description, description_md, cover_url, city_id, duration_hours, price_from, highlights, included, not_included, published, sort_order, guide_id, price_by_language, transport_included, languages, rating, reviews_count, cities(name, slug), guides(id, slug, name, photo_url, rating, reviews, languages), tour_categories(category_id, categories(slug, name, icon))";
+  "id, slug, title, short_description, description_md, cover_url, city_id, duration_hours, price_from, highlights, included, not_included, published, sort_order, guide_id, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, children_free_under, transport_included, languages, rating, reviews_count, cities(name, slug), guides(id, slug, name, photo_url, rating, reviews, languages), tour_categories(category_id, categories(slug, name, icon))";
 
 
 function normalizeTour(row: any): TourRow {
@@ -334,9 +356,24 @@ function normalizeTour(row: any): TourRow {
     const n = Number(v);
     if (Number.isFinite(n) && n > 0) pbl[k] = n;
   }
+  const mults: Record<string, number> = {};
+  for (const [k, v] of Object.entries((row.language_multipliers ?? {}) as Record<string, unknown>)) {
+    const n = Number(v);
+    if (Number.isFinite(n)) mults[k] = n;
+  }
+  const gp: Record<string, number> = {};
+  for (const [k, v] of Object.entries((row.group_prices ?? {}) as Record<string, unknown>)) {
+    const n = Number(v);
+    if (Number.isFinite(n) && n > 0) gp[k] = n;
+  }
   return {
     ...row,
     price_by_language: pbl,
+    pricing_mode: (row.pricing_mode === "by_group" ? "by_group" : "fixed") as PricingMode,
+    base_language: row.base_language ?? "Russian",
+    language_multipliers: mults,
+    group_prices: gp as TourRow["group_prices"],
+    children_free_under: Number(row.children_free_under ?? 16),
     languages: row.languages ?? [],
     transport_included: !!row.transport_included,
     highlights: row.highlights ?? [],
@@ -345,6 +382,30 @@ function normalizeTour(row: any): TourRow {
     rating: Number(row.rating ?? 5),
     reviews_count: Number(row.reviews_count ?? 0),
   };
+}
+
+export function computeTourPrice(
+  tour: Pick<TourRow, "pricing_mode" | "group_prices" | "language_multipliers" | "base_language" | "price_from">,
+  opts: { category?: GroupCategory | null; language?: string | null },
+): number | null {
+  let base: number | undefined;
+  if (tour.pricing_mode === "by_group") {
+    if (!opts.category) return null;
+    base = tour.group_prices[opts.category];
+  } else {
+    base = tour.group_prices.fixed ?? tour.price_from;
+  }
+  if (!base || base <= 0) return null;
+  const lang = opts.language;
+  const mult = !lang || lang === tour.base_language ? 0 : Number(tour.language_multipliers[lang] ?? 0);
+  return Math.round(base * (1 + mult / 100));
+}
+
+export function offeredCategories(tour: Pick<TourRow, "pricing_mode" | "group_prices">): GroupCategory[] {
+  if (tour.pricing_mode !== "by_group") return [];
+  return (Object.keys(tour.group_prices) as GroupCategory[]).filter(
+    (k) => k in GROUP_CATEGORY_MAX && (tour.group_prices[k] ?? 0) > 0,
+  );
 }
 
 
