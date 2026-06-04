@@ -77,7 +77,7 @@ export function HorizontalCarousel({
           className={`grid grid-flow-col ${
             twoRowsDesktop ? "grid-rows-1 md:grid-rows-2" : "grid-rows-1"
           } gap-4`}
-          style={{ gridAutoColumns: "min-content" }}
+          style={{ gridAutoColumns: "max-content" }}
         >
           {Array.isArray(children)
             ? children.map((child, i) => (
