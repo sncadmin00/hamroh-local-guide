@@ -79,7 +79,7 @@ function GuidePortal() {
   const [guide, setGuide] = useState<MyGuide | null>(null);
   const [slots, setSlots] = useState<Slot[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [tab, setTab] = useState<"availability" | "bookings" | "tours" | "cities" | "languages" | "posts" | "referral">("availability");
+  const [tab, setTab] = useState<"calendar" | "availability" | "bookings" | "tours" | "cities" | "languages" | "posts" | "referral">("calendar");
 
   const fetchGuide = useServerFn(getMyGuide);
   const fetchSlots = useServerFn(listMySlots);
