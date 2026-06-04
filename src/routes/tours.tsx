@@ -90,7 +90,7 @@ function ToursPage() {
                     )}
                   </div>
                   <div className="p-4">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground flex-wrap">
                       {tr.cities?.name && (
                         <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" />{tr.cities.name}</span>
                       )}
@@ -99,6 +99,9 @@ function ToursPage() {
                       )}
                     </div>
                     <h3 className="mt-1 font-semibold leading-snug">{tr.title}</h3>
+                    {tr.guides?.name && (
+                      <p className="mt-0.5 text-xs text-muted-foreground">by {tr.guides.name}</p>
+                    )}
                     {tr.short_description && (
                       <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{tr.short_description}</p>
                     )}

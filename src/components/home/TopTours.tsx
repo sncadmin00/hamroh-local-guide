@@ -74,9 +74,9 @@ export function TopTours() {
                         <h3 className="font-display text-base font-semibold text-foreground line-clamp-2">
                           {tour.title}
                         </h3>
-                        {tour.cities?.name ? (
-                          <p className="mt-1 text-xs text-muted-foreground">{tour.cities.name}</p>
-                        ) : null}
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          {[tour.cities?.name, tour.guides?.name].filter(Boolean).join(" · ")}
+                        </p>
                         <div className="mt-3 flex items-center justify-between text-sm">
                           <span className="inline-flex items-center gap-1 text-muted-foreground">
                             <Clock className="size-3.5" />
