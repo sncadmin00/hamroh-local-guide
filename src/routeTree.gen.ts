@@ -38,7 +38,6 @@ import { Route as MessagesBookingIdRouteImport } from './routes/messages.$bookin
 import { Route as GuidesGuideIdRouteImport } from './routes/guides_.$guideId'
 import { Route as ExploreSlugRouteImport } from './routes/explore.$slug'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
-import { Route as BookGuideIdRouteImport } from './routes/book.$guideId'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AiThreadIdRouteImport } from './routes/ai.$threadId'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
@@ -197,11 +196,6 @@ const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
   path: '/email/unsubscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BookGuideIdRoute = BookGuideIdRouteImport.update({
-  id: '/book/$guideId',
-  path: '/book/$guideId',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
@@ -295,7 +289,6 @@ export interface FileRoutesByFullPath {
   '/wishlist': typeof WishlistRoute
   '/ai/$threadId': typeof AiThreadIdRoute
   '/api/chat': typeof ApiChatRoute
-  '/book/$guideId': typeof BookGuideIdRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/explore/$slug': typeof ExploreSlugRoute
   '/guides/$guideId': typeof GuidesGuideIdRoute
@@ -338,7 +331,6 @@ export interface FileRoutesByTo {
   '/wishlist': typeof WishlistRoute
   '/ai/$threadId': typeof AiThreadIdRoute
   '/api/chat': typeof ApiChatRoute
-  '/book/$guideId': typeof BookGuideIdRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/explore/$slug': typeof ExploreSlugRoute
   '/guides/$guideId': typeof GuidesGuideIdRoute
@@ -383,7 +375,6 @@ export interface FileRoutesById {
   '/wishlist': typeof WishlistRoute
   '/ai/$threadId': typeof AiThreadIdRoute
   '/api/chat': typeof ApiChatRoute
-  '/book/$guideId': typeof BookGuideIdRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/explore/$slug': typeof ExploreSlugRoute
   '/guides_/$guideId': typeof GuidesGuideIdRoute
@@ -429,7 +420,6 @@ export interface FileRouteTypes {
     | '/wishlist'
     | '/ai/$threadId'
     | '/api/chat'
-    | '/book/$guideId'
     | '/email/unsubscribe'
     | '/explore/$slug'
     | '/guides/$guideId'
@@ -472,7 +462,6 @@ export interface FileRouteTypes {
     | '/wishlist'
     | '/ai/$threadId'
     | '/api/chat'
-    | '/book/$guideId'
     | '/email/unsubscribe'
     | '/explore/$slug'
     | '/guides/$guideId'
@@ -516,7 +505,6 @@ export interface FileRouteTypes {
     | '/wishlist'
     | '/ai/$threadId'
     | '/api/chat'
-    | '/book/$guideId'
     | '/email/unsubscribe'
     | '/explore/$slug'
     | '/guides_/$guideId'
@@ -560,7 +548,6 @@ export interface RootRouteChildren {
   UnsubscribeRoute: typeof UnsubscribeRoute
   WishlistRoute: typeof WishlistRoute
   ApiChatRoute: typeof ApiChatRoute
-  BookGuideIdRoute: typeof BookGuideIdRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   GuidesGuideIdRoute: typeof GuidesGuideIdRoute
   ToursSlugRoute: typeof ToursSlugRoute
@@ -782,13 +769,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EmailUnsubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/book/$guideId': {
-      id: '/book/$guideId'
-      path: '/book/$guideId'
-      fullPath: '/book/$guideId'
-      preLoaderRoute: typeof BookGuideIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/chat': {
       id: '/api/chat'
       path: '/api/chat'
@@ -935,7 +915,6 @@ const rootRouteChildren: RootRouteChildren = {
   UnsubscribeRoute: UnsubscribeRoute,
   WishlistRoute: WishlistRoute,
   ApiChatRoute: ApiChatRoute,
-  BookGuideIdRoute: BookGuideIdRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   GuidesGuideIdRoute: GuidesGuideIdRoute,
   ToursSlugRoute: ToursSlugRoute,
@@ -954,3 +933,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

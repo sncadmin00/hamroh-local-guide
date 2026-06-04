@@ -3,9 +3,8 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { useTour } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
-import { Clock, MapPin, Check, X } from "lucide-react";
+import { Clock, MapPin, Check, X, Car, Star } from "lucide-react";
 import { WishlistHeart } from "@/components/WishlistHeart";
-
 
 export const Route = createFileRoute("/tours_/$slug")({
   head: () => ({ meta: [{ title: "Tour — Hamroh" }] }),
@@ -16,6 +15,8 @@ export const Route = createFileRoute("/tours_/$slug")({
 
 const PLACEHOLDER =
   "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'><rect width='16' height='9' fill='%23e5e7eb'/></svg>";
+const AVATAR_PLACEHOLDER =
+  "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 4'><rect width='4' height='4' fill='%23e5e7eb'/></svg>";
 
 function TourDetailPage() {
   const { slug } = Route.useParams();
@@ -45,7 +46,10 @@ function TourDetailPage() {
     );
   }
 
-  const guides = (tour.tour_guides ?? []).map((tg) => tg.guides).filter(Boolean) as NonNullable<NonNullable<typeof tour.tour_guides>[number]["guides"]>[];
+  const guide = tour.guides;
+  const langPrices = tour.languages
+    .map((lng) => ({ lng, price: tour.price_by_language[lng] ?? Number(tour.price_from) }))
+    .filter((x) => x.price > 0);
 
   return (
     <div className="min-h-screen bg-background">
@@ -60,17 +64,34 @@ function TourDetailPage() {
               <WishlistHeart type="tour" id={tour.id} size="lg" className="absolute right-4 top-4" />
             </div>
 
-
-            <div className="mt-5 flex items-center gap-3 text-sm text-muted-foreground">
+            <div className="mt-5 flex items-center flex-wrap gap-3 text-sm text-muted-foreground">
               {tour.cities?.name && (
                 <span className="inline-flex items-center gap-1"><MapPin className="h-4 w-4" />{tour.cities.name}</span>
               )}
               {tour.duration_hours > 0 && (
-                <span className="inline-flex items-center gap-1"><Clock className="h-4 w-4" />{tour.duration_hours}{t("tours.hours")}</span>
+                <span className="inline-flex items-center gap-1"><Clock className="h-4 w-4" />{Number(tour.duration_hours)}{t("tours.hours")}</span>
+              )}
+              {tour.transport_included && (
+                <span className="inline-flex items-center gap-1 text-primary"><Car className="h-4 w-4" />Transport included</span>
               )}
             </div>
             <h1 className="mt-2 font-display text-3xl sm:text-4xl font-semibold">{tour.title}</h1>
             {tour.short_description && <p className="mt-2 text-lg text-muted-foreground">{tour.short_description}</p>}
+
+            {langPrices.length > 0 && (
+              <section className="mt-6">
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Price per language</h2>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {langPrices.map(({ lng, price }) => (
+                    <span key={lng} className="inline-flex items-center gap-2 rounded-xl bg-card ring-1 ring-border/60 px-3 py-2 text-sm">
+                      <span className="font-medium">{lng}</span>
+                      <span className="font-display text-lg font-semibold tabular-nums">${Math.round(price)}</span>
+                      <span className="text-xs text-muted-foreground">/ person</span>
+                    </span>
+                  ))}
+                </div>
+              </section>
+            )}
 
             {tour.highlights.length > 0 && (
               <section className="mt-8">
@@ -119,40 +140,37 @@ function TourDetailPage() {
           <aside className="lg:sticky lg:top-20 self-start space-y-4">
             <div className="rounded-2xl bg-card p-5 ring-1 ring-border/60">
               <div className="text-sm text-muted-foreground">{t("tours.priceFrom")}</div>
-              <div className="text-3xl font-semibold">${Number(tour.price_from).toFixed(0)}</div>
-              {guides.length > 0 && (
-                <Link
-                  to="/book/$guideId"
-                  params={{ guideId: guides[0].slug }}
-                  search={{ experience: tour.title }}
-                  className="mt-4 inline-flex h-11 w-full items-center justify-center rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90"
-                >
-                  {t("tours.book")}
-                </Link>
-              )}
+              <div className="text-3xl font-semibold">${Math.round(Number(tour.price_from))}</div>
+              <Link
+                to="/book/$slug"
+                params={{ slug: tour.slug }}
+                className="mt-4 inline-flex h-11 w-full items-center justify-center rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90"
+              >
+                {t("tours.book")}
+              </Link>
             </div>
 
-            {guides.length > 0 && (
+            {guide && (
               <div className="rounded-2xl bg-card p-5 ring-1 ring-border/60">
-                <h3 className="font-semibold">{t("tours.guides")}</h3>
-                <ul className="mt-3 space-y-3">
-                  {guides.map((g) => (
-                    <li key={g.id}>
-                      <Link
-                        to="/guides/$guideId"
-                        params={{ guideId: g.slug }}
-                        className="flex items-center gap-3 hover:bg-secondary/50 -mx-2 px-2 py-1.5 rounded-lg"
-                      >
-                        <img
-                          src={g.photo_url || PLACEHOLDER}
-                          alt={g.name}
-                          className="h-10 w-10 rounded-full object-cover"
-                        />
-                        <span className="text-sm font-medium">{g.name}</span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
+                <h3 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">Your guide</h3>
+                <Link
+                  to="/guides/$guideId"
+                  params={{ guideId: guide.slug }}
+                  className="mt-3 flex items-center gap-3 hover:bg-secondary/50 -mx-2 px-2 py-1.5 rounded-lg"
+                >
+                  <img
+                    src={guide.photo_url || AVATAR_PLACEHOLDER}
+                    alt={guide.name}
+                    className="h-12 w-12 rounded-full object-cover"
+                  />
+                  <div className="min-w-0">
+                    <div className="font-medium truncate">{guide.name}</div>
+                    <div className="text-xs text-muted-foreground inline-flex items-center gap-1">
+                      <Star className="h-3 w-3 fill-accent text-accent" />
+                      {Number(guide.rating).toFixed(1)} · {guide.reviews} reviews
+                    </div>
+                  </div>
+                </Link>
               </div>
             )}
           </aside>
