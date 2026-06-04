@@ -498,3 +498,101 @@ function EventSheet({ open, onClose, onSave, onDelete, defaultDate, event }: {
     </Drawer.Root>
   );
 }
+
+function GoogleCalendarCard() {
+  const [loading, setLoading] = useState(true);
+  const [connected, setConnected] = useState(false);
+  const [email, setEmail] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  const getStatus = useServerFn(getGoogleCalendarStatus);
+  const startOAuth = useServerFn(startGoogleOAuth);
+  const disconnect = useServerFn(disconnectGoogleCalendar);
+
+  const refresh = async () => {
+    try {
+      const s = await getStatus();
+      setConnected(s.connected);
+      setEmail(s.email);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    void refresh();
+    // Show toast if returning from OAuth callback
+    const params = new URLSearchParams(window.location.search);
+    const gcal = params.get("gcal");
+    if (gcal === "connected") toast.success("Google Calendar connected");
+    if (gcal === "error") toast.error("Google Calendar connection failed");
+    if (gcal) {
+      params.delete("gcal");
+      const newUrl = window.location.pathname + (params.toString() ? `?${params}` : "");
+      window.history.replaceState({}, "", newUrl);
+    }
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
+  }, []);
+
+  const handleConnect = async () => {
+    setBusy(true);
+    try {
+      const { url } = await startOAuth({ data: { origin: window.location.origin } });
+      window.location.href = url;
+    } catch (e) {
+      toast.error((e as Error).message);
+      setBusy(false);
+    }
+  };
+
+  const handleDisconnect = async () => {
+    if (!confirm("Disconnect Google Calendar? Existing events stay, but new changes won't sync.")) return;
+    setBusy(true);
+    try {
+      await disconnect();
+      toast.success("Disconnected");
+      await refresh();
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  if (loading) return null;
+
+  return (
+    <div className={`rounded-2xl p-4 ring-1 flex items-center gap-3 ${connected ? "bg-emerald-500/10 ring-emerald-500/30" : "bg-muted ring-border"}`}>
+      <div className={`h-10 w-10 grid place-items-center rounded-full ${connected ? "bg-emerald-500 text-white" : "bg-foreground text-background"}`}>
+        {connected ? <Link2 className="h-4 w-4" /> : <Link2 className="h-4 w-4" />}
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-semibold">Google Calendar</p>
+        <p className="text-xs text-muted-foreground truncate">
+          {connected ? `Synced${email ? ` · ${email}` : ""}` : "Connect to mirror events to your Google Calendar"}
+        </p>
+      </div>
+      {connected ? (
+        <button
+          onClick={handleDisconnect}
+          disabled={busy}
+          className="h-9 px-3 rounded-full text-xs font-medium bg-background ring-1 ring-border inline-flex items-center gap-1.5 disabled:opacity-50"
+        >
+          {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Unlink className="h-3.5 w-3.5" />}
+          Disconnect
+        </button>
+      ) : (
+        <button
+          onClick={handleConnect}
+          disabled={busy}
+          className="h-9 px-3 rounded-full text-xs font-semibold bg-foreground text-background inline-flex items-center gap-1.5 disabled:opacity-50"
+        >
+          {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
+          Connect
+        </button>
+      )}
+    </div>
+  );
+}
