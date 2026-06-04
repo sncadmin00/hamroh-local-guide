@@ -92,7 +92,18 @@ function BecomeAGuidePage() {
       .then(({ data }) => {
         if (data) setCategories(data);
       });
+    supabase
+      .from("languages")
+      .select("id, name")
+      .eq("is_active", true)
+      .order("sort_order")
+      .then(({ data }) => {
+        if (data) setAllLanguages(data);
+      });
   }, []);
+
+  const toggleLanguage = (name: string) =>
+    setSelectedLanguages((s) => (s.includes(name) ? s.filter((x) => x !== name) : [...s, name]));
 
   const toggleCategory = (id: string) =>
     setSelectedCategories((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
