@@ -2,7 +2,7 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Sparkles, ArrowUp, Loader2, Wrench, Trash2 } from "lucide-react";
+import { Sparkles, ArrowUp, Loader2, Wrench, Trash2, Mic, MicOff } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
 const STORAGE_KEY = "guide-ai-history-v1";
@@ -161,6 +161,7 @@ function AIChat({ token }: { token: string }) {
         }}
         className="mt-3 flex items-end gap-2"
       >
+        <VoiceButton onTranscript={(t) => setInput((p) => (p ? p + " " : "") + t)} disabled={isBusy} />
         <textarea
           ref={taRef}
           value={input}
@@ -172,7 +173,7 @@ function AIChat({ token }: { token: string }) {
             }
           }}
           rows={1}
-          placeholder="Напиши сообщение…"
+          placeholder="Напиши или скажи…"
           className="flex-1 resize-none rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary min-h-[44px] max-h-32"
           disabled={isBusy}
         />
@@ -186,6 +187,75 @@ function AIChat({ token }: { token: string }) {
         </button>
       </form>
     </div>
+  );
+}
+
+type SpeechRecognitionLike = {
+  lang: string;
+  continuous: boolean;
+  interimResults: boolean;
+  start: () => void;
+  stop: () => void;
+  onresult: ((event: { results: ArrayLike<ArrayLike<{ transcript: string }>> }) => void) | null;
+  onend: (() => void) | null;
+  onerror: ((event: { error?: string }) => void) | null;
+};
+
+function VoiceButton({ onTranscript, disabled }: { onTranscript: (t: string) => void; disabled?: boolean }) {
+  const [listening, setListening] = useState(false);
+  const recRef = useRef<SpeechRecognitionLike | null>(null);
+  const [supported, setSupported] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const Ctor =
+      (window as unknown as { SpeechRecognition?: new () => SpeechRecognitionLike }).SpeechRecognition ??
+      (window as unknown as { webkitSpeechRecognition?: new () => SpeechRecognitionLike }).webkitSpeechRecognition;
+    setSupported(!!Ctor);
+  }, []);
+
+  if (!supported) return null;
+
+  const toggle = () => {
+    if (listening) {
+      recRef.current?.stop();
+      return;
+    }
+    const Ctor =
+      (window as unknown as { SpeechRecognition?: new () => SpeechRecognitionLike }).SpeechRecognition ??
+      (window as unknown as { webkitSpeechRecognition?: new () => SpeechRecognitionLike }).webkitSpeechRecognition;
+    if (!Ctor) return;
+    const rec = new Ctor();
+    rec.lang = "ru-RU";
+    rec.continuous = false;
+    rec.interimResults = false;
+    rec.onresult = (event) => {
+      const transcript = Array.from(event.results)
+        .map((r) => r[0]?.transcript ?? "")
+        .join(" ")
+        .trim();
+      if (transcript) onTranscript(transcript);
+    };
+    rec.onend = () => setListening(false);
+    rec.onerror = () => setListening(false);
+    recRef.current = rec;
+    setListening(true);
+    rec.start();
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      disabled={disabled}
+      aria-label={listening ? "Остановить запись" : "Голосовой ввод"}
+      className={
+        "h-11 w-11 flex items-center justify-center rounded-lg border disabled:opacity-40 " +
+        (listening ? "bg-destructive text-destructive-foreground animate-pulse" : "bg-background")
+      }
+    >
+      {listening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+    </button>
   );
 }
 
