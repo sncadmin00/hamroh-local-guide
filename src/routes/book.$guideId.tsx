@@ -241,20 +241,22 @@ function BookPage() {
                   <button type="button" onClick={() => setGuests(form.guests + 1)} disabled={form.guests >= 12} className="h-12 w-12 text-lg font-medium text-muted-foreground hover:text-foreground disabled:opacity-40">+</button>
                 </div>
               </div>
-              {guide.languages.length > 1 && (
+              {guide.languages.length > 0 && (
                 <div>
                   <label className="text-sm font-medium">Language</label>
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     {guide.languages.map((lng) => {
-                      const active = (form.language || guide.languages[0]) === lng;
+                      const active = currentLanguage === lng;
+                      const langPrice = selectedExperience.priceByLanguage[lng] ?? selectedExperience.price;
                       return (
                         <button
                           key={lng}
                           type="button"
                           onClick={() => setForm({ ...form, language: lng })}
-                          className={`h-9 px-3 rounded-full text-sm ring-1 transition ${active ? "bg-foreground text-background ring-foreground" : "bg-background ring-border hover:bg-muted"}`}
+                          className={`inline-flex items-center gap-1.5 h-9 px-3 rounded-full text-sm ring-1 transition ${active ? "bg-foreground text-background ring-foreground" : "bg-background ring-border hover:bg-muted"}`}
                         >
-                          {lng}
+                          <span>{lng}</span>
+                          <span className={`tabular-nums ${active ? "text-background/80" : "text-muted-foreground"}`}>${Math.round(langPrice)}</span>
                         </button>
                       );
                     })}
