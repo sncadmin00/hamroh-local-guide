@@ -426,6 +426,7 @@ function ToursPanel() {
         highlights: t.highlights ?? [],
         included: t.included ?? [],
         not_included: t.not_included ?? [],
+        category_ids: t.category_ids ?? [],
       })));
     } catch (e) {
       toast.error((e as Error).message);
