@@ -104,6 +104,22 @@ export const createBooking = createServerFn({ method: "POST" })
     const isInstant = !!data.slot_id;
     const experienceLabel = data.language ? `${tour.title} (${data.language})` : tour.title;
 
+    // Compute response deadline based on how soon the tour starts
+    let expiresAt: string | null = null;
+    if (!isInstant) {
+      const tourStart = new Date(`${data.date}T${data.start_time ?? "12:00"}:00`);
+      const hoursUntilTour = (tourStart.getTime() - Date.now()) / 3600000;
+      let responseHours = 24;
+      if (hoursUntilTour < 24) responseHours = 2;
+      else if (hoursUntilTour < 48) responseHours = 12;
+      // Cap so deadline never exceeds tour start
+      const deadlineMs = Math.min(
+        Date.now() + responseHours * 3600000,
+        tourStart.getTime() - 30 * 60000,
+      );
+      expiresAt = new Date(Math.max(deadlineMs, Date.now() + 30 * 60000)).toISOString();
+    }
+
     const insertPayload = {
       tour_id: tour.id,
       guide_id: tour.guide_id,
@@ -128,6 +144,7 @@ export const createBooking = createServerFn({ method: "POST" })
       user_id: authedUserId,
       status: isInstant ? "confirmed" : "pending",
       locale: clientLocale,
+      expires_at: expiresAt,
     };
     const { data: row, error } = await supabaseAdmin
       .from("bookings")
