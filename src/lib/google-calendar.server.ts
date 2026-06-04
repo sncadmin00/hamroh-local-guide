@@ -195,7 +195,7 @@ export async function pushEventToGoogle(
   const link = await getValidLink(guideId);
   if (!link) return null;
   const res = await fetch(
-    `${API_BASE}/calendars/${encodeURIComponent(link.google_calendar_id)}/events`,
+    `${API_BASE}/calendars/${encodeURIComponent(link.calendar_id)}/events`,
     {
       method: "POST",
       headers: {
@@ -221,7 +221,7 @@ export async function updateEventOnGoogle(
   const link = await getValidLink(guideId);
   if (!link) return;
   const res = await fetch(
-    `${API_BASE}/calendars/${encodeURIComponent(link.google_calendar_id)}/events/${encodeURIComponent(googleEventId)}`,
+    `${API_BASE}/calendars/${encodeURIComponent(link.calendar_id)}/events/${encodeURIComponent(googleEventId)}`,
     {
       method: "PATCH",
       headers: {
@@ -243,7 +243,7 @@ export async function deleteEventOnGoogle(
   const link = await getValidLink(guideId);
   if (!link) return;
   const res = await fetch(
-    `${API_BASE}/calendars/${encodeURIComponent(link.google_calendar_id)}/events/${encodeURIComponent(googleEventId)}`,
+    `${API_BASE}/calendars/${encodeURIComponent(link.calendar_id)}/events/${encodeURIComponent(googleEventId)}`,
     {
       method: "DELETE",
       headers: { Authorization: `Bearer ${link.access_token}` },
