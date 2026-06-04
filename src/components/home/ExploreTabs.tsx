@@ -47,7 +47,7 @@ export function ExploreTabs() {
         <Tabs value={tab} onValueChange={setTab} className="w-full">
           <div className="relative mb-10 border-b border-border">
             <TabsList className="mx-auto flex h-auto w-full justify-center gap-8 md:gap-14 bg-transparent p-0 rounded-none">
-              {(["guides", "tours", "cities", "explore"] as const).map((key) => (
+              {(["tours", "guides", "cities", "explore"] as const).map((key) => (
                 <TabsTrigger
                   key={key}
                   value={key}
