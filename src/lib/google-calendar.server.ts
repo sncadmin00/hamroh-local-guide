@@ -139,34 +139,35 @@ export async function fetchUserEmail(accessToken: string): Promise<string | null
 
 type GoogleLink = {
   guide_id: string;
-  google_calendar_id: string;
+  calendar_id: string;
   access_token: string;
   refresh_token: string;
-  token_expires_at: string;
+  expires_at: string;
 };
 
 async function getValidLink(guideId: string): Promise<GoogleLink | null> {
   const { data } = await supabaseAdmin
     .from("guide_google_calendar")
-    .select("guide_id, google_calendar_id, access_token, refresh_token, token_expires_at")
+    .select("guide_id, calendar_id, access_token, refresh_token, expires_at")
     .eq("guide_id", guideId)
     .maybeSingle();
   if (!data) return null;
+  const link = data as unknown as GoogleLink;
 
-  const expiresAt = new Date(data.token_expires_at).getTime();
-  if (expiresAt - Date.now() > 60_000) return data as GoogleLink;
+  const expiresAt = new Date(link.expires_at).getTime();
+  if (expiresAt - Date.now() > 60_000) return link;
 
   // Refresh
-  const refreshed = await refreshAccessToken(data.refresh_token);
+  const refreshed = await refreshAccessToken(link.refresh_token);
   const newExpiresAt = new Date(Date.now() + refreshed.expires_in * 1000).toISOString();
   await supabaseAdmin
     .from("guide_google_calendar")
     .update({
       access_token: refreshed.access_token,
-      token_expires_at: newExpiresAt,
-    })
+      expires_at: newExpiresAt,
+    } as never)
     .eq("guide_id", guideId);
-  return { ...data, access_token: refreshed.access_token, token_expires_at: newExpiresAt } as GoogleLink;
+  return { ...link, access_token: refreshed.access_token, expires_at: newExpiresAt };
 }
 
 type EventInput = {
