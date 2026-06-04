@@ -28,7 +28,7 @@ export function TopTours() {
     ? tours.filter((tr) => (tr.tour_categories ?? []).some((tc) => tc.categories?.slug === active))
     : tours;
   if (!isLoading && tours.length === 0) return null;
-  const top = filtered.slice(0, 8);
+  const top = filtered.slice(0, 20);
 
   return (
     <section className="px-6 py-10 md:py-20">
