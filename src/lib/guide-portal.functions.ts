@@ -43,6 +43,21 @@ export const updateMyCities = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const updateMyLanguages = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) => z.object({
+    languages: z.array(z.string().min(1).max(80)).max(30),
+  }).parse(input))
+  .handler(async ({ context, data }) => {
+    const { supabase, userId } = context;
+    const { error } = await supabase
+      .from("guides")
+      .update({ languages: data.languages })
+      .eq("user_id", userId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 export const listMySlots = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
