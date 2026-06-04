@@ -2,7 +2,7 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Sparkles, ArrowUp, Loader2, Wrench, Trash2 } from "lucide-react";
+import { Sparkles, ArrowUp, Loader2, Wrench, Trash2, Mic, MicOff } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
 const STORAGE_KEY = "guide-ai-history-v1";

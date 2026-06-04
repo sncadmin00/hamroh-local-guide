@@ -50,6 +50,7 @@ import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/em
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as ApiPublicTelegramWebhookRouteImport } from './routes/api/public/telegram/webhook'
 import { Route as ApiPublicHooksExpireBookingsRouteImport } from './routes/api/public/hooks/expire-bookings'
+import { Route as ApiPublicHooksDailyBriefRouteImport } from './routes/api/public/hooks/daily-brief'
 import { Route as ApiPublicHooksChatNotificationsRouteImport } from './routes/api/public/hooks/chat-notifications'
 import { Route as ApiPublicHooksBookingReviewsRouteImport } from './routes/api/public/hooks/booking-reviews'
 import { Route as ApiPublicHooksBookingRemindersRouteImport } from './routes/api/public/hooks/booking-reminders'
@@ -264,6 +265,12 @@ const ApiPublicHooksExpireBookingsRoute =
     path: '/api/public/hooks/expire-bookings',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksDailyBriefRoute =
+  ApiPublicHooksDailyBriefRouteImport.update({
+    id: '/api/public/hooks/daily-brief',
+    path: '/api/public/hooks/daily-brief',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksChatNotificationsRoute =
   ApiPublicHooksChatNotificationsRouteImport.update({
     id: '/api/public/hooks/chat-notifications',
@@ -321,6 +328,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
   '/api/public/hooks/booking-reviews': typeof ApiPublicHooksBookingReviewsRoute
   '/api/public/hooks/chat-notifications': typeof ApiPublicHooksChatNotificationsRoute
+  '/api/public/hooks/daily-brief': typeof ApiPublicHooksDailyBriefRoute
   '/api/public/hooks/expire-bookings': typeof ApiPublicHooksExpireBookingsRoute
   '/api/public/telegram/webhook': typeof ApiPublicTelegramWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -366,6 +374,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
   '/api/public/hooks/booking-reviews': typeof ApiPublicHooksBookingReviewsRoute
   '/api/public/hooks/chat-notifications': typeof ApiPublicHooksChatNotificationsRoute
+  '/api/public/hooks/daily-brief': typeof ApiPublicHooksDailyBriefRoute
   '/api/public/hooks/expire-bookings': typeof ApiPublicHooksExpireBookingsRoute
   '/api/public/telegram/webhook': typeof ApiPublicTelegramWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -413,6 +422,7 @@ export interface FileRoutesById {
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
   '/api/public/hooks/booking-reviews': typeof ApiPublicHooksBookingReviewsRoute
   '/api/public/hooks/chat-notifications': typeof ApiPublicHooksChatNotificationsRoute
+  '/api/public/hooks/daily-brief': typeof ApiPublicHooksDailyBriefRoute
   '/api/public/hooks/expire-bookings': typeof ApiPublicHooksExpireBookingsRoute
   '/api/public/telegram/webhook': typeof ApiPublicTelegramWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -461,6 +471,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/booking-reminders'
     | '/api/public/hooks/booking-reviews'
     | '/api/public/hooks/chat-notifications'
+    | '/api/public/hooks/daily-brief'
     | '/api/public/hooks/expire-bookings'
     | '/api/public/telegram/webhook'
     | '/lovable/email/auth/preview'
@@ -506,6 +517,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/booking-reminders'
     | '/api/public/hooks/booking-reviews'
     | '/api/public/hooks/chat-notifications'
+    | '/api/public/hooks/daily-brief'
     | '/api/public/hooks/expire-bookings'
     | '/api/public/telegram/webhook'
     | '/lovable/email/auth/preview'
@@ -552,6 +564,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/booking-reminders'
     | '/api/public/hooks/booking-reviews'
     | '/api/public/hooks/chat-notifications'
+    | '/api/public/hooks/daily-brief'
     | '/api/public/hooks/expire-bookings'
     | '/api/public/telegram/webhook'
     | '/lovable/email/auth/preview'
@@ -595,6 +608,7 @@ export interface RootRouteChildren {
   ApiPublicHooksBookingRemindersRoute: typeof ApiPublicHooksBookingRemindersRoute
   ApiPublicHooksBookingReviewsRoute: typeof ApiPublicHooksBookingReviewsRoute
   ApiPublicHooksChatNotificationsRoute: typeof ApiPublicHooksChatNotificationsRoute
+  ApiPublicHooksDailyBriefRoute: typeof ApiPublicHooksDailyBriefRoute
   ApiPublicHooksExpireBookingsRoute: typeof ApiPublicHooksExpireBookingsRoute
   ApiPublicTelegramWebhookRoute: typeof ApiPublicTelegramWebhookRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
@@ -893,6 +907,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksExpireBookingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/daily-brief': {
+      id: '/api/public/hooks/daily-brief'
+      path: '/api/public/hooks/daily-brief'
+      fullPath: '/api/public/hooks/daily-brief'
+      preLoaderRoute: typeof ApiPublicHooksDailyBriefRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/chat-notifications': {
       id: '/api/public/hooks/chat-notifications'
       path: '/api/public/hooks/chat-notifications'
@@ -986,6 +1007,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksBookingRemindersRoute: ApiPublicHooksBookingRemindersRoute,
   ApiPublicHooksBookingReviewsRoute: ApiPublicHooksBookingReviewsRoute,
   ApiPublicHooksChatNotificationsRoute: ApiPublicHooksChatNotificationsRoute,
+  ApiPublicHooksDailyBriefRoute: ApiPublicHooksDailyBriefRoute,
   ApiPublicHooksExpireBookingsRoute: ApiPublicHooksExpireBookingsRoute,
   ApiPublicTelegramWebhookRoute: ApiPublicTelegramWebhookRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
