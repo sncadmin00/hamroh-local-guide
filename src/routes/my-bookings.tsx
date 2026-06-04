@@ -25,6 +25,7 @@ function MyBookingsPage() {
   const [ready, setReady] = useState(false);
   const fetchBookings = useServerFn(listMyBookings);
   const cancelBooking = useServerFn(cancelBookingAsClient);
+  const respondProposal = useServerFn(respondToProposal);
   const qc = useQueryClient();
 
   useEffect(() => {
