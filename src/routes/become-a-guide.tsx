@@ -260,9 +260,35 @@ function BecomeAGuidePage() {
                   <input required value={form.city} onChange={set("city")} className={inputCls} placeholder="Samarkand" />
                 )}
               </FormField>
-              <FormField label="Languages (comma-separated)">
-                <input required value={form.languages} onChange={set("languages")} className={inputCls} placeholder="English, Russian, Uzbek" />
+              <FormField label="Years of experience">
+                <input required type="number" min={0} max={80} value={form.experience_years} onChange={set("experience_years")} className={inputCls} placeholder="3" />
               </FormField>
+            </div>
+            <FormField label="Languages (pick all that apply)">
+              {allLanguages.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No languages available yet.</p>
+              ) : (
+                <div className="mt-1 flex flex-wrap gap-2">
+                  {allLanguages.map((lng) => {
+                    const active = selectedLanguages.includes(lng.name);
+                    return (
+                      <button
+                        type="button"
+                        key={lng.id}
+                        onClick={() => toggleLanguage(lng.name)}
+                        className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
+                          active
+                            ? "border-primary bg-primary text-primary-foreground"
+                            : "border-input bg-background text-foreground hover:bg-secondary/40"
+                        }`}
+                      >
+                        {lng.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </FormField>
               <FormField label="Years of experience">
                 <input required type="number" min={0} max={80} value={form.experience_years} onChange={set("experience_years")} className={inputCls} placeholder="3" />
               </FormField>
