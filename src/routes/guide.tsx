@@ -12,6 +12,7 @@ import {
   deleteSlot,
   listMyBookings,
   updateBookingStatus,
+  proposeBookingTime,
   listMyTours,
   upsertTour,
   deleteTour,
