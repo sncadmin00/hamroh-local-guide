@@ -17,11 +17,15 @@ import { TelegramLoginButton } from "@/components/TelegramLoginButton";
 
 export const Route = createFileRoute("/book/$guideId")({
   head: () => ({ meta: [{ title: "Book a guide — Hamroh" }] }),
+  validateSearch: (search: Record<string, unknown>) => ({
+    experience: typeof search.experience === "string" ? search.experience : undefined,
+  }),
   component: BookPage,
 });
 
 function BookPage() {
   const { guideId } = Route.useParams();
+  const { experience: experienceFromUrl } = Route.useSearch();
   const { data: guide, isLoading } = useGuide(guideId);
   const navigate = useNavigate();
   const { lang } = useI18n();
