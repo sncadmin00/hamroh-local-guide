@@ -2,13 +2,18 @@ import { useEffect, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { Drawer } from "vaul";
 import { toast } from "sonner";
-import { Plus, Loader2, MapPin, Trash2, ChevronLeft, ChevronRight, Briefcase, Coffee, Ban, Bell } from "lucide-react";
+import { Plus, Loader2, MapPin, Trash2, ChevronLeft, ChevronRight, Briefcase, Coffee, Ban, Bell, Link2, Unlink } from "lucide-react";
 import {
   listMyCalendarEvents,
   createCalendarEvent,
   updateCalendarEvent,
   deleteCalendarEvent,
 } from "@/lib/guide-calendar.functions";
+import {
+  getGoogleCalendarStatus,
+  startGoogleOAuth,
+  disconnectGoogleCalendar,
+} from "@/lib/google-calendar.functions";
 
 type CalendarEvent = {
   id: string;
