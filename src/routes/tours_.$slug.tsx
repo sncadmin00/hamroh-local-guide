@@ -101,7 +101,22 @@ function TourDetailPage() {
               )}
             </div>
             <h1 className="mt-2 font-display text-3xl sm:text-4xl font-semibold">{tour.title}</h1>
+            {tour.reviews_count > 0 && (
+              <div className="mt-2 inline-flex items-center gap-1.5 text-sm">
+                <div className="flex items-center gap-0.5">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`h-4 w-4 ${i < Math.round(tour.rating) ? "fill-amber-400 text-amber-400" : "text-muted-foreground/40"}`}
+                    />
+                  ))}
+                </div>
+                <span className="font-semibold tabular-nums">{Number(tour.rating).toFixed(1)}</span>
+                <span className="text-muted-foreground">· {tour.reviews_count} {tour.reviews_count === 1 ? "review" : "reviews"}</span>
+              </div>
+            )}
             {tour.short_description && <p className="mt-2 text-lg text-muted-foreground">{tour.short_description}</p>}
+
 
             {langPrices.length > 0 && (
               <section className="mt-6">
