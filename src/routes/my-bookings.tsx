@@ -122,6 +122,20 @@ function MyBookingsPage() {
                     <span className="font-medium text-foreground">${Number(b.total).toFixed(0)}</span>
                   </div>
                   {(() => {
+                    const bb = b as { expires_at?: string | null };
+                    if (b.status !== "pending" || !bb.expires_at) return null;
+                    const msLeft = new Date(bb.expires_at).getTime() - Date.now();
+                    if (msLeft <= 0) return (
+                      <p className="mt-2 text-xs text-destructive">Guide didn't respond in time. This request will expire shortly.</p>
+                    );
+                    const hours = Math.floor(msLeft / 3600000);
+                    const mins = Math.floor((msLeft % 3600000) / 60000);
+                    const label = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+                    return (
+                      <p className="mt-2 text-xs text-amber-700">⏱ Waiting for guide — auto-expires in {label}</p>
+                    );
+                  })()}
+                  {(() => {
                     const bb = b as { proposed_date?: string | null; proposed_time?: string | null; proposed_note?: string | null };
                     if (!bb.proposed_date || !bb.proposed_time) return null;
                     return (

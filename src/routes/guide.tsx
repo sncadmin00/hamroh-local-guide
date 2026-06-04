@@ -56,6 +56,7 @@ type Booking = {
   proposed_time?: string | null;
   proposed_note?: string | null;
   proposed_at?: string | null;
+  expires_at?: string | null;
 };
 
 type MyGuide = {
@@ -389,6 +390,19 @@ function BookingsPanel({
               <p className="text-xs text-muted-foreground mt-2">
                 Status: <StatusPill status={b.status} /> · ${Number(b.total).toFixed(0)} · {b.slot_id ? "Instant" : "Request"}
               </p>
+              {b.status === "pending" && b.expires_at && (() => {
+                const msLeft = new Date(b.expires_at).getTime() - Date.now();
+                if (msLeft <= 0) return <p className="mt-1 text-xs text-destructive">⌛ Deadline passed — will auto-expire shortly</p>;
+                const hours = Math.floor(msLeft / 3600000);
+                const mins = Math.floor((msLeft % 3600000) / 60000);
+                const label = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+                const urgent = msLeft < 2 * 3600000;
+                return (
+                  <p className={`mt-1 text-xs ${urgent ? "text-destructive font-medium" : "text-amber-700"}`}>
+                    ⏱ Respond within {label} or the request will auto-expire
+                  </p>
+                );
+              })()}
             </div>
             {b.status === "pending" && (
               <div className="flex gap-2 shrink-0 flex-wrap">

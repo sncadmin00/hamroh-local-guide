@@ -213,6 +213,8 @@ export type Database = {
           date: string
           duration_minutes: number
           experience: string
+          expired_at: string | null
+          expires_at: string | null
           group_category: string | null
           guests: number
           guide_id: string
@@ -246,6 +248,8 @@ export type Database = {
           date: string
           duration_minutes?: number
           experience: string
+          expired_at?: string | null
+          expires_at?: string | null
           group_category?: string | null
           guests?: number
           guide_id: string
@@ -279,6 +283,8 @@ export type Database = {
           date?: string
           duration_minutes?: number
           experience?: string
+          expired_at?: string | null
+          expires_at?: string | null
           group_category?: string | null
           guests?: number
           guide_id?: string
