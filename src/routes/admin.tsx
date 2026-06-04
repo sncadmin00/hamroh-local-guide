@@ -481,7 +481,7 @@ function GuidesPanel({
   const [price, setPrice] = useState("");
   const [photo, setPhoto] = useState("");
   const [specialties, setSpecialties] = useState("");
-  const [languages, setLanguages] = useState("");
+  const [selectedLangs, setSelectedLangs] = useState<string[]>([]);
   const [verified, setVerified] = useState(true);
   const [instantBook, setInstantBook] = useState(false);
   const [saving, setSaving] = useState(false);
