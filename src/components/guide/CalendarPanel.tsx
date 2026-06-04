@@ -93,6 +93,9 @@ export function CalendarPanel() {
 
   return (
     <section className="space-y-4">
+      <GoogleCalendarCard />
+
+
       {/* Controls */}
       <div className="flex items-center justify-between gap-2">
         <div className="inline-flex rounded-full bg-muted p-1 text-sm">
