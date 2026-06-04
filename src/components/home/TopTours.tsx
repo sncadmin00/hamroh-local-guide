@@ -1,16 +1,33 @@
+import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Clock, Car } from "lucide-react";
-import { useTours } from "@/lib/content-queries";
+import { useTours, useCategories } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
 import { WishlistHeart } from "@/components/WishlistHeart";
 import { Skeleton } from "@/components/ui/skeleton";
 
 
 export function TopTours() {
-  const { t } = useI18n();
+  const { t, tCategory } = useI18n();
   const { data: tours = [], isLoading } = useTours();
+  const { data: categories = [] } = useCategories();
+  const [active, setActive] = useState<string | null>(null);
+
+  const availableCategories = useMemo(() => {
+    const slugs = new Set<string>();
+    for (const tr of tours) {
+      for (const tc of tr.tour_categories ?? []) {
+        if (tc.categories?.slug) slugs.add(tc.categories.slug);
+      }
+    }
+    return categories.filter((c) => slugs.has(c.slug));
+  }, [tours, categories]);
+
+  const filtered = active
+    ? tours.filter((tr) => (tr.tour_categories ?? []).some((tc) => tc.categories?.slug === active))
+    : tours;
   if (!isLoading && tours.length === 0) return null;
-  const top = tours.slice(0, 8);
+  const top = filtered.slice(0, 8);
 
   return (
     <section className="px-6 py-10 md:py-20">
@@ -30,7 +47,42 @@ export function TopTours() {
           </Link>
         </div>
 
+        {availableCategories.length > 0 && (
+          <div className="-mx-6 px-6 mb-4">
+            <div className="flex gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+              <button
+                type="button"
+                onClick={() => setActive(null)}
+                className={`shrink-0 px-3.5 py-1.5 rounded-full text-sm font-medium border transition-colors ${
+                  active === null
+                    ? "bg-foreground text-background border-foreground"
+                    : "bg-card text-foreground/70 border-border hover:bg-secondary"
+                }`}
+              >
+                {t("topTours.all")}
+              </button>
+              {availableCategories.map((c) => (
+                <button
+                  key={c.id}
+                  type="button"
+                  onClick={() => setActive(c.slug)}
+                  className={`shrink-0 px-3.5 py-1.5 rounded-full text-sm font-medium border transition-colors whitespace-nowrap ${
+                    active === c.slug
+                      ? "bg-foreground text-background border-foreground"
+                      : "bg-card text-foreground/70 border-border hover:bg-secondary"
+                  }`}
+                >
+                  {tCategory(c.slug, c.name)}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="-mx-6 px-6">
+          {!isLoading && top.length === 0 ? (
+            <p className="text-sm text-muted-foreground py-6">—</p>
+          ) : null}
           <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 [scrollbar-width:thin]">
             {isLoading
               ? Array.from({ length: 4 }).map((_, i) => (
