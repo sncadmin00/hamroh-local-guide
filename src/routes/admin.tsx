@@ -704,9 +704,130 @@ function GuidesPanel({
                     })}
                   </div>
                 )}
+                {languageList.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5">
+                    {languageList.map((lng) => {
+                      const on = (g.languages ?? []).includes(lng.name);
+                      return (
+                        <button
+                          key={lng.id}
+                          onClick={async () => {
+                            const next = on
+                              ? (g.languages ?? []).filter((x) => x !== lng.name)
+                              : [...(g.languages ?? []), lng.name];
+                            const { error } = await supabase
+                              .from("guides")
+                              .update({ languages: next })
+                              .eq("id", g.id);
+                            if (error) toast.error(error.message);
+                            else await reload();
+                          }}
+                          className={`inline-flex items-center px-2.5 h-7 rounded-full text-xs font-medium ring-1 transition ${
+                            on
+                              ? "bg-primary text-primary-foreground ring-primary"
+                              : "bg-card ring-border/60 text-muted-foreground hover:bg-secondary/60"
+                          }`}
+                        >
+                          {lng.name}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
               </li>
             );
           })}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function LanguagesPanel({
+  languages,
+  reload,
+}: {
+  languages: Language[];
+  reload: () => Promise<void>;
+}) {
+  const [name, setName] = useState("");
+  const [code, setCode] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const add = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim()) {
+      toast.error("Name required");
+      return;
+    }
+    setSaving(true);
+    const { error } = await supabase.from("languages").insert({
+      name: name.trim(),
+      code: code.trim() || null,
+      sort_order: languages.length,
+    });
+    setSaving(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success("Language added");
+    setName("");
+    setCode("");
+    await reload();
+  };
+
+  const remove = async (id: string) => {
+    if (!confirm("Delete this language?")) return;
+    const { error } = await supabase.from("languages").delete().eq("id", id);
+    if (error) toast.error(error.message);
+    else {
+      toast.success("Deleted");
+      await reload();
+    }
+  };
+
+  return (
+    <div className="mt-6 grid gap-6 lg:grid-cols-2">
+      <form onSubmit={add} className="rounded-3xl bg-card p-6 ring-1 ring-border/60 h-fit">
+        <h2 className="font-display text-lg font-semibold">Add a language</h2>
+        <div className="mt-4 space-y-3">
+          <Field label="Name" value={name} onChange={setName} placeholder="French" />
+          <Field label="Code (optional)" value={code} onChange={setCode} placeholder="fr" />
+        </div>
+        <button
+          type="submit"
+          disabled={saving}
+          className="mt-5 inline-flex items-center gap-2 h-11 px-6 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-60"
+        >
+          <Plus className="h-4 w-4" /> {saving ? "Saving…" : "Add language"}
+        </button>
+      </form>
+
+      <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
+        <h2 className="font-display text-lg font-semibold">Languages</h2>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Guides pick from this list on their profile and applications.
+        </p>
+        <ul className="mt-4 divide-y divide-border/60">
+          {languages.length === 0 && (
+            <li className="py-4 text-sm text-muted-foreground">No languages yet.</li>
+          )}
+          {languages.map((l) => (
+            <li key={l.id} className="py-3 flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <p className="font-medium truncate">{l.name}</p>
+                <p className="text-xs text-muted-foreground truncate">{l.code ?? "—"}</p>
+              </div>
+              <button
+                onClick={() => remove(l.id)}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                aria-label="Delete"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </li>
+          ))}
         </ul>
       </div>
     </div>
