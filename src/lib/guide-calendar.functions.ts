@@ -1,6 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import {
+  pushEventToGoogle,
+  updateEventOnGoogle,
+  deleteEventOnGoogle,
+} from "@/lib/google-calendar.server";
 
 const EventTypeSchema = z.enum(["personal", "block", "reminder"]);
 
@@ -87,6 +93,26 @@ export const createCalendarEvent = createServerFn({ method: "POST" })
       .single();
 
     if (error) throw new Error(error.message);
+
+    // Mirror to Google Calendar (best-effort)
+    try {
+      const googleEventId = await pushEventToGoogle(guide.id, {
+        title: data.title,
+        starts_at: data.starts_at,
+        ends_at: data.ends_at,
+        location: data.location,
+        notes: data.notes,
+      });
+      if (googleEventId && event) {
+        await supabaseAdmin
+          .from("calendar_events")
+          .update({ google_event_id: googleEventId } as never)
+          .eq("id", (event as { id: string }).id);
+      }
+    } catch (e) {
+      console.error("[calendar] google push failed:", e);
+    }
+
     return event;
   });
 
@@ -117,6 +143,30 @@ export const updateCalendarEvent = createServerFn({ method: "POST" })
       .single();
 
     if (error) throw new Error(error.message);
+
+    // Mirror update to Google Calendar
+    try {
+      const ev = event as {
+        google_event_id: string | null;
+        title: string;
+        starts_at: string;
+        ends_at: string;
+        location: string;
+        notes: string;
+      } | null;
+      if (ev?.google_event_id) {
+        await updateEventOnGoogle(guide.id, ev.google_event_id, {
+          title: ev.title,
+          starts_at: ev.starts_at,
+          ends_at: ev.ends_at,
+          location: ev.location,
+          notes: ev.notes,
+        });
+      }
+    } catch (e) {
+      console.error("[calendar] google update failed:", e);
+    }
+
     return event;
   });
 
@@ -137,13 +187,14 @@ export const deleteCalendarEvent = createServerFn({ method: "POST" })
     // Only allow deleting manual/personal/block events, not bookings
     const { data: existing } = await supabase
       .from("calendar_events")
-      .select("source, type")
+      .select("source, type, google_event_id")
       .eq("id", data.id)
       .eq("guide_id", guide.id)
       .maybeSingle();
 
     if (!existing) throw new Error("Event not found");
-    if (existing.source === "booking") {
+    const ex = existing as unknown as { source: string; google_event_id: string | null };
+    if (ex.source === "booking") {
       throw new Error("Cancel the booking instead to remove this event");
     }
 
@@ -154,5 +205,15 @@ export const deleteCalendarEvent = createServerFn({ method: "POST" })
       .eq("guide_id", guide.id);
 
     if (error) throw new Error(error.message);
+
+    // Mirror delete to Google Calendar
+    if (ex.google_event_id) {
+      try {
+        await deleteEventOnGoogle(guide.id, ex.google_event_id);
+      } catch (e) {
+        console.error("[calendar] google delete failed:", e);
+      }
+    }
+
     return { ok: true };
   });
