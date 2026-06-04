@@ -980,6 +980,7 @@ export type Database = {
           guide_id: string
           id: string
           rating: number
+          tour_id: string
           updated_at: string
           user_id: string
         }
@@ -990,6 +991,7 @@ export type Database = {
           guide_id: string
           id?: string
           rating: number
+          tour_id: string
           updated_at?: string
           user_id: string
         }
@@ -1000,6 +1002,7 @@ export type Database = {
           guide_id?: string
           id?: string
           rating?: number
+          tour_id?: string
           updated_at?: string
           user_id?: string
         }
@@ -1240,6 +1243,8 @@ export type Database = {
           price_by_language: Json
           price_from: number
           published: boolean
+          rating: number
+          reviews_count: number
           short_description: string
           slug: string
           sort_order: number
@@ -1262,6 +1267,8 @@ export type Database = {
           price_by_language?: Json
           price_from?: number
           published?: boolean
+          rating?: number
+          reviews_count?: number
           short_description?: string
           slug: string
           sort_order?: number
@@ -1284,6 +1291,8 @@ export type Database = {
           price_by_language?: Json
           price_from?: number
           published?: boolean
+          rating?: number
+          reviews_count?: number
           short_description?: string
           slug?: string
           sort_order?: number
@@ -1398,6 +1407,7 @@ export type Database = {
         Args: { _guide_id: string }
         Returns: undefined
       }
+      recompute_tour_rating: { Args: { _tour_id: string }; Returns: undefined }
     }
     Enums: {
       app_role: "admin"
