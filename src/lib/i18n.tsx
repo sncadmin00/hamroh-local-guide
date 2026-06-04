@@ -143,6 +143,7 @@ export const translations: Dict = {
   "footer.privacy": { en: "Privacy", uz: "Maxfiylik", ru: "Конфиденциальность" },
   "footer.refunds": { en: "Refunds", uz: "Pulni qaytarish", ru: "Возвраты" },
   "footer.tagline": { en: "Operated by Ark Labs LLC", uz: "Ark Labs LLC tomonidan boshqariladi", ru: "Оператор — Ark Labs LLC" },
+  "payments.accepted": { en: "We accept", uz: "To'lov qabul qilamiz", ru: "Принимаем к оплате" },
 
   "tours.title": { en: "Tours", uz: "Sayohatlar", ru: "Туры" },
   "tours.subtitle": { en: "Curated routes led by verified local guides", uz: "Tasdiqlangan mahalliy hamrohlar olib boradigan tanlangan yo'nalishlar", ru: "Подборка маршрутов с проверенными местными гидами" },

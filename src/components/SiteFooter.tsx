@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Instagram, Send } from "lucide-react";
+import { PaymentMethods } from "@/components/PaymentMethods";
 import hamrohLogo from "@/assets/hamroh-logo.png";
 import { useI18n } from "@/lib/i18n";
 
@@ -35,7 +36,10 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <p className="mt-6 text-center text-xs text-muted-foreground">
+        <div className="mt-6 flex justify-center">
+          <PaymentMethods variant="footer" />
+        </div>
+        <p className="mt-4 text-center text-xs text-muted-foreground">
           © {new Date().getFullYear()} Hamroh · {t("footer.tagline")}
         </p>
       </div>
