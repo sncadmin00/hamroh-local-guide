@@ -52,6 +52,23 @@ function TourDetailPage() {
     .map((lng) => ({ lng, price: tour.price_by_language[lng] ?? Number(tour.price_from) }))
     .filter((x) => x.price > 0);
 
+  const currentCatSlugs = new Set(
+    (tour.tour_categories ?? []).map((tc) => tc.categories?.slug).filter(Boolean) as string[]
+  );
+  const currentCitySlug = tour.cities?.slug;
+  const similar = (allTours ?? [])
+    .filter((tr) => tr.id !== tour.id)
+    .map((tr) => {
+      let score = 0;
+      if ((tr.tour_categories ?? []).some((tc) => tc.categories?.slug && currentCatSlugs.has(tc.categories.slug))) score += 2;
+      if (currentCitySlug && tr.cities?.slug === currentCitySlug) score += 1;
+      return { tr, score };
+    })
+    .filter((x) => x.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 4)
+    .map((x) => x.tr);
+
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
