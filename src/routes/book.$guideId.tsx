@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { PaymentMethods } from "@/components/PaymentMethods";
 import { useGuide } from "@/lib/content-queries";
 import { getBookingSource } from "@/hooks/useTrackSource";
 import { getGuideSlots, createBooking } from "@/lib/booking.functions";
@@ -280,6 +281,9 @@ function BookPage() {
                 <div className="flex justify-between"><span className="text-muted-foreground">× {form.guests} guests</span><span>${total}</span></div>
                 <div className="flex justify-between"><span className="text-muted-foreground">Service fee</span><span>${fee}</span></div>
                 <div className="flex justify-between border-t border-border/60 pt-3 text-base font-semibold"><span>Total</span><span>${total + fee}</span></div>
+              </div>
+              <div className="mt-5 border-t border-border/60 pt-4">
+                <PaymentMethods variant="checkout" />
               </div>
             </div>
           </aside>
