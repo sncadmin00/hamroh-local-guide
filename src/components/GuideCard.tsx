@@ -2,8 +2,14 @@ import { Link } from "@tanstack/react-router";
 import { Star, BadgeCheck, Zap, MapPin } from "lucide-react";
 import type { Guide } from "@/data/guides";
 import { WishlistHeart } from "@/components/WishlistHeart";
+import { useCities } from "@/lib/content-queries";
 
 export function GuideCard({ guide }: { guide: Guide }) {
+  const { data: cities } = useCities();
+  const extraNames = (guide.extraCityIds ?? [])
+    .map((id) => cities?.find((c) => c.id === id)?.name)
+    .filter(Boolean) as string[];
+  const allCities = [guide.city, ...extraNames].filter(Boolean);
   return (
     <Link
       to="/guides/$guideId"
@@ -44,9 +50,8 @@ export function GuideCard({ guide }: { guide: Guide }) {
           </span>
         </div>
         <p className="mt-1 inline-flex items-center gap-1 text-sm text-muted-foreground">
-          <MapPin className="h-3.5 w-3.5" /> {guide.city}
+          <MapPin className="h-3.5 w-3.5" /> {allCities.join(" · ")}
         </p>
-        <p className="mt-3 text-sm text-foreground/80">{guide.tagline}</p>
 
         <div className="mt-4 flex flex-wrap gap-1.5">
           {guide.languages.slice(0, 4).map((l) => (
