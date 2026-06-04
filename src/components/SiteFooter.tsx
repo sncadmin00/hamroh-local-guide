@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Instagram, Youtube, Music2, Twitter, Send } from "lucide-react";
+import { Instagram, Send } from "lucide-react";
 import hamrohLogo from "@/assets/hamroh-logo.png";
 import { useI18n } from "@/lib/i18n";
 
@@ -27,18 +27,6 @@ export function SiteFooter() {
             <a href="https://www.instagram.com/hamrohguides/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"
               className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-secondary text-foreground hover:bg-secondary/80 transition-colors">
               <Instagram className="h-5 w-5" />
-            </a>
-            <a href="https://tiktok.com/@yourhandle" target="_blank" rel="noopener noreferrer" aria-label="TikTok"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-secondary text-foreground hover:bg-secondary/80 transition-colors">
-              <Music2 className="h-5 w-5" />
-            </a>
-            <a href="https://youtube.com/@yourhandle" target="_blank" rel="noopener noreferrer" aria-label="YouTube"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-secondary text-foreground hover:bg-secondary/80 transition-colors">
-              <Youtube className="h-5 w-5" />
-            </a>
-            <a href="https://x.com/yourhandle" target="_blank" rel="noopener noreferrer" aria-label="X"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-secondary text-foreground hover:bg-secondary/80 transition-colors">
-              <Twitter className="h-5 w-5" />
             </a>
             <a href="https://t.me/hamroh" target="_blank" rel="noopener noreferrer" aria-label="Telegram channel"
               className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-secondary text-foreground hover:bg-secondary/80 transition-colors">

@@ -1,12 +1,18 @@
-## Plan
+# Упростить иконки соцсетей в футере
 
-1. Make the steps animate with a reliable CSS class instead of inline animation shorthand.
-2. Add a dedicated `.step-sequence-item` animation in `src/styles.css` that starts hidden and keeps its final visible state.
-3. Apply staggered CSS delays to the three step items in `src/routes/index.tsx` so `1`, then `2`, then `3` appear one after another.
-4. Respect reduced-motion settings so the steps remain visible for users who disable animations.
+## Что делаем
+Оставить в футере только реальные соцсети проекта (Instagram и Telegram). Убрать заглушки TikTok, YouTube и X/Twitter.
 
-## Technical details
+## Изменения
 
-- Replace `style={{ animation: ... }}` with CSS variables like `--step-delay` to avoid inline shorthand issues.
-- Use `animation-fill-mode: both` and an initial `opacity: 0` in the CSS class.
-- Keep the existing layout/text unchanged.
+### `src/components/SiteFooter.tsx`
+- Удалить иконку TikTok (ссылка на `@yourhandle`)
+- Удалить иконку YouTube (ссылка на `@yourhandle`)
+- Удалить иконку X/Twitter (ссылка на `@yourhandle`)
+- Оставить Instagram (`https://www.instagram.com/hamrohguides/`)
+- Оставить Telegram (`https://t.me/hamroh`)
+- Убрать неиспользуемые импорты `Youtube`, `Music2`, `Twitter` из `lucide-react`
+
+### Telegram-ссылка
+Пользователь указал, что Telegram-канал будет. Вопрос: какая именно ссылка на канал?
+- Сейчас стоит `https://t.me/hamroh` — это правильная ссылка или нужно обновить?
