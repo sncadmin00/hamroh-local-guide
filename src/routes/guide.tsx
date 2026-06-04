@@ -15,6 +15,7 @@ import {
   upsertTour,
   deleteTour,
   updateMyCities,
+  updateMyLanguages,
 } from "@/lib/guide-portal.functions";
 import { useCities, useCategories } from "@/lib/content-queries";
 import { GuidePostsPanel } from "@/components/GuidePostsPanel";
