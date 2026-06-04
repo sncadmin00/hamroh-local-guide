@@ -80,14 +80,13 @@ export function TopTours() {
           </div>
         )}
 
-        <div className="-mx-6 px-6">
-          {!isLoading && top.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-6">—</p>
-          ) : null}
-          <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 [scrollbar-width:thin]">
+        {!isLoading && top.length === 0 ? (
+          <p className="text-sm text-muted-foreground py-6">—</p>
+        ) : (
+          <HorizontalCarousel itemClassName="w-[240px] md:w-[260px]" twoRowsDesktop>
             {isLoading
-              ? Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="w-60 md:w-72 shrink-0 snap-start rounded-2xl border border-border bg-card overflow-hidden">
+              ? Array.from({ length: 8 }).map((_, i) => (
+                  <div key={i} className="rounded-2xl border border-border bg-card overflow-hidden">
                     <Skeleton className="aspect-[4/3] w-full rounded-none" />
                     <div className="p-4 space-y-2">
                       <Skeleton className="h-4 w-3/4" />
@@ -104,7 +103,7 @@ export function TopTours() {
                       key={tour.id}
                       to="/tours/$slug"
                       params={{ slug: tour.slug }}
-                      className="group w-60 md:w-72 shrink-0 snap-start rounded-2xl border border-border bg-card overflow-hidden hover:shadow-md transition-shadow"
+                      className="group block rounded-2xl border border-border bg-card overflow-hidden hover:shadow-md transition-shadow"
                     >
                       <div className="relative aspect-[4/3] bg-secondary overflow-hidden">
                         {tour.cover_url ? (
@@ -155,8 +154,8 @@ export function TopTours() {
                     </Link>
                   );
                 })}
-          </div>
-        </div>
+          </HorizontalCarousel>
+        )}
 
         <div className="md:hidden mt-6 text-center">
           <Link to="/tours" className="text-sm font-medium text-primary hover:underline">
