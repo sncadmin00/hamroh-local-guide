@@ -187,7 +187,7 @@ function Home() {
               <div
                 key={i}
                 className="step-sequence-item absolute left-1/2 top-0 flex items-center gap-2 whitespace-nowrap"
-                style={{ ["--step-delay" as any]: `${i * 4800}ms` }}
+                style={{ ["--step-delay" as any]: `${i * 3000}ms` }}
               >
                 <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-[#8BB5A9]/15 text-[#5e8a7e] text-[11px] font-semibold">{i + 1}</span>
                 <span>{label}</span>
