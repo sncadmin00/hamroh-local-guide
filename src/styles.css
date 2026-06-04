@@ -114,9 +114,15 @@
 }
 .animate-fade-in { animation: fade-in 0.5s ease-out both; }
 
+@keyframes step-sequence {
+  0%, 8% { opacity: 0; transform: translateY(8px); }
+  14%, 78% { opacity: 1; transform: translateY(0); }
+  86%, 100% { opacity: 0; transform: translateY(0); }
+}
+
 .step-sequence-item {
   opacity: 0;
-  animation: fade-in 0.6s ease-out both;
+  animation: step-sequence 4.8s ease-out infinite both;
   animation-delay: var(--step-delay, 0ms);
 }
 
