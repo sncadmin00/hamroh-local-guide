@@ -176,6 +176,8 @@ function GuidePortal() {
           />
         )}
 
+        {tab === "tours" && <ToursPanel />}
+
         {tab === "posts" && <GuidePostsPanel />}
 
         {tab === "referral" && (
