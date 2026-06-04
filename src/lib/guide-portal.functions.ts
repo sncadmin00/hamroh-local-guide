@@ -204,6 +204,13 @@ export const updateBookingStatus = createServerFn({ method: "POST" })
       }
     }
 
+    // Mirror booking change to Google Calendar (best-effort)
+    try {
+      await mirrorBookingToGoogle(data.id);
+    } catch (e) {
+      console.error("[booking-status] google mirror failed", e);
+    }
+
     return { ok: true };
   });
 
