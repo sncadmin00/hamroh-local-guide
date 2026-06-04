@@ -1,27 +1,25 @@
 ## Ideya
 
-Sejchas tury — produkt, a gidy — ispolniteli. V UI vse naoborot: snachala gidy, potom tury. Pomenyaem poryadok vezde, gde oni stoyat ryadom.
+V sekciyu `TopTours` na glavnoy dobavit gorizontal'nyy ryad chipov-kategoriy nad spiskom turov. Klik po chipu — filtruet karusel klient-saydno (po `tour.tour_categories[].categories.slug`). Chip "Vse" sbrasyvaet.
 
-## Chto menyaetsya
+## Chto delaem
 
-**Header navigatsiya (`SiteHeader.tsx`)**
-Poryadok ssylok: Tury → Naydi gida → Bronirovat → Stat' gidom → FAQ
-(sejchas: Naydi gida → Tury → ...)
+**`src/components/home/TopTours.tsx`**
+- Dergaem `useCategories()` ryadom s `useTours()`.
+- Lokal'nyy state `active: string | null` (null = "Vse").
+- Pokazyvaem tol'ko te kategorii, u kotoryh est' hotya by odin opublikovannyy tur (chto by ne bylo pustyh chipov).
+- Chipy v gorizontal'nom skrolle (kak v `BrowseByInterest`), aktivnyy — tyomnyy fon.
+- Filtruem `tours` po `active`, berem `slice(0, 8)`. Esli posle filtra pusto — pokazat' nebol'shuyu zaglushku "v etoy kategorii poka net turov".
+- Sortirovka kak sejchas (po `sort_order`, kotoryy uje delaet zapros) — "luchshie" zadayut admin/gid cherez sort. Otdel'nyy rating-sort ne vvodim.
 
-**Glavnaya, desktop tabs (`ExploreTabs.tsx`)**
-Poryadok i defolt: `tours` → `guides` → `cities` → `explore`. Defoltnyy tab — `tours`.
+**i18n**
+- Dobavit klyuch `topTours.all` ("Vse" / "Hammasi" / "All") dlya chipa-sbros.
+- Imena kategoriy — cherez `tCategory(slug, name)` kak v `BrowseByInterest`.
 
-**Glavnaya, mobile sekcii (`ExploreTabs.tsx`)**
-Poryadok: `TopTours` → `FeaturedGuides` → `PopularCities`
-(sejchas: FeaturedGuides → TopTours → PopularCities)
+## Vne plana
 
-**SEO/teksty glavnoy (`routes/index.tsx`, `i18n`)**
-Podzagolovok i meta-description sdvigayutsya v storonu "naydi tur" (a ne "naydi gida"). H1 ostavlyaem kak est' — eto AI-chat, on universalen. Konkretnye stroki podberu pri realizatsii (RU/UZ/EN).
-
-## Vne plana (po umolchaniyu ne trogaem)
-
-- Profil gida `guides_.$guideId.tsx` — tam gid eto kontekst, sektsiya "Tury etogo gida" uje pervaya posle bio.
-- `/guides` i `/tours` stranicy spiskov — ostayutsya kak est'.
-- Tablicy, RLS, server-funktsii — nichego ne menyaetsya, eto chisto UI.
+- Sortirovka po reytingu/populyarnosti — net (pole `rating` na turah otsutstvuet).
+- Filtr na desktop-tabe "Tours" v `ExploreTabs` — ne trogaem, tam vsego 6 kartochek.
+- Server-side filtr ili otdel'nye URL — net, vse v pamyati, dannye uje zagrujeny.
 
 OK?
