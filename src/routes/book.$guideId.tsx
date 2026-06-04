@@ -317,10 +317,16 @@ function BookPage() {
               </div>
 
               <div className="mt-6 space-y-3 border-t border-border/60 pt-5 text-sm">
-                <div className="flex justify-between"><span className="text-muted-foreground">{selectedExperience.title}</span><span>${selectedExperience.price}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">× {form.guests} guests</span><span>${total}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Service fee</span><span>${fee}</span></div>
-                <div className="flex justify-between border-t border-border/60 pt-3 text-base font-semibold"><span>Total</span><span>${total + fee}</span></div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">
+                    {selectedExperience.title}
+                    {currentLanguage && <span className="text-foreground/70"> · {currentLanguage}</span>}
+                  </span>
+                  <span className="tabular-nums">${unitPrice}</span>
+                </div>
+                <div className="flex justify-between"><span className="text-muted-foreground">× {form.guests} {form.guests === 1 ? "guest" : "guests"}</span><span className="tabular-nums">${total}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Service fee</span><span className="tabular-nums">${fee}</span></div>
+                <div className="flex justify-between border-t border-border/60 pt-3 text-base font-semibold"><span>Total</span><span className="tabular-nums">${total + fee}</span></div>
               </div>
               <div className="mt-5 border-t border-border/60 pt-4">
                 <PaymentMethods variant="checkout" />
