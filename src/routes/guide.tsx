@@ -683,8 +683,8 @@ function TourEditor({
               <input type="number" min={0.5} step={0.5} value={durationHours} onChange={(e) => setDurationHours(Number(e.target.value) || 0)} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
             </label>
             <label className="block text-sm">
-              <span className="text-xs text-muted-foreground">Base price ($)</span>
-              <input type="number" min={0} value={basePrice} onChange={(e) => setBasePrice(Number(e.target.value) || 0)} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
+              <span className="text-xs text-muted-foreground">Children free under (age)</span>
+              <input type="number" min={0} max={21} value={childrenFreeUnder} onChange={(e) => setChildrenFreeUnder(Number(e.target.value) || 0)} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
             </label>
             <label className="block text-sm">
               <span className="text-xs text-muted-foreground">&nbsp;</span>
@@ -693,6 +693,47 @@ function TourEditor({
                 Transport included
               </label>
             </label>
+          </div>
+
+          {/* Pricing */}
+          <div className="rounded-2xl border border-border bg-card/40 p-4 space-y-3">
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-medium">Pricing</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <label className={`inline-flex items-center gap-2 rounded-full px-3 h-9 text-sm cursor-pointer ${pricingMode === "fixed" ? "bg-foreground text-background" : "bg-secondary"}`}>
+                <input type="radio" name="pmode" className="hidden" checked={pricingMode === "fixed"} onChange={() => setPricingMode("fixed")} />
+                Fixed price
+              </label>
+              <label className={`inline-flex items-center gap-2 rounded-full px-3 h-9 text-sm cursor-pointer ${pricingMode === "by_group" ? "bg-foreground text-background" : "bg-secondary"}`}>
+                <input type="radio" name="pmode" className="hidden" checked={pricingMode === "by_group"} onChange={() => setPricingMode("by_group")} />
+                Price by group size
+              </label>
+            </div>
+            {pricingMode === "fixed" ? (
+              <label className="block text-sm max-w-xs">
+                <span className="text-xs text-muted-foreground">Price ($, in base language)</span>
+                <input type="number" min={0} value={fixedPrice || ""} onChange={(e) => setFixedPrice(Number(e.target.value) || 0)} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
+              </label>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {GROUP_KEYS.map((k) => (
+                  <div key={k} className="flex items-center gap-2 rounded-xl border border-input bg-background px-3 h-11 text-sm">
+                    <span className="flex-1 font-medium">{GROUP_LABELS[k]}</span>
+                    <span className="text-muted-foreground">$</span>
+                    <input
+                      type="number"
+                      min={0}
+                      value={groupPricesText[k] ?? ""}
+                      onChange={(e) => setGroupPricesText({ ...groupPricesText, [k]: e.target.value })}
+                      placeholder="—"
+                      className="w-24 h-9 bg-transparent outline-none text-sm tabular-nums"
+                    />
+                  </div>
+                ))}
+                <p className="col-span-full text-xs text-muted-foreground">Leave empty to skip a group size. Larger groups can still contact you directly.</p>
+              </div>
+            )}
           </div>
 
           <div className="space-y-2">
