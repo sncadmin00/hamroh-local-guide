@@ -89,7 +89,7 @@ function ToursPage() {
         ) : filtered.length === 0 ? (
           <p className="mt-10 text-sm text-muted-foreground">{t("tours.empty")}</p>
         ) : (
-          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 grid gap-3 grid-cols-2">
             {filtered.map((tr) => {
               const langPrices = tr.languages
                 .map((lng) => ({ lng, price: tr.price_by_language[lng] ?? Number(tr.price_from) }))
