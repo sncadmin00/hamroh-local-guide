@@ -32,7 +32,9 @@ function BookPage() {
   const [telegramContact, setTelegramContact] = useState<{ telegram_user_id: number; telegram_chat_id: number | null; telegram_username: string | null } | null>(null);
   const [form, setForm] = useState({
     date: "",
-    guests: 2,
+    adults: 2,
+    children: 0,
+    category: null as GroupCategory | null,
     language: "",
     name: "",
     email: "",
