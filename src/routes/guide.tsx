@@ -503,17 +503,25 @@ function ToursPanel() {
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <p className="font-medium">{it.title} {!it.published && <span className="text-[10px] uppercase text-muted-foreground ml-1">draft</span>}</p>
-                  <p className="text-xs text-muted-foreground">{Number(it.duration_hours)}h · base ${it.price_from} {it.transport_included && "· transport"}</p>
+                  <p className="text-xs text-muted-foreground">{Number(it.duration_hours)}h · {it.pricing_mode === "by_group" ? "by group size" : `$${it.price_from}`} {it.transport_included && "· transport"}</p>
                   <div className="mt-3 flex flex-wrap gap-1.5">
-                    {it.languages.map((lng) => {
-                      const p = it.price_by_language[lng];
-                      return (
-                        <span key={lng} className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs ring-1 ${p ? "bg-primary/10 text-primary ring-primary/20" : "bg-muted text-muted-foreground ring-border"}`}>
-                          <span className="font-medium">{lng}</span>
-                          <span className="tabular-nums">${p ?? it.price_from}</span>
-                        </span>
-                      );
-                    })}
+                    {it.pricing_mode === "by_group"
+                      ? GROUP_KEYS.filter((k) => (it.group_prices[k] ?? 0) > 0).map((k) => (
+                          <span key={k} className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs bg-primary/10 text-primary ring-1 ring-primary/20">
+                            <span className="font-medium">{GROUP_LABELS[k]}</span>
+                            <span className="tabular-nums">${it.group_prices[k]}</span>
+                          </span>
+                        ))
+                      : it.languages.map((lng) => {
+                          const mult = it.language_multipliers[lng];
+                          const isBase = lng === it.base_language;
+                          return (
+                            <span key={lng} className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs bg-primary/10 text-primary ring-1 ring-primary/20">
+                              <span className="font-medium">{lng}</span>
+                              <span className="tabular-nums">{isBase ? "base" : (mult ? `+${mult}%` : "+0%")}</span>
+                            </span>
+                          );
+                        })}
                   </div>
                 </div>
                 <div className="flex gap-1 shrink-0">
