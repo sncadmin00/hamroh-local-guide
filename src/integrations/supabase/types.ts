@@ -201,7 +201,9 @@ export type Database = {
       }
       bookings: {
         Row: {
+          adults: number
           cancellation_reason: string | null
+          children: number
           created_at: string
           customer_email: string | null
           customer_name: string
@@ -211,6 +213,7 @@ export type Database = {
           date: string
           duration_minutes: number
           experience: string
+          group_category: string | null
           guests: number
           guide_id: string
           id: string
@@ -227,7 +230,9 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          adults?: number
           cancellation_reason?: string | null
+          children?: number
           created_at?: string
           customer_email?: string | null
           customer_name: string
@@ -237,6 +242,7 @@ export type Database = {
           date: string
           duration_minutes?: number
           experience: string
+          group_category?: string | null
           guests?: number
           guide_id: string
           id?: string
@@ -253,7 +259,9 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          adults?: number
           cancellation_reason?: string | null
+          children?: number
           created_at?: string
           customer_email?: string | null
           customer_name?: string
@@ -263,6 +271,7 @@ export type Database = {
           date?: string
           duration_minutes?: number
           experience?: string
+          group_category?: string | null
           guests?: number
           guide_id?: string
           id?: string
@@ -1006,7 +1015,29 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "reviews_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: true
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_guide_id_fkey"
+            columns: ["guide_id"]
+            isOneToOne: false
+            referencedRelation: "guides"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_tour_id_fkey"
+            columns: ["tour_id"]
+            isOneToOne: false
+            referencedRelation: "tours"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       social_embed_cities: {
         Row: {
@@ -1229,19 +1260,24 @@ export type Database = {
       }
       tours: {
         Row: {
+          base_language: string
+          children_free_under: number
           city_id: string
           cover_url: string | null
           created_at: string
           description_md: string
           duration_hours: number
+          group_prices: Json
           guide_id: string
           highlights: string[]
           id: string
           included: string[]
+          language_multipliers: Json
           languages: string[]
           not_included: string[]
           price_by_language: Json
           price_from: number
+          pricing_mode: string
           published: boolean
           rating: number
           reviews_count: number
@@ -1253,19 +1289,24 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          base_language?: string
+          children_free_under?: number
           city_id: string
           cover_url?: string | null
           created_at?: string
           description_md?: string
           duration_hours?: number
+          group_prices?: Json
           guide_id: string
           highlights?: string[]
           id?: string
           included?: string[]
+          language_multipliers?: Json
           languages?: string[]
           not_included?: string[]
           price_by_language?: Json
           price_from?: number
+          pricing_mode?: string
           published?: boolean
           rating?: number
           reviews_count?: number
@@ -1277,19 +1318,24 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          base_language?: string
+          children_free_under?: number
           city_id?: string
           cover_url?: string | null
           created_at?: string
           description_md?: string
           duration_hours?: number
+          group_prices?: Json
           guide_id?: string
           highlights?: string[]
           id?: string
           included?: string[]
+          language_multipliers?: Json
           languages?: string[]
           not_included?: string[]
           price_by_language?: Json
           price_from?: number
+          pricing_mode?: string
           published?: boolean
           rating?: number
           reviews_count?: number
