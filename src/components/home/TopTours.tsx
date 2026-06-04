@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Clock, Car } from "lucide-react";
+import { Clock, Car, Star } from "lucide-react";
 import { useTours, useCategories } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
 import { WishlistHeart } from "@/components/WishlistHeart";
