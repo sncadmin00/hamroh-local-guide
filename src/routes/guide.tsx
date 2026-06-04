@@ -753,36 +753,57 @@ function TourEditor({
           </div>
 
           <div>
-            <p className="text-sm font-medium">Tour languages & price per language</p>
-            <p className="text-xs text-muted-foreground mt-0.5">Tick the languages you offer this tour in. Leave the price empty to use the base price.</p>
+            <p className="text-sm font-medium">Tour languages & surcharge %</p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Pick a base language (= 100% price). For other languages set a % surcharge — system computes the final price automatically. Leave at 0 if the price is the same.
+            </p>
             {languages.length === 0 ? (
               <p className="mt-2 text-xs text-muted-foreground">No languages on your profile yet.</p>
             ) : (
-              <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {languages.map((lng) => {
-                  const enabled = tourLangs.includes(lng);
-                  return (
-                    <div key={lng} className="flex items-center gap-2 rounded-xl border border-input bg-background px-3 h-11 text-sm">
-                      <label className="inline-flex items-center gap-2 flex-1 cursor-pointer">
-                        <input type="checkbox" checked={enabled} onChange={() => toggleLang(lng)} className="h-4 w-4" />
-                        <span className="font-medium">{lng}</span>
-                      </label>
-                      <span className="text-muted-foreground">$</span>
-                      <input
-                        type="number"
-                        min={0}
-                        value={pricesText[lng] ?? ""}
-                        onChange={(e) => setPricesText({ ...pricesText, [lng]: e.target.value })}
-                        placeholder={String(basePrice || 0)}
-                        disabled={!enabled}
-                        className="w-20 h-9 bg-transparent outline-none text-sm tabular-nums disabled:opacity-50"
-                      />
-                    </div>
-                  );
-                })}
-              </div>
+              <>
+                <div className="mt-3 flex items-center gap-2 text-sm">
+                  <span className="text-xs text-muted-foreground">Base language:</span>
+                  <select
+                    value={baseLanguage}
+                    onChange={(e) => setBaseLanguage(e.target.value)}
+                    className="h-9 rounded-lg border border-input bg-background px-2 text-sm"
+                  >
+                    {languages.map((l) => <option key={l} value={l}>{l}</option>)}
+                  </select>
+                </div>
+                <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {languages.map((lng) => {
+                    const enabled = tourLangs.includes(lng);
+                    const isBase = lng === baseLanguage;
+                    return (
+                      <div key={lng} className="flex items-center gap-2 rounded-xl border border-input bg-background px-3 h-11 text-sm">
+                        <label className="inline-flex items-center gap-2 flex-1 cursor-pointer">
+                          <input type="checkbox" checked={enabled} onChange={() => toggleLang(lng)} className="h-4 w-4" />
+                          <span className="font-medium">{lng}</span>
+                          {isBase && <span className="text-[10px] uppercase text-muted-foreground">base</span>}
+                        </label>
+                        {!isBase && (
+                          <>
+                            <span className="text-muted-foreground">+</span>
+                            <input
+                              type="number"
+                              value={langMultsText[lng] ?? ""}
+                              onChange={(e) => setLangMultsText({ ...langMultsText, [lng]: e.target.value })}
+                              placeholder="0"
+                              disabled={!enabled}
+                              className="w-16 h-9 bg-transparent outline-none text-sm tabular-nums disabled:opacity-50 text-right"
+                            />
+                            <span className="text-muted-foreground">%</span>
+                          </>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
             )}
           </div>
+
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <label className="block text-sm">
