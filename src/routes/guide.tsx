@@ -16,7 +16,7 @@ import {
   deleteTour,
   updateMyCities,
 } from "@/lib/guide-portal.functions";
-import { useCities } from "@/lib/content-queries";
+import { useCities, useCategories } from "@/lib/content-queries";
 import { GuidePostsPanel } from "@/components/GuidePostsPanel";
 
 export const Route = createFileRoute("/guide")({
