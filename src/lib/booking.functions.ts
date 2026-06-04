@@ -261,5 +261,14 @@ export const createBooking = createServerFn({ method: "POST" })
       console.error("Booking email enqueue failed", e);
     }
 
+    // Mirror confirmed bookings to Google Calendar (best-effort)
+    try {
+      if ((row.status as string) === "confirmed") {
+        await mirrorBookingToGoogle(row.id);
+      }
+    } catch (e) {
+      console.error("[booking] google mirror failed", e);
+    }
+
     return row;
   });
