@@ -220,6 +220,10 @@ export type Database = {
           language: string | null
           locale: string
           notes: string
+          proposed_at: string | null
+          proposed_date: string | null
+          proposed_note: string | null
+          proposed_time: string | null
           slot_id: string | null
           source: string
           start_time: string | null
@@ -249,6 +253,10 @@ export type Database = {
           language?: string | null
           locale?: string
           notes?: string
+          proposed_at?: string | null
+          proposed_date?: string | null
+          proposed_note?: string | null
+          proposed_time?: string | null
           slot_id?: string | null
           source?: string
           start_time?: string | null
@@ -278,6 +286,10 @@ export type Database = {
           language?: string | null
           locale?: string
           notes?: string
+          proposed_at?: string | null
+          proposed_date?: string | null
+          proposed_note?: string | null
+          proposed_time?: string | null
           slot_id?: string | null
           source?: string
           start_time?: string | null
