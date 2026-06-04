@@ -581,7 +581,9 @@ function TourEditor({
   const [included, setIncluded] = useState(arrToText(initial?.included ?? []));
   const [notIncluded, setNotIncluded] = useState(arrToText(initial?.not_included ?? []));
   const [published, setPublished] = useState(initial?.published ?? true);
+  const [selectedCats, setSelectedCats] = useState<string[]>(initial?.category_ids ?? []);
   const [uploading, setUploading] = useState(false);
+  const toggleCat = (id: string) => setSelectedCats((s) => s.includes(id) ? s.filter((x) => x !== id) : [...s, id]);
 
   const toggleLang = (lng: string) => {
     setTourLangs((cur) => cur.includes(lng) ? cur.filter((x) => x !== lng) : [...cur, lng]);
