@@ -175,7 +175,10 @@ function TourDetailPage() {
                 </div>
               )}
             </div>
+
+            <TourReviewsSection tourId={tour.id} tourTitle={tour.title} />
           </div>
+
 
           <aside className="lg:sticky lg:top-20 self-start space-y-4">
             <div className="rounded-2xl bg-card p-5 ring-1 ring-border/60">
