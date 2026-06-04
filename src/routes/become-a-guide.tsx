@@ -58,8 +58,10 @@ function BecomeAGuidePage() {
 
   const [cities, setCities] = useState<{ id: string; name: string }[]>([]);
   const [categories, setCategories] = useState<{ id: string; slug: string; name: string; icon: string }[]>([]);
+  const [allLanguages, setAllLanguages] = useState<{ id: string; name: string }[]>([]);
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
   const [submitted, setSubmitted] = useState(false);
   const [saving, setSaving] = useState(false);
   const [portrait, setPortrait] = useState<File | null>(null);
@@ -70,7 +72,6 @@ function BecomeAGuidePage() {
     email: "",
     phone: "",
     city: "",
-    languages: "",
     specialization: "",
     experience_years: "",
     about: "",
