@@ -90,12 +90,20 @@ function BookPage() {
   const handleFieldChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-  const setGuests = (n: number) => {
-    setForm((f) => ({ ...f, guests: Math.min(12, Math.max(1, n)) }));
-  };
+  const setAdults = (n: number) => setForm((f) => ({ ...f, adults: Math.min(50, Math.max(1, n)) }));
+  const setChildren = (n: number) => setForm((f) => ({ ...f, children: Math.min(50, Math.max(0, n)) }));
 
-  const unitPrice = (currentLanguage && tour.price_by_language[currentLanguage]) || Number(tour.price_from);
-  const total = unitPrice * form.guests;
+  const categories = offeredCategories(tour);
+  // Auto-pick category if not set
+  const selectedCategory: GroupCategory | null = form.category
+    ?? categories.find((c) => GROUP_CATEGORY_MAX[c] >= form.adults)
+    ?? null;
+  const adultsExceedAll = tour.pricing_mode === "by_group"
+    && categories.length > 0
+    && categories.every((c) => GROUP_CATEGORY_MAX[c] < form.adults);
+
+  const computedPrice = computeTourPrice(tour, { category: selectedCategory, language: currentLanguage || null });
+  const total = computedPrice ?? 0;
   const fee = Math.round(total * 0.08);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
