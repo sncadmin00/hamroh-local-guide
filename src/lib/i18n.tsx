@@ -159,6 +159,7 @@ export const translations: Dict = {
   "tours.allCities": { en: "All cities", uz: "Barcha shaharlar", ru: "Все города" },
   "tours.empty": { en: "No tours yet. Check back soon.", uz: "Hozircha sayohatlar yo'q.", ru: "Туров пока нет. Загляните позже." },
   "tours.backToList": { en: "← All tours", uz: "← Barcha sayohatlar", ru: "← Все туры" },
+  "tours.similar": { en: "Similar tours", uz: "O'xshash sayohatlar", ru: "Похожие туры" },
 
   "book.cta": { en: "Book", uz: "Bron", ru: "Бронь" },
 
