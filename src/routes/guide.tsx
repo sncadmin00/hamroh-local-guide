@@ -3,8 +3,9 @@ import { useEffect, useState, useCallback } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Calendar, CalendarClock, CalendarDays, Plus, Trash2, Check, X, LogOut, Loader2, Copy, Link2, Image as ImageIcon, Compass, Pencil, MapPin } from "lucide-react";
+import { Calendar, CalendarClock, CalendarDays, Plus, Trash2, Check, X, LogOut, Loader2, Copy, Link2, Image as ImageIcon, Compass, Pencil, MapPin, Sparkles } from "lucide-react";
 import { CalendarPanel } from "@/components/guide/CalendarPanel";
+import { GuideAIPanel } from "@/components/guide/GuideAIPanel";
 
 import {
   getMyGuide,
@@ -79,7 +80,7 @@ function GuidePortal() {
   const [guide, setGuide] = useState<MyGuide | null>(null);
   const [slots, setSlots] = useState<Slot[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [tab, setTab] = useState<"calendar" | "availability" | "bookings" | "tours" | "cities" | "languages" | "posts" | "referral">("calendar");
+  const [tab, setTab] = useState<"calendar" | "ai" | "availability" | "bookings" | "tours" | "cities" | "languages" | "posts" | "referral">("calendar");
 
   const fetchGuide = useServerFn(getMyGuide);
   const fetchSlots = useServerFn(listMySlots);
@@ -155,6 +156,9 @@ function GuidePortal() {
           <TabBtn active={tab === "calendar"} onClick={() => setTab("calendar")}>
             <CalendarDays className="h-4 w-4" /> Calendar
           </TabBtn>
+          <TabBtn active={tab === "ai"} onClick={() => setTab("ai")}>
+            <Sparkles className="h-4 w-4" /> AI
+          </TabBtn>
           <TabBtn active={tab === "availability"} onClick={() => setTab("availability")}>
             <Calendar className="h-4 w-4" /> Availability
           </TabBtn>
@@ -179,6 +183,7 @@ function GuidePortal() {
         </div>
 
         {tab === "calendar" && <CalendarPanel />}
+        {tab === "ai" && <GuideAIPanel />}
 
         {tab === "availability" && (
           <AvailabilityPanel

@@ -39,6 +39,7 @@ import { Route as GuidesGuideIdRouteImport } from './routes/guides_.$guideId'
 import { Route as ExploreSlugRouteImport } from './routes/explore.$slug'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as BookSlugRouteImport } from './routes/book.$slug'
+import { Route as ApiGuideAiRouteImport } from './routes/api/guide-ai'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AiThreadIdRouteImport } from './routes/ai.$threadId'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
@@ -203,6 +204,11 @@ const BookSlugRoute = BookSlugRouteImport.update({
   path: '/book/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiGuideAiRoute = ApiGuideAiRouteImport.update({
+  id: '/api/guide-ai',
+  path: '/api/guide-ai',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
@@ -302,6 +308,7 @@ export interface FileRoutesByFullPath {
   '/wishlist': typeof WishlistRoute
   '/ai/$threadId': typeof AiThreadIdRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/guide-ai': typeof ApiGuideAiRoute
   '/book/$slug': typeof BookSlugRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/explore/$slug': typeof ExploreSlugRoute
@@ -346,6 +353,7 @@ export interface FileRoutesByTo {
   '/wishlist': typeof WishlistRoute
   '/ai/$threadId': typeof AiThreadIdRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/guide-ai': typeof ApiGuideAiRoute
   '/book/$slug': typeof BookSlugRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/explore/$slug': typeof ExploreSlugRoute
@@ -392,6 +400,7 @@ export interface FileRoutesById {
   '/wishlist': typeof WishlistRoute
   '/ai/$threadId': typeof AiThreadIdRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/guide-ai': typeof ApiGuideAiRoute
   '/book/$slug': typeof BookSlugRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/explore/$slug': typeof ExploreSlugRoute
@@ -439,6 +448,7 @@ export interface FileRouteTypes {
     | '/wishlist'
     | '/ai/$threadId'
     | '/api/chat'
+    | '/api/guide-ai'
     | '/book/$slug'
     | '/email/unsubscribe'
     | '/explore/$slug'
@@ -483,6 +493,7 @@ export interface FileRouteTypes {
     | '/wishlist'
     | '/ai/$threadId'
     | '/api/chat'
+    | '/api/guide-ai'
     | '/book/$slug'
     | '/email/unsubscribe'
     | '/explore/$slug'
@@ -528,6 +539,7 @@ export interface FileRouteTypes {
     | '/wishlist'
     | '/ai/$threadId'
     | '/api/chat'
+    | '/api/guide-ai'
     | '/book/$slug'
     | '/email/unsubscribe'
     | '/explore/$slug'
@@ -573,6 +585,7 @@ export interface RootRouteChildren {
   UnsubscribeRoute: typeof UnsubscribeRoute
   WishlistRoute: typeof WishlistRoute
   ApiChatRoute: typeof ApiChatRoute
+  ApiGuideAiRoute: typeof ApiGuideAiRoute
   BookSlugRoute: typeof BookSlugRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   GuidesGuideIdRoute: typeof GuidesGuideIdRoute
@@ -803,6 +816,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BookSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/guide-ai': {
+      id: '/api/guide-ai'
+      path: '/api/guide-ai'
+      fullPath: '/api/guide-ai'
+      preLoaderRoute: typeof ApiGuideAiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/chat': {
       id: '/api/chat'
       path: '/api/chat'
@@ -956,6 +976,7 @@ const rootRouteChildren: RootRouteChildren = {
   UnsubscribeRoute: UnsubscribeRoute,
   WishlistRoute: WishlistRoute,
   ApiChatRoute: ApiChatRoute,
+  ApiGuideAiRoute: ApiGuideAiRoute,
   BookSlugRoute: BookSlugRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   GuidesGuideIdRoute: GuidesGuideIdRoute,
