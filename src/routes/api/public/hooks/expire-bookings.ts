@@ -89,12 +89,11 @@ export const Route = createFileRoute('/api/public/hooks/expire-bookings')({
             // Telegram ping to client
             if (b.customer_telegram_chat_id) {
               try {
-                await sendTelegramMessage({
-                  chatId: Number(b.customer_telegram_chat_id),
-                  text:
-                    `⌛ Your booking request for "${b.experience}" on ${b.date} expired because the guide did not respond in time. ` +
+                await sendTelegramMessage(
+                  Number(b.customer_telegram_chat_id),
+                  `⌛ Your booking request for "${b.experience}" on ${b.date} expired because the guide did not respond in time. ` +
                     `You can choose another guide here: ${APP_BASE_URL}/my-bookings`,
-                })
+                )
               } catch (e) {
                 console.error('expire telegram failed', b.id, e)
               }
