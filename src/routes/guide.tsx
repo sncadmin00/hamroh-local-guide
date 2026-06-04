@@ -129,6 +129,9 @@ function GuidePortal() {
           <TabBtn active={tab === "availability"} onClick={() => setTab("availability")}>
             <Calendar className="h-4 w-4" /> Availability
           </TabBtn>
+          <TabBtn active={tab === "tours"} onClick={() => setTab("tours")}>
+            <Compass className="h-4 w-4" /> Tours & prices
+          </TabBtn>
           <TabBtn active={tab === "bookings"} onClick={() => setTab("bookings")}>
             Bookings ({bookings.length})
           </TabBtn>
