@@ -3,41 +3,72 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
+async function attachAuthorNames<T extends { user_id: string }>(rows: T[]) {
+  return Promise.all(
+    rows.map(async (r) => {
+      let name = "Guest";
+      try {
+        const { data: u } = await supabaseAdmin.auth.admin.getUserById(r.user_id);
+        name =
+          (u?.user?.user_metadata?.full_name as string | undefined) ||
+          (u?.user?.user_metadata?.name as string | undefined) ||
+          (u?.user?.email ? String(u.user.email).split("@")[0] : "Guest");
+      } catch {
+        /* ignore */
+      }
+      return { ...r, authorName: name };
+    }),
+  );
+}
+
 export const listGuideReviews = createServerFn({ method: "GET" })
   .inputValidator((input) => z.object({ guideId: z.string().uuid() }).parse(input))
   .handler(async ({ data }) => {
     const { data: rows, error } = await supabaseAdmin
       .from("reviews")
-      .select("id, rating, comment, created_at, user_id")
+      .select("id, rating, comment, created_at, user_id, tour_id, tours(slug, title)")
       .eq("guide_id", data.guideId)
       .order("created_at", { ascending: false })
       .limit(50);
     if (error) throw new Error(error.message);
 
-    // Display names from auth metadata (best-effort)
-    const reviews = await Promise.all(
-      (rows ?? []).map(async (r) => {
-        let name = "Guest";
-        try {
-          const { data: u } = await supabaseAdmin.auth.admin.getUserById(r.user_id);
-          name =
-            (u?.user?.user_metadata?.full_name as string | undefined) ||
-            (u?.user?.user_metadata?.name as string | undefined) ||
-            (u?.user?.email ? String(u.user.email).split("@")[0] : "Guest");
-        } catch {
-          /* ignore */
-        }
-        return {
-          id: r.id,
-          rating: r.rating,
-          comment: r.comment,
-          createdAt: r.created_at,
-          authorName: name,
-        };
-      }),
+    const withNames = await attachAuthorNames(
+      (rows ?? []).map((r: any) => ({
+        id: r.id as string,
+        rating: r.rating as number,
+        comment: r.comment as string,
+        createdAt: r.created_at as string,
+        user_id: r.user_id as string,
+        tourId: r.tour_id as string | null,
+        tourSlug: (r.tours?.slug as string | undefined) ?? null,
+        tourTitle: (r.tours?.title as string | undefined) ?? null,
+      })),
     );
 
-    return reviews;
+    return withNames.map(({ user_id: _u, ...rest }) => rest);
+  });
+
+export const listTourReviews = createServerFn({ method: "GET" })
+  .inputValidator((input) => z.object({ tourId: z.string().uuid() }).parse(input))
+  .handler(async ({ data }) => {
+    const { data: rows, error } = await supabaseAdmin
+      .from("reviews")
+      .select("id, rating, comment, created_at, user_id")
+      .eq("tour_id", data.tourId)
+      .order("created_at", { ascending: false })
+      .limit(50);
+    if (error) throw new Error(error.message);
+
+    const withNames = await attachAuthorNames(
+      (rows ?? []).map((r) => ({
+        id: r.id as string,
+        rating: r.rating as number,
+        comment: r.comment as string,
+        createdAt: r.created_at as string,
+        user_id: r.user_id as string,
+      })),
+    );
+    return withNames.map(({ user_id: _u, ...rest }) => rest);
   });
 
 export const getMyReviewForBooking = createServerFn({ method: "GET" })
@@ -70,12 +101,15 @@ export const submitReview = createServerFn({ method: "POST" })
     // Validate booking ownership + that the trip already happened
     const { data: booking, error: bErr } = await supabaseAdmin
       .from("bookings")
-      .select("id, user_id, guide_id, status, date")
+      .select("id, user_id, guide_id, tour_id, status, date")
       .eq("id", data.bookingId)
       .maybeSingle();
     if (bErr) throw new Error(bErr.message);
     if (!booking) throw new Error("Booking not found");
     if (booking.user_id !== userId) throw new Error("Forbidden");
+    if (!booking.tour_id) {
+      throw new Error("This booking is not linked to a tour, so it cannot be reviewed.");
+    }
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -95,6 +129,7 @@ export const submitReview = createServerFn({ method: "POST" })
         {
           booking_id: data.bookingId,
           guide_id: booking.guide_id,
+          tour_id: booking.tour_id,
           user_id: userId,
           rating: data.rating,
           comment: data.comment,

@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Clock, Car } from "lucide-react";
+import { Clock, Car, Star } from "lucide-react";
 import { useTours, useCategories } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
 import { WishlistHeart } from "@/components/WishlistHeart";
@@ -129,7 +129,15 @@ export function TopTours() {
                         <p className="mt-1 text-xs text-muted-foreground">
                           {[tour.cities?.name, tour.guides?.name].filter(Boolean).join(" · ")}
                         </p>
+                        {tour.reviews_count > 0 && (
+                          <p className="mt-1 inline-flex items-center gap-1 text-xs text-muted-foreground">
+                            <Star className="size-3 fill-amber-400 text-amber-400" />
+                            <span className="font-semibold text-foreground tabular-nums">{Number(tour.rating).toFixed(1)}</span>
+                            <span>({tour.reviews_count})</span>
+                          </p>
+                        )}
                         <div className="mt-3 flex items-center justify-between text-sm">
+
                           <span className="inline-flex items-center gap-1 text-muted-foreground">
                             <Clock className="size-3.5" />
                             {Number(tour.duration_hours)} {t("tours.hours")}

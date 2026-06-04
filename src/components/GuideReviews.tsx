@@ -1,5 +1,6 @@
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import { Star } from "lucide-react";
 import { listGuideReviews } from "@/lib/reviews.functions";
 
@@ -22,7 +23,16 @@ export function GuideReviews({ guideId }: { guideId: string }) {
     <ul className="space-y-4">
       {reviews.map((r) => (
         <li key={r.id} className="rounded-2xl bg-card ring-1 ring-border/60 p-4">
-          <div className="flex items-center justify-between">
+          {r.tourSlug && r.tourTitle && (
+            <Link
+              to="/tours/$slug"
+              params={{ slug: r.tourSlug }}
+              className="text-xs font-medium text-primary hover:underline"
+            >
+              Tour: {r.tourTitle}
+            </Link>
+          )}
+          <div className="mt-1 flex items-center justify-between">
             <p className="text-sm font-medium">{r.authorName}</p>
             <div className="flex items-center gap-0.5">
               {Array.from({ length: 5 }).map((_, i) => (
