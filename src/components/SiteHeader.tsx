@@ -62,7 +62,7 @@ export function SiteHeader() {
       <div className="container mx-auto flex h-16 items-center justify-between gap-4 px-4">
         {/* Left: logo */}
         <Link to="/" className="flex items-center gap-2 shrink-0">
-          <img src={hamrohLogo} alt="Hamroh" className="h-11 w-auto object-contain" />
+          <img src={hamrohLogo} alt="Hamroh" className="h-[3.25rem] w-auto object-contain" />
         </Link>
 
         {/* Center: clean nav */}

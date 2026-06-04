@@ -11,7 +11,7 @@ export function SiteFooter() {
       <div className="container mx-auto px-4 py-10">
         <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
           <div className="flex items-center gap-2">
-            <img src={hamrohLogo} alt="Hamroh" className="h-10 w-auto object-contain" />
+            <img src={hamrohLogo} alt="Hamroh" className="h-12 w-auto object-contain" />
           </div>
 
           <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
