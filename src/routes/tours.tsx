@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { useTours, useCities } from "@/lib/content-queries";
+import { useTours, useCities, useCategories } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
 import { Clock, MapPin, Car } from "lucide-react";
 
@@ -26,12 +26,19 @@ const PLACEHOLDER =
 function ToursPage() {
   const { t } = useI18n();
   const [citySlug, setCitySlug] = useState<string>("");
+  const [categorySlug, setCategorySlug] = useState<string>("");
   const { data: cities = [] } = useCities();
+  const { data: categories = [] } = useCategories();
   const { data: tours = [], isLoading } = useTours();
 
   const filtered = useMemo(
-    () => (citySlug ? tours.filter((tr) => tr.cities?.slug === citySlug) : tours),
-    [tours, citySlug]
+    () =>
+      tours.filter((tr) => {
+        if (citySlug && tr.cities?.slug !== citySlug) return false;
+        if (categorySlug && !tr.tour_categories?.some((tc) => tc.categories?.slug === categorySlug)) return false;
+        return true;
+      }),
+    [tours, citySlug, categorySlug]
   );
 
   return (
@@ -53,6 +60,24 @@ function ToursPage() {
               key={c.id}
               onClick={() => setCitySlug(c.slug)}
               className={`px-3 h-8 rounded-full text-sm ${citySlug === c.slug ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground hover:bg-secondary/80"}`}
+            >
+              {c.name}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-2 flex flex-wrap gap-2">
+          <button
+            onClick={() => setCategorySlug("")}
+            className={`px-3 h-8 rounded-full text-sm ${categorySlug === "" ? "bg-foreground text-background" : "bg-secondary text-foreground hover:bg-secondary/80"}`}
+          >
+            All categories
+          </button>
+          {categories.map((c) => (
+            <button
+              key={c.id}
+              onClick={() => setCategorySlug(c.slug)}
+              className={`px-3 h-8 rounded-full text-sm ${categorySlug === c.slug ? "bg-foreground text-background" : "bg-secondary text-foreground hover:bg-secondary/80"}`}
             >
               {c.name}
             </button>
