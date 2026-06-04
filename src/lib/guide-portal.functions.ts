@@ -196,13 +196,13 @@ export const listMyExperiences = createServerFn({ method: "GET" })
     if (error) throw new Error(error.message);
     return {
       languages: (guide.languages ?? []) as string[],
-      experiences: (data ?? []).map((e: { id: string; title: string; duration: string; price: number; price_by_language: Record<string, number> | null; sort_order: number }) => ({
-        id: e.id,
-        title: e.title,
-        duration: e.duration,
+      experiences: (data ?? []).map((e) => ({
+        id: e.id as string,
+        title: e.title as string,
+        duration: e.duration as string,
         price: Number(e.price),
-        price_by_language: (e.price_by_language ?? {}) as Record<string, number>,
-        sort_order: e.sort_order,
+        price_by_language: ((e.price_by_language ?? {}) as Record<string, number>),
+        sort_order: Number(e.sort_order),
       })),
     };
   });
