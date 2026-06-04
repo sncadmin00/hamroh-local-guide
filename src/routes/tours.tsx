@@ -89,7 +89,7 @@ function ToursPage() {
         ) : filtered.length === 0 ? (
           <p className="mt-10 text-sm text-muted-foreground">{t("tours.empty")}</p>
         ) : (
-          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 grid gap-3 grid-cols-2">
             {filtered.map((tr) => {
               const langPrices = tr.languages
                 .map((lng) => ({ lng, price: tr.price_by_language[lng] ?? Number(tr.price_from) }))
@@ -99,9 +99,9 @@ function ToursPage() {
                   key={tr.id}
                   to="/tours/$slug"
                   params={{ slug: tr.slug }}
-                  className="group overflow-hidden rounded-2xl bg-card ring-1 ring-border/60 hover:shadow-lg transition-shadow"
+                  className="group overflow-hidden rounded-xl bg-card ring-1 ring-border/60 hover:shadow-md transition-shadow"
                 >
-                  <div className="relative aspect-[4/3] w-full overflow-hidden bg-secondary">
+                  <div className="relative aspect-[16/10] w-full overflow-hidden bg-secondary">
                     <img
                       src={tr.cover_url || PLACEHOLDER}
                       alt={tr.title}
@@ -109,38 +109,35 @@ function ToursPage() {
                       loading="lazy"
                     />
                     {tr.transport_included && (
-                      <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-background/95 px-2 py-1 text-[10px] font-medium text-primary backdrop-blur">
-                        <Car className="h-3 w-3" /> transport
+                      <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-background/95 px-1.5 py-0.5 text-[9px] font-medium text-primary backdrop-blur">
+                        <Car className="h-2.5 w-2.5" /> transport
                       </span>
                     )}
                   </div>
-                  <div className="p-4">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground flex-wrap">
+                  <div className="p-2.5">
+                    <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground flex-wrap">
                       {tr.cities?.name && (
-                        <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" />{tr.cities.name}</span>
+                        <span className="inline-flex items-center gap-0.5"><MapPin className="h-2.5 w-2.5" />{tr.cities.name}</span>
                       )}
                       {tr.duration_hours > 0 && (
-                        <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" />{Number(tr.duration_hours)}{t("tours.hours")}</span>
+                        <span className="inline-flex items-center gap-0.5"><Clock className="h-2.5 w-2.5" />{Number(tr.duration_hours)}{t("tours.hours")}</span>
                       )}
                     </div>
-                    <h3 className="mt-1 font-semibold leading-snug">{tr.title}</h3>
+                    <h3 className="mt-0.5 text-sm font-semibold leading-snug line-clamp-2">{tr.title}</h3>
                     {tr.guides?.name && (
-                      <p className="mt-0.5 text-xs text-muted-foreground">by {tr.guides.name}</p>
-                    )}
-                    {tr.short_description && (
-                      <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{tr.short_description}</p>
+                      <p className="mt-0.5 text-[10px] text-muted-foreground">by {tr.guides.name}</p>
                     )}
                     {langPrices.length > 0 && (
-                      <div className="mt-3 flex flex-wrap gap-1">
-                        {langPrices.slice(0, 4).map(({ lng, price }) => (
-                          <span key={lng} className="inline-flex items-center gap-1 rounded-md bg-secondary px-2 py-0.5 text-[10px]">
+                      <div className="mt-1.5 flex flex-wrap gap-1">
+                        {langPrices.slice(0, 3).map(({ lng, price }) => (
+                          <span key={lng} className="inline-flex items-center gap-1 rounded bg-secondary px-1.5 py-0.5 text-[9px]">
                             <span className="font-medium">{lng}</span>
                             <span className="text-muted-foreground tabular-nums">${Math.round(price)}</span>
                           </span>
                         ))}
                       </div>
                     )}
-                    <div className="mt-3 text-sm">
+                    <div className="mt-1.5 text-xs">
                       <span className="text-muted-foreground">{t("tours.priceFrom")} </span>
                       <span className="font-semibold">${Number(tr.price_from).toFixed(0)}</span>
                     </div>
