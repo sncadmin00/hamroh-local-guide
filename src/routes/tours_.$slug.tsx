@@ -193,6 +193,51 @@ function TourDetailPage() {
             )}
           </aside>
         </div>
+
+        {similar.length > 0 && (
+          <section className="mt-12">
+            <h2 className="font-display text-2xl font-semibold">{t("tours.similar")}</h2>
+            <div className="mt-5 grid gap-3 grid-cols-2 lg:grid-cols-4">
+              {similar.map((tr) => (
+                <Link
+                  key={tr.id}
+                  to="/tours/$slug"
+                  params={{ slug: tr.slug }}
+                  className="group overflow-hidden rounded-xl bg-card ring-1 ring-border/60 hover:shadow-md transition-shadow"
+                >
+                  <div className="relative aspect-[16/10] w-full overflow-hidden bg-secondary">
+                    <img
+                      src={tr.cover_url || PLACEHOLDER}
+                      alt={tr.title}
+                      className="h-full w-full object-cover group-hover:scale-105 transition-transform"
+                      loading="lazy"
+                    />
+                    {tr.transport_included && (
+                      <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-background/95 px-1.5 py-0.5 text-[9px] font-medium text-primary backdrop-blur">
+                        <Car className="h-2.5 w-2.5" /> transport
+                      </span>
+                    )}
+                  </div>
+                  <div className="p-2.5">
+                    <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground flex-wrap">
+                      {tr.cities?.name && (
+                        <span className="inline-flex items-center gap-0.5"><MapPin className="h-2.5 w-2.5" />{tr.cities.name}</span>
+                      )}
+                      {tr.duration_hours > 0 && (
+                        <span className="inline-flex items-center gap-0.5"><Clock className="h-2.5 w-2.5" />{Number(tr.duration_hours)}{t("tours.hours")}</span>
+                      )}
+                    </div>
+                    <h3 className="mt-0.5 text-sm font-semibold leading-snug line-clamp-2">{tr.title}</h3>
+                    <div className="mt-1.5 text-xs">
+                      <span className="text-muted-foreground">{t("tours.priceFrom")} </span>
+                      <span className="font-semibold">${Number(tr.price_from).toFixed(0)}</span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
       </main>
       <SiteFooter />
     </div>
