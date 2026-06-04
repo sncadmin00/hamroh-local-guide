@@ -557,8 +557,10 @@ function TourEditor({
     not_included: string[];
     published: boolean;
     sort_order: number;
+    category_ids: string[];
   }) => void;
 }) {
+  const { data: categories = [] } = useCategories();
   const [title, setTitle] = useState(initial?.title ?? "");
   const [shortDesc, setShortDesc] = useState(initial?.short_description ?? "");
   const [coverUrl, setCoverUrl] = useState(initial?.cover_url ?? "");
