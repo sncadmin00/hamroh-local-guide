@@ -232,7 +232,7 @@ function BookPage() {
               </div>
             )}
 
-            <div className={`grid gap-4 ${guide.languages.length > 1 ? "sm:grid-cols-2" : ""}`}>
+            <div className={`grid gap-4 ${guide.languages.length > 0 ? "sm:grid-cols-2" : ""}`}>
               <div>
                 <label className="text-sm font-medium">Guests</label>
                 <div className="mt-2 inline-flex h-12 items-center rounded-xl border border-input bg-background">
