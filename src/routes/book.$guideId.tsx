@@ -17,11 +17,15 @@ import { TelegramLoginButton } from "@/components/TelegramLoginButton";
 
 export const Route = createFileRoute("/book/$guideId")({
   head: () => ({ meta: [{ title: "Book a guide — Hamroh" }] }),
+  validateSearch: (search: Record<string, unknown>) => ({
+    experience: typeof search.experience === "string" ? search.experience : undefined,
+  }),
   component: BookPage,
 });
 
 function BookPage() {
   const { guideId } = Route.useParams();
+  const { experience: experienceFromUrl } = Route.useSearch();
   const { data: guide, isLoading } = useGuide(guideId);
   const navigate = useNavigate();
   const { lang } = useI18n();
@@ -49,6 +53,13 @@ function BookPage() {
       .then((rows) => setSlots(rows as typeof slots))
       .catch(() => setSlots([]));
   }, [guide, fetchSlots]);
+
+  // Pre-select experience from URL (e.g. when arriving from tour page)
+  useEffect(() => {
+    if (!guide || !experienceFromUrl) return;
+    const match = guide.experiences.find((e) => e.title === experienceFromUrl);
+    if (match) setForm((f) => ({ ...f, experience: match.title }));
+  }, [guide, experienceFromUrl]);
 
   const loadTelegramContact = async () => {
     const { data: userData } = await supabase.auth.getUser();
