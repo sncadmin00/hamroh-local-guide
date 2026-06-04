@@ -504,9 +504,7 @@ function GuidesPanel({
       specialties: specialties
         ? specialties.split(",").map((s) => s.trim()).filter(Boolean)
         : [],
-      languages: languages
-        ? languages.split(",").map((s) => s.trim()).filter(Boolean)
-        : [],
+      languages: selectedLangs,
       verified,
       instant_book: instantBook,
       sort_order: guides.length,
