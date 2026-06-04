@@ -271,7 +271,7 @@ const upsertTourSchema = z.object({
   base_language: z.string().trim().min(1).max(40).default("Russian"),
   language_multipliers: z
     .record(z.string().min(1).max(40), z.number().min(-50).max(500))
-    .default({}),
+    .default(() => ({}) as Record<string, number>),
   children_free_under: z.number().int().min(0).max(21).default(16),
   languages: z.array(z.string().min(1).max(40)).max(20).default([]),
   transport_included: z.boolean().default(false),
