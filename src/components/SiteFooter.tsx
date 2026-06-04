@@ -24,7 +24,7 @@ export function SiteFooter() {
           </nav>
 
           <div className="flex items-center gap-2">
-            <a href="https://instagram.com/yourhandle" target="_blank" rel="noopener noreferrer" aria-label="Instagram"
+            <a href="https://www.instagram.com/hamrohguides/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"
               className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-secondary text-foreground hover:bg-secondary/80 transition-colors">
               <Instagram className="h-5 w-5" />
             </a>
