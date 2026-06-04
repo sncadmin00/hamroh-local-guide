@@ -11,7 +11,7 @@ type Props = {
 
 export function HorizontalCarousel({
   children,
-  itemClassName = "w-[78%] sm:w-[46%] md:w-[32%] lg:w-[24%]",
+  itemClassName = "w-[260px] md:w-[280px]",
   twoRowsDesktop = true,
 }: Props) {
   const scrollerRef = useRef<HTMLDivElement>(null);
