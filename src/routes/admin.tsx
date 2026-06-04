@@ -304,6 +304,11 @@ function AdminPage() {
             Categories ({categories.length})
           </button>
           <button
+            onClick={() => setTab("languages")}
+            className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "languages" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+          >
+            Languages ({languages.length})
+          <button
             onClick={() => setTab("places")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "places" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
