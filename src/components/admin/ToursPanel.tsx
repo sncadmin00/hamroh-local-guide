@@ -18,6 +18,9 @@ const EMPTY: Partial<TourRow> = {
   not_included: [],
   published: false,
   sort_order: 0,
+  price_by_language: {},
+  languages: [],
+  transport_included: false,
 };
 
 export function ToursPanel() {
@@ -27,12 +30,11 @@ export function ToursPanel() {
   const { data: guides = [] } = useGuidesAdmin();
   const [editing, setEditing] = useState<Partial<TourRow> | null>(null);
 
-  const startNew = () => setEditing({ ...EMPTY, city_id: cities[0]?.id ?? "" });
+  const startNew = () => setEditing({ ...EMPTY, city_id: cities[0]?.id ?? "", guide_id: guides[0]?.dbId ?? "" });
   const startEdit = (t: TourRow) => setEditing({ ...t });
 
   const remove = async (id: string) => {
     if (!confirm("Delete this tour?")) return;
-    await (supabase as any).from("tour_guides").delete().eq("tour_id", id);
     await (supabase as any).from("tour_categories").delete().eq("tour_id", id);
     const { error } = await (supabase as any).from("tours").delete().eq("id", id);
     if (error) toast.error(error.message);
@@ -51,7 +53,7 @@ export function ToursPanel() {
         <h2 className="font-display text-xl font-semibold">Tours</h2>
         <button
           onClick={startNew}
-          disabled={cities.length === 0}
+          disabled={cities.length === 0 || guides.length === 0}
           className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 disabled:opacity-50"
         >
           <Plus className="h-4 w-4" /> Add tour
@@ -76,6 +78,7 @@ export function ToursPanel() {
               <th className="text-left px-4 py-2">Order</th>
               <th className="text-left px-4 py-2">Cover</th>
               <th className="text-left px-4 py-2">Title</th>
+              <th className="text-left px-4 py-2">Guide</th>
               <th className="text-left px-4 py-2">City</th>
               <th className="text-left px-4 py-2">Price</th>
               <th className="text-left px-4 py-2">Published</th>
@@ -93,6 +96,7 @@ export function ToursPanel() {
                   <div className="font-medium">{t.title}</div>
                   <div className="text-xs text-muted-foreground">/{t.slug}</div>
                 </td>
+                <td className="px-4 py-2 text-xs">{t.guides?.name ?? "—"}</td>
                 <td className="px-4 py-2">{t.cities?.name ?? "—"}</td>
                 <td className="px-4 py-2">${Number(t.price_from).toFixed(0)}</td>
                 <td className="px-4 py-2">
@@ -110,7 +114,7 @@ export function ToursPanel() {
               </tr>
             ))}
             {tours.length === 0 && (
-              <tr><td colSpan={7} className="px-4 py-8 text-center text-sm text-muted-foreground">No tours yet.</td></tr>
+              <tr><td colSpan={8} className="px-4 py-8 text-center text-sm text-muted-foreground">No tours yet.</td></tr>
             )}
           </tbody>
         </table>
@@ -133,16 +137,13 @@ function TourEditor({
   initial: Partial<TourRow>;
   cities: { id: string; name: string }[];
   categories: { id: string; name: string }[];
-  guides: { dbId: string; name: string }[];
+  guides: { dbId: string; name: string; languages: string[] }[];
   onClose: () => void;
   onSaved: () => void;
 }) {
   const [form, setForm] = useState(initial);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [selectedGuides, setSelectedGuides] = useState<string[]>(
-    (initial.tour_guides ?? []).map((tg) => tg.guide_id),
-  );
   const [selectedCats, setSelectedCats] = useState<string[]>(
     (initial.tour_categories ?? []).map((tc) => tc.category_id),
   );
@@ -151,8 +152,21 @@ function TourEditor({
 
   const set = <K extends keyof TourRow>(k: K, v: TourRow[K]) => setForm((f) => ({ ...f, [k]: v }));
 
-  const toggleGuide = (id: string) => setSelectedGuides((s) => s.includes(id) ? s.filter((x) => x !== id) : [...s, id]);
+  const currentGuide = guides.find((g) => g.dbId === form.guide_id);
+  const guideLangs = currentGuide?.languages ?? [];
+
   const toggleCat = (id: string) => setSelectedCats((s) => s.includes(id) ? s.filter((x) => x !== id) : [...s, id]);
+  const toggleTourLang = (lng: string) => {
+    const cur = form.languages ?? [];
+    set("languages", (cur.includes(lng) ? cur.filter((x) => x !== lng) : [...cur, lng]) as any);
+  };
+  const setLangPrice = (lng: string, value: string) => {
+    const n = Number(value);
+    const next = { ...(form.price_by_language ?? {}) };
+    if (Number.isFinite(n) && n > 0) next[lng] = n;
+    else delete next[lng];
+    set("price_by_language", next as any);
+  };
 
   const upload = async (file: File) => {
     setUploading(true);
@@ -166,11 +180,16 @@ function TourEditor({
   };
 
   const save = async () => {
-    if (!form.slug || !form.title || !form.city_id) {
-      toast.error("Slug, title and city are required");
+    if (!form.slug || !form.title || !form.city_id || !form.guide_id) {
+      toast.error("Slug, title, city and guide are required");
       return;
     }
     setSaving(true);
+    const cleanedPbl: Record<string, number> = {};
+    for (const [k, v] of Object.entries(form.price_by_language ?? {})) {
+      const n = Number(v);
+      if (Number.isFinite(n) && n > 0) cleanedPbl[k] = n;
+    }
     const payload = {
       slug: form.slug,
       title: form.title,
@@ -178,8 +197,12 @@ function TourEditor({
       description_md: form.description_md ?? "",
       cover_url: form.cover_url || null,
       city_id: form.city_id,
+      guide_id: form.guide_id,
       duration_hours: Number(form.duration_hours ?? 0),
       price_from: Number(form.price_from ?? 0),
+      price_by_language: cleanedPbl,
+      languages: form.languages ?? [],
+      transport_included: !!form.transport_included,
       highlights: form.highlights ?? [],
       included: form.included ?? [],
       not_included: form.not_included ?? [],
@@ -197,11 +220,6 @@ function TourEditor({
       tourId = data.id;
     }
 
-    // Replace links
-    await (supabase as any).from("tour_guides").delete().eq("tour_id", tourId);
-    if (selectedGuides.length > 0) {
-      await (supabase as any).from("tour_guides").insert(selectedGuides.map((gid) => ({ tour_id: tourId, guide_id: gid })));
-    }
     await (supabase as any).from("tour_categories").delete().eq("tour_id", tourId);
     if (selectedCats.length > 0) {
       await (supabase as any).from("tour_categories").insert(selectedCats.map((cid) => ({ tour_id: tourId, category_id: cid })));
@@ -242,6 +260,13 @@ function TourEditor({
 
       <div className="grid gap-3 sm:grid-cols-4">
         <label className="text-sm">
+          <span className="text-muted-foreground">Guide (owner)</span>
+          <select value={form.guide_id ?? ""} onChange={(e) => set("guide_id", e.target.value)} className="mt-1 w-full h-9 rounded-lg border border-border bg-background px-2">
+            <option value="">—</option>
+            {guides.map((g) => <option key={g.dbId} value={g.dbId}>{g.name}</option>)}
+          </select>
+        </label>
+        <label className="text-sm">
           <span className="text-muted-foreground">City</span>
           <select value={form.city_id ?? ""} onChange={(e) => set("city_id", e.target.value)} className="mt-1 w-full h-9 rounded-lg border border-border bg-background px-2">
             {cities.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -252,14 +277,50 @@ function TourEditor({
           <input type="number" step="0.5" value={form.duration_hours ?? 0} onChange={(e) => set("duration_hours", Number(e.target.value))} className="mt-1 w-full h-9 rounded-lg border border-border bg-background px-2" />
         </label>
         <label className="text-sm">
-          <span className="text-muted-foreground">Price from ($)</span>
+          <span className="text-muted-foreground">Base price ($)</span>
           <input type="number" value={form.price_from ?? 0} onChange={(e) => set("price_from", Number(e.target.value))} className="mt-1 w-full h-9 rounded-lg border border-border bg-background px-2" />
+        </label>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2">
+        <label className="text-sm inline-flex items-center gap-2 h-9">
+          <input type="checkbox" checked={!!form.transport_included} onChange={(e) => set("transport_included", e.target.checked)} className="h-4 w-4" />
+          <span>Transport included</span>
         </label>
         <label className="text-sm">
           <span className="text-muted-foreground">Sort order</span>
           <input type="number" value={form.sort_order ?? 0} onChange={(e) => set("sort_order", Number(e.target.value))} className="mt-1 w-full h-9 rounded-lg border border-border bg-background px-2" />
         </label>
       </div>
+
+      {guideLangs.length > 0 && (
+        <div>
+          <div className="text-sm text-muted-foreground mb-2">Tour languages & price per language</div>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {guideLangs.map((lng) => {
+              const enabled = (form.languages ?? []).includes(lng);
+              return (
+                <div key={lng} className="flex items-center gap-2 rounded-xl border border-border bg-background px-3 h-11 text-sm">
+                  <label className="inline-flex items-center gap-2 flex-1">
+                    <input type="checkbox" checked={enabled} onChange={() => toggleTourLang(lng)} className="h-4 w-4" />
+                    <span className="font-medium">{lng}</span>
+                  </label>
+                  <span className="text-muted-foreground">$</span>
+                  <input
+                    type="number"
+                    min={0}
+                    value={(form.price_by_language ?? {})[lng] ?? ""}
+                    onChange={(e) => setLangPrice(lng, e.target.value)}
+                    placeholder={String(form.price_from || 0)}
+                    disabled={!enabled}
+                    className="w-20 h-9 bg-transparent outline-none text-sm tabular-nums disabled:opacity-50"
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       <div className="grid gap-3 sm:grid-cols-3">
         <label className="text-sm">
@@ -274,21 +335,6 @@ function TourEditor({
           <span className="text-muted-foreground">Not included (one per line)</span>
           <textarea value={arrToText(form.not_included)} onChange={(e) => set("not_included", textToArr(e.target.value))} rows={4} className="mt-1 w-full rounded-lg border border-border bg-background p-2" />
         </label>
-      </div>
-
-      <div>
-        <div className="text-sm text-muted-foreground mb-1">Guides</div>
-        <div className="flex flex-wrap gap-1.5">
-          {guides.map((g) => (
-            <button
-              key={g.dbId}
-              onClick={() => toggleGuide(g.dbId)}
-              className={`px-3 h-8 rounded-full text-sm ${selectedGuides.includes(g.dbId) ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground hover:bg-secondary/80"}`}
-            >
-              {g.name}
-            </button>
-          ))}
-        </div>
       </div>
 
       <div>
