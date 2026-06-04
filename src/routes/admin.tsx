@@ -129,6 +129,14 @@ type Place = {
 
 type PlaceGuideLink = { place_id: string; guide_id: string };
 
+type Language = {
+  id: string;
+  name: string;
+  code: string | null;
+  sort_order: number;
+  is_active: boolean;
+};
+
 type PlaceSuggestion = {
   id: string;
   city_id: string | null;
