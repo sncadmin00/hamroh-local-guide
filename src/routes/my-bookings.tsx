@@ -51,6 +51,16 @@ function MyBookingsPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const proposalMut = useMutation({
+    mutationFn: (vars: { id: string; accept: boolean }) =>
+      respondProposal({ data: vars }),
+    onSuccess: (_d, vars) => {
+      toast.success(vars.accept ? "Booking confirmed" : "Proposal declined");
+      qc.invalidateQueries({ queryKey: ["my-bookings"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   const handleCancel = (id: string) => {
     const reason = window.prompt("Reason for cancellation (optional):") ?? undefined;
     if (window.confirm("Cancel this booking?")) cancelMut.mutate({ id, reason });
