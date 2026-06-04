@@ -446,6 +446,11 @@ function ToursPanel() {
       setItems(res.tours.map((t) => ({
         ...t,
         price_by_language: (t.price_by_language ?? {}) as Record<string, number>,
+        pricing_mode: (t.pricing_mode === "by_group" ? "by_group" : "fixed") as "fixed" | "by_group",
+        base_language: t.base_language ?? (res.guide?.languages?.[0] ?? "Russian"),
+        language_multipliers: (t.language_multipliers ?? {}) as Record<string, number>,
+        group_prices: (t.group_prices ?? {}) as Record<string, number>,
+        children_free_under: Number(t.children_free_under ?? 16),
         languages: t.languages ?? [],
         highlights: t.highlights ?? [],
         included: t.included ?? [],
