@@ -400,6 +400,11 @@ type Tour = {
   duration_hours: number;
   price_from: number;
   price_by_language: Record<string, number>;
+  pricing_mode: "fixed" | "by_group";
+  base_language: string;
+  language_multipliers: Record<string, number>;
+  group_prices: Record<string, number>;
+  children_free_under: number;
   languages: string[];
   transport_included: boolean;
   highlights: string[];
@@ -408,6 +413,14 @@ type Tour = {
   published: boolean;
   sort_order: number;
   category_ids: string[];
+};
+
+const GROUP_KEYS = ["private", "small", "group", "large"] as const;
+const GROUP_LABELS: Record<(typeof GROUP_KEYS)[number], string> = {
+  private: "Private (up to 2)",
+  small: "Small group (up to 6)",
+  group: "Group (up to 12)",
+  large: "Large group (up to 25)",
 };
 
 function ToursPanel() {
