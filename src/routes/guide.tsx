@@ -400,6 +400,11 @@ type Tour = {
   duration_hours: number;
   price_from: number;
   price_by_language: Record<string, number>;
+  pricing_mode: "fixed" | "by_group";
+  base_language: string;
+  language_multipliers: Record<string, number>;
+  group_prices: Record<string, number>;
+  children_free_under: number;
   languages: string[];
   transport_included: boolean;
   highlights: string[];
@@ -408,6 +413,14 @@ type Tour = {
   published: boolean;
   sort_order: number;
   category_ids: string[];
+};
+
+const GROUP_KEYS = ["private", "small", "group", "large"] as const;
+const GROUP_LABELS: Record<(typeof GROUP_KEYS)[number], string> = {
+  private: "Private (up to 2)",
+  small: "Small group (up to 6)",
+  group: "Group (up to 12)",
+  large: "Large group (up to 25)",
 };
 
 function ToursPanel() {
@@ -433,6 +446,11 @@ function ToursPanel() {
       setItems(res.tours.map((t) => ({
         ...t,
         price_by_language: (t.price_by_language ?? {}) as Record<string, number>,
+        pricing_mode: (t.pricing_mode === "by_group" ? "by_group" : "fixed") as "fixed" | "by_group",
+        base_language: t.base_language ?? (res.guide?.languages?.[0] ?? "Russian"),
+        language_multipliers: (t.language_multipliers ?? {}) as Record<string, number>,
+        group_prices: (t.group_prices ?? {}) as Record<string, number>,
+        children_free_under: Number(t.children_free_under ?? 16),
         languages: t.languages ?? [],
         highlights: t.highlights ?? [],
         included: t.included ?? [],
@@ -485,17 +503,25 @@ function ToursPanel() {
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <p className="font-medium">{it.title} {!it.published && <span className="text-[10px] uppercase text-muted-foreground ml-1">draft</span>}</p>
-                  <p className="text-xs text-muted-foreground">{Number(it.duration_hours)}h · base ${it.price_from} {it.transport_included && "· transport"}</p>
+                  <p className="text-xs text-muted-foreground">{Number(it.duration_hours)}h · {it.pricing_mode === "by_group" ? "by group size" : `$${it.price_from}`} {it.transport_included && "· transport"}</p>
                   <div className="mt-3 flex flex-wrap gap-1.5">
-                    {it.languages.map((lng) => {
-                      const p = it.price_by_language[lng];
-                      return (
-                        <span key={lng} className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs ring-1 ${p ? "bg-primary/10 text-primary ring-primary/20" : "bg-muted text-muted-foreground ring-border"}`}>
-                          <span className="font-medium">{lng}</span>
-                          <span className="tabular-nums">${p ?? it.price_from}</span>
-                        </span>
-                      );
-                    })}
+                    {it.pricing_mode === "by_group"
+                      ? GROUP_KEYS.filter((k) => (it.group_prices[k] ?? 0) > 0).map((k) => (
+                          <span key={k} className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs bg-primary/10 text-primary ring-1 ring-primary/20">
+                            <span className="font-medium">{GROUP_LABELS[k]}</span>
+                            <span className="tabular-nums">${it.group_prices[k]}</span>
+                          </span>
+                        ))
+                      : it.languages.map((lng) => {
+                          const mult = it.language_multipliers[lng];
+                          const isBase = lng === it.base_language;
+                          return (
+                            <span key={lng} className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs bg-primary/10 text-primary ring-1 ring-primary/20">
+                              <span className="font-medium">{lng}</span>
+                              <span className="tabular-nums">{isBase ? "base" : (mult ? `+${mult}%` : "+0%")}</span>
+                            </span>
+                          );
+                        })}
                   </div>
                 </div>
                 <div className="flex gap-1 shrink-0">
@@ -559,8 +585,12 @@ function TourEditor({
     cover_url: string | null;
     city_id: string;
     duration_hours: number;
-    price_from: number;
-    price_by_language: Record<string, number>;
+    pricing_mode: "fixed" | "by_group";
+    fixed_price: number;
+    group_prices: Partial<Record<(typeof GROUP_KEYS)[number], number>>;
+    base_language: string;
+    language_multipliers: Record<string, number>;
+    children_free_under: number;
     languages: string[];
     transport_included: boolean;
     highlights: string[];
@@ -577,17 +607,30 @@ function TourEditor({
   const [coverUrl, setCoverUrl] = useState(initial?.cover_url ?? "");
   const [cityId, setCityId] = useState(initial?.city_id ?? defaultCityId);
   const [durationHours, setDurationHours] = useState<number>(initial?.duration_hours ?? 2);
-  const [basePrice, setBasePrice] = useState<number>(initial?.price_from ?? 0);
+  const [pricingMode, setPricingMode] = useState<"fixed" | "by_group">(initial?.pricing_mode ?? "fixed");
+  const [fixedPrice, setFixedPrice] = useState<number>(
+    initial?.pricing_mode === "by_group" ? 0 : Number(initial?.group_prices?.fixed ?? initial?.price_from ?? 0),
+  );
+  const [groupPricesText, setGroupPricesText] = useState<Record<string, string>>(() => {
+    const out: Record<string, string> = {};
+    GROUP_KEYS.forEach((k) => {
+      const v = initial?.group_prices?.[k];
+      out[k] = v ? String(v) : "";
+    });
+    return out;
+  });
+  const [baseLanguage, setBaseLanguage] = useState<string>(initial?.base_language ?? languages[0] ?? "Russian");
+  const [langMultsText, setLangMultsText] = useState<Record<string, string>>(() => {
+    const out: Record<string, string> = {};
+    languages.forEach((l) => {
+      const v = initial?.language_multipliers?.[l];
+      out[l] = v !== undefined ? String(v) : "";
+    });
+    return out;
+  });
+  const [childrenFreeUnder, setChildrenFreeUnder] = useState<number>(initial?.children_free_under ?? 16);
   const [transportIncluded, setTransportIncluded] = useState<boolean>(initial?.transport_included ?? false);
   const [tourLangs, setTourLangs] = useState<string[]>(initial?.languages ?? languages);
-  const [pricesText, setPricesText] = useState<Record<string, string>>(() => {
-    const base: Record<string, string> = {};
-    languages.forEach((l) => {
-      const v = initial?.price_by_language?.[l];
-      base[l] = v ? String(v) : "";
-    });
-    return base;
-  });
   const [highlights, setHighlights] = useState(arrToText(initial?.highlights ?? []));
   const [included, setIncluded] = useState(arrToText(initial?.included ?? []));
   const [notIncluded, setNotIncluded] = useState(arrToText(initial?.not_included ?? []));
@@ -640,8 +683,8 @@ function TourEditor({
               <input type="number" min={0.5} step={0.5} value={durationHours} onChange={(e) => setDurationHours(Number(e.target.value) || 0)} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
             </label>
             <label className="block text-sm">
-              <span className="text-xs text-muted-foreground">Base price ($)</span>
-              <input type="number" min={0} value={basePrice} onChange={(e) => setBasePrice(Number(e.target.value) || 0)} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
+              <span className="text-xs text-muted-foreground">Children free under (age)</span>
+              <input type="number" min={0} max={21} value={childrenFreeUnder} onChange={(e) => setChildrenFreeUnder(Number(e.target.value) || 0)} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
             </label>
             <label className="block text-sm">
               <span className="text-xs text-muted-foreground">&nbsp;</span>
@@ -650,6 +693,47 @@ function TourEditor({
                 Transport included
               </label>
             </label>
+          </div>
+
+          {/* Pricing */}
+          <div className="rounded-2xl border border-border bg-card/40 p-4 space-y-3">
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-medium">Pricing</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <label className={`inline-flex items-center gap-2 rounded-full px-3 h-9 text-sm cursor-pointer ${pricingMode === "fixed" ? "bg-foreground text-background" : "bg-secondary"}`}>
+                <input type="radio" name="pmode" className="hidden" checked={pricingMode === "fixed"} onChange={() => setPricingMode("fixed")} />
+                Fixed price
+              </label>
+              <label className={`inline-flex items-center gap-2 rounded-full px-3 h-9 text-sm cursor-pointer ${pricingMode === "by_group" ? "bg-foreground text-background" : "bg-secondary"}`}>
+                <input type="radio" name="pmode" className="hidden" checked={pricingMode === "by_group"} onChange={() => setPricingMode("by_group")} />
+                Price by group size
+              </label>
+            </div>
+            {pricingMode === "fixed" ? (
+              <label className="block text-sm max-w-xs">
+                <span className="text-xs text-muted-foreground">Price ($, in base language)</span>
+                <input type="number" min={0} value={fixedPrice || ""} onChange={(e) => setFixedPrice(Number(e.target.value) || 0)} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
+              </label>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {GROUP_KEYS.map((k) => (
+                  <div key={k} className="flex items-center gap-2 rounded-xl border border-input bg-background px-3 h-11 text-sm">
+                    <span className="flex-1 font-medium">{GROUP_LABELS[k]}</span>
+                    <span className="text-muted-foreground">$</span>
+                    <input
+                      type="number"
+                      min={0}
+                      value={groupPricesText[k] ?? ""}
+                      onChange={(e) => setGroupPricesText({ ...groupPricesText, [k]: e.target.value })}
+                      placeholder="—"
+                      className="w-24 h-9 bg-transparent outline-none text-sm tabular-nums"
+                    />
+                  </div>
+                ))}
+                <p className="col-span-full text-xs text-muted-foreground">Leave empty to skip a group size. Larger groups can still contact you directly.</p>
+              </div>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -669,36 +753,57 @@ function TourEditor({
           </div>
 
           <div>
-            <p className="text-sm font-medium">Tour languages & price per language</p>
-            <p className="text-xs text-muted-foreground mt-0.5">Tick the languages you offer this tour in. Leave the price empty to use the base price.</p>
+            <p className="text-sm font-medium">Tour languages & surcharge %</p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Pick a base language (= 100% price). For other languages set a % surcharge — system computes the final price automatically. Leave at 0 if the price is the same.
+            </p>
             {languages.length === 0 ? (
               <p className="mt-2 text-xs text-muted-foreground">No languages on your profile yet.</p>
             ) : (
-              <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {languages.map((lng) => {
-                  const enabled = tourLangs.includes(lng);
-                  return (
-                    <div key={lng} className="flex items-center gap-2 rounded-xl border border-input bg-background px-3 h-11 text-sm">
-                      <label className="inline-flex items-center gap-2 flex-1 cursor-pointer">
-                        <input type="checkbox" checked={enabled} onChange={() => toggleLang(lng)} className="h-4 w-4" />
-                        <span className="font-medium">{lng}</span>
-                      </label>
-                      <span className="text-muted-foreground">$</span>
-                      <input
-                        type="number"
-                        min={0}
-                        value={pricesText[lng] ?? ""}
-                        onChange={(e) => setPricesText({ ...pricesText, [lng]: e.target.value })}
-                        placeholder={String(basePrice || 0)}
-                        disabled={!enabled}
-                        className="w-20 h-9 bg-transparent outline-none text-sm tabular-nums disabled:opacity-50"
-                      />
-                    </div>
-                  );
-                })}
-              </div>
+              <>
+                <div className="mt-3 flex items-center gap-2 text-sm">
+                  <span className="text-xs text-muted-foreground">Base language:</span>
+                  <select
+                    value={baseLanguage}
+                    onChange={(e) => setBaseLanguage(e.target.value)}
+                    className="h-9 rounded-lg border border-input bg-background px-2 text-sm"
+                  >
+                    {languages.map((l) => <option key={l} value={l}>{l}</option>)}
+                  </select>
+                </div>
+                <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {languages.map((lng) => {
+                    const enabled = tourLangs.includes(lng);
+                    const isBase = lng === baseLanguage;
+                    return (
+                      <div key={lng} className="flex items-center gap-2 rounded-xl border border-input bg-background px-3 h-11 text-sm">
+                        <label className="inline-flex items-center gap-2 flex-1 cursor-pointer">
+                          <input type="checkbox" checked={enabled} onChange={() => toggleLang(lng)} className="h-4 w-4" />
+                          <span className="font-medium">{lng}</span>
+                          {isBase && <span className="text-[10px] uppercase text-muted-foreground">base</span>}
+                        </label>
+                        {!isBase && (
+                          <>
+                            <span className="text-muted-foreground">+</span>
+                            <input
+                              type="number"
+                              value={langMultsText[lng] ?? ""}
+                              onChange={(e) => setLangMultsText({ ...langMultsText, [lng]: e.target.value })}
+                              placeholder="0"
+                              disabled={!enabled}
+                              className="w-16 h-9 bg-transparent outline-none text-sm tabular-nums disabled:opacity-50 text-right"
+                            />
+                            <span className="text-muted-foreground">%</span>
+                          </>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
             )}
           </div>
+
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <label className="block text-sm">
@@ -749,10 +854,16 @@ function TourEditor({
           <button
             disabled={!title.trim() || !cityId}
             onClick={() => {
-              const pbl: Record<string, number> = {};
-              for (const [k, v] of Object.entries(pricesText)) {
+              const gp: Partial<Record<(typeof GROUP_KEYS)[number], number>> = {};
+              for (const k of GROUP_KEYS) {
+                const n = Number(groupPricesText[k] ?? "");
+                if (Number.isFinite(n) && n > 0) gp[k] = n;
+              }
+              const mults: Record<string, number> = {};
+              for (const [k, v] of Object.entries(langMultsText)) {
+                if (k === baseLanguage) continue;
                 const n = Number(v);
-                if (Number.isFinite(n) && n > 0) pbl[k] = n;
+                if (Number.isFinite(n) && v !== "") mults[k] = n;
               }
               onSave({
                 id: initial?.id,
@@ -761,8 +872,12 @@ function TourEditor({
                 cover_url: coverUrl.trim() || null,
                 city_id: cityId,
                 duration_hours: durationHours,
-                price_from: basePrice,
-                price_by_language: pbl,
+                pricing_mode: pricingMode,
+                fixed_price: fixedPrice,
+                group_prices: gp,
+                base_language: baseLanguage,
+                language_multipliers: mults,
+                children_free_under: childrenFreeUnder,
                 languages: tourLangs,
                 transport_included: transportIncluded,
                 highlights: textToArr(highlights),

@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { PaymentMethods } from "@/components/PaymentMethods";
-import { useTour } from "@/lib/content-queries";
+import { useTour, computeTourPrice, offeredCategories, GROUP_CATEGORY_MAX, GROUP_CATEGORY_LABEL, type GroupCategory } from "@/lib/content-queries";
 import { getBookingSource } from "@/hooks/useTrackSource";
 import { getGuideSlots, createBooking } from "@/lib/booking.functions";
 import { useI18n } from "@/lib/i18n";
@@ -32,7 +32,9 @@ function BookPage() {
   const [telegramContact, setTelegramContact] = useState<{ telegram_user_id: number; telegram_chat_id: number | null; telegram_username: string | null } | null>(null);
   const [form, setForm] = useState({
     date: "",
-    guests: 2,
+    adults: 2,
+    children: 0,
+    category: null as GroupCategory | null,
     language: "",
     name: "",
     email: "",
@@ -88,12 +90,20 @@ function BookPage() {
   const handleFieldChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-  const setGuests = (n: number) => {
-    setForm((f) => ({ ...f, guests: Math.min(12, Math.max(1, n)) }));
-  };
+  const setAdults = (n: number) => setForm((f) => ({ ...f, adults: Math.min(50, Math.max(1, n)) }));
+  const setChildren = (n: number) => setForm((f) => ({ ...f, children: Math.min(50, Math.max(0, n)) }));
 
-  const unitPrice = (currentLanguage && tour.price_by_language[currentLanguage]) || Number(tour.price_from);
-  const total = unitPrice * form.guests;
+  const categories = offeredCategories(tour);
+  // Auto-pick category if not set
+  const selectedCategory: GroupCategory | null = form.category
+    ?? categories.find((c) => GROUP_CATEGORY_MAX[c] >= form.adults)
+    ?? null;
+  const adultsExceedAll = tour.pricing_mode === "by_group"
+    && categories.length > 0
+    && categories.every((c) => GROUP_CATEGORY_MAX[c] < form.adults);
+
+  const computedPrice = computeTourPrice(tour, { category: selectedCategory, language: currentLanguage || null });
+  const total = computedPrice ?? 0;
   const fee = Math.round(total * 0.08);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -117,7 +127,9 @@ function BookPage() {
           date: chosenSlot?.date ?? form.date,
           start_time: chosenSlot?.start_time,
           duration_minutes: chosenSlot?.duration_minutes,
-          guests: form.guests,
+          adults: form.adults,
+          children: form.children,
+          group_category: tour.pricing_mode === "by_group" ? selectedCategory : null,
           customer_name: form.name,
           customer_email: form.email,
           customer_telegram_user_id: telegramContact?.telegram_user_id,
@@ -205,38 +217,79 @@ function BookPage() {
               </div>
             )}
 
-            <div className={`grid gap-4 ${availableLanguages.length > 0 ? "sm:grid-cols-2" : ""}`}>
+            <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label className="text-sm font-medium">Guests</label>
+                <label className="text-sm font-medium">Adults</label>
                 <div className="mt-2 inline-flex h-12 items-center rounded-xl border border-input bg-background">
-                  <button type="button" onClick={() => setGuests(form.guests - 1)} disabled={form.guests <= 1} className="h-12 w-12 text-lg font-medium text-muted-foreground hover:text-foreground disabled:opacity-40">−</button>
-                  <span className="w-10 text-center text-sm font-medium tabular-nums">{form.guests}</span>
-                  <button type="button" onClick={() => setGuests(form.guests + 1)} disabled={form.guests >= 12} className="h-12 w-12 text-lg font-medium text-muted-foreground hover:text-foreground disabled:opacity-40">+</button>
+                  <button type="button" onClick={() => setAdults(form.adults - 1)} disabled={form.adults <= 1} className="h-12 w-12 text-lg font-medium text-muted-foreground hover:text-foreground disabled:opacity-40">−</button>
+                  <span className="w-10 text-center text-sm font-medium tabular-nums">{form.adults}</span>
+                  <button type="button" onClick={() => setAdults(form.adults + 1)} className="h-12 w-12 text-lg font-medium text-muted-foreground hover:text-foreground">+</button>
                 </div>
               </div>
-              {availableLanguages.length > 0 && (
-                <div>
-                  <label className="text-sm font-medium">Language</label>
-                  <div className="mt-2 flex flex-wrap gap-1.5">
-                    {availableLanguages.map((lng) => {
-                      const active = currentLanguage === lng;
-                      const langPrice = tour.price_by_language[lng] ?? Number(tour.price_from);
-                      return (
-                        <button
-                          key={lng}
-                          type="button"
-                          onClick={() => setForm({ ...form, language: lng })}
-                          className={`inline-flex items-center gap-1.5 h-9 px-3 rounded-full text-sm ring-1 transition ${active ? "bg-foreground text-background ring-foreground" : "bg-background ring-border hover:bg-muted"}`}
-                        >
-                          <span>{lng}</span>
-                          <span className={`tabular-nums ${active ? "text-background/80" : "text-muted-foreground"}`}>${Math.round(langPrice)}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
+              <div>
+                <label className="text-sm font-medium">Children (under {tour.children_free_under})</label>
+                <div className="mt-2 inline-flex h-12 items-center rounded-xl border border-input bg-background">
+                  <button type="button" onClick={() => setChildren(form.children - 1)} disabled={form.children <= 0} className="h-12 w-12 text-lg font-medium text-muted-foreground hover:text-foreground disabled:opacity-40">−</button>
+                  <span className="w-10 text-center text-sm font-medium tabular-nums">{form.children}</span>
+                  <button type="button" onClick={() => setChildren(form.children + 1)} className="h-12 w-12 text-lg font-medium text-muted-foreground hover:text-foreground">+</button>
                 </div>
-              )}
+                <p className="mt-1 text-xs text-muted-foreground">Don't count toward the group size.</p>
+              </div>
             </div>
+
+            {tour.pricing_mode === "by_group" && categories.length > 0 && (
+              <div>
+                <label className="text-sm font-medium">Group size</label>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {categories.map((c) => {
+                    const active = selectedCategory === c;
+                    const tooSmall = GROUP_CATEGORY_MAX[c] < form.adults;
+                    return (
+                      <button
+                        key={c}
+                        type="button"
+                        disabled={tooSmall}
+                        onClick={() => setForm({ ...form, category: c })}
+                        className={`inline-flex items-center gap-1.5 h-9 px-3 rounded-full text-sm ring-1 transition ${active ? "bg-foreground text-background ring-foreground" : "bg-background ring-border hover:bg-muted"} ${tooSmall ? "opacity-40 cursor-not-allowed" : ""}`}
+                      >
+                        <span>{GROUP_CATEGORY_LABEL[c]}</span>
+                        <span className={`tabular-nums ${active ? "text-background/80" : "text-muted-foreground"}`}>${tour.group_prices[c]}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                {adultsExceedAll && (
+                  <p className="mt-2 text-sm text-amber-700 bg-amber-500/10 rounded-xl p-3">
+                    Your group is larger than the offered sizes. Please contact the guide to arrange a custom booking.
+                  </p>
+                )}
+              </div>
+            )}
+
+            {availableLanguages.length > 0 && (
+              <div>
+                <label className="text-sm font-medium">Language</label>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {availableLanguages.map((lng) => {
+                    const active = currentLanguage === lng;
+                    const isBase = lng === tour.base_language;
+                    const mult = tour.language_multipliers[lng] ?? 0;
+                    return (
+                      <button
+                        key={lng}
+                        type="button"
+                        onClick={() => setForm({ ...form, language: lng })}
+                        className={`inline-flex items-center gap-1.5 h-9 px-3 rounded-full text-sm ring-1 transition ${active ? "bg-foreground text-background ring-foreground" : "bg-background ring-border hover:bg-muted"}`}
+                      >
+                        <span>{lng}</span>
+                        <span className={`tabular-nums ${active ? "text-background/80" : "text-muted-foreground"}`}>{isBase ? "base" : mult > 0 ? `+${mult}%` : mult < 0 ? `${mult}%` : "+0%"}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
@@ -268,7 +321,7 @@ function BookPage() {
               <textarea value={form.notes} onChange={handleFieldChange} name="notes" rows={4} className="mt-2 w-full rounded-xl border border-input bg-background p-4 text-sm outline-none focus:ring-2 focus:ring-ring" placeholder="Anything specific you'd love to see or do…" />
             </div>
 
-            <button type="submit" disabled={submitting} className="inline-flex h-12 w-full items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.01] disabled:opacity-60">
+            <button type="submit" disabled={submitting || adultsExceedAll || total === 0} className="inline-flex h-12 w-full items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.01] disabled:opacity-60">
               {submitting ? "Sending…" : isInstantMode ? `Confirm & book — $${total + fee}` : `Request booking — $${total + fee}`}
             </button>
             <p className="text-center text-xs text-muted-foreground">{isInstantMode ? "Your slot is locked in instantly." : "Your guide will review and confirm this request."}</p>
@@ -303,10 +356,13 @@ function BookPage() {
                   <span className="text-muted-foreground">
                     {tour.title}
                     {currentLanguage && <span className="text-foreground/70"> · {currentLanguage}</span>}
+                    {tour.pricing_mode === "by_group" && selectedCategory && (
+                      <span className="text-foreground/70"> · {GROUP_CATEGORY_LABEL[selectedCategory]}</span>
+                    )}
                   </span>
-                  <span className="tabular-nums">${unitPrice}</span>
+                  <span className="tabular-nums">${total}</span>
                 </div>
-                <div className="flex justify-between"><span className="text-muted-foreground">× {form.guests} {form.guests === 1 ? "guest" : "guests"}</span><span className="tabular-nums">${total}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">{form.adults} {form.adults === 1 ? "adult" : "adults"}{form.children > 0 ? `, ${form.children} ${form.children === 1 ? "child" : "children"}` : ""}</span><span className="tabular-nums" /></div>
                 <div className="flex justify-between"><span className="text-muted-foreground">Service fee</span><span className="tabular-nums">${fee}</span></div>
                 <div className="flex justify-between border-t border-border/60 pt-3 text-base font-semibold"><span>Total</span><span className="tabular-nums">${total + fee}</span></div>
               </div>

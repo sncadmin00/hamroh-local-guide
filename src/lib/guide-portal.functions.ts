@@ -238,7 +238,7 @@ export const listMyTours = createServerFn({ method: "GET" })
       supabase.from("cities").select("id, name").in("id", cityIds),
       supabase
         .from("tours")
-        .select("id, slug, title, short_description, cover_url, city_id, duration_hours, price_from, price_by_language, transport_included, languages, highlights, included, not_included, published, sort_order, tour_categories(category_id)")
+        .select("id, slug, title, short_description, cover_url, city_id, duration_hours, price_from, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, children_free_under, transport_included, languages, highlights, included, not_included, published, sort_order, tour_categories(category_id)")
         .eq("guide_id", guide.id)
         .order("sort_order", { ascending: true }),
     ]);
@@ -254,6 +254,8 @@ export const listMyTours = createServerFn({ method: "GET" })
     };
   });
 
+const GROUP_KEYS = ["private", "small", "group", "large"] as const;
+
 const upsertTourSchema = z.object({
   id: z.string().uuid().optional(),
   title: z.string().trim().min(1).max(200),
@@ -261,8 +263,16 @@ const upsertTourSchema = z.object({
   cover_url: z.string().trim().max(2000).optional().nullable(),
   city_id: z.string().uuid(),
   duration_hours: z.number().min(0.5).max(72),
-  price_from: z.number().min(0).max(100000),
-  price_by_language: z.record(z.string().min(1).max(40), z.number().min(0).max(100000)).default({}),
+  pricing_mode: z.enum(["fixed", "by_group"]).default("fixed"),
+  fixed_price: z.number().min(0).max(100000).default(0),
+  group_prices: z
+    .record(z.enum(GROUP_KEYS), z.number().min(0).max(100000))
+    .default(() => ({}) as Record<(typeof GROUP_KEYS)[number], number>),
+  base_language: z.string().trim().min(1).max(40).default("Russian"),
+  language_multipliers: z
+    .record(z.string().min(1).max(40), z.number().min(-50).max(500))
+    .default(() => ({}) as Record<string, number>),
+  children_free_under: z.number().int().min(0).max(21).default(16),
   languages: z.array(z.string().min(1).max(40)).max(20).default([]),
   transport_included: z.boolean().default(false),
   highlights: z.array(z.string().trim().min(1).max(300)).max(30).default([]),
@@ -282,10 +292,30 @@ export const upsertTour = createServerFn({ method: "POST" })
       .from("guides").select("id, slug").eq("user_id", userId).maybeSingle();
     if (!guide) throw new Error("You are not linked to a guide profile yet.");
 
-    const cleanedPbl: Record<string, number> = {};
-    for (const [k, v] of Object.entries(data.price_by_language)) {
-      if (v > 0) cleanedPbl[k] = v;
+    // Build group_prices jsonb depending on mode
+    const groupPrices: Record<string, number> = {};
+    if (data.pricing_mode === "by_group") {
+      for (const k of GROUP_KEYS) {
+        const v = Number(data.group_prices[k] ?? 0);
+        if (v > 0) groupPrices[k] = v;
+      }
+      if (Object.keys(groupPrices).length === 0) {
+        throw new Error("Add at least one group price.");
+      }
+    } else {
+      if (data.fixed_price <= 0) throw new Error("Set a price.");
+      groupPrices.fixed = data.fixed_price;
     }
+
+    // Clean language multipliers (drop base language and zero/empty)
+    const cleanedMults: Record<string, number> = {};
+    for (const [k, v] of Object.entries(data.language_multipliers)) {
+      if (k === data.base_language) continue;
+      if (Number.isFinite(v)) cleanedMults[k] = v;
+    }
+
+    // price_from = minimum offered base price
+    const priceFrom = Math.min(...Object.values(groupPrices));
 
     const payload = {
       title: data.title,
@@ -294,8 +324,13 @@ export const upsertTour = createServerFn({ method: "POST" })
       cover_url: data.cover_url || null,
       city_id: data.city_id,
       duration_hours: data.duration_hours,
-      price_from: data.price_from,
-      price_by_language: cleanedPbl,
+      price_from: priceFrom,
+      price_by_language: {},
+      pricing_mode: data.pricing_mode,
+      base_language: data.base_language,
+      language_multipliers: cleanedMults,
+      group_prices: groupPrices,
+      children_free_under: data.children_free_under,
       languages: data.languages,
       transport_included: data.transport_included,
       highlights: data.highlights,
@@ -304,6 +339,7 @@ export const upsertTour = createServerFn({ method: "POST" })
       published: data.published,
       sort_order: data.sort_order,
     };
+
 
     let tourId: string;
     if (data.id) {

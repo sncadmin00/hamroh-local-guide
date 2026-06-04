@@ -37,7 +37,9 @@ const bookingSchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   start_time: z.string().regex(/^\d{2}:\d{2}(:\d{2})?$/).optional(),
   duration_minutes: z.number().int().min(30).max(720).optional(),
-  guests: z.number().int().min(1).max(50),
+  adults: z.number().int().min(1).max(50),
+  children: z.number().int().min(0).max(50).default(0),
+  group_category: z.enum(["private", "small", "group", "large"]).nullable().optional(),
   language: z.string().min(1).max(40).optional(),
   customer_name: z.string().min(1).max(200),
   customer_email: z.string().email().optional().or(z.literal("")),
@@ -51,6 +53,13 @@ const bookingSchema = z.object({
   message: "Email or Telegram contact is required",
 });
 
+const GROUP_MAX: Record<"private" | "small" | "group" | "large", number> = {
+  private: 2,
+  small: 6,
+  group: 12,
+  large: 25,
+};
+
 export const createBooking = createServerFn({ method: "POST" })
   .inputValidator((input) => bookingSchema.parse(input))
   .handler(async ({ data }) => {
@@ -60,19 +69,38 @@ export const createBooking = createServerFn({ method: "POST" })
     // Load tour authoritatively — never trust client-side price.
     const { data: tour, error: tourErr } = await supabaseAdmin
       .from("tours")
-      .select("id, guide_id, title, price_from, price_by_language, duration_hours, published")
+      .select("id, guide_id, title, price_from, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, children_free_under, duration_hours, published")
       .eq("id", data.tour_id)
       .maybeSingle();
     if (tourErr) throw new Error(tourErr.message);
     if (!tour || !tour.published) throw new Error("Tour not available");
 
-    const pbl = (tour.price_by_language ?? {}) as Record<string, number>;
-    const langPrice = data.language ? Number(pbl[data.language] ?? 0) : 0;
-    const unit = langPrice > 0 ? langPrice : Number(tour.price_from);
-    const subtotal = unit * data.guests;
+    const pricingMode = (tour as any).pricing_mode === "by_group" ? "by_group" : "fixed";
+    const groupPrices = ((tour as any).group_prices ?? {}) as Record<string, number>;
+    const langMults = ((tour as any).language_multipliers ?? {}) as Record<string, number>;
+    const baseLanguage = (tour as any).base_language as string | null;
+
+    let basePrice = 0;
+    if (pricingMode === "by_group") {
+      if (!data.group_category) throw new Error("Please choose a group size.");
+      const max = GROUP_MAX[data.group_category];
+      if (data.adults > max) {
+        throw new Error("Your group is larger than this category. Please contact the guide.");
+      }
+      basePrice = Number(groupPrices[data.group_category] ?? 0);
+      if (basePrice <= 0) throw new Error("This group size is not offered for this tour.");
+    } else {
+      basePrice = Number(groupPrices.fixed ?? tour.price_from ?? 0);
+      if (basePrice <= 0) throw new Error("Tour price is not set.");
+    }
+
+    const lang = data.language ?? null;
+    const mult = !lang || lang === baseLanguage ? 0 : Number(langMults[lang] ?? 0);
+    const subtotal = Math.round(basePrice * (1 + mult / 100));
     const fee = Math.round(subtotal * 0.08);
     const total = subtotal + fee;
 
+    const totalGuests = data.adults + data.children;
     const isInstant = !!data.slot_id;
     const experienceLabel = data.language ? `${tour.title} (${data.language})` : tour.title;
 
@@ -85,7 +113,10 @@ export const createBooking = createServerFn({ method: "POST" })
       date: data.date,
       start_time: data.start_time ?? null,
       duration_minutes: data.duration_minutes ?? Math.round(Number(tour.duration_hours) * 60) ?? 120,
-      guests: data.guests,
+      guests: totalGuests,
+      adults: data.adults,
+      children: data.children,
+      group_category: data.group_category ?? null,
       customer_name: data.customer_name,
       customer_email: data.customer_email || null,
       customer_telegram_user_id: data.customer_telegram_user_id ?? null,
@@ -137,7 +168,7 @@ export const createBooking = createServerFn({ method: "POST" })
             experience: experienceLabel,
             date: data.date,
             startTime: data.start_time,
-            guests: data.guests,
+            guests: totalGuests,
             total,
             bookingUrl: `${APP_BASE_URL}/my-bookings`,
             status,
@@ -162,7 +193,7 @@ export const createBooking = createServerFn({ method: "POST" })
         experience: experienceLabel,
         date: data.date,
         startTime: data.start_time,
-        guests: data.guests,
+        guests: totalGuests,
         status,
         url: `${APP_BASE_URL}/my-bookings`,
       }));
@@ -182,7 +213,7 @@ export const createBooking = createServerFn({ method: "POST" })
               experience: experienceLabel,
               date: data.date,
               startTime: data.start_time,
-              guests: data.guests,
+              guests: totalGuests,
               total,
               notes: data.notes,
               bookingUrl: `${APP_BASE_URL}/guide`,
@@ -203,7 +234,7 @@ export const createBooking = createServerFn({ method: "POST" })
           experience: experienceLabel,
           date: data.date,
           startTime: data.start_time,
-          guests: data.guests,
+          guests: totalGuests,
           status,
           url: `${APP_BASE_URL}/guide`,
         }));
