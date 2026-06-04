@@ -50,9 +50,8 @@ export function GuideCard({ guide }: { guide: Guide }) {
           </span>
         </div>
         <p className="mt-1 inline-flex items-center gap-1 text-sm text-muted-foreground">
-          <MapPin className="h-3.5 w-3.5" /> {guide.city}
+          <MapPin className="h-3.5 w-3.5" /> {allCities.join(" · ")}
         </p>
-        <p className="mt-3 text-sm text-foreground/80">{guide.tagline}</p>
 
         <div className="mt-4 flex flex-wrap gap-1.5">
           {guide.languages.slice(0, 4).map((l) => (
