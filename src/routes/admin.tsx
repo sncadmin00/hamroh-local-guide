@@ -463,12 +463,14 @@ function GuidesPanel({
   cities,
   categories,
   guideCategories,
+  languages: languageList,
   reload,
 }: {
   guides: Guide[];
   cities: City[];
   categories: Category[];
   guideCategories: GuideCategoryLink[];
+  languages: Language[];
   reload: () => Promise<void>;
 }) {
   const [name, setName] = useState("");
