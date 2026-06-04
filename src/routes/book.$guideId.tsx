@@ -99,8 +99,8 @@ function BookPage() {
   const handleFieldChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-  const handleGuestChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, guests: Math.max(1, Number(e.target.value) || 1) });
+  const setGuests = (n: number) => {
+    setForm((f) => ({ ...f, guests: Math.min(12, Math.max(1, n)) }));
   };
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
