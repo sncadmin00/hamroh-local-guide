@@ -16,7 +16,7 @@ import { useI18n } from "@/lib/i18n";
 export function ExploreTabs() {
   const isMobile = useIsMobile();
   const { t } = useI18n();
-  const [tab, setTab] = useState("guides");
+  const [tab, setTab] = useState("tours");
   const { data: guides = [] } = useGuides();
   const { data: tours = [] } = useTours();
 
@@ -24,8 +24,8 @@ export function ExploreTabs() {
   if (isMobile) {
     return (
       <>
-        <FeaturedGuides />
         <TopTours />
+        <FeaturedGuides />
         <PopularCities />
       </>
     );
@@ -47,7 +47,7 @@ export function ExploreTabs() {
         <Tabs value={tab} onValueChange={setTab} className="w-full">
           <div className="relative mb-10 border-b border-border">
             <TabsList className="mx-auto flex h-auto w-full justify-center gap-8 md:gap-14 bg-transparent p-0 rounded-none">
-              {(["guides", "tours", "cities", "explore"] as const).map((key) => (
+              {(["tours", "guides", "cities", "explore"] as const).map((key) => (
                 <TabsTrigger
                   key={key}
                   value={key}
