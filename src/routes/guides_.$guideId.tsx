@@ -164,20 +164,37 @@ function GuidePage() {
               <div>
                 <h2 className="font-display text-2xl font-semibold">Experiences</h2>
                 <div className="mt-4 space-y-3">
-                  {guide.experiences.map((e) => (
-                    <div key={e.title} className="flex items-center justify-between gap-4 rounded-2xl bg-card p-5 ring-1 ring-border/60">
-                      <div>
-                        <h4 className="font-medium">{e.title}</h4>
-                        <p className="mt-1 inline-flex items-center gap-1 text-sm text-muted-foreground">
-                          <Clock className="h-3.5 w-3.5" /> {e.duration}
-                        </p>
+                  {guide.experiences.map((e) => {
+                    const langPrices = guide.languages
+                      .map((lng) => ({ lng, price: e.priceByLanguage[lng] ?? e.price }))
+                      .filter((x) => x.price > 0);
+                    return (
+                      <div key={e.title} className="rounded-2xl bg-card p-5 ring-1 ring-border/60">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="min-w-0">
+                            <h4 className="font-medium">{e.title}</h4>
+                            <p className="mt-1 inline-flex items-center gap-1 text-sm text-muted-foreground">
+                              <Clock className="h-3.5 w-3.5" /> {e.duration}
+                            </p>
+                          </div>
+                          <div className="text-right shrink-0">
+                            <div className="font-display text-xl font-semibold">${e.price}</div>
+                            <div className="text-xs text-muted-foreground">per person</div>
+                          </div>
+                        </div>
+                        {langPrices.length > 0 && (
+                          <div className="mt-3 flex flex-wrap gap-1.5">
+                            {langPrices.map(({ lng, price }) => (
+                              <span key={lng} className="inline-flex items-center gap-1 rounded-md bg-secondary px-2 py-1 text-xs">
+                                <span className="font-medium text-secondary-foreground">{lng}</span>
+                                <span className="text-muted-foreground tabular-nums">${Math.round(price)}</span>
+                              </span>
+                            ))}
+                          </div>
+                        )}
                       </div>
-                      <div className="text-right">
-                        <div className="font-display text-xl font-semibold">${e.price}</div>
-                        <div className="text-xs text-muted-foreground">per person</div>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
