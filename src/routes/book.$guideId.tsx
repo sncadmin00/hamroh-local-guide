@@ -38,6 +38,7 @@ function BookPage() {
     date: "",
     guests: 2,
     experience: "",
+    language: "",
     name: "",
     email: "",
     notes: "",
@@ -98,8 +99,8 @@ function BookPage() {
   const handleFieldChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-  const handleGuestChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, guests: Math.max(1, Number(e.target.value) || 1) });
+  const setGuests = (n: number) => {
+    setForm((f) => ({ ...f, guests: Math.min(12, Math.max(1, n)) }));
   };
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -218,23 +219,44 @@ function BookPage() {
                     );
                   })}
                 </div>
-                <div className="mt-4">
-                  <label className="text-sm font-medium">Guests</label>
-                  <input type="number" min={1} max={12} value={form.guests} onChange={handleGuestChange} className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring" />
-                </div>
               </div>
             ) : (
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <label className="text-sm font-medium">Date</label>
-                  <input type="date" required value={form.date} onChange={handleFieldChange} name="date" className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring" />
-                </div>
-                <div>
-                  <label className="text-sm font-medium">Guests</label>
-                  <input type="number" min={1} max={12} value={form.guests} onChange={handleGuestChange} className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring" />
-                </div>
+              <div>
+                <label className="text-sm font-medium">Date</label>
+                <input type="date" required value={form.date} onChange={handleFieldChange} name="date" className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring" />
               </div>
             )}
+
+            <div className={`grid gap-4 ${guide.languages.length > 1 ? "sm:grid-cols-2" : ""}`}>
+              <div>
+                <label className="text-sm font-medium">Guests</label>
+                <div className="mt-2 inline-flex h-12 items-center rounded-xl border border-input bg-background">
+                  <button type="button" onClick={() => setGuests(form.guests - 1)} disabled={form.guests <= 1} className="h-12 w-12 text-lg font-medium text-muted-foreground hover:text-foreground disabled:opacity-40">−</button>
+                  <span className="w-10 text-center text-sm font-medium tabular-nums">{form.guests}</span>
+                  <button type="button" onClick={() => setGuests(form.guests + 1)} disabled={form.guests >= 12} className="h-12 w-12 text-lg font-medium text-muted-foreground hover:text-foreground disabled:opacity-40">+</button>
+                </div>
+              </div>
+              {guide.languages.length > 1 && (
+                <div>
+                  <label className="text-sm font-medium">Language</label>
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {guide.languages.map((lng) => {
+                      const active = (form.language || guide.languages[0]) === lng;
+                      return (
+                        <button
+                          key={lng}
+                          type="button"
+                          onClick={() => setForm({ ...form, language: lng })}
+                          className={`h-9 px-3 rounded-full text-sm ring-1 transition ${active ? "bg-foreground text-background ring-foreground" : "bg-background ring-border hover:bg-muted"}`}
+                        >
+                          {lng}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
