@@ -3,7 +3,8 @@ import { useEffect, useState, useCallback } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Calendar, Plus, Trash2, Check, X, LogOut, Loader2, Copy, Link2, Image as ImageIcon, Compass, Pencil, MapPin } from "lucide-react";
+import { Calendar, CalendarClock, Plus, Trash2, Check, X, LogOut, Loader2, Copy, Link2, Image as ImageIcon, Compass, Pencil, MapPin } from "lucide-react";
+import { sendMessage } from "@/lib/messages.functions";
 import {
   getMyGuide,
   listMySlots,
@@ -79,6 +80,7 @@ function GuidePortal() {
   const addSlotFn = useServerFn(addSlot);
   const deleteSlotFn = useServerFn(deleteSlot);
   const updateStatusFn = useServerFn(updateBookingStatus);
+  const sendMessageFn = useServerFn(sendMessage);
 
   const load = useCallback(async () => {
     const [g, s, b] = await Promise.all([fetchGuide(), fetchSlots(), fetchBookings()]);
@@ -194,6 +196,13 @@ function GuidePortal() {
                 await updateStatusFn({ data: { id, status } });
                 toast.success(`Booking ${status}`);
                 await load();
+              } catch (e) { toast.error((e as Error).message); }
+            }}
+            onPropose={async (bookingId, date, time, note) => {
+              try {
+                const body = `Proposing another time: ${date} at ${time}.${note ? ` Note: ${note}` : ""}`;
+                await sendMessageFn({ data: { booking_id: bookingId, body } });
+                toast.success("Proposal sent to client");
               } catch (e) { toast.error((e as Error).message); }
             }}
           />
@@ -335,11 +344,18 @@ function AvailabilityPanel({
 }
 
 function BookingsPanel({
-  bookings, onAction,
+  bookings, onAction, onPropose,
 }: {
   bookings: Booking[];
   onAction: (id: string, status: "confirmed" | "declined" | "cancelled") => void;
+  onPropose: (bookingId: string, date: string, time: string, note: string) => Promise<void>;
 }) {
+  const [proposeFor, setProposeFor] = useState<string | null>(null);
+  const [pDate, setPDate] = useState("");
+  const [pTime, setPTime] = useState("");
+  const [pNote, setPNote] = useState("");
+  const [sending, setSending] = useState(false);
+
   if (bookings.length === 0) {
     return <div className="rounded-3xl bg-card p-6 ring-1 ring-border text-sm text-muted-foreground">No bookings yet.</div>;
   }
@@ -347,7 +363,7 @@ function BookingsPanel({
     <div className="space-y-3">
       {bookings.map((b) => (
         <div key={b.id} className="rounded-2xl bg-card p-5 ring-1 ring-border">
-          <div className="flex items-start justify-between gap-3">
+          <div className="flex items-start justify-between gap-3 flex-wrap">
             <div className="min-w-0">
               <p className="font-medium">{b.customer_name} · {b.guests} {b.guests === 1 ? "guest" : "guests"}</p>
               <p className="text-xs text-muted-foreground truncate">
@@ -364,9 +380,20 @@ function BookingsPanel({
               </p>
             </div>
             {b.status === "pending" && (
-              <div className="flex gap-2 shrink-0">
+              <div className="flex gap-2 shrink-0 flex-wrap">
                 <button onClick={() => onAction(b.id, "confirmed")} className="h-9 px-3 rounded-full bg-foreground text-background text-xs font-medium inline-flex items-center gap-1">
                   <Check className="h-3.5 w-3.5" /> Confirm
+                </button>
+                <button
+                  onClick={() => {
+                    setProposeFor(proposeFor === b.id ? null : b.id);
+                    setPDate(b.date);
+                    setPTime(b.start_time ? b.start_time.slice(0, 5) : "");
+                    setPNote("");
+                  }}
+                  className="h-9 px-3 rounded-full bg-muted text-foreground text-xs font-medium inline-flex items-center gap-1"
+                >
+                  <CalendarClock className="h-3.5 w-3.5" /> Propose time
                 </button>
                 <button onClick={() => onAction(b.id, "declined")} className="h-9 px-3 rounded-full bg-muted text-foreground text-xs font-medium inline-flex items-center gap-1">
                   <X className="h-3.5 w-3.5" /> Decline
@@ -374,6 +401,49 @@ function BookingsPanel({
               </div>
             )}
           </div>
+
+          {proposeFor === b.id && (
+            <div className="mt-4 pt-4 border-t border-border space-y-3">
+              <p className="text-xs text-muted-foreground">Suggest a different date and time. The client will get this as a message.</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <label className="text-xs font-medium">
+                  Date
+                  <input type="date" value={pDate} onChange={(e) => setPDate(e.target.value)}
+                    className="mt-1 h-10 w-full rounded-lg border border-input bg-background px-3 text-sm" />
+                </label>
+                <label className="text-xs font-medium">
+                  Time
+                  <input type="time" value={pTime} onChange={(e) => setPTime(e.target.value)}
+                    className="mt-1 h-10 w-full rounded-lg border border-input bg-background px-3 text-sm" />
+                </label>
+              </div>
+              <label className="text-xs font-medium block">
+                Note (optional)
+                <textarea value={pNote} onChange={(e) => setPNote(e.target.value)} rows={2}
+                  placeholder="Why this time works better…"
+                  className="mt-1 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm" />
+              </label>
+              <div className="flex gap-2 justify-end">
+                <button onClick={() => setProposeFor(null)} className="h-9 px-3 rounded-full bg-muted text-foreground text-xs font-medium">
+                  Cancel
+                </button>
+                <button
+                  disabled={!pDate || !pTime || sending}
+                  onClick={async () => {
+                    setSending(true);
+                    try {
+                      await onPropose(b.id, pDate, pTime, pNote.trim());
+                      setProposeFor(null);
+                    } finally { setSending(false); }
+                  }}
+                  className="h-9 px-3 rounded-full bg-foreground text-background text-xs font-medium inline-flex items-center gap-1 disabled:opacity-50"
+                >
+                  {sending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <CalendarClock className="h-3.5 w-3.5" />}
+                  Send proposal
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       ))}
     </div>
