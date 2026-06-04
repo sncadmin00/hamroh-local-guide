@@ -522,7 +522,7 @@ function GuidesPanel({
     setPrice("");
     setPhoto("");
     setSpecialties("");
-    setLanguages("");
+    setSelectedLangs([]);
     await reload();
   };
 
