@@ -125,6 +125,8 @@ function BecomeAGuidePage() {
   const [photos, setPhotos] = useState<File[]>([]);
   const [video, setVideo] = useState<File | null>(null);
   const [form, setForm] = useState<FormState>(emptyForm);
+  const [hasTransport, setHasTransport] = useState<boolean>(false);
+  const [transportSeats, setTransportSeats] = useState<string>("");
 
   // Load draft
   useEffect(() => {
