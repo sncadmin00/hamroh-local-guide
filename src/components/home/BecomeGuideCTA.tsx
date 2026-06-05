@@ -12,7 +12,7 @@ export function BecomeGuideCTA() {
         >
           <div className="absolute -top-20 -right-20 w-72 h-72 rounded-full opacity-30 blur-3xl bg-white" />
           <div className="relative">
-            <h2 className="font-display text-3xl md:text-4xl font-semibold">{t("cta.title")}</h2>
+            <h2 className="font-display text-3xl md:text-4xl font-semibold whitespace-pre-line">{t("cta.title")}</h2>
             <p className="mt-3 text-base md:text-lg opacity-90 max-w-xl mx-auto">
               {t("cta.subtitle")}
             </p>
