@@ -2,8 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { convertToModelMessages, streamText, stepCountIs, type UIMessage } from "ai";
 import { createClient } from "@supabase/supabase-js";
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
+import { retrieveArticleContext } from "@/lib/articles-rag.functions";
 
 type ChatBody = { messages?: UIMessage[]; threadId?: string };
+
 
 const DAILY_LIMIT = 20;
 const MAX_QUERY_LEN = 300;
