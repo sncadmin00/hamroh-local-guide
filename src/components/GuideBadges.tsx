@@ -7,6 +7,7 @@ export type GuideBadgesData = {
   hasVerifiedLanguage: boolean;
   introVideoVerified: boolean;
   reviewsCount: number;
+  avgRating?: number | null;
   completedToursCount: number;
   avgResponseMinutes: number | null;
 };
