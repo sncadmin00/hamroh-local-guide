@@ -124,7 +124,7 @@ export function TopTours() {
 
                       <div className="p-4">
                         <h3 className="font-display text-base font-semibold text-foreground line-clamp-2">
-                          {tour.title}
+                          {pickTourTitle(tour, lang)}
                         </h3>
                         <p className="mt-1 text-xs text-muted-foreground">
                           {[tour.cities?.name, tour.guides?.name].filter(Boolean).join(" · ")}
