@@ -33,12 +33,12 @@ export const translations: Dict = {
   "hero.h1": {
     en: "Find trusted local guides across Uzbekistan",
     uz: "O'zbekiston bo'ylab ishonchli mahalliy hamrohlarni toping",
-    ru: "Найдите проверенных местных гидов по всему Узбекистану",
+    ru: "Откройте Узбекистан с местными",
   },
   "hero.h1sub": {
     en: "Book authentic experiences with verified local companions in Tashkent, Samarkand and Bukhara.",
     uz: "Toshkent, Samarqand va Buxoroda tasdiqlangan mahalliy hamrohlar bilan haqiqiy tajribalarni bron qiling.",
-    ru: "Бронируйте аутентичные впечатления с проверенными местными спутниками в Ташкенте, Самарканде и Бухаре.",
+    ru: "Проверенные гиды, уникальные маршруты и настоящие впечатления.",
   },
   "hero.subtitle": {
     en: "Describe the trip you want. Hamroh AI matches you with a verified local guide.",
