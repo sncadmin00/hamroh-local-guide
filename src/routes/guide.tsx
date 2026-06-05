@@ -241,6 +241,7 @@ function GuidePortal() {
         {tab === "languages" && (
           <LanguagesPanel
             current={guide.languages ?? []}
+            verified={guide.verified_languages ?? {}}
             onSaved={() => load()}
           />
         )}
