@@ -200,12 +200,24 @@ function GuidePage() {
                 <div>
                   <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Languages</h3>
                   <div className="mt-3 flex flex-wrap gap-2">
-                    {guide.languages.map((l) => (
-                      <span key={l} className="inline-flex items-center gap-1 rounded-full bg-secondary px-3 py-1 text-sm">
-                        <Globe2 className="h-3.5 w-3.5" /> {l}
-                      </span>
-                    ))}
+                    {guide.languages.map((l) => {
+                      const level = guide.verifiedLanguages?.[l];
+                      return (
+                        <span key={l} className="inline-flex items-center gap-1 rounded-full bg-secondary px-3 py-1 text-sm">
+                          <Globe2 className="h-3.5 w-3.5" /> {l}
+                          {level && (
+                            <span
+                              title={`AI-verified · CEFR ${level}`}
+                              className="ml-1 inline-flex items-center gap-0.5 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary"
+                            >
+                              <BadgeCheck className="h-3 w-3" /> {level}
+                            </span>
+                          )}
+                        </span>
+                      );
+                    })}
                   </div>
+
                 </div>
                 <div>
                   <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Specialties</h3>
