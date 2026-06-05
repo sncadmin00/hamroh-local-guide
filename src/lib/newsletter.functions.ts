@@ -46,6 +46,7 @@ export const notifyAdminsOfGuideApplication = createServerFn({ method: "POST" })
             fullName: app.full_name,
             email: app.email,
             phone: app.phone,
+            telegram: app.telegram,
             city: app.city,
             languages: app.languages,
             specialization: app.specialization,
