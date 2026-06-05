@@ -60,6 +60,8 @@ export const translations: Dict = {
   "hero.suggest.3": { en: "Family-friendly history walk", uz: "Oilaviy tarixiy sayohat", ru: "Историческая прогулка для семьи" },
   "hero.suggest.4": { en: "Half-day artisan workshop", uz: "Yarim kunlik hunarmandlar ustaxonasi", ru: "Мастер-класс на полдня" },
 
+  "hero.bookGuide": { en: "Book a guide", uz: "Hamroh bron qilish", ru: "Забронировать гида" },
+  "hero.becomeGuide": { en: "Become a guide", uz: "Hamroh bo'lish", ru: "Стать гидом" },
   "hero.stats.guides": { en: "verified guides", uz: "tasdiqlangan hamroh", ru: "проверенных гидов" },
   "hero.stats.cities": { en: "cities", uz: "shahar", ru: "городов" },
   "hero.stats.travelers": { en: "happy travelers", uz: "mamnun sayohatchi", ru: "довольных путешественников" },
