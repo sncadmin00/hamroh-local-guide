@@ -86,9 +86,11 @@ export const translations: Dict = {
   "spot.crafts.title": { en: "Crafts & bazaar walks now in Khiva", uz: "Xivada hunarmandlar va bozor sayohatlari", ru: "Прогулки по ремёслам и базарам теперь в Хиве" },
   "spot.crafts.desc": { en: "Meet ceramicists, silk weavers and wood carvers", uz: "Kulollar, ipak to'quvchilar va yog'och o'ymakorlari", ru: "Керамисты, ткачи шёлка и резчики по дереву" },
 
-  "trust.verified": { en: "Verified locals", uz: "Tasdiqlangan mahalliylar", ru: "Проверенные местные" },
+  "trust.verified": { en: "Verified identity", uz: "Tasdiqlangan shaxs", ru: "Проверенная личность" },
+  "trust.language": { en: "Verified language", uz: "Tasdiqlangan til", ru: "Проверенный язык" },
   "trust.directChat": { en: "Direct chat", uz: "To'g'ridan-to'g'ri chat", ru: "Чат напрямую" },
   "trust.secureBooking": { en: "Secure booking", uz: "Xavfsiz bron", ru: "Безопасная бронь" },
+  "trust.trustedReviews": { en: "Only trusted reviews", uz: "Faqat ishonchli sharhlar", ru: "Только проверенные отзывы" },
   "trust.rated": { en: "Rated by travelers", uz: "Sayohatchilar baholagan", ru: "Оценено путешественниками" },
 
   "how.title": { en: "How it works", uz: "Qanday ishlaydi", ru: "Как это работает" },
