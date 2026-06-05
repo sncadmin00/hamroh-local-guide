@@ -70,8 +70,9 @@ export const getMyVerification = createServerFn({ method: "GET" })
 
 // ---------- Admin-side ----------
 
-async function ensureAdmin(supabase: NonNullable<Awaited<ReturnType<typeof requireSupabaseAuth>>> extends never ? never : any, userId: string) {
-  const { data } = await supabase.from("user_roles").select("role").eq("user_id", userId).eq("role", "admin").maybeSingle();
+async function ensureAdmin(userId: string) {
+  const { data } = await supabaseAdmin
+    .from("user_roles").select("role").eq("user_id", userId).eq("role", "admin").maybeSingle();
   if (!data) throw new Error("Admin only");
 }
 
