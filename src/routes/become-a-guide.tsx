@@ -40,6 +40,7 @@ const finalSchema = z.object({
   full_name: z.string().trim().min(2).max(120),
   email: z.string().trim().email().max(255),
   phone: z.string().trim().min(5).max(40),
+  telegram: z.string().trim().max(64).optional().default(""),
   city: z.string().trim().min(1).max(80),
   languages: z.array(z.string().min(1)).min(1).max(20),
   specialization: z.string().trim().min(2).max(200),
