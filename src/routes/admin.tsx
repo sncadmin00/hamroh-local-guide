@@ -1211,7 +1211,23 @@ function ArticlesPanel({
       </form>
 
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
-        <h2 className="font-display text-lg font-semibold">Articles</h2>
+        <div className="flex items-center justify-between gap-2">
+          <h2 className="font-display text-lg font-semibold">Articles</h2>
+          <button
+            onClick={async () => {
+              const t = toast.loading("Reindexing all published articles…");
+              try {
+                const res = await reindexAllArticles();
+                toast.success(`Indexed ${res.chunks} chunks across ${res.articles} articles`, { id: t });
+              } catch (e) {
+                toast.error((e as Error).message, { id: t });
+              }
+            }}
+            className="h-9 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-secondary/60"
+          >
+            Reindex all for AI
+          </button>
+        </div>
         <ul className="mt-4 divide-y divide-border/60">
           {articles.length === 0 && <li className="py-4 text-sm text-muted-foreground">No articles yet.</li>}
           {articles.map((a) => (
@@ -1221,6 +1237,20 @@ function ArticlesPanel({
                 <p className="text-xs text-muted-foreground truncate">/{a.slug} · {a.published ? "Published" : "Draft"}</p>
               </div>
               <div className="flex items-center gap-1">
+                <button
+                  onClick={async () => {
+                    const t = toast.loading("Indexing…");
+                    try {
+                      const res = await reindexArticle({ data: { articleId: a.id } });
+                      toast.success(`Indexed ${res.chunks} chunks`, { id: t });
+                    } catch (e) {
+                      toast.error((e as Error).message, { id: t });
+                    }
+                  }}
+                  className="h-9 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-secondary/60"
+                >
+                  Reindex
+                </button>
                 <button
                   onClick={() => togglePublished(a)}
                   className="h-9 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-secondary/60"
@@ -1242,6 +1272,7 @@ function ArticlesPanel({
     </div>
   );
 }
+
 
 function SocialPanel({
   embeds,
