@@ -238,12 +238,14 @@ export const translations: Dict = {
 };
 
 
-const I18nContext = createContext<{ lang: Lang; setLang: (l: Lang) => void; t: (k: keyof typeof translations) => string; tCategory: (slug: string, fallback?: string) => string }>({
+const I18nContext = createContext<{ lang: Lang; setLang: (l: Lang) => void; t: (k: keyof typeof translations) => string; tCategory: (slug: string, fallback?: string) => string; tLanguage: (name: string) => string }>({
   lang: "en",
   setLang: () => {},
   t: (k) => translations[k]?.en ?? String(k),
   tCategory: (_slug, fallback) => fallback ?? "",
+  tLanguage: (name) => name,
 });
+
 
 
 export function I18nProvider({ children }: { children: ReactNode }) {
