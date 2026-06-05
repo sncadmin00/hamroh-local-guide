@@ -1611,19 +1611,49 @@ function ApplicationsPanel({
 
   const setStatus = async (id: string, status: string) => {
     const { error } = await supabase.from("guide_applications").update({ status }).eq("id", id);
-    if (error) toast.error(error.message);
-    else {
-      toast.success("Status updated");
-      if (status === "approved" || status === "rejected") {
-        try {
-          await notifyGuideApplicationStatus({ data: { application_id: id, status } });
-        } catch (e) {
-          console.error("status email failed", e);
-        }
-      }
-      await reload();
+    if (error) {
+      toast.error(error.message);
+      return;
     }
+    toast.success("Status updated");
+
+    // Auto-copy AI-verified languages (B1+) into the matching guide row when approving.
+    if (status === "approved") {
+      try {
+        const app = applications.find((a) => a.id === id);
+        const tests = app?.language_tests ?? [];
+        const passed: Record<string, string> = {};
+        for (const t of tests) {
+          if (t.skipped) continue;
+          if (["B1", "B2", "C1", "C2"].includes(t.level)) passed[t.language] = t.level;
+        }
+        if (app?.user_id && Object.keys(passed).length > 0) {
+          const { data: g } = await supabase
+            .from("guides")
+            .select("id, verified_languages")
+            .eq("user_id", app.user_id)
+            .maybeSingle();
+          if (g?.id) {
+            const merged = { ...((g.verified_languages as Record<string, string>) ?? {}), ...passed };
+            await supabase.from("guides").update({ verified_languages: merged }).eq("id", g.id);
+            toast.success(`Verified ${Object.keys(passed).length} language(s) on guide profile`);
+          }
+        }
+      } catch (e) {
+        console.error("verified_languages auto-fill failed", e);
+      }
+    }
+
+    if (status === "approved" || status === "rejected") {
+      try {
+        await notifyGuideApplicationStatus({ data: { application_id: id, status } });
+      } catch (e) {
+        console.error("status email failed", e);
+      }
+    }
+    await reload();
   };
+
 
   const remove = async (id: string) => {
     if (!confirm("Delete this application?")) return;
