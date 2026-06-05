@@ -135,26 +135,30 @@ function BecomeAGuidePage() {
         form?: FormState;
         languages?: string[];
         categories?: string[];
+        languageTests?: Record<string, LangTestResult>;
       };
       if (parsed.form) setForm({ ...emptyForm, ...parsed.form });
       if (parsed.languages) setSelectedLanguages(parsed.languages);
       if (parsed.categories) setSelectedCategories(parsed.categories);
+      if (parsed.languageTests) setLanguageTests(parsed.languageTests);
     } catch {
       // ignore
     }
   }, []);
+
 
   // Save draft
   useEffect(() => {
     try {
       localStorage.setItem(
         DRAFT_KEY,
-        JSON.stringify({ form, languages: selectedLanguages, categories: selectedCategories }),
+        JSON.stringify({ form, languages: selectedLanguages, categories: selectedCategories, languageTests }),
       );
     } catch {
       // ignore
     }
-  }, [form, selectedLanguages, selectedCategories]);
+  }, [form, selectedLanguages, selectedCategories, languageTests]);
+
 
   useEffect(() => {
     supabase.from("cities").select("id, name").order("sort_order").then(({ data }) => {
