@@ -116,8 +116,8 @@ export const translations: Dict = {
   "reviews.subtitle": { en: "Real stories from real trips", uz: "Haqiqiy sayohatlardan haqiqiy hikoyalar", ru: "Реальные истории из реальных поездок" },
   "reviews.about": { en: "about", uz: "haqida", ru: "о гиде" },
 
-  "cta.title": { en: "Are you a local guide?", uz: "Siz mahalliy hamrohmisiz?", ru: "Вы местный гид?" },
-  "cta.subtitle": { en: "Join Hamroh, share your city and grow your bookings.", uz: "Hamroh'ga qo'shiling, shahringizni ulashing va bronlaringizni oshiring.", ru: "Присоединяйтесь к Hamroh, делитесь городом и получайте больше броней." },
+  "cta.title": { en: "Got stories to tell? Become a guide in 5 minutes", uz: "Aytadigan hikoyalaringiz bormi? 5 daqiqada hamroh bo'ling", ru: "Есть что рассказать? Стань гидом за 5 минут" },
+  "cta.subtitle": { en: "Join Hamroh, explore yourself", uz: "Hamroh'ga qo'shiling, o'zingizni kashf eting", ru: "Присоединяйтесь к Hamroh, откройте себя" },
   "cta.button": { en: "Become a guide", uz: "Hamroh bo'lish", ru: "Стать гидом" },
 
   "browse.title": { en: "Browse by interest", uz: "Qiziqish bo'yicha izlash", ru: "По интересам" },
