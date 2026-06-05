@@ -17,7 +17,7 @@ export const getMyGuide = createServerFn({ method: "GET" })
     const { supabase, userId } = context;
     const { data, error } = await supabase
       .from("guides")
-      .select("id, name, slug, photo_url, tagline, price_per_day, referral_code, city_id, extra_city_ids, languages, cities(name)")
+      .select("id, name, slug, photo_url, tagline, price_per_day, referral_code, city_id, extra_city_ids, languages, verified_languages, cities(name)")
       .eq("user_id", userId)
       .maybeSingle();
     if (error) throw new Error(error.message);
@@ -27,6 +27,38 @@ export const getMyGuide = createServerFn({ method: "GET" })
       .select("*", { count: "exact", head: true })
       .eq("guide_id", data.id);
     return { ...data, referral_clicks: count ?? 0 };
+  });
+
+// Record a language test result; verified only when B1+, otherwise removed.
+export const recordMyLanguageTest = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) => z.object({
+    language: z.string().trim().min(1).max(80),
+    level: z.enum(["A1", "A2", "B1", "B2", "C1", "C2", "N/A"]),
+  }).parse(input))
+  .handler(async ({ context, data }) => {
+    const { supabase, userId } = context;
+    const { data: guide, error: gErr } = await supabase
+      .from("guides")
+      .select("id, verified_languages")
+      .eq("user_id", userId)
+      .maybeSingle();
+    if (gErr) throw new Error(gErr.message);
+    if (!guide) throw new Error("Guide profile not found");
+
+    const current = (guide.verified_languages ?? {}) as Record<string, string>;
+    const next = { ...current };
+    if (["B1", "B2", "C1", "C2"].includes(data.level)) {
+      next[data.language] = data.level;
+    } else {
+      delete next[data.language];
+    }
+    const { error } = await supabase
+      .from("guides")
+      .update({ verified_languages: next })
+      .eq("id", guide.id);
+    if (error) throw new Error(error.message);
+    return { ok: true, verified_languages: next };
   });
 
 export const updateMyCities = createServerFn({ method: "POST" })
