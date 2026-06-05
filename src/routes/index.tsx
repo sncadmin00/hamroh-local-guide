@@ -303,7 +303,6 @@ function Home() {
       </section>
 
       <ExploreTabs />
-      <BecomeGuideCTA />
       <WhyHamroh />
 
       <LatestPosts />
