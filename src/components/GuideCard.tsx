@@ -66,6 +66,8 @@ export function GuideCard({ guide }: { guide: Guide }) {
               avgRating: guide.rating,
               completedToursCount: guide.completedToursCount,
               avgResponseMinutes: guide.avgResponseMinutes,
+              hasTransport: guide.hasTransport,
+              transportSeats: guide.transportSeats,
             }}
           />
         </div>
