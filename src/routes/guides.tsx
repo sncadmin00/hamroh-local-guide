@@ -10,9 +10,10 @@ import { useI18n } from "@/lib/i18n";
 
 
 export const Route = createFileRoute("/guides")({
-  validateSearch: (search: Record<string, unknown>): { city?: string; category?: string } => ({
+  validateSearch: (search: Record<string, unknown>): { city?: string; category?: string; lang?: string } => ({
     city: typeof search.city === "string" ? search.city : undefined,
     category: typeof search.category === "string" ? search.category : undefined,
+    lang: typeof search.lang === "string" ? search.lang : undefined,
   }),
   head: () => ({
     meta: [
@@ -22,6 +23,7 @@ export const Route = createFileRoute("/guides")({
   }),
   component: GuidesPage,
 });
+
 
 function GuidesPage() {
   const { tCategory } = useI18n();
