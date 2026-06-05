@@ -85,7 +85,7 @@ function ToursPage() {
         </div>
 
         {isLoading ? (
-          <p className="mt-10 text-sm text-muted-foreground">Loading…</p>
+          <p className="mt-10 text-sm text-muted-foreground">{t("tours.loading")}</p>
         ) : filtered.length === 0 ? (
           <p className="mt-10 text-sm text-muted-foreground">{t("tours.empty")}</p>
         ) : (
