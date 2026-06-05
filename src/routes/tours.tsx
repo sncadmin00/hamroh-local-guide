@@ -125,7 +125,7 @@ function ToursPage() {
                     </div>
                     <h3 className="mt-0.5 text-sm font-semibold leading-snug line-clamp-2">{pickTourTitle(tr, lang)}</h3>
                     {tr.guides?.name && (
-                      <p className="mt-0.5 text-[10px] text-muted-foreground">by {tr.guides.name}</p>
+                      <p className="mt-0.5 text-[10px] text-muted-foreground">{t("tours.by")} {tr.guides.name}</p>
                     )}
                     {langPrices.length > 0 && (
                       <div className="mt-1.5 flex flex-wrap gap-1">
