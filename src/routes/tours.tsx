@@ -71,7 +71,7 @@ function ToursPage() {
             onClick={() => setCategorySlug("")}
             className={`px-3 h-8 rounded-full text-sm ${categorySlug === "" ? "bg-foreground text-background" : "bg-secondary text-foreground hover:bg-secondary/80"}`}
           >
-            All categories
+            {t("tours.allCategories")}
           </button>
           {categories.map((c) => (
             <button
@@ -79,7 +79,7 @@ function ToursPage() {
               onClick={() => setCategorySlug(c.slug)}
               className={`px-3 h-8 rounded-full text-sm ${categorySlug === c.slug ? "bg-foreground text-background" : "bg-secondary text-foreground hover:bg-secondary/80"}`}
             >
-              {c.name}
+              {tCategory(c.slug, c.name)}
             </button>
           ))}
         </div>
