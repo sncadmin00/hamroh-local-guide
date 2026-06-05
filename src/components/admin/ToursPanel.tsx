@@ -146,13 +146,48 @@ function TourEditor({
   const [form, setForm] = useState(initial);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [translating, setTranslating] = useState<null | "ru" | "uz" | "en">(null);
   const [selectedCats, setSelectedCats] = useState<string[]>(
     (initial.tour_categories ?? []).map((tc) => tc.category_id),
   );
+  const translate = useServerFn(translateTourContent);
 
   useEffect(() => { setForm(initial); }, [initial]);
 
   const set = <K extends keyof TourRow>(k: K, v: TourRow[K]) => setForm((f) => ({ ...f, [k]: v }));
+
+  const autoTranslate = async (sourceLang: "ru" | "uz" | "en") => {
+    const title = ((form as any)[`title_${sourceLang}`] ?? "").trim();
+    const short = ((form as any)[`short_description_${sourceLang}`] ?? "").trim();
+    const desc = ((form as any)[`description_md_${sourceLang}`] ?? "").trim();
+    if (!title && !short && !desc) {
+      toast.error(`Fill in the ${sourceLang.toUpperCase()} fields first`);
+      return;
+    }
+    setTranslating(sourceLang);
+    try {
+      const out = await translate({
+        data: { sourceLang, title, short_description: short, description_md: desc },
+      });
+      setForm((f) => {
+        const next: any = { ...f };
+        for (const lc of ["ru", "uz", "en"] as const) {
+          if (lc === sourceLang || !out[lc]) continue;
+          next[`title_${lc}`] = out[lc].title;
+          next[`short_description_${lc}`] = out[lc].short_description;
+          next[`description_md_${lc}`] = out[lc].description_md;
+        }
+        return next;
+      });
+      toast.success("Translated");
+    } catch (e: any) {
+      toast.error(e?.message ?? "Translation failed");
+    } finally {
+      setTranslating(null);
+    }
+  };
+
+
 
   const currentGuide = guides.find((g) => g.dbId === form.guide_id);
   const guideLangs = currentGuide?.languages ?? [];
