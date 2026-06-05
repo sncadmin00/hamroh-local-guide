@@ -154,6 +154,29 @@ function BecomeAGuidePage() {
     });
   }, []);
 
+  // Prefill from authenticated user (Google login etc.)
+  useEffect(() => {
+    const applyUser = (user: { email?: string | null; phone?: string | null; user_metadata?: Record<string, unknown> } | null) => {
+      if (!user) return;
+      const meta = (user.user_metadata ?? {}) as Record<string, unknown>;
+      const nameFromAuth = (meta.full_name as string) || (meta.name as string) || "";
+      const emailFromAuth = user.email ?? "";
+      const phoneFromAuth = user.phone ?? "";
+      setForm((f) => ({
+        ...f,
+        full_name: f.full_name || nameFromAuth,
+        email: f.email || emailFromAuth,
+        phone: f.phone || phoneFromAuth,
+      }));
+    };
+    supabase.auth.getUser().then(({ data }) => applyUser(data.user));
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      applyUser(session?.user ?? null);
+    });
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
+
   const update = <K extends keyof FormState>(k: K, v: FormState[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
 

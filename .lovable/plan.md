@@ -1,25 +1,19 @@
-## Заменить "Телефон / WhatsApp" на отдельные поля Телефон и Telegram
+## Проблема
 
-### Изменения
+Форма "Как с вами связаться?" не подставляет данные автоматически, потому что в коде нет логики чтения текущего пользователя Supabase — `form` инициализируется пустыми строками, а потом перезаписывается только из черновика в `localStorage`. Google-логин даёт нам `email` и `user_metadata.full_name` / `name`, но мы их никуда не подставляем.
 
-**1. Миграция БД** — добавить колонку `telegram` в `guide_applications`:
-```sql
-ALTER TABLE public.guide_applications ADD COLUMN telegram text NOT NULL DEFAULT '';
-```
+## План
 
-**2. `src/routes/become-a-guide.tsx`**
-- Лейбл `"Телефон / WhatsApp"` → `"Телефон"` (строка 253)
-- Добавить новое поле `Telegram` (необязательное) под телефоном с placeholder `@username`
-- В `FormState`, `emptyForm`, `finalSchema` добавить `telegram: z.string().trim().max(64).optional()` (или пустая строка)
-- Передавать `telegram` при insert в Supabase (строка ~453)
-- В summary-таблице (строка 720) добавить строку `["Telegram", form.telegram || "—"]`
+Добавить в `src/routes/become-a-guide.tsx` `useEffect`, который при монтировании читает текущего пользователя и подставляет значения в поля **только если они пустые** (чтобы не затирать черновик и ввод пользователя):
 
-**3. `src/lib/email-templates/guide-application-admin.tsx`**
-- Добавить опциональное поле `telegram?: string` и вывод `<Text><b>Telegram:</b> {telegram}</Text>`
-- Передавать `telegram` из вызывающего кода
+1. Вызвать `supabase.auth.getUser()`.
+2. Если пользователь есть — взять:
+   - `email` → `user.email`
+   - `full_name` → `user.user_metadata.full_name || user.user_metadata.name`
+   - `phone` → `user.phone` (если есть)
+3. Обновить `setForm((f) => ({ ...f, full_name: f.full_name || nameFromAuth, email: f.email || emailFromAuth, phone: f.phone || phoneFromAuth }))`.
+4. Подписаться на `onAuthStateChange`, чтобы если человек логинится прямо на странице — поля тоже подтянулись.
 
-**4. `src/routes/admin.tsx`**
-- В типе заявки и в отображении (строка ~1609) добавить `telegram` рядом с email/phone
+Telegram не подставляем — Google его не отдаёт.
 
-### Результат
-Форма «Как с вами связаться?» спрашивает Имя, Email, Телефон, Telegram (необязательно). WhatsApp полностью убран из текста и логики.
+Никакие другие файлы и логика не трогаются.
