@@ -19,7 +19,16 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { notifyAdminsOfGuideApplication } from "@/lib/newsletter.functions";
 import { generateGuideBio } from "@/lib/guide-application.functions";
+import { assessLanguageTest } from "@/lib/language-test.functions";
 import { useI18n } from "@/lib/i18n";
+
+type LangTestResult = {
+  level: "A1" | "A2" | "B1" | "B2" | "C1" | "C2" | "N/A";
+  transcript: string;
+  feedback: string;
+  skipped?: boolean;
+};
+
 
 export const Route = createFileRoute("/become-a-guide")({
   head: () => ({
@@ -95,8 +104,11 @@ async function uploadTo(bucket: string, file: File): Promise<string> {
 function BecomeAGuidePage() {
   const notifyAdmins = useServerFn(notifyAdminsOfGuideApplication);
   const generateBio = useServerFn(generateGuideBio);
+  const assessLang = useServerFn(assessLanguageTest);
   const { t, tCategory, tLanguage } = useI18n();
   const [otherLanguage, setOtherLanguage] = useState("");
+  const [languageTests, setLanguageTests] = useState<Record<string, LangTestResult>>({});
+
 
 
   const [cities, setCities] = useState<{ id: string; name: string }[]>([]);
