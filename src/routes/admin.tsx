@@ -1146,11 +1146,19 @@ function ArticlesPanel({
         .insert(cityIds.map((city_id) => ({ article_id: data.id, city_id })));
       if (linkErr) toast.error(linkErr.message);
     }
+    // Index for AI search
+    try {
+      const res = await reindexArticle({ data: { articleId: data.id } });
+      toast.success(`Article added · indexed ${res.chunks} chunks for AI`);
+    } catch (err) {
+      toast.success("Article added (AI indexing failed — use Re-index button)");
+      console.error(err);
+    }
     setSaving(false);
-    toast.success("Article added");
     setTitle(""); setSlug(""); setExcerpt(""); setCover(""); setBody(""); setCityIds([]);
     await reload();
   };
+
 
   const togglePublished = async (a: Article) => {
     const next = !a.published;
