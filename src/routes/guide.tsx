@@ -3,9 +3,10 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Calendar, CalendarClock, CalendarDays, Plus, Trash2, Check, X, LogOut, Loader2, Copy, Link2, Image as ImageIcon, Compass, Pencil, MapPin, Sparkles } from "lucide-react";
+import { Calendar, CalendarClock, CalendarDays, Plus, Trash2, Check, X, LogOut, Loader2, Copy, Link2, Image as ImageIcon, Compass, Pencil, MapPin, Sparkles, ShieldCheck } from "lucide-react";
 import { CalendarPanel } from "@/components/guide/CalendarPanel";
 import { GuideAIPanel } from "@/components/guide/GuideAIPanel";
+import { VerificationPanel } from "@/components/guide/VerificationPanel";
 
 import {
   getMyGuide,
@@ -83,7 +84,7 @@ function GuidePortal() {
   const [guide, setGuide] = useState<MyGuide | null>(null);
   const [slots, setSlots] = useState<Slot[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [tab, setTab] = useState<"calendar" | "ai" | "availability" | "bookings" | "tours" | "cities" | "languages" | "posts" | "referral">("calendar");
+  const [tab, setTab] = useState<"calendar" | "ai" | "availability" | "bookings" | "tours" | "cities" | "languages" | "posts" | "referral" | "verification">("calendar");
 
   const fetchGuide = useServerFn(getMyGuide);
   const fetchSlots = useServerFn(listMySlots);
@@ -183,6 +184,9 @@ function GuidePortal() {
           <TabBtn active={tab === "referral"} onClick={() => setTab("referral")}>
             <Link2 className="h-4 w-4" /> Referral
           </TabBtn>
+          <TabBtn active={tab === "verification"} onClick={() => setTab("verification")}>
+            <ShieldCheck className="h-4 w-4" /> Verification
+          </TabBtn>
         </div>
 
         {tab === "calendar" && <CalendarPanel />}
@@ -251,6 +255,8 @@ function GuidePortal() {
         {tab === "referral" && (
           <ReferralPanel code={guide.referral_code} clicks={guide.referral_clicks} />
         )}
+
+        {tab === "verification" && <VerificationPanel />}
       </div>
     </div>
   );
