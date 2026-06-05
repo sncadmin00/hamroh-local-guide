@@ -138,11 +138,15 @@ function BecomeAGuidePage() {
         languages?: string[];
         categories?: string[];
         languageTests?: Record<string, LangTestResult>;
+        hasTransport?: boolean;
+        transportSeats?: string;
       };
       if (parsed.form) setForm({ ...emptyForm, ...parsed.form });
       if (parsed.languages) setSelectedLanguages(parsed.languages);
       if (parsed.categories) setSelectedCategories(parsed.categories);
       if (parsed.languageTests) setLanguageTests(parsed.languageTests);
+      if (typeof parsed.hasTransport === "boolean") setHasTransport(parsed.hasTransport);
+      if (typeof parsed.transportSeats === "string") setTransportSeats(parsed.transportSeats);
     } catch {
       // ignore
     }
