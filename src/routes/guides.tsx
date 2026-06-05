@@ -142,7 +142,7 @@ function GuidesPage() {
         ) : filtered.length === 0 ? (
           <div className="mt-16 text-center text-muted-foreground">No guides match your filters yet — try widening your search.</div>
         ) : (
-          <div aria-labelledby="guides-heading" className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div aria-labelledby="guides-heading" className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.map((g) => <GuideCard key={g.id} guide={g} />)}
           </div>
         )}
