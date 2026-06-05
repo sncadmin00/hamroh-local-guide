@@ -836,7 +836,31 @@ function LanguagesPanel({
         >
           <Plus className="h-4 w-4" /> {saving ? "Saving…" : "Add language"}
         </button>
+
+        {suggested.length > 0 && (
+          <div className="mt-6 pt-5 border-t border-border/60">
+            <h3 className="text-sm font-semibold">Suggested from applications</h3>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Languages entered by guides that aren't in the list yet.
+            </p>
+            <ul className="mt-3 space-y-2">
+              {suggested.map((s) => (
+                <li key={s} className="flex items-center justify-between gap-3 text-sm">
+                  <span className="truncate">{s}</span>
+                  <button
+                    type="button"
+                    onClick={() => quickAdd(s)}
+                    className="inline-flex items-center gap-1 h-8 px-3 rounded-full bg-primary/10 text-primary text-xs font-semibold hover:bg-primary/20"
+                  >
+                    <Plus className="h-3 w-3" /> Add
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </form>
+
 
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
         <h2 className="font-display text-lg font-semibold">Languages</h2>
