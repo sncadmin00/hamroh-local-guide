@@ -1607,7 +1607,7 @@ function ApplicationsPanel({
                       {a.city} · {a.experience_years} yr · {new Date(a.created_at).toLocaleDateString()}
                     </p>
                     <p className="mt-1 text-xs text-muted-foreground truncate">
-                      {a.email} · {a.phone}
+                      {a.email} · {a.phone}{a.telegram ? ` · ${a.telegram}` : ""}
                     </p>
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
