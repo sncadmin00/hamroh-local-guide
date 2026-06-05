@@ -679,10 +679,13 @@ function BecomeAGuidePage() {
           video_url,
           photo_urls,
           category_ids: selectedCategories,
+          has_transport: hasTransport,
+          transport_seats: hasTransport && transportSeats ? Number(transportSeats) : null,
           language_tests: selectedLanguages.map((l) => ({
             language: l,
             ...(languageTests[l] ?? { level: "N/A", transcript: "", feedback: "", skipped: true }),
           })),
+
 
         })
         .select("id")
