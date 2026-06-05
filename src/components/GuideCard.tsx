@@ -57,20 +57,18 @@ export function GuideCard({ guide }: { guide: Guide }) {
           {guide.languages.slice(0, 4).map((l) => {
             const level = guide.verifiedLanguages?.[l];
             return (
-              <span key={l} className="inline-flex items-center gap-1 rounded-full bg-secondary px-2.5 py-1 text-xs text-secondary-foreground">
+              <span
+                key={l}
+                title={level ? `AI-verified · CEFR ${level}` : undefined}
+                className="inline-flex items-center gap-1 rounded-full bg-secondary px-2.5 py-1 text-xs text-secondary-foreground"
+              >
                 {l}
-                {level && (
-                  <BadgeCheck
-                    className="h-3 w-3 text-primary"
-                    aria-label={`AI-verified ${l} (${level})`}
-                  >
-                    <title>AI-verified · {level}</title>
-                  </BadgeCheck>
-                )}
+                {level && <BadgeCheck className="h-3 w-3 text-primary" />}
               </span>
             );
           })}
         </div>
+
 
 
         <div className="mt-auto pt-4 flex items-center justify-end border-t border-border/60">
