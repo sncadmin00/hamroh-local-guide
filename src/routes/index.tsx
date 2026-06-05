@@ -264,12 +264,13 @@ function Home() {
 
 
       <ExploreTabs />
+      <BecomeGuideCTA />
       <WhyHamroh />
 
       <LatestPosts />
       <FeaturedReviews />
       <HomeFaq />
-      <BecomeGuideCTA />
+
 
       <SiteFooter />
 
