@@ -177,6 +177,22 @@ function Home() {
             <p className="mt-3 md:mt-4 text-sm md:text-lg text-slate-500 max-w-xl mx-auto">
               {t("hero.h1sub")}
             </p>
+
+            {/* CTA Buttons */}
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+              <Link
+                to="/guides"
+                className="inline-flex items-center justify-center rounded-full bg-[#8BB5A9] hover:bg-[#7aa297] text-white px-6 py-3 text-sm font-medium shadow-md shadow-slate-900/10 transition-all active:scale-95"
+              >
+                {t("hero.bookGuide")}
+              </Link>
+              <Link
+                to="/become-a-guide"
+                className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 px-6 py-3 text-sm font-medium transition-all active:scale-95"
+              >
+                {t("hero.becomeGuide")}
+              </Link>
+            </div>
           </div>
 
 
