@@ -1,5 +1,6 @@
 import { BadgeCheck, ShieldCheck, Video, Languages, Star, Compass, Clock } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useI18n } from "@/lib/i18n";
 
 export type GuideBadgesData = {
   identityVerified: boolean;
@@ -12,6 +13,10 @@ export type GuideBadgesData = {
 
 const REVIEWS_THRESHOLD = 3;
 const RESPONSE_LIMIT = 30;
+
+function fmt(template: string, vars: Record<string, string | number>) {
+  return template.replace(/\{(\w+)\}/g, (_, k) => String(vars[k] ?? ""));
+}
 
 function BadgePill({
   active,
@@ -44,61 +49,65 @@ function BadgePill({
 }
 
 export function GuideBadges({ data, compact = false }: { data: GuideBadgesData; compact?: boolean }) {
+  const { t } = useI18n();
   const responseActive = data.avgResponseMinutes !== null && data.avgResponseMinutes <= RESPONSE_LIMIT;
   const reviewsActive = data.reviewsCount >= REVIEWS_THRESHOLD;
+  const min = t("badges.min");
 
   return (
     <TooltipProvider delayDuration={200}>
       <div className="space-y-1.5">
         {!compact && (
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground/70">Verified</p>
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground/70">{t("badges.verified")}</p>
         )}
         <div className="flex flex-wrap gap-1">
           <BadgePill
             active={data.identityVerified}
             icon={ShieldCheck}
-            label="Identity"
-            tooltip={data.identityVerified ? "Email, phone & passport verified" : "Identity not verified"}
+            label={t("badges.identity")}
+            tooltip={data.identityVerified ? t("badges.identity.on") : t("badges.identity.off")}
           />
           <BadgePill
             active={data.hasVerifiedLanguage}
             icon={Languages}
-            label="Language"
-            tooltip={data.hasVerifiedLanguage ? "AI language test passed (B1+)" : "No verified language"}
+            label={t("badges.language")}
+            tooltip={data.hasVerifiedLanguage ? t("badges.language.on") : t("badges.language.off")}
           />
           <BadgePill
             active={data.introVideoVerified}
             icon={Video}
-            label="Intro video"
-            tooltip={data.introVideoVerified ? "Intro video approved" : "No approved intro video"}
+            label={t("badges.introVideo")}
+            tooltip={data.introVideoVerified ? t("badges.introVideo.on") : t("badges.introVideo.off")}
           />
         </div>
         {!compact && (
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground/70 pt-1">Activity</p>
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground/70 pt-1">{t("badges.activity")}</p>
         )}
         <div className="flex flex-wrap gap-1">
           <BadgePill
             active={reviewsActive}
             icon={Star}
-            label={`${data.reviewsCount} reviews`}
-            tooltip={reviewsActive ? `${data.reviewsCount} reviews from completed tours` : `Needs ${REVIEWS_THRESHOLD}+ verified reviews`}
+            label={`${data.reviewsCount} ${t("badges.reviews")}`}
+            tooltip={reviewsActive
+              ? fmt(t("badges.reviews.on"), { n: data.reviewsCount })
+              : fmt(t("badges.reviews.off"), { n: REVIEWS_THRESHOLD })}
           />
           <BadgePill
             active={data.completedToursCount > 0}
             icon={Compass}
-            label={`${data.completedToursCount} tours`}
-            tooltip={`${data.completedToursCount} completed tours`}
+            label={`${data.completedToursCount} ${t("badges.tours")}`}
+            tooltip={fmt(t("badges.tours.count"), { n: data.completedToursCount })}
           />
           <BadgePill
             active={responseActive}
             icon={Clock}
-            label={responseActive ? `<${RESPONSE_LIMIT} min` : (data.avgResponseMinutes !== null ? `${Math.round(data.avgResponseMinutes)} min` : "—")}
+            label={responseActive ? `<${RESPONSE_LIMIT} ${min}` : (data.avgResponseMinutes !== null ? `${Math.round(data.avgResponseMinutes)} ${min}` : "—")}
             tooltip={
               data.avgResponseMinutes === null
-                ? "Not enough data to measure response time"
+                ? t("badges.response.none")
                 : responseActive
-                  ? `Median response time ${Math.round(data.avgResponseMinutes)} min`
-                  : `Median response ${Math.round(data.avgResponseMinutes)} min (badge requires <${RESPONSE_LIMIT})`
+                  ? fmt(t("badges.response.on"), { n: Math.round(data.avgResponseMinutes) })
+                  : fmt(t("badges.response.off"), { n: Math.round(data.avgResponseMinutes), limit: RESPONSE_LIMIT })
             }
           />
         </div>
