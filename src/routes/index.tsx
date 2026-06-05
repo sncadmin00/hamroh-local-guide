@@ -245,14 +245,7 @@ function Home() {
           </form>
 
           {/* Tagline under input */}
-          <div className="mt-5 md:mt-6 text-center space-y-0.5">
-            <p className="font-display text-lg md:text-xl font-medium text-foreground leading-snug">
-              {t("hero.story1")}
-            </p>
-            <p className="text-sm md:text-base text-muted-foreground">
-              {t("hero.story2")}
-            </p>
-          </div>
+          <p className="mt-3 text-xs text-slate-400">{t("hero.tagline")}</p>
 
           {/* Stats + trust below input */}
           <div className="text-center space-y-4 mt-8 md:mt-10">
