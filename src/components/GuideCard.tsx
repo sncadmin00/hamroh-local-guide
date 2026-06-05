@@ -55,23 +55,8 @@ export function GuideCard({ guide }: { guide: Guide }) {
           <MapPin className="h-3.5 w-3.5" /> {allCities.join(" · ")}
         </p>
 
-        <div className="mt-3 flex flex-wrap gap-1.5">
-          {guide.languages.slice(0, 4).map((l) => {
-            const level = guide.verifiedLanguages?.[l];
-            return (
-              <span
-                key={l}
-                title={level ? `AI-verified · CEFR ${level}` : undefined}
-                className="inline-flex items-center gap-1 rounded-full bg-secondary px-2.5 py-1 text-xs text-secondary-foreground"
-              >
-                {l}
-                {level && <BadgeCheck className="h-3 w-3 text-primary" />}
-              </span>
-            );
-          })}
-        </div>
-
         <div className="mt-4">
+
           <GuideBadges
             data={{
               identityVerified: guide.identityVerified,

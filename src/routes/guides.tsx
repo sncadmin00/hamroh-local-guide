@@ -10,9 +10,10 @@ import { useI18n } from "@/lib/i18n";
 
 
 export const Route = createFileRoute("/guides")({
-  validateSearch: (search: Record<string, unknown>): { city?: string; category?: string } => ({
+  validateSearch: (search: Record<string, unknown>): { city?: string; category?: string; lang?: string } => ({
     city: typeof search.city === "string" ? search.city : undefined,
     category: typeof search.category === "string" ? search.category : undefined,
+    lang: typeof search.lang === "string" ? search.lang : undefined,
   }),
   head: () => ({
     meta: [
@@ -23,13 +24,14 @@ export const Route = createFileRoute("/guides")({
   component: GuidesPage,
 });
 
+
 function GuidesPage() {
-  const { tCategory } = useI18n();
-  const { city: initialCity, category: initialCategory } = Route.useSearch();
+  const { t, tCategory, tLanguage } = useI18n();
+  const { city: initialCity, category: initialCategory, lang: initialLang } = Route.useSearch();
 
   const [city, setCity] = useState<"All" | string>(initialCity ?? "All");
   const [category, setCategory] = useState<"All" | string>(initialCategory ?? "All");
-  const [lang, setLang] = useState<string>("All");
+  const [lang, setLang] = useState<string>(initialLang ?? "All");
   const [instant, setInstant] = useState(false);
   const { data: guides = [], isLoading } = useGuides();
   const { data: categories = [] } = useCategories();
@@ -43,6 +45,7 @@ function GuidesPage() {
       (!instant || g.instantBook) &&
       (category === "All" || g.categories.some((c) => c.slug === category)),
   );
+
 
   return (
     <div className="min-h-screen">
@@ -62,19 +65,12 @@ function GuidesPage() {
           <CityPicker value={city} onChange={setCity} />
 
           <div className="md:ml-auto flex flex-wrap items-center gap-3">
-            <select
-              value={lang}
-              onChange={(e) => setLang(e.target.value)}
-              className="h-10 rounded-full border border-input bg-background px-4 text-sm font-medium outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="All">All languages</option>
-              {allLangs.map((l) => <option key={l} value={l}>{l}</option>)}
-            </select>
             <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-secondary px-4 py-2 text-sm font-medium">
               <input type="checkbox" checked={instant} onChange={(e) => setInstant(e.target.checked)} className="accent-primary" />
               Instant book
             </label>
           </div>
+
         </div>
 
         {categories.length > 0 && (
@@ -108,6 +104,35 @@ function GuidesPage() {
             })}
           </div>
         )}
+
+        {allLangs.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-2">
+            <button
+              onClick={() => setLang("All")}
+              className={`inline-flex items-center h-9 px-4 rounded-full text-sm font-medium ring-1 transition ${
+                lang === "All"
+                  ? "bg-primary text-primary-foreground ring-primary"
+                  : "bg-card ring-border/60 text-muted-foreground hover:bg-secondary/60"
+              }`}
+            >
+              {t("tours.allLanguages")}
+            </button>
+            {allLangs.map((l) => (
+              <button
+                key={l}
+                onClick={() => setLang(l)}
+                className={`inline-flex items-center h-9 px-4 rounded-full text-sm font-medium ring-1 transition ${
+                  lang === l
+                    ? "bg-primary text-primary-foreground ring-primary"
+                    : "bg-card ring-border/60 text-muted-foreground hover:bg-secondary/60"
+                }`}
+              >
+                {tLanguage(l)}
+              </button>
+            ))}
+          </div>
+        )}
+
 
         <h2 id="guides-heading" className="sr-only mt-10">
           {isLoading ? "Loading guides" : `${filtered.length} guides found`}
