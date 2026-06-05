@@ -55,7 +55,8 @@ function ToursPage() {
   );
 
   const setSearch = (patch: Partial<ToursSearch>) =>
-    navigate({ search: (prev) => ({ ...prev, ...patch }), replace: true });
+    navigate({ search: (prev: ToursSearch) => ({ ...prev, ...patch }), replace: true });
+
 
   return (
     <div className="min-h-screen bg-background">
