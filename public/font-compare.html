@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Сравнение шрифтов</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: system-ui, sans-serif;
+    background: #faf9f6;
+    padding: 40px 20px;
+    color: #1e293b;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  h2 {
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 18px;
+    color: #64748b;
+    font-weight: 400;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .card {
+    background: white;
+    border-radius: 20px;
+    padding: 36px 32px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  }
+  .label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #94a3b8;
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+  .headline {
+    font-size: 28px;
+    line-height: 1.2;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #0f172a;
+  }
+  .sub {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #64748b;
+  }
+  .nunito .headline, .nunito .sub { font-family: 'Nunito', sans-serif; }
+  .rubik .headline, .rubik .sub { font-family: 'Rubik', sans-serif; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>Русский заголовок в двух вариантах шрифта</h2>
+  <div class="grid">
+    <div class="card nunito">
+      <div class="label">Nunito</div>
+      <div class="headline">Найдите своего надежного спутника</div>
+      <div class="sub">Увидьте Узбекистан глазами местных.</div>
+    </div>
+    <div class="card rubik">
+      <div class="label">Rubik</div>
+      <div class="headline">Найдите своего надежного спутника</div>
+      <div class="sub">Увидьте Узбекистан глазами местных.</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
