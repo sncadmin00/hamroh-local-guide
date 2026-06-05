@@ -55,6 +55,9 @@ function TourDetailPage() {
   }
 
   const guide = tour.guides;
+  const localizedTitle = pickTourTitle(tour, lang);
+  const localizedShort = pickTourShortDescription(tour, lang);
+  const localizedDesc = pickTourDescriptionMd(tour, lang);
   const langPrices = tour.languages
     .map((lng) => ({ lng, price: tour.price_by_language[lng] ?? Number(tour.price_from) }))
     .filter((x) => x.price > 0);
