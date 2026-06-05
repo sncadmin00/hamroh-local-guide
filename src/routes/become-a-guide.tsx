@@ -19,7 +19,16 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { notifyAdminsOfGuideApplication } from "@/lib/newsletter.functions";
 import { generateGuideBio } from "@/lib/guide-application.functions";
+import { assessLanguageTest } from "@/lib/language-test.functions";
 import { useI18n } from "@/lib/i18n";
+
+type LangTestResult = {
+  level: "A1" | "A2" | "B1" | "B2" | "C1" | "C2" | "N/A";
+  transcript: string;
+  feedback: string;
+  skipped?: boolean;
+};
+
 
 export const Route = createFileRoute("/become-a-guide")({
   head: () => ({
@@ -95,8 +104,11 @@ async function uploadTo(bucket: string, file: File): Promise<string> {
 function BecomeAGuidePage() {
   const notifyAdmins = useServerFn(notifyAdminsOfGuideApplication);
   const generateBio = useServerFn(generateGuideBio);
+  const assessLang = useServerFn(assessLanguageTest);
   const { t, tCategory, tLanguage } = useI18n();
   const [otherLanguage, setOtherLanguage] = useState("");
+  const [languageTests, setLanguageTests] = useState<Record<string, LangTestResult>>({});
+
 
 
   const [cities, setCities] = useState<{ id: string; name: string }[]>([]);
@@ -123,26 +135,30 @@ function BecomeAGuidePage() {
         form?: FormState;
         languages?: string[];
         categories?: string[];
+        languageTests?: Record<string, LangTestResult>;
       };
       if (parsed.form) setForm({ ...emptyForm, ...parsed.form });
       if (parsed.languages) setSelectedLanguages(parsed.languages);
       if (parsed.categories) setSelectedCategories(parsed.categories);
+      if (parsed.languageTests) setLanguageTests(parsed.languageTests);
     } catch {
       // ignore
     }
   }, []);
+
 
   // Save draft
   useEffect(() => {
     try {
       localStorage.setItem(
         DRAFT_KEY,
-        JSON.stringify({ form, languages: selectedLanguages, categories: selectedCategories }),
+        JSON.stringify({ form, languages: selectedLanguages, categories: selectedCategories, languageTests }),
       );
     } catch {
       // ignore
     }
-  }, [form, selectedLanguages, selectedCategories]);
+  }, [form, selectedLanguages, selectedCategories, languageTests]);
+
 
   useEffect(() => {
     supabase.from("cities").select("id, name").order("sort_order").then(({ data }) => {
@@ -384,6 +400,59 @@ function BecomeAGuidePage() {
     },
 
     {
+      title: t("bg.lt.title"),
+      subtitle: t("bg.lt.sub"),
+      canNext: () => selectedLanguages.every((l) => !!languageTests[l]),
+      nextHint: t("bg.lt.hint"),
+      render: () => (
+        <div className="space-y-4">
+          {selectedLanguages.map((lng) => (
+            <LanguageTestCard
+              key={lng}
+              language={lng}
+              displayName={tLanguage(lng)}
+              result={languageTests[lng]}
+              onResult={(r) => setLanguageTests((m) => ({ ...m, [lng]: r }))}
+              onSkip={() =>
+                setLanguageTests((m) => ({
+                  ...m,
+                  [lng]: { level: "N/A", transcript: "", feedback: "", skipped: true },
+                }))
+              }
+              onReset={() =>
+                setLanguageTests((m) => {
+                  const next = { ...m };
+                  delete next[lng];
+                  return next;
+                })
+              }
+              assess={async (payload) => {
+                const r = await assessLang({ data: payload });
+                return r;
+              }}
+              labels={{
+                prompt: t("bg.lt.prompt"),
+                start: t("bg.lt.start"),
+                stop: t("bg.lt.stop"),
+                rerecord: t("bg.lt.rerecord"),
+                submit: t("bg.lt.submit"),
+                checking: t("bg.lt.checking"),
+                recording: t("bg.lt.recording"),
+                level: t("bg.lt.level"),
+                skip: t("bg.lt.skip"),
+                tooShort: t("bg.lt.tooShort"),
+                micFail: t("bg.lt.micFail"),
+                assessFail: t("bg.lt.assessFail"),
+                transcript: t("bg.lt.transcript"),
+              }}
+            />
+          ))}
+        </div>
+      ),
+    },
+
+    {
+
       title: t("bg.s4.title"),
       canNext: () => form.specialization.trim().length >= 2,
       nextHint: t("bg.s4.hint"),
@@ -492,6 +561,10 @@ function BecomeAGuidePage() {
         <ReviewBlock
           form={form}
           languages={selectedLanguages.map(tLanguage)}
+          languageTests={selectedLanguages.map((l) => ({
+            language: tLanguage(l),
+            result: languageTests[l],
+          }))}
           categories={selectedCategories.map((id) => categories.find((c) => c.id === id)?.name).filter(Boolean) as string[]}
           portrait={portrait}
           photos={photos}
@@ -510,9 +583,12 @@ function BecomeAGuidePage() {
             portrait: t("bg.rv.portrait"),
             photos: t("bg.rv.photos"),
             video: t("bg.rv.video"),
+            languageTests: t("bg.rv.languageTests"),
+            level: t("bg.lt.level"),
           }}
         />
       ),
+
     },
   ];
 
@@ -567,6 +643,11 @@ function BecomeAGuidePage() {
           video_url,
           photo_urls,
           category_ids: selectedCategories,
+          language_tests: selectedLanguages.map((l) => ({
+            language: l,
+            ...(languageTests[l] ?? { level: "N/A", transcript: "", feedback: "", skipped: true }),
+          })),
+
         })
         .select("id")
         .single();
@@ -814,6 +895,7 @@ function PickButton({
 function ReviewBlock({
   form,
   languages,
+  languageTests,
   categories,
   portrait,
   photos,
@@ -822,6 +904,7 @@ function ReviewBlock({
 }: {
   form: FormState;
   languages: string[];
+  languageTests: Array<{ language: string; result?: LangTestResult }>;
   categories: string[];
   portrait: File | null;
   photos: File[];
@@ -829,7 +912,7 @@ function ReviewBlock({
   labels: {
     name: string; email: string; phone: string; telegram: string; city: string; years: string;
     languages: string; categories: string; specialization: string; about: string;
-    portrait: string; photos: string; video: string;
+    portrait: string; photos: string; video: string; languageTests: string; level: string;
   };
 }) {
   const rows: Array<[string, string]> = [
@@ -853,6 +936,21 @@ function ReviewBlock({
           </div>
         ))}
       </div>
+      {languageTests.length > 0 && (
+        <div className="rounded-xl border border-border/60 p-3 text-sm">
+          <div className="text-muted-foreground text-xs mb-2">{labels.languageTests}</div>
+          <div className="space-y-1.5">
+            {languageTests.map((lt) => (
+              <div key={lt.language} className="flex items-center justify-between gap-2">
+                <span className="text-foreground">{lt.language}</span>
+                <span className="text-xs rounded-full px-2 py-0.5 bg-secondary text-secondary-foreground">
+                  {labels.level}: {lt.result?.skipped ? "—" : (lt.result?.level ?? "—")}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       <div className="rounded-xl border border-border/60 p-3 text-sm">
         <div className="text-muted-foreground text-xs mb-1">{labels.about}</div>
         <p className="whitespace-pre-wrap">{form.about || "—"}</p>
@@ -865,6 +963,194 @@ function ReviewBlock({
     </div>
   );
 }
+
+function LanguageTestCard({
+  language,
+  displayName,
+  result,
+  onResult,
+  onSkip,
+  onReset,
+  assess,
+  labels,
+}: {
+  language: string;
+  displayName: string;
+  result?: LangTestResult;
+  onResult: (r: LangTestResult) => void;
+  onSkip: () => void;
+  onReset: () => void;
+  assess: (payload: { language: string; audio_base64: string; mime_type: string; prompt_text: string }) => Promise<{
+    transcript: string;
+    level: LangTestResult["level"];
+    feedback: string;
+  }>;
+  labels: {
+    prompt: string; start: string; stop: string; rerecord: string; submit: string;
+    checking: string; recording: string; level: string; skip: string;
+    tooShort: string; micFail: string; assessFail: string; transcript: string;
+  };
+}) {
+  const [recording, setRecording] = useState(false);
+  const [blob, setBlob] = useState<Blob | null>(null);
+  const [elapsed, setElapsed] = useState(0);
+  const [busy, setBusy] = useState(false);
+  const recorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<BlobPart[]>([]);
+  const startedAtRef = useRef<number>(0);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const previewUrl = useMemo(() => (blob ? URL.createObjectURL(blob) : null), [blob]);
+  useEffect(() => () => { if (previewUrl) URL.revokeObjectURL(previewUrl); }, [previewUrl]);
+
+  const promptText = labels.prompt.replace("{lang}", displayName);
+
+  const start = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mr = new MediaRecorder(stream);
+      recorderRef.current = mr;
+      chunksRef.current = [];
+      mr.ondataavailable = (e) => { if (e.data.size > 0) chunksRef.current.push(e.data); };
+      mr.onstop = () => {
+        stream.getTracks().forEach((t) => t.stop());
+        const b = new Blob(chunksRef.current, { type: mr.mimeType || "audio/webm" });
+        setBlob(b);
+        setRecording(false);
+        if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; }
+      };
+      mr.start();
+      startedAtRef.current = Date.now();
+      setElapsed(0);
+      timerRef.current = setInterval(() => {
+        const s = Math.floor((Date.now() - startedAtRef.current) / 1000);
+        setElapsed(s);
+        if (s >= 60) mr.state === "recording" && mr.stop();
+      }, 250);
+      setRecording(true);
+      setBlob(null);
+    } catch {
+      toast.error(labels.micFail);
+    }
+  };
+  const stop = () => recorderRef.current?.state === "recording" && recorderRef.current.stop();
+
+  const submit = async () => {
+    if (!blob) return;
+    if (elapsed < 5) { toast.error(labels.tooShort); return; }
+    setBusy(true);
+    try {
+      const base64 = await blobToBase64(blob);
+      const r = await assess({
+        language,
+        audio_base64: base64,
+        mime_type: blob.type || "audio/webm",
+        prompt_text: promptText,
+      });
+      onResult({ level: r.level, transcript: r.transcript, feedback: r.feedback });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : labels.assessFail);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const levelColor = (lv: LangTestResult["level"]) => {
+    if (lv === "C1" || lv === "C2") return "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300";
+    if (lv === "B1" || lv === "B2") return "bg-amber-500/15 text-amber-700 dark:text-amber-300";
+    if (lv === "A1" || lv === "A2") return "bg-orange-500/15 text-orange-700 dark:text-orange-300";
+    return "bg-muted text-muted-foreground";
+  };
+
+  return (
+    <div className="rounded-2xl border border-border/60 bg-background p-4 space-y-3">
+      <div className="flex items-center justify-between gap-3">
+        <span className="font-medium">{displayName}</span>
+        {result && !result.skipped && (
+          <span className={`text-xs font-semibold rounded-full px-2.5 py-1 ${levelColor(result.level)}`}>
+            {labels.level}: {result.level}
+          </span>
+        )}
+        {result?.skipped && <span className="text-xs text-muted-foreground">— {labels.skip}</span>}
+      </div>
+
+      {!result && (
+        <>
+          <p className="text-xs text-muted-foreground">{promptText}</p>
+
+          {!recording && !blob && (
+            <div className="flex flex-wrap gap-2">
+              <Button type="button" size="sm" onClick={start} className="rounded-full">
+                {labels.start}
+              </Button>
+              <Button type="button" size="sm" variant="ghost" onClick={onSkip} className="rounded-full">
+                {labels.skip}
+              </Button>
+            </div>
+          )}
+
+          {recording && (
+            <div className="flex items-center gap-3">
+              <span className="inline-flex h-2.5 w-2.5 rounded-full bg-red-500 animate-pulse" />
+              <span className="text-sm">{labels.recording} {elapsed}s</span>
+              <Button type="button" size="sm" variant="outline" onClick={stop} className="rounded-full ml-auto">
+                {labels.stop}
+              </Button>
+            </div>
+          )}
+
+          {blob && !recording && (
+            <div className="space-y-2">
+              {previewUrl && <audio src={previewUrl} controls className="w-full" />}
+              <div className="flex flex-wrap gap-2">
+                <Button type="button" size="sm" onClick={submit} disabled={busy} className="rounded-full">
+                  {busy ? <><Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> {labels.checking}</> : labels.submit}
+                </Button>
+                <Button type="button" size="sm" variant="outline" onClick={() => { setBlob(null); setElapsed(0); }} className="rounded-full">
+                  {labels.rerecord}
+                </Button>
+              </div>
+            </div>
+          )}
+        </>
+      )}
+
+      {result && !result.skipped && (
+        <div className="space-y-2">
+          {result.feedback && <p className="text-sm text-muted-foreground">{result.feedback}</p>}
+          {result.transcript && (
+            <details className="text-xs">
+              <summary className="cursor-pointer text-muted-foreground">{labels.transcript}</summary>
+              <p className="mt-1 whitespace-pre-wrap text-foreground/80">{result.transcript}</p>
+            </details>
+          )}
+          <Button type="button" size="sm" variant="ghost" onClick={onReset} className="rounded-full">
+            {labels.rerecord}
+          </Button>
+        </div>
+      )}
+
+      {result?.skipped && (
+        <Button type="button" size="sm" variant="ghost" onClick={onReset} className="rounded-full">
+          {labels.start}
+        </Button>
+      )}
+    </div>
+  );
+}
+
+function blobToBase64(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const result = String(reader.result ?? "");
+      const comma = result.indexOf(",");
+      resolve(comma >= 0 ? result.slice(comma + 1) : result);
+    };
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(blob);
+  });
+}
+
 
 function useObjectUrl(file: File | null) {
   const url = useMemo(() => (file ? URL.createObjectURL(file) : null), [file]);
