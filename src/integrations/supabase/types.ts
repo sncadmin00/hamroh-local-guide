@@ -1524,6 +1524,9 @@ export type Database = {
           cover_url: string | null
           created_at: string
           description_md: string
+          description_md_en: string
+          description_md_ru: string
+          description_md_uz: string
           duration_hours: number
           group_prices: Json
           guide_id: string
@@ -1540,9 +1543,15 @@ export type Database = {
           rating: number
           reviews_count: number
           short_description: string
+          short_description_en: string
+          short_description_ru: string
+          short_description_uz: string
           slug: string
           sort_order: number
           title: string
+          title_en: string
+          title_ru: string
+          title_uz: string
           transport_included: boolean
           updated_at: string
         }
@@ -1553,6 +1562,9 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           description_md?: string
+          description_md_en?: string
+          description_md_ru?: string
+          description_md_uz?: string
           duration_hours?: number
           group_prices?: Json
           guide_id: string
@@ -1569,9 +1581,15 @@ export type Database = {
           rating?: number
           reviews_count?: number
           short_description?: string
+          short_description_en?: string
+          short_description_ru?: string
+          short_description_uz?: string
           slug: string
           sort_order?: number
           title: string
+          title_en?: string
+          title_ru?: string
+          title_uz?: string
           transport_included?: boolean
           updated_at?: string
         }
@@ -1582,6 +1600,9 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           description_md?: string
+          description_md_en?: string
+          description_md_ru?: string
+          description_md_uz?: string
           duration_hours?: number
           group_prices?: Json
           guide_id?: string
@@ -1598,9 +1619,15 @@ export type Database = {
           rating?: number
           reviews_count?: number
           short_description?: string
+          short_description_en?: string
+          short_description_ru?: string
+          short_description_uz?: string
           slug?: string
           sort_order?: number
           title?: string
+          title_en?: string
+          title_ru?: string
+          title_uz?: string
           transport_included?: boolean
           updated_at?: string
         }
