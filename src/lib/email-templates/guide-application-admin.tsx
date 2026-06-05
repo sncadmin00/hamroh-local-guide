@@ -8,6 +8,7 @@ interface Props {
   fullName?: string
   email?: string
   phone?: string
+  telegram?: string
   city?: string
   languages?: string[]
   specialization?: string
@@ -17,7 +18,7 @@ interface Props {
 }
 
 const Email = ({
-  fullName, email, phone, city, languages, specialization, experienceYears, about, reviewUrl,
+  fullName, email, phone, telegram, city, languages, specialization, experienceYears, about, reviewUrl,
 }: Props) => (
   <Html lang="ru" dir="ltr">
     <Head />
@@ -33,6 +34,7 @@ const Email = ({
           {fullName && <Text style={row}><b>Имя:</b> {fullName}</Text>}
           {email && <Text style={row}><b>Email:</b> {email}</Text>}
           {phone && <Text style={row}><b>Телефон:</b> {phone}</Text>}
+          {telegram && <Text style={row}><b>Telegram:</b> {telegram}</Text>}
           {city && <Text style={row}><b>Город:</b> {city}</Text>}
           {languages?.length ? <Text style={row}><b>Языки:</b> {languages.join(', ')}</Text> : null}
           {specialization && <Text style={row}><b>Специализация:</b> {specialization}</Text>}

@@ -18,7 +18,7 @@ export const notifyAdminsOfGuideApplication = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { data: app, error } = await supabaseAdmin
       .from("guide_applications")
-      .select("id, full_name, email, phone, city, languages, specialization, experience_years, about, created_at")
+      .select("id, full_name, email, phone, telegram, city, languages, specialization, experience_years, about, created_at")
       .eq("id", data.application_id)
       .maybeSingle();
     if (error || !app) return { ok: false };
@@ -46,6 +46,7 @@ export const notifyAdminsOfGuideApplication = createServerFn({ method: "POST" })
             fullName: app.full_name,
             email: app.email,
             phone: app.phone,
+            telegram: app.telegram,
             city: app.city,
             languages: app.languages,
             specialization: app.specialization,

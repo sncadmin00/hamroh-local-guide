@@ -1,0 +1,1 @@
+ALTER TABLE public.guide_applications ADD COLUMN IF NOT EXISTS telegram text NOT NULL DEFAULT '';

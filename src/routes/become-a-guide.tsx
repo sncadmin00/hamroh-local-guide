@@ -40,6 +40,7 @@ const finalSchema = z.object({
   full_name: z.string().trim().min(2).max(120),
   email: z.string().trim().email().max(255),
   phone: z.string().trim().min(5).max(40),
+  telegram: z.string().trim().max(64).optional().default(""),
   city: z.string().trim().min(1).max(80),
   languages: z.array(z.string().min(1)).min(1).max(20),
   specialization: z.string().trim().min(2).max(200),
@@ -51,6 +52,7 @@ type FormState = {
   full_name: string;
   email: string;
   phone: string;
+  telegram: string;
   city: string;
   experience_years: string;
   specialization: string;
@@ -64,6 +66,7 @@ const emptyForm: FormState = {
   full_name: "",
   email: "",
   phone: "",
+  telegram: "",
   city: "",
   experience_years: "",
   specialization: "",
@@ -250,8 +253,11 @@ function BecomeAGuidePage() {
           <Field label="Email">
             <input type="email" className={inputCls} value={form.email} onChange={(e) => update("email", e.target.value)} placeholder="you@example.com" />
           </Field>
-          <Field label="Телефон / WhatsApp">
+          <Field label="Телефон">
             <input className={inputCls} value={form.phone} onChange={(e) => update("phone", e.target.value)} placeholder="+998 ..." />
+          </Field>
+          <Field label="Telegram (необязательно)">
+            <input className={inputCls} value={form.telegram} onChange={(e) => update("telegram", e.target.value)} placeholder="@username" />
           </Field>
         </div>
       ),
@@ -451,6 +457,7 @@ function BecomeAGuidePage() {
           full_name: parsed.data.full_name,
           email: parsed.data.email,
           phone: parsed.data.phone,
+          telegram: parsed.data.telegram ?? "",
           city: parsed.data.city,
           languages: parsed.data.languages,
           specialization: parsed.data.specialization,
@@ -718,6 +725,7 @@ function ReviewBlock({
     ["Имя", form.full_name || "—"],
     ["Email", form.email || "—"],
     ["Телефон", form.phone || "—"],
+    ["Telegram", form.telegram || "—"],
     ["Город", form.city || "—"],
     ["Опыт (лет)", form.experience_years || "—"],
     ["Языки", languages.join(", ") || "—"],

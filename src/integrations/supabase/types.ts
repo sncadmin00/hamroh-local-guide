@@ -661,6 +661,7 @@ export type Database = {
           portrait_url: string | null
           specialization: string
           status: string
+          telegram: string
           updated_at: string
           user_id: string | null
           video_url: string | null
@@ -680,6 +681,7 @@ export type Database = {
           portrait_url?: string | null
           specialization?: string
           status?: string
+          telegram?: string
           updated_at?: string
           user_id?: string | null
           video_url?: string | null
@@ -699,6 +701,7 @@ export type Database = {
           portrait_url?: string | null
           specialization?: string
           status?: string
+          telegram?: string
           updated_at?: string
           user_id?: string | null
           video_url?: string | null
