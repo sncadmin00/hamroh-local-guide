@@ -255,7 +255,7 @@ function TourDetailPage() {
                         <span className="inline-flex items-center gap-0.5"><Clock className="h-2.5 w-2.5" />{Number(tr.duration_hours)}{t("tours.hours")}</span>
                       )}
                     </div>
-                    <h3 className="mt-0.5 text-sm font-semibold leading-snug line-clamp-2">{tr.title}</h3>
+                    <h3 className="mt-0.5 text-sm font-semibold leading-snug line-clamp-2">{pickTourTitle(tr, lang)}</h3>
                     <div className="mt-1.5 text-xs">
                       <span className="text-muted-foreground">{t("tours.priceFrom")} </span>
                       <span className="font-semibold">${Number(tr.price_from).toFixed(0)}</span>
