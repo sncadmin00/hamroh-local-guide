@@ -5,7 +5,7 @@ import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
 
 type ChatBody = { messages?: UIMessage[]; threadId?: string };
 
-const DAILY_LIMIT = 10;
+const DAILY_LIMIT = 20;
 const MAX_QUERY_LEN = 300;
 
 async function buildSystemPrompt(client: ReturnType<typeof createClient<any, any, any>>) {
