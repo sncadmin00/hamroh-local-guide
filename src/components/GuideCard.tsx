@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Star, BadgeCheck, Zap, MapPin } from "lucide-react";
+import { BadgeCheck, Zap, MapPin } from "lucide-react";
 import type { Guide } from "@/data/guides";
 import { WishlistHeart } from "@/components/WishlistHeart";
 import { useCities } from "@/lib/content-queries";
