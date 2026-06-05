@@ -9,7 +9,7 @@ import { HorizontalCarousel } from "@/components/home/HorizontalCarousel";
 
 
 export function TopTours() {
-  const { t, tCategory } = useI18n();
+  const { t, tCategory, tLanguage } = useI18n();
   const { data: tours = [], isLoading } = useTours();
   const { data: categories = [] } = useCategories();
   const [active, setActive] = useState<string | null>(null);
