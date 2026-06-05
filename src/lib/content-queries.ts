@@ -36,6 +36,7 @@ type GuideRow = {
   tagline: string;
   bio: string;
   languages: string[];
+  verified_languages: Record<string, string> | null;
   specialties: string[];
   price_per_day: number;
   rating: number;
@@ -62,6 +63,7 @@ function mapGuide(row: GuideRow): Guide {
     tagline: row.tagline,
     bio: row.bio,
     languages: row.languages,
+    verifiedLanguages: (row.verified_languages ?? {}) as Record<string, string>,
     specialties: row.specialties,
     pricePerDay: Number(row.price_per_day),
     rating: Number(row.rating),
@@ -75,7 +77,7 @@ function mapGuide(row: GuideRow): Guide {
 }
 
 const GUIDE_SELECT =
-  "id, slug, name, city_id, extra_city_ids, photo_url, tagline, bio, languages, specialties, price_per_day, rating, reviews, verified, instant_book, sort_order, cities(name), guide_categories(categories(slug, name, icon))";
+  "id, slug, name, city_id, extra_city_ids, photo_url, tagline, bio, languages, verified_languages, specialties, price_per_day, rating, reviews, verified, instant_book, sort_order, cities(name), guide_categories(categories(slug, name, icon))";
 
 async function fetchGuides(): Promise<Guide[]> {
   const { data, error } = await supabase
