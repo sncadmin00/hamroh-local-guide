@@ -561,6 +561,10 @@ function BecomeAGuidePage() {
         <ReviewBlock
           form={form}
           languages={selectedLanguages.map(tLanguage)}
+          languageTests={selectedLanguages.map((l) => ({
+            language: tLanguage(l),
+            result: languageTests[l],
+          }))}
           categories={selectedCategories.map((id) => categories.find((c) => c.id === id)?.name).filter(Boolean) as string[]}
           portrait={portrait}
           photos={photos}
@@ -579,9 +583,12 @@ function BecomeAGuidePage() {
             portrait: t("bg.rv.portrait"),
             photos: t("bg.rv.photos"),
             video: t("bg.rv.video"),
+            languageTests: t("bg.rv.languageTests"),
+            level: t("bg.lt.level"),
           }}
         />
       ),
+
     },
   ];
 
