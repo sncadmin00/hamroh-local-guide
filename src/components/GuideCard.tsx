@@ -63,6 +63,7 @@ export function GuideCard({ guide }: { guide: Guide }) {
               hasVerifiedLanguage,
               introVideoVerified: guide.introVideoVerified,
               reviewsCount: guide.reviews,
+              avgRating: guide.rating,
               completedToursCount: guide.completedToursCount,
               avgResponseMinutes: guide.avgResponseMinutes,
             }}
