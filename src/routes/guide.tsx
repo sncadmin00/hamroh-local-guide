@@ -20,7 +20,9 @@ import {
   deleteTour,
   updateMyCities,
   updateMyLanguages,
+  recordMyLanguageTest,
 } from "@/lib/guide-portal.functions";
+import { assessLanguageTest } from "@/lib/language-test.functions";
 import { useCities, useCategories } from "@/lib/content-queries";
 import { GuidePostsPanel } from "@/components/GuidePostsPanel";
 
