@@ -107,7 +107,7 @@ function ToursPage() {
               onClick={() => setSearch({ lang: undefined })}
               className={`px-3 h-8 rounded-full text-sm ${langFilter === "" ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground hover:bg-secondary/80"}`}
             >
-              {t("tours.allLanguages") ?? "All languages"}
+              {t("tours.allLanguages")}
             </button>
             {allLangs.map((lng) => (
               <button
