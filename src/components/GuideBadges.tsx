@@ -89,7 +89,24 @@ export function GuideBadges({ data, compact = false }: { data: GuideBadgesData; 
         )}
         <div className="flex flex-wrap gap-1">
           <BadgePill
+            active={!!data.hasTransport}
+            icon={Car}
+            label={
+              data.hasTransport && data.transportSeats
+                ? fmt(t("badges.transport.seats"), { n: data.transportSeats })
+                : t("badges.transport")
+            }
+            tooltip={
+              data.hasTransport
+                ? data.transportSeats
+                  ? fmt(t("badges.transport.on"), { n: data.transportSeats })
+                  : t("badges.transport.onNoSeats")
+                : t("badges.transport.off")
+            }
+          />
+          <BadgePill
             active={reviewsActive}
+
             icon={Star}
             label={
               data.avgRating != null && data.reviewsCount > 0
