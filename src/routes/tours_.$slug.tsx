@@ -88,7 +88,7 @@ function TourDetailPage() {
         <div className="mt-4 grid gap-6 lg:grid-cols-[2fr_1fr]">
           <div>
             <div className="relative aspect-[16/9] overflow-hidden rounded-2xl bg-secondary">
-              <img src={tour.cover_url || PLACEHOLDER} alt={tour.title} className="h-full w-full object-cover" />
+              <img src={tour.cover_url || PLACEHOLDER} alt={localizedTitle} className="h-full w-full object-cover" />
               <WishlistHeart type="tour" id={tour.id} size="lg" className="absolute right-4 top-4" />
             </div>
 
@@ -103,7 +103,7 @@ function TourDetailPage() {
                 <span className="inline-flex items-center gap-1 text-primary"><Car className="h-4 w-4" />Transport included</span>
               )}
             </div>
-            <h1 className="mt-2 font-display text-3xl sm:text-4xl font-semibold">{tour.title}</h1>
+            <h1 className="mt-2 font-display text-3xl sm:text-4xl font-semibold">{localizedTitle}</h1>
             {tour.reviews_count > 0 && (
               <div className="mt-2 inline-flex items-center gap-1.5 text-sm">
                 <div className="flex items-center gap-0.5">
@@ -118,7 +118,7 @@ function TourDetailPage() {
                 <span className="text-muted-foreground">· {tour.reviews_count} {tour.reviews_count === 1 ? "review" : "reviews"}</span>
               </div>
             )}
-            {tour.short_description && <p className="mt-2 text-lg text-muted-foreground">{tour.short_description}</p>}
+            {localizedShort && <p className="mt-2 text-lg text-muted-foreground">{localizedShort}</p>}
 
 
             {langPrices.length > 0 && (
@@ -150,9 +150,9 @@ function TourDetailPage() {
               </section>
             )}
 
-            {tour.description_md && (
+            {localizedDesc && (
               <section className="mt-8 prose prose-sm max-w-none">
-                <p className="whitespace-pre-wrap">{tour.description_md}</p>
+                <p className="whitespace-pre-wrap">{localizedDesc}</p>
               </section>
             )}
 
@@ -179,7 +179,7 @@ function TourDetailPage() {
               )}
             </div>
 
-            <TourReviewsSection tourId={tour.id} tourTitle={tour.title} />
+            <TourReviewsSection tourId={tour.id} tourTitle={localizedTitle} />
           </div>
 
 
