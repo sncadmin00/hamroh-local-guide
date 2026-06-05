@@ -95,7 +95,7 @@ async function uploadTo(bucket: string, file: File): Promise<string> {
 function BecomeAGuidePage() {
   const notifyAdmins = useServerFn(notifyAdminsOfGuideApplication);
   const generateBio = useServerFn(generateGuideBio);
-  const { tCategory, tLanguage } = useI18n();
+  const { t, tCategory, tLanguage } = useI18n();
   const [otherLanguage, setOtherLanguage] = useState("");
 
 
@@ -191,7 +191,7 @@ function BecomeAGuidePage() {
   const addPhotos = (files: File[]) => {
     for (const f of files) {
       if (f.size > MAX_PHOTO_BYTES) {
-        toast.error(`${f.name} больше 8 MB`);
+        toast.error(t("bg.s7.tooBig").replace("{name}", f.name));
         return;
       }
     }
@@ -204,7 +204,7 @@ function BecomeAGuidePage() {
     label: string,
   ) => {
     if (file && file.size > limit) {
-      toast.error(`${label} слишком большой`);
+      toast.error(label);
       return;
     }
     setter(file);
@@ -231,9 +231,9 @@ function BecomeAGuidePage() {
         },
       });
       update("about", bio);
-      toast.success("Готово! Можно отредактировать текст.");
+      toast.success(t("bg.s5.ok"));
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Не получилось сгенерировать";
+      const msg = err instanceof Error ? err.message : t("bg.s5.fail");
       toast.error(msg);
     } finally {
       setAiLoading(false);
@@ -249,71 +249,71 @@ function BecomeAGuidePage() {
     render: () => React.ReactNode;
   }> = [
     {
-      title: "Привет! Станьте гидом на Hamroh",
-      subtitle: "Это займёт 3–5 минут. Расскажите о себе, добавьте фото и короткое видео — мы поможем с текстом «о себе».",
+      title: t("bg.s0.title"),
+      subtitle: t("bg.s0.sub"),
       canNext: () => true,
       render: () => (
         <div className="space-y-4 text-sm text-muted-foreground">
           <ul className="space-y-2">
-            <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-primary mt-0.5 shrink-0" /> Несколько простых вопросов</li>
-            <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-primary mt-0.5 shrink-0" /> AI поможет написать «о себе»</li>
-            <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-primary mt-0.5 shrink-0" /> Сделайте фото и видео прямо с камеры</li>
-            <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-primary mt-0.5 shrink-0" /> Ответ от нас в течение 2 рабочих дней</li>
+            <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-primary mt-0.5 shrink-0" /> {t("bg.s0.b1")}</li>
+            <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-primary mt-0.5 shrink-0" /> {t("bg.s0.b2")}</li>
+            <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-primary mt-0.5 shrink-0" /> {t("bg.s0.b3")}</li>
+            <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-primary mt-0.5 shrink-0" /> {t("bg.s0.b4")}</li>
           </ul>
         </div>
       ),
     },
     {
-      title: "Как с вами связаться?",
+      title: t("bg.s1.title"),
       canNext: () =>
         form.full_name.trim().length >= 2 &&
         /^\S+@\S+\.\S+$/.test(form.email) &&
         form.phone.trim().length >= 5,
-      nextHint: "Заполните имя, email и телефон",
+      nextHint: t("bg.s1.hint"),
       render: () => (
         <div className="grid gap-4">
-          <Field label="Имя и фамилия">
-            <input autoFocus className={inputCls} value={form.full_name} onChange={(e) => update("full_name", e.target.value)} placeholder="Алишер Каримов" />
+          <Field label={t("bg.s1.fullName")}>
+            <input autoFocus className={inputCls} value={form.full_name} onChange={(e) => update("full_name", e.target.value)} placeholder={t("bg.s1.namePh")} />
           </Field>
-          <Field label="Email">
+          <Field label={t("bg.s1.email")}>
             <input type="email" className={inputCls} value={form.email} onChange={(e) => update("email", e.target.value)} placeholder="you@example.com" />
           </Field>
-          <Field label="Телефон">
+          <Field label={t("bg.s1.phone")}>
             <input className={inputCls} value={form.phone} onChange={(e) => update("phone", e.target.value)} placeholder="+998 ..." />
           </Field>
-          <Field label="Telegram (необязательно)">
+          <Field label={t("bg.s1.telegram")}>
             <input className={inputCls} value={form.telegram} onChange={(e) => update("telegram", e.target.value)} placeholder="@username" />
           </Field>
         </div>
       ),
     },
     {
-      title: "Откуда вы и как давно водите?",
+      title: t("bg.s2.title"),
       canNext: () => form.city.trim().length > 0 && form.experience_years !== "",
-      nextHint: "Укажите город и опыт",
+      nextHint: t("bg.s2.hint"),
       render: () => (
         <div className="grid gap-4">
-          <Field label="Город">
+          <Field label={t("bg.s2.city")}>
             {cities.length > 0 ? (
               <select className={inputCls} value={form.city} onChange={(e) => update("city", e.target.value)}>
-                <option value="">Выберите город…</option>
+                <option value="">{t("bg.s2.cityPick")}</option>
                 {cities.map((c) => <option key={c.id} value={c.name}>{c.name}</option>)}
-                <option value="Other">Другой</option>
+                <option value="Other">{t("bg.s2.cityOther")}</option>
               </select>
             ) : (
-              <input className={inputCls} value={form.city} onChange={(e) => update("city", e.target.value)} placeholder="Самарканд" />
+              <input className={inputCls} value={form.city} onChange={(e) => update("city", e.target.value)} placeholder={t("bg.s2.cityPh")} />
             )}
           </Field>
-          <Field label="Лет опыта">
+          <Field label={t("bg.s2.years")}>
             <input type="number" min={0} max={80} className={inputCls} value={form.experience_years} onChange={(e) => update("experience_years", e.target.value)} placeholder="3" />
           </Field>
         </div>
       ),
     },
     {
-      title: "На каких языках водите туры?",
+      title: t("bg.s3.title"),
       canNext: () => selectedLanguages.length > 0,
-      nextHint: "Выберите хотя бы один язык",
+      nextHint: t("bg.s3.hint"),
       render: () => {
         const knownNames = new Set(allLanguages.map((l) => l.name));
         const customLangs = selectedLanguages.filter((n) => !knownNames.has(n));
@@ -330,7 +330,7 @@ function BecomeAGuidePage() {
         return (
           <div className="space-y-4">
             <div className="flex flex-wrap gap-2">
-              {allLanguages.length === 0 && <p className="text-sm text-muted-foreground">Загрузка…</p>}
+              {allLanguages.length === 0 && <p className="text-sm text-muted-foreground">{t("bg.s3.loading")}</p>}
               {allLanguages.map((lng) => {
                 const active = selectedLanguages.includes(lng.name);
                 return (
@@ -356,15 +356,15 @@ function BecomeAGuidePage() {
               ))}
             </div>
             <div>
-              <p className="text-sm font-medium text-foreground">Нет вашего языка? Добавьте свой</p>
-              <p className="text-xs text-muted-foreground mt-1">Админ затем добавит его в общий список</p>
+              <p className="text-sm font-medium text-foreground">{t("bg.s3.addOwn")}</p>
+              <p className="text-xs text-muted-foreground mt-1">{t("bg.s3.addOwnHint")}</p>
               <div className="mt-2 flex gap-2">
                 <input
                   type="text"
                   value={otherLanguage}
                   onChange={(e) => setOtherLanguage(e.target.value)}
                   onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addOther(); } }}
-                  placeholder="Напр. Türkçe, 한국어, Tojik…"
+                  placeholder={t("bg.s3.otherPh")}
                   maxLength={64}
                   className="flex-1 h-11 px-4 rounded-full bg-background ring-1 ring-border/60 text-sm"
                 />
@@ -374,7 +374,7 @@ function BecomeAGuidePage() {
                   disabled={!otherLanguage.trim()}
                   className="h-11 px-5 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-50"
                 >
-                  Добавить
+                  {t("bg.s3.add")}
                 </button>
               </div>
             </div>
@@ -384,13 +384,13 @@ function BecomeAGuidePage() {
     },
 
     {
-      title: "Чем вы специализируетесь?",
+      title: t("bg.s4.title"),
       canNext: () => form.specialization.trim().length >= 2,
-      nextHint: "Опишите вашу специализацию",
+      nextHint: t("bg.s4.hint"),
       render: () => (
         <div className="space-y-4">
           {categories.length > 0 && (
-            <Field label="Категории (можно несколько)">
+            <Field label={t("bg.s4.categories")}>
               <div className="flex flex-wrap gap-2">
                 {categories.map((c) => {
                   const active = selectedCategories.includes(c.id);
@@ -403,57 +403,60 @@ function BecomeAGuidePage() {
               </div>
             </Field>
           )}
-          <Field label="Коротко о специализации">
-            <input className={inputCls} value={form.specialization} onChange={(e) => update("specialization", e.target.value)} placeholder="Гастротуры, история, архитектура…" />
+          <Field label={t("bg.s4.specLabel")}>
+            <input className={inputCls} value={form.specialization} onChange={(e) => update("specialization", e.target.value)} placeholder={t("bg.s4.specPh")} />
           </Field>
         </div>
       ),
     },
     {
-      title: "Расскажите о себе — AI поможет",
-      subtitle: "Ответьте в двух словах на 3 вопроса, и AI составит чернетку. Вы её сможете отредактировать.",
+      title: t("bg.s5.title"),
+      subtitle: t("bg.s5.sub"),
       canNext: () => form.about.trim().length >= 20,
-      nextHint: "Сгенерируйте или напишите текст «о себе» (минимум 20 символов)",
+      nextHint: t("bg.s5.hint"),
       render: () => (
         <div className="space-y-4">
-          <Field label="Что вы обязательно покажете гостям?">
-            <textarea rows={2} className={inputCls} value={form.ai_highlight} onChange={(e) => update("ai_highlight", e.target.value)} placeholder="Например: рассвет на Регистане, чайхану дедушки…" />
+          <Field label={t("bg.s5.q1")}>
+            <textarea rows={2} className={inputCls} value={form.ai_highlight} onChange={(e) => update("ai_highlight", e.target.value)} placeholder={t("bg.s5.q1ph")} />
           </Field>
-          <Field label="Как вы ведёте туры?">
-            <textarea rows={2} className={inputCls} value={form.ai_style} onChange={(e) => update("ai_style", e.target.value)} placeholder="Неспешно, с историями, дегустациями…" />
+          <Field label={t("bg.s5.q2")}>
+            <textarea rows={2} className={inputCls} value={form.ai_style} onChange={(e) => update("ai_style", e.target.value)} placeholder={t("bg.s5.q2ph")} />
           </Field>
-          <Field label="Почему вам это нравится?">
-            <textarea rows={2} className={inputCls} value={form.ai_why} onChange={(e) => update("ai_why", e.target.value)} placeholder="Люблю знакомить людей с настоящим Узбекистаном…" />
+          <Field label={t("bg.s5.q3")}>
+            <textarea rows={2} className={inputCls} value={form.ai_why} onChange={(e) => update("ai_why", e.target.value)} placeholder={t("bg.s5.q3ph")} />
           </Field>
 
           <Button type="button" onClick={onAiGenerate} disabled={aiLoading} className="rounded-full w-full sm:w-auto">
-            {aiLoading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Пишу…</> : <><Sparkles className="h-4 w-4 mr-2" /> {form.about ? "Переписать с AI" : "Составить с AI"}</>}
+            {aiLoading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> {t("bg.s5.writing")}</> : <><Sparkles className="h-4 w-4 mr-2" /> {form.about ? t("bg.s5.rewrite") : t("bg.s5.compose")}</>}
           </Button>
 
-          <Field label="«О себе» (можно отредактировать)">
-            <textarea rows={6} className={inputCls} value={form.about} onChange={(e) => update("about", e.target.value)} placeholder="Здесь появится текст после генерации, или напишите сами." />
-            <div className="mt-1 text-xs text-muted-foreground">{form.about.trim().length} символов</div>
+          <Field label={t("bg.s5.aboutLabel")}>
+            <textarea rows={6} className={inputCls} value={form.about} onChange={(e) => update("about", e.target.value)} placeholder={t("bg.s5.aboutPh")} />
+            <div className="mt-1 text-xs text-muted-foreground">{form.about.trim().length} {t("bg.s5.chars")}</div>
           </Field>
         </div>
       ),
     },
     {
-      title: "Ваш портрет",
-      subtitle: "Доброжелательное фото — это первое, что увидят путешественники.",
+      title: t("bg.s6.title"),
+      subtitle: t("bg.s6.sub"),
       canNext: () => true,
       render: () => (
         <PhotoSlot
           file={portrait}
-          onPick={(f) => setOnePhoto(f, MAX_PHOTO_BYTES, setPortrait, "Портрет")}
+          onPick={(f) => setOnePhoto(f, MAX_PHOTO_BYTES, setPortrait, t("bg.s6.portraitTooBig"))}
           onClear={() => setPortrait(null)}
           accept="image/*"
           captureMode="user"
+          takeLabel={t("bg.s6.takeCamera")}
+          pickLabel={t("bg.s6.pickGallery")}
+          removeLabel={t("bg.remove")}
         />
       ),
     },
     {
-      title: "Фото ваших туров",
-      subtitle: `До ${MAX_PHOTOS} фотографий. Покажите атмосферу — места, людей, моменты.`,
+      title: t("bg.s7.title"),
+      subtitle: t("bg.s7.sub").replace("{n}", String(MAX_PHOTOS)),
       canNext: () => true,
       render: () => (
         <PhotoGrid
@@ -461,23 +464,29 @@ function BecomeAGuidePage() {
           onAdd={addPhotos}
           onRemove={(i) => setPhotos((arr) => arr.filter((_, j) => j !== i))}
           max={MAX_PHOTOS}
+          takeLabel={t("bg.s6.takeCamera")}
+          pickLabel={t("bg.s7.pickLeft")}
+          removeLabel={t("bg.remove")}
         />
       ),
     },
     {
-      title: "Короткое видео-приветствие",
-      subtitle: "Не обязательно, но очень помогает. 15–30 секунд — расскажите, кто вы и что покажете.",
+      title: t("bg.s8.title"),
+      subtitle: t("bg.s8.sub"),
       canNext: () => true,
       render: () => (
         <VideoSlot
           file={video}
-          onPick={(f) => setOnePhoto(f, MAX_VIDEO_BYTES, setVideo, "Видео")}
+          onPick={(f) => setOnePhoto(f, MAX_VIDEO_BYTES, setVideo, t("bg.s8.videoTooBig"))}
           onClear={() => setVideo(null)}
+          recordLabel={t("bg.s8.record")}
+          uploadLabel={t("bg.s8.upload")}
+          removeLabel={t("bg.remove")}
         />
       ),
     },
     {
-      title: "Проверьте и отправьте",
+      title: t("bg.s9.title"),
       canNext: () => true,
       render: () => (
         <ReviewBlock
@@ -487,6 +496,21 @@ function BecomeAGuidePage() {
           portrait={portrait}
           photos={photos}
           video={video}
+          labels={{
+            name: t("bg.rv.name"),
+            email: t("bg.rv.email"),
+            phone: t("bg.rv.phone"),
+            telegram: t("bg.rv.telegram"),
+            city: t("bg.rv.city"),
+            years: t("bg.rv.years"),
+            languages: t("bg.rv.languages"),
+            categories: t("bg.rv.categories"),
+            specialization: t("bg.rv.specialization"),
+            about: t("bg.rv.about"),
+            portrait: t("bg.rv.portrait"),
+            photos: t("bg.rv.photos"),
+            video: t("bg.rv.video"),
+          }}
         />
       ),
     },
@@ -512,7 +536,7 @@ function BecomeAGuidePage() {
   const onSubmit = async () => {
     const parsed = finalSchema.safeParse({ ...form, languages: selectedLanguages });
     if (!parsed.success) {
-      toast.error(parsed.error.issues[0]?.message ?? "Проверьте форму");
+      toast.error(parsed.error.issues[0]?.message ?? t("bg.formCheck"));
       return;
     }
     setSaving(true);
@@ -556,10 +580,10 @@ function BecomeAGuidePage() {
 
       try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
 
-      toast.success("Заявка отправлена");
+      toast.success(t("bg.applicationSent"));
       setSubmitted(true);
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Что-то пошло не так";
+      const msg = err instanceof Error ? err.message : t("bg.sthWrong");
       toast.error(msg);
     } finally {
       setSaving(false);
@@ -570,7 +594,7 @@ function BecomeAGuidePage() {
     <div className="container mx-auto px-4 py-8 sm:py-12">
       <div className="mb-6">
         <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
-          <ArrowLeft className="h-4 w-4" /> На главную
+          <ArrowLeft className="h-4 w-4" /> {t("bg.toMain")}
         </Link>
       </div>
 
@@ -578,16 +602,16 @@ function BecomeAGuidePage() {
         {submitted ? (
           <div className="rounded-3xl border border-border/60 bg-secondary/30 p-8 text-center">
             <CheckCircle2 className="mx-auto h-10 w-10 text-primary" />
-            <h2 className="mt-4 font-display text-2xl font-semibold">Спасибо за заявку!</h2>
-            <p className="mt-2 text-muted-foreground">Мы свяжемся с вами в течение 2 рабочих дней.</p>
-            <Button asChild className="mt-6 rounded-full px-6"><Link to="/">На главную</Link></Button>
+            <h2 className="mt-4 font-display text-2xl font-semibold">{t("bg.thanksTitle")}</h2>
+            <p className="mt-2 text-muted-foreground">{t("bg.thanksSub")}</p>
+            <Button asChild className="mt-6 rounded-full px-6"><Link to="/">{t("bg.toMain")}</Link></Button>
           </div>
         ) : (
           <>
             {/* Progress */}
             <div className="mb-6">
               <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
-                <span>Шаг {step + 1} из {total}</span>
+                <span>{t("bg.step")} {step + 1} {t("bg.of")} {total}</span>
                 <span>{Math.round(((step + 1) / total) * 100)}%</span>
               </div>
               <div className="h-1.5 w-full rounded-full bg-secondary overflow-hidden">
@@ -614,15 +638,15 @@ function BecomeAGuidePage() {
                   disabled={step === 0}
                   className="rounded-full"
                 >
-                  <ArrowLeft className="h-4 w-4 mr-1" /> Назад
+                  <ArrowLeft className="h-4 w-4 mr-1" /> {t("bg.back")}
                 </Button>
                 {isLast ? (
                   <Button type="button" onClick={onSubmit} disabled={saving} size="lg" className="rounded-full px-6">
-                    {saving ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Отправка…</> : "Отправить заявку"}
+                    {saving ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> {t("bg.submitting")}</> : t("bg.submit")}
                   </Button>
                 ) : (
                   <Button type="button" onClick={goNext} size="lg" className="rounded-full px-6">
-                    {step === 0 ? "Начать" : "Далее"} <ArrowRight className="h-4 w-4 ml-1" />
+                    {step === 0 ? t("bg.start") : t("bg.next")} <ArrowRight className="h-4 w-4 ml-1" />
                   </Button>
                 )}
               </div>
@@ -661,12 +685,18 @@ function PhotoSlot({
   onClear,
   accept,
   captureMode,
+  takeLabel,
+  pickLabel,
+  removeLabel,
 }: {
   file: File | null;
   onPick: (f: File | null) => void;
   onClear: () => void;
   accept: string;
   captureMode?: "user" | "environment";
+  takeLabel: string;
+  pickLabel: string;
+  removeLabel: string;
 }) {
   const previewUrl = useObjectUrl(file);
   if (file) {
@@ -674,7 +704,7 @@ function PhotoSlot({
       <div className="flex items-center gap-3 rounded-xl border border-input bg-background p-3">
         {previewUrl && <img src={previewUrl} alt="" className="h-24 w-24 rounded-lg object-cover" />}
         <span className="flex-1 truncate text-sm">{file.name}</span>
-        <button type="button" onClick={onClear} className="inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive" aria-label="Убрать">
+        <button type="button" onClick={onClear} className="inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive" aria-label={removeLabel}>
           <X className="h-4 w-4" />
         </button>
       </div>
@@ -682,20 +712,20 @@ function PhotoSlot({
   }
   return (
     <div className="grid gap-2 sm:grid-cols-2">
-      <PickButton icon={<Camera className="h-4 w-4" />} label="Снять камерой" accept={accept} capture={captureMode} onPick={(fs) => onPick(fs[0] ?? null)} />
-      <PickButton icon={<ImagePlus className="h-4 w-4" />} label="Выбрать из галереи" accept={accept} onPick={(fs) => onPick(fs[0] ?? null)} />
+      <PickButton icon={<Camera className="h-4 w-4" />} label={takeLabel} accept={accept} capture={captureMode} onPick={(fs) => onPick(fs[0] ?? null)} />
+      <PickButton icon={<ImagePlus className="h-4 w-4" />} label={pickLabel} accept={accept} onPick={(fs) => onPick(fs[0] ?? null)} />
     </div>
   );
 }
 
-function VideoSlot({ file, onPick, onClear }: { file: File | null; onPick: (f: File | null) => void; onClear: () => void }) {
+function VideoSlot({ file, onPick, onClear, recordLabel, uploadLabel, removeLabel }: { file: File | null; onPick: (f: File | null) => void; onClear: () => void; recordLabel: string; uploadLabel: string; removeLabel: string }) {
   const previewUrl = useObjectUrl(file);
   if (file) {
     return (
       <div className="flex items-center gap-3 rounded-xl border border-input bg-background p-3">
         {previewUrl && <video src={previewUrl} className="h-24 w-32 rounded-lg object-cover bg-black" controls />}
         <span className="flex-1 truncate text-sm">{file.name}</span>
-        <button type="button" onClick={onClear} className="inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive" aria-label="Убрать">
+        <button type="button" onClick={onClear} className="inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive" aria-label={removeLabel}>
           <X className="h-4 w-4" />
         </button>
       </div>
@@ -703,36 +733,36 @@ function VideoSlot({ file, onPick, onClear }: { file: File | null; onPick: (f: F
   }
   return (
     <div className="grid gap-2 sm:grid-cols-2">
-      <PickButton icon={<Video className="h-4 w-4" />} label="Записать видео" accept="video/*" capture="user" onPick={(fs) => onPick(fs[0] ?? null)} />
-      <PickButton icon={<Upload className="h-4 w-4" />} label="Загрузить файл" accept="video/*" onPick={(fs) => onPick(fs[0] ?? null)} />
+      <PickButton icon={<Video className="h-4 w-4" />} label={recordLabel} accept="video/*" capture="user" onPick={(fs) => onPick(fs[0] ?? null)} />
+      <PickButton icon={<Upload className="h-4 w-4" />} label={uploadLabel} accept="video/*" onPick={(fs) => onPick(fs[0] ?? null)} />
     </div>
   );
 }
 
-function PhotoGrid({ photos, onAdd, onRemove, max }: { photos: File[]; onAdd: (fs: File[]) => void; onRemove: (i: number) => void; max: number }) {
+function PhotoGrid({ photos, onAdd, onRemove, max, takeLabel, pickLabel, removeLabel }: { photos: File[]; onAdd: (fs: File[]) => void; onRemove: (i: number) => void; max: number; takeLabel: string; pickLabel: string; removeLabel: string }) {
   return (
     <div className="space-y-3">
       {photos.length > 0 && (
         <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-          {photos.map((f, i) => <GridThumb key={i} file={f} onRemove={() => onRemove(i)} />)}
+          {photos.map((f, i) => <GridThumb key={i} file={f} onRemove={() => onRemove(i)} removeLabel={removeLabel} />)}
         </div>
       )}
       {photos.length < max && (
         <div className="grid gap-2 sm:grid-cols-2">
-          <PickButton icon={<Camera className="h-4 w-4" />} label="Снять камерой" accept="image/*" capture="environment" onPick={(fs) => onAdd(fs.slice(0, max - photos.length))} />
-          <PickButton icon={<ImagePlus className="h-4 w-4" />} label={`Выбрать (${max - photos.length} осталось)`} accept="image/*" multiple onPick={(fs) => onAdd(fs.slice(0, max - photos.length))} />
+          <PickButton icon={<Camera className="h-4 w-4" />} label={takeLabel} accept="image/*" capture="environment" onPick={(fs) => onAdd(fs.slice(0, max - photos.length))} />
+          <PickButton icon={<ImagePlus className="h-4 w-4" />} label={pickLabel.replace("{n}", String(max - photos.length))} accept="image/*" multiple onPick={(fs) => onAdd(fs.slice(0, max - photos.length))} />
         </div>
       )}
     </div>
   );
 }
 
-function GridThumb({ file, onRemove }: { file: File; onRemove: () => void }) {
+function GridThumb({ file, onRemove, removeLabel }: { file: File; onRemove: () => void; removeLabel: string }) {
   const url = useObjectUrl(file);
   return (
     <div className="relative aspect-square">
       {url && <img src={url} alt="" className="h-full w-full rounded-lg object-cover ring-1 ring-border" />}
-      <button type="button" onClick={onRemove} className="absolute -top-1.5 -right-1.5 inline-flex h-6 w-6 items-center justify-center rounded-full bg-background ring-1 ring-border text-muted-foreground hover:text-destructive" aria-label="Убрать">
+      <button type="button" onClick={onRemove} className="absolute -top-1.5 -right-1.5 inline-flex h-6 w-6 items-center justify-center rounded-full bg-background ring-1 ring-border text-muted-foreground hover:text-destructive" aria-label={removeLabel}>
         <X className="h-3.5 w-3.5" />
       </button>
     </div>
@@ -788,6 +818,7 @@ function ReviewBlock({
   portrait,
   photos,
   video,
+  labels,
 }: {
   form: FormState;
   languages: string[];
@@ -795,17 +826,22 @@ function ReviewBlock({
   portrait: File | null;
   photos: File[];
   video: File | null;
+  labels: {
+    name: string; email: string; phone: string; telegram: string; city: string; years: string;
+    languages: string; categories: string; specialization: string; about: string;
+    portrait: string; photos: string; video: string;
+  };
 }) {
   const rows: Array<[string, string]> = [
-    ["Имя", form.full_name || "—"],
-    ["Email", form.email || "—"],
-    ["Телефон", form.phone || "—"],
-    ["Telegram", form.telegram || "—"],
-    ["Город", form.city || "—"],
-    ["Опыт (лет)", form.experience_years || "—"],
-    ["Языки", languages.join(", ") || "—"],
-    ["Категории", categories.join(", ") || "—"],
-    ["Специализация", form.specialization || "—"],
+    [labels.name, form.full_name || "—"],
+    [labels.email, form.email || "—"],
+    [labels.phone, form.phone || "—"],
+    [labels.telegram, form.telegram || "—"],
+    [labels.city, form.city || "—"],
+    [labels.years, form.experience_years || "—"],
+    [labels.languages, languages.join(", ") || "—"],
+    [labels.categories, categories.join(", ") || "—"],
+    [labels.specialization, form.specialization || "—"],
   ];
   return (
     <div className="space-y-4">
@@ -818,13 +854,13 @@ function ReviewBlock({
         ))}
       </div>
       <div className="rounded-xl border border-border/60 p-3 text-sm">
-        <div className="text-muted-foreground text-xs mb-1">О себе</div>
+        <div className="text-muted-foreground text-xs mb-1">{labels.about}</div>
         <p className="whitespace-pre-wrap">{form.about || "—"}</p>
       </div>
       <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
-        <span>Портрет: {portrait ? "✓" : "—"}</span>
-        <span>· Фото: {photos.length}</span>
-        <span>· Видео: {video ? "✓" : "—"}</span>
+        <span>{labels.portrait}: {portrait ? "✓" : "—"}</span>
+        <span>· {labels.photos}: {photos.length}</span>
+        <span>· {labels.video}: {video ? "✓" : "—"}</span>
       </div>
     </div>
   );
