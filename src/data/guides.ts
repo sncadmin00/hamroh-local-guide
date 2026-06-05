@@ -25,5 +25,7 @@ export interface Guide {
   introVideoVerified: boolean;
   completedToursCount: number;
   avgResponseMinutes: number | null;
+  hasTransport: boolean;
+  transportSeats: number | null;
   categories: { slug: string; name: string; icon: string }[];
 }

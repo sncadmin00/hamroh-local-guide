@@ -125,6 +125,8 @@ function BecomeAGuidePage() {
   const [photos, setPhotos] = useState<File[]>([]);
   const [video, setVideo] = useState<File | null>(null);
   const [form, setForm] = useState<FormState>(emptyForm);
+  const [hasTransport, setHasTransport] = useState<boolean>(false);
+  const [transportSeats, setTransportSeats] = useState<string>("");
 
   // Load draft
   useEffect(() => {
@@ -136,11 +138,15 @@ function BecomeAGuidePage() {
         languages?: string[];
         categories?: string[];
         languageTests?: Record<string, LangTestResult>;
+        hasTransport?: boolean;
+        transportSeats?: string;
       };
       if (parsed.form) setForm({ ...emptyForm, ...parsed.form });
       if (parsed.languages) setSelectedLanguages(parsed.languages);
       if (parsed.categories) setSelectedCategories(parsed.categories);
       if (parsed.languageTests) setLanguageTests(parsed.languageTests);
+      if (typeof parsed.hasTransport === "boolean") setHasTransport(parsed.hasTransport);
+      if (typeof parsed.transportSeats === "string") setTransportSeats(parsed.transportSeats);
     } catch {
       // ignore
     }
@@ -152,12 +158,12 @@ function BecomeAGuidePage() {
     try {
       localStorage.setItem(
         DRAFT_KEY,
-        JSON.stringify({ form, languages: selectedLanguages, categories: selectedCategories, languageTests }),
+        JSON.stringify({ form, languages: selectedLanguages, categories: selectedCategories, languageTests, hasTransport, transportSeats }),
       );
     } catch {
       // ignore
     }
-  }, [form, selectedLanguages, selectedCategories, languageTests]);
+  }, [form, selectedLanguages, selectedCategories, languageTests, hasTransport, transportSeats]);
 
 
   useEffect(() => {
@@ -479,6 +485,36 @@ function BecomeAGuidePage() {
       ),
     },
     {
+      title: t("bg.tr.title"),
+      subtitle: t("bg.tr.sub"),
+      canNext: () => !hasTransport || (transportSeats !== "" && Number(transportSeats) > 0),
+      render: () => (
+        <div className="space-y-4">
+          <div className="flex flex-wrap gap-2">
+            <button type="button" onClick={() => setHasTransport(true)} className={chipCls(hasTransport)}>
+              {t("bg.tr.yes")}
+            </button>
+            <button type="button" onClick={() => { setHasTransport(false); setTransportSeats(""); }} className={chipCls(!hasTransport)}>
+              {t("bg.tr.no")}
+            </button>
+          </div>
+          {hasTransport && (
+            <Field label={t("bg.tr.seats")}>
+              <input
+                type="number"
+                min={1}
+                max={60}
+                className={inputCls}
+                value={transportSeats}
+                onChange={(e) => setTransportSeats(e.target.value)}
+                placeholder={t("bg.tr.seatsPh")}
+              />
+            </Field>
+          )}
+        </div>
+      ),
+    },
+    {
       title: t("bg.s5.title"),
       subtitle: t("bg.s5.sub"),
       canNext: () => form.about.trim().length >= 20,
@@ -643,10 +679,13 @@ function BecomeAGuidePage() {
           video_url,
           photo_urls,
           category_ids: selectedCategories,
+          has_transport: hasTransport,
+          transport_seats: hasTransport && transportSeats ? Number(transportSeats) : null,
           language_tests: selectedLanguages.map((l) => ({
             language: l,
             ...(languageTests[l] ?? { level: "N/A", transcript: "", feedback: "", skipped: true }),
           })),
+
 
         })
         .select("id")

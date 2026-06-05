@@ -1,4 +1,4 @@
-import { BadgeCheck, ShieldCheck, Video, Languages, Star, Compass, Clock } from "lucide-react";
+import { BadgeCheck, ShieldCheck, Video, Languages, Star, Compass, Clock, Car } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useI18n } from "@/lib/i18n";
 
@@ -10,6 +10,8 @@ export type GuideBadgesData = {
   avgRating?: number | null;
   completedToursCount: number;
   avgResponseMinutes: number | null;
+  hasTransport?: boolean;
+  transportSeats?: number | null;
 };
 
 const REVIEWS_THRESHOLD = 3;
@@ -79,6 +81,22 @@ export function GuideBadges({ data, compact = false }: { data: GuideBadgesData; 
             icon={Video}
             label={t("badges.introVideo")}
             tooltip={data.introVideoVerified ? t("badges.introVideo.on") : t("badges.introVideo.off")}
+          />
+          <BadgePill
+            active={!!data.hasTransport}
+            icon={Car}
+            label={
+              data.hasTransport && data.transportSeats
+                ? fmt(t("badges.transport.seats"), { n: data.transportSeats })
+                : t("badges.transport")
+            }
+            tooltip={
+              data.hasTransport
+                ? data.transportSeats
+                  ? fmt(t("badges.transport.on"), { n: data.transportSeats })
+                  : t("badges.transport.onNoSeats")
+                : t("badges.transport.off")
+            }
           />
         </div>
         {!compact && (
