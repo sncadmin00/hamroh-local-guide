@@ -130,8 +130,9 @@ function GuidesPage() {
                 {tLanguage(l)}
               </button>
             ))}
-
+          </div>
         )}
+
 
         <h2 id="guides-heading" className="sr-only mt-10">
           {isLoading ? "Loading guides" : `${filtered.length} guides found`}
