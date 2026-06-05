@@ -52,8 +52,8 @@ export const translations: Dict = {
   },
   "hero.tagline": {
     en: "Powered by Hamroh AI",
-    uz: "Hamroh AI · Bepul · Ro'yxatdan o'tmasdan sinab ko'ring",
-    ru: "Hamroh AI · Бесплатно · Без регистрации",
+    uz: "Hamroh AI bilan ishlaydi",
+    ru: "Работает на Hamroh AI",
   },
   "hero.suggest.1": { en: "Korean-speaking food guide", uz: "Koreys tilida ovqat hamrohi", ru: "Гид по еде со знанием корейского" },
   "hero.suggest.2": { en: "Sunset photography tour", uz: "Quyosh botishi fotosessiyasi", ru: "Фототур на закате" },
