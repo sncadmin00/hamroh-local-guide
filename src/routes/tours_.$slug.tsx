@@ -27,7 +27,7 @@ const AVATAR_PLACEHOLDER =
 
 function TourDetailPage() {
   const { slug } = Route.useParams();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { data: tour, isLoading } = useTour(slug);
   const { data: allTours } = useTours();
 
