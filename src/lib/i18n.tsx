@@ -31,14 +31,14 @@ export const translations: Dict = {
   "common.admin": { en: "Admin", uz: "Admin", ru: "Админ" },
   "hero.title": { en: "Find your local guide", uz: "Mahalliy hamrohizni toping", ru: "Найдите своего местного гида" },
   "hero.h1": {
-    en: "Find a trusted companion in 30 seconds",
-    uz: "30 soniyada ishonchli hamroh toping",
-    ru: "Найдите проверенного спутника за 30 секунд",
+    en: "Find trusted local guides across Uzbekistan",
+    uz: "O'zbekiston bo'ylab ishonchli mahalliy hamrohlarni toping",
+    ru: "Найдите проверенных местных гидов по всему Узбекистану",
   },
   "hero.h1sub": {
-    en: "Get matched with a verified local guide who can show you the city, translate, and help you travel like a local.",
-    uz: "Sizga shaharni ko'rsatadigan, tarjima qiladigan va mahalliy aholi kabi sayohat qilishga yordam beradigan tasdiqlangan mahalliy hamrohni toping.",
-    ru: "Найдите проверенного местного гида, который покажет город, переведет и поможет путешествовать как местный.",
+    en: "Book authentic experiences with verified local companions in Tashkent, Samarkand and Bukhara.",
+    uz: "Toshkent, Samarqand va Buxoroda tasdiqlangan mahalliy hamrohlar bilan haqiqiy tajribalarni bron qiling.",
+    ru: "Бронируйте аутентичные впечатления с проверенными местными спутниками в Ташкенте, Самарканде и Бухаре.",
   },
   "hero.subtitle": {
     en: "Describe the trip you want. Hamroh AI matches you with a verified local guide.",
