@@ -1,4 +1,4 @@
-import { BadgeCheck, ShieldCheck, Video, Languages, Star, Compass, Clock } from "lucide-react";
+import { BadgeCheck, ShieldCheck, Video, Languages, Star, Compass, Clock, Car } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useI18n } from "@/lib/i18n";
 
@@ -10,6 +10,8 @@ export type GuideBadgesData = {
   avgRating?: number | null;
   completedToursCount: number;
   avgResponseMinutes: number | null;
+  hasTransport?: boolean;
+  transportSeats?: number | null;
 };
 
 const REVIEWS_THRESHOLD = 3;
