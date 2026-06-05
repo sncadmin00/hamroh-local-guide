@@ -9,7 +9,7 @@ import { HorizontalCarousel } from "@/components/home/HorizontalCarousel";
 
 
 export function TopTours() {
-  const { t, tCategory } = useI18n();
+  const { t, tCategory, tLanguage } = useI18n();
   const { data: tours = [], isLoading } = useTours();
   const { data: categories = [] } = useCategories();
   const [active, setActive] = useState<string | null>(null);
@@ -152,7 +152,7 @@ export function TopTours() {
                           <div className="mt-3 flex flex-wrap gap-1">
                             {langPrices.slice(0, 3).map(({ lng, price }) => (
                               <span key={lng} className="inline-flex items-center gap-1 rounded-md bg-secondary px-1.5 py-0.5 text-[10px]">
-                                <span className="font-medium">{lng}</span>
+                                <span className="font-medium">{tLanguage(lng)}</span>
                                 <span className="text-muted-foreground tabular-nums">${Math.round(price)}</span>
                               </span>
                             ))}
