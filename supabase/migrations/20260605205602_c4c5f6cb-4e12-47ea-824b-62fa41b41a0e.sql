@@ -1,0 +1,1 @@
+ALTER TABLE public.guides ADD COLUMN IF NOT EXISTS verified_languages jsonb NOT NULL DEFAULT '{}'::jsonb;
