@@ -272,6 +272,11 @@ export const translations: Dict = {
   "bg.s0.b2": { en: "AI helps write your \"about\"", uz: "AI \"o'zim haqimda\" yozishga yordam beradi", ru: "AI поможет написать «о себе»" },
   "bg.s0.b3": { en: "Take photos and video right from your camera", uz: "Rasm va videoni kameradan to'g'ridan-to'g'ri oling", ru: "Сделайте фото и видео прямо с камеры" },
   "bg.s0.b4": { en: "Response within 2 business days", uz: "2 ish kuni ichida javob", ru: "Ответ от нас в течение 2 рабочих дней" },
+  "bg.s0.remTitle": { en: "Before you start", uz: "Boshlashdan oldin", ru: "Прежде чем начать" },
+  "bg.s0.rem1": { en: "Have your passport or ID ready", uz: "Pasport yoki ID-kartangiz tayyor bo‘lsin", ru: "Имейте при себе паспорт или удостоверение личности" },
+  "bg.s0.rem2": { en: "Make sure you can record a short video of yourself", uz: "O‘zingizni qisqa videoga olish imkoniyati borligiga ishonch hosil qiling", ru: "Убедитесь, что вы сможете снять себя на короткое видео" },
+  "bg.s0.rem3": { en: "You will need a microphone for the language test", uz: "Til testi uchun mikrofon kerak bo‘ladi", ru: "Для языкового теста понадобится микрофон" },
+  "bg.s0.rem4": { en: "Prepare a few photos of your city or tours", uz: "Shaharingiz yoki sayohatlaringizdan bir nechta rasm tayyorlang", ru: "Подготовьте несколько фотографий вашего города или туров" },
 
   "bg.s1.title": { en: "How can we reach you?", uz: "Siz bilan qanday bog'lansak bo'ladi?", ru: "Как с вами связаться?" },
   "bg.s1.hint": { en: "Fill in name, email and phone", uz: "Ism, email va telefonni to'ldiring", ru: "Заполните имя, email и телефон" },
