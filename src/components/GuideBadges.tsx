@@ -82,23 +82,8 @@ export function GuideBadges({ data, compact = false }: { data: GuideBadgesData; 
             label={t("badges.introVideo")}
             tooltip={data.introVideoVerified ? t("badges.introVideo.on") : t("badges.introVideo.off")}
           />
-          <BadgePill
-            active={!!data.hasTransport}
-            icon={Car}
-            label={
-              data.hasTransport && data.transportSeats
-                ? fmt(t("badges.transport.seats"), { n: data.transportSeats })
-                : t("badges.transport")
-            }
-            tooltip={
-              data.hasTransport
-                ? data.transportSeats
-                  ? fmt(t("badges.transport.on"), { n: data.transportSeats })
-                  : t("badges.transport.onNoSeats")
-                : t("badges.transport.off")
-            }
-          />
         </div>
+
         {!compact && (
           <p className="text-[10px] uppercase tracking-wider text-muted-foreground/70 pt-1">{t("badges.activity")}</p>
         )}
