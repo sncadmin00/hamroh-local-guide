@@ -8,6 +8,7 @@ interface Props {
   fullName?: string
   email?: string
   phone?: string
+  telegram?: string
   city?: string
   languages?: string[]
   specialization?: string
