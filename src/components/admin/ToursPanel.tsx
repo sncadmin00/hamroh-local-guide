@@ -295,6 +295,25 @@ function TourEditor({
         </label>
       </div>
 
+      <div className="rounded-xl border border-dashed border-primary/40 bg-primary/5 p-3 flex flex-wrap items-center gap-2">
+        <Languages className="h-4 w-4 text-primary" />
+        <span className="text-sm font-medium">Auto-translate from:</span>
+        {(["ru", "uz", "en"] as const).map((lc) => (
+          <button
+            key={lc}
+            type="button"
+            disabled={translating !== null}
+            onClick={() => autoTranslate(lc)}
+            className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full bg-background ring-1 ring-border text-xs font-medium uppercase hover:bg-secondary disabled:opacity-50"
+          >
+            {translating === lc ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
+            {lc}
+          </button>
+        ))}
+        <span className="text-xs text-muted-foreground ml-auto">Fills the other two languages via Lovable AI</span>
+      </div>
+
+
       <div className="rounded-xl border border-border/60 p-3 space-y-3">
         <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Title (per language)</div>
         <div className="grid gap-2 sm:grid-cols-3">
