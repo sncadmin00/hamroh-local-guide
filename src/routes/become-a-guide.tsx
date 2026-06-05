@@ -314,25 +314,75 @@ function BecomeAGuidePage() {
       title: "На каких языках водите туры?",
       canNext: () => selectedLanguages.length > 0,
       nextHint: "Выберите хотя бы один язык",
-      render: () => (
-        <div className="flex flex-wrap gap-2">
-          {allLanguages.length === 0 && <p className="text-sm text-muted-foreground">Загрузка…</p>}
-          {allLanguages.map((lng) => {
-            const active = selectedLanguages.includes(lng.name);
-            return (
-              <button
-                type="button"
-                key={lng.id}
-                onClick={() => toggleLanguage(lng.name)}
-                className={chipCls(active)}
-              >
-                {lng.name}
-              </button>
-            );
-          })}
-        </div>
-      ),
+      render: () => {
+        const knownNames = new Set(allLanguages.map((l) => l.name));
+        const customLangs = selectedLanguages.filter((n) => !knownNames.has(n));
+        const addOther = () => {
+          const v = otherLanguage.trim();
+          if (!v) return;
+          if (selectedLanguages.some((x) => x.toLowerCase() === v.toLowerCase())) {
+            setOtherLanguage("");
+            return;
+          }
+          setSelectedLanguages((s) => [...s, v]);
+          setOtherLanguage("");
+        };
+        return (
+          <div className="space-y-4">
+            <div className="flex flex-wrap gap-2">
+              {allLanguages.length === 0 && <p className="text-sm text-muted-foreground">Загрузка…</p>}
+              {allLanguages.map((lng) => {
+                const active = selectedLanguages.includes(lng.name);
+                return (
+                  <button
+                    type="button"
+                    key={lng.id}
+                    onClick={() => toggleLanguage(lng.name)}
+                    className={chipCls(active)}
+                  >
+                    {tLanguage(lng.name)}
+                  </button>
+                );
+              })}
+              {customLangs.map((n) => (
+                <button
+                  type="button"
+                  key={`custom-${n}`}
+                  onClick={() => toggleLanguage(n)}
+                  className={chipCls(true)}
+                >
+                  {n} <X className="inline h-3 w-3 ml-1" />
+                </button>
+              ))}
+            </div>
+            <div>
+              <p className="text-sm font-medium text-foreground">Нет вашего языка? Добавьте свой</p>
+              <p className="text-xs text-muted-foreground mt-1">Админ затем добавит его в общий список</p>
+              <div className="mt-2 flex gap-2">
+                <input
+                  type="text"
+                  value={otherLanguage}
+                  onChange={(e) => setOtherLanguage(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addOther(); } }}
+                  placeholder="Напр. Türkçe, 한국어, Tojik…"
+                  maxLength={64}
+                  className="flex-1 h-11 px-4 rounded-full bg-background ring-1 ring-border/60 text-sm"
+                />
+                <button
+                  type="button"
+                  onClick={addOther}
+                  disabled={!otherLanguage.trim()}
+                  className="h-11 px-5 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-50"
+                >
+                  Добавить
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      },
     },
+
     {
       title: "Чем вы специализируетесь?",
       canNext: () => form.specialization.trim().length >= 2,
