@@ -164,6 +164,8 @@ export const translations: Dict = {
   "tours.book": { en: "Book this tour", uz: "Sayohatni bron qilish", ru: "Забронировать тур" },
   "tours.allCities": { en: "All cities", uz: "Barcha shaharlar", ru: "Все города" },
   "tours.allCategories": { en: "All categories", uz: "Barcha toifalar", ru: "Все категории" },
+  "tours.allLanguages": { en: "All languages", uz: "Barcha tillar", ru: "Все языки" },
+
   "tours.by": { en: "by", uz: "hamroh", ru: "гид" },
   "tours.transport": { en: "transport", uz: "transport", ru: "транспорт" },
   "tours.loading": { en: "Loading…", uz: "Yuklanmoqda…", ru: "Загрузка…" },
