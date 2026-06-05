@@ -754,6 +754,39 @@ function LanguagesPanel({
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
   const [saving, setSaving] = useState(false);
+  const [suggested, setSuggested] = useState<string[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase.from("guide_applications").select("languages");
+      if (!data) return;
+      const known = new Set(languages.map((l) => l.name.toLowerCase()));
+      const seen = new Map<string, string>();
+      for (const row of data) {
+        for (const raw of (row.languages ?? []) as string[]) {
+          const v = (raw ?? "").trim();
+          if (!v) continue;
+          const key = v.toLowerCase();
+          if (known.has(key) || seen.has(key)) continue;
+          seen.set(key, v);
+        }
+      }
+      setSuggested(Array.from(seen.values()).sort());
+    })();
+  }, [languages]);
+
+  const quickAdd = async (n: string) => {
+    const { error } = await supabase.from("languages").insert({
+      name: n,
+      sort_order: languages.length,
+    });
+    if (error) toast.error(error.message);
+    else {
+      toast.success(`${n} added`);
+      await reload();
+    }
+  };
+
 
   const add = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -803,7 +836,31 @@ function LanguagesPanel({
         >
           <Plus className="h-4 w-4" /> {saving ? "Saving…" : "Add language"}
         </button>
+
+        {suggested.length > 0 && (
+          <div className="mt-6 pt-5 border-t border-border/60">
+            <h3 className="text-sm font-semibold">Suggested from applications</h3>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Languages entered by guides that aren't in the list yet.
+            </p>
+            <ul className="mt-3 space-y-2">
+              {suggested.map((s) => (
+                <li key={s} className="flex items-center justify-between gap-3 text-sm">
+                  <span className="truncate">{s}</span>
+                  <button
+                    type="button"
+                    onClick={() => quickAdd(s)}
+                    className="inline-flex items-center gap-1 h-8 px-3 rounded-full bg-primary/10 text-primary text-xs font-semibold hover:bg-primary/20"
+                  >
+                    <Plus className="h-3 w-3" /> Add
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </form>
+
 
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
         <h2 className="font-display text-lg font-semibold">Languages</h2>
