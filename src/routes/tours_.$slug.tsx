@@ -236,7 +236,7 @@ function TourDetailPage() {
                   <div className="relative aspect-[16/10] w-full overflow-hidden bg-secondary">
                     <img
                       src={tr.cover_url || PLACEHOLDER}
-                      alt={tr.title}
+                      alt={pickTourTitle(tr, lang)}
                       className="h-full w-full object-cover group-hover:scale-105 transition-transform"
                       loading="lazy"
                     />
