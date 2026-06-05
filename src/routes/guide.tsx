@@ -73,6 +73,7 @@ type MyGuide = {
   city_id: string;
   extra_city_ids: string[] | null;
   languages: string[] | null;
+  verified_languages: Record<string, string> | null;
   cities?: { name: string } | null;
 };
 
