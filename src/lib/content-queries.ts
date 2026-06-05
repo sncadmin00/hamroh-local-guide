@@ -320,6 +320,15 @@ export type TourRow = {
   title: string;
   short_description: string;
   description_md: string;
+  title_ru: string;
+  title_uz: string;
+  title_en: string;
+  short_description_ru: string;
+  short_description_uz: string;
+  short_description_en: string;
+  description_md_ru: string;
+  description_md_uz: string;
+  description_md_en: string;
   cover_url: string | null;
   city_id: string;
   duration_hours: number;
