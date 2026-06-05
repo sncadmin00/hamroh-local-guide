@@ -181,7 +181,7 @@ function Home() {
             {/* CTA Buttons */}
             <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
               <Link
-                to="/guides"
+                to="/tours"
                 className="inline-flex items-center justify-center rounded-full bg-[#8BB5A9] hover:bg-[#7aa297] text-white px-6 py-3 text-sm font-medium shadow-md shadow-slate-900/10 transition-all active:scale-95"
               >
                 {t("hero.bookGuide")}
