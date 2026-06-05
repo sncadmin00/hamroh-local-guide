@@ -154,6 +154,24 @@ function AiLayout() {
       </aside>
 
       <main className="flex-1 flex flex-col min-w-0">
+        <header className="md:hidden sticky top-0 z-10 flex items-center justify-between gap-2 px-3 h-12 border-b border-border/60 bg-background/90 backdrop-blur">
+          <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
+            <ArrowLeft className="h-4 w-4" /> Home
+          </Link>
+          <Link to="/" className="flex items-center gap-1.5">
+            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
+              <Compass className="h-3.5 w-3.5" />
+            </div>
+            <span className="font-display text-sm font-semibold">Hamroh AI</span>
+          </Link>
+          <button
+            onClick={newThread}
+            aria-label="New search"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground hover:opacity-90"
+          >
+            <Plus className="h-4 w-4" />
+          </button>
+        </header>
         <Outlet />
       </main>
     </div>
