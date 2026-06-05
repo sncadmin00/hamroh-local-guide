@@ -742,9 +742,52 @@ function GuidesPanel({
                     })}
                   </div>
                 )}
+                {(g.languages ?? []).length > 0 && (
+                  <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-border/40">
+                    <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mr-1">
+                      Verified ✓
+                    </span>
+                    {(g.languages ?? []).map((lname) => {
+                      const lvl = (g.verified_languages ?? {})[lname] ?? "";
+                      return (
+                        <label
+                          key={`vl-${g.id}-${lname}`}
+                          className="inline-flex items-center gap-1 rounded-full bg-card ring-1 ring-border/60 px-2 h-7 text-xs"
+                        >
+                          <span className="text-muted-foreground">{lname}</span>
+                          <select
+                            value={lvl}
+                            onChange={async (e) => {
+                              const v = e.target.value;
+                              const next: Record<string, string> = { ...(g.verified_languages ?? {}) };
+                              if (v) next[lname] = v;
+                              else delete next[lname];
+                              const { error } = await supabase
+                                .from("guides")
+                                .update({ verified_languages: next })
+                                .eq("id", g.id);
+                              if (error) toast.error(error.message);
+                              else await reload();
+                            }}
+                            className="bg-transparent border-0 outline-none text-xs font-semibold text-primary"
+                          >
+                            <option value="">—</option>
+                            <option value="A1">A1</option>
+                            <option value="A2">A2</option>
+                            <option value="B1">B1</option>
+                            <option value="B2">B2</option>
+                            <option value="C1">C1</option>
+                            <option value="C2">C2</option>
+                          </select>
+                        </label>
+                      );
+                    })}
+                  </div>
+                )}
               </li>
             );
           })}
+
         </ul>
       </div>
     </div>
