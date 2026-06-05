@@ -320,6 +320,15 @@ export type TourRow = {
   title: string;
   short_description: string;
   description_md: string;
+  title_ru: string;
+  title_uz: string;
+  title_en: string;
+  short_description_ru: string;
+  short_description_uz: string;
+  short_description_en: string;
+  description_md_ru: string;
+  description_md_uz: string;
+  description_md_en: string;
   cover_url: string | null;
   city_id: string;
   duration_hours: number;
@@ -346,7 +355,7 @@ export type TourRow = {
 };
 
 const TOUR_SELECT =
-  "id, slug, title, short_description, description_md, cover_url, city_id, duration_hours, price_from, highlights, included, not_included, published, sort_order, guide_id, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, children_free_under, transport_included, languages, rating, reviews_count, cities(name, slug), guides(id, slug, name, photo_url, rating, reviews, languages), tour_categories(category_id, categories(slug, name, icon))";
+  "id, slug, title, short_description, description_md, title_ru, title_uz, title_en, short_description_ru, short_description_uz, short_description_en, description_md_ru, description_md_uz, description_md_en, cover_url, city_id, duration_hours, price_from, highlights, included, not_included, published, sort_order, guide_id, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, children_free_under, transport_included, languages, rating, reviews_count, cities(name, slug), guides(id, slug, name, photo_url, rating, reviews, languages), tour_categories(category_id, categories(slug, name, icon))";
 
 
 function normalizeTour(row: any): TourRow {
@@ -407,6 +416,22 @@ export function offeredCategories(tour: Pick<TourRow, "pricing_mode" | "group_pr
     (k) => k in GROUP_CATEGORY_MAX && (tour.group_prices[k] ?? 0) > 0,
   );
 }
+
+type LocalizableTour = Pick<TourRow, "title" | "title_ru" | "title_uz" | "title_en" | "short_description" | "short_description_ru" | "short_description_uz" | "short_description_en" | "description_md" | "description_md_ru" | "description_md_uz" | "description_md_en">;
+
+export function pickTourTitle(tour: Partial<LocalizableTour>, lang: "ru" | "uz" | "en"): string {
+  return (tour as any)[`title_${lang}`] || tour.title_en || tour.title_ru || tour.title_uz || tour.title || "";
+}
+
+export function pickTourShortDescription(tour: Partial<LocalizableTour>, lang: "ru" | "uz" | "en"): string {
+  return (tour as any)[`short_description_${lang}`] || tour.short_description_en || tour.short_description_ru || tour.short_description_uz || tour.short_description || "";
+}
+
+export function pickTourDescriptionMd(tour: Partial<LocalizableTour>, lang: "ru" | "uz" | "en"): string {
+  return (tour as any)[`description_md_${lang}`] || tour.description_md_en || tour.description_md_ru || tour.description_md_uz || tour.description_md || "";
+}
+
+
 
 
 export function useTours(opts?: { citySlug?: string; categorySlug?: string }) {

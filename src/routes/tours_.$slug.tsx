@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { useTour, useTours } from "@/lib/content-queries";
+import { useTour, useTours, pickTourTitle, pickTourShortDescription, pickTourDescriptionMd } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
 import { Clock, MapPin, Check, X, Car, Star } from "lucide-react";
 import { WishlistHeart } from "@/components/WishlistHeart";
@@ -27,7 +27,7 @@ const AVATAR_PLACEHOLDER =
 
 function TourDetailPage() {
   const { slug } = Route.useParams();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { data: tour, isLoading } = useTour(slug);
   const { data: allTours } = useTours();
 
@@ -55,6 +55,9 @@ function TourDetailPage() {
   }
 
   const guide = tour.guides;
+  const localizedTitle = pickTourTitle(tour, lang);
+  const localizedShort = pickTourShortDescription(tour, lang);
+  const localizedDesc = pickTourDescriptionMd(tour, lang);
   const langPrices = tour.languages
     .map((lng) => ({ lng, price: tour.price_by_language[lng] ?? Number(tour.price_from) }))
     .filter((x) => x.price > 0);
@@ -85,7 +88,7 @@ function TourDetailPage() {
         <div className="mt-4 grid gap-6 lg:grid-cols-[2fr_1fr]">
           <div>
             <div className="relative aspect-[16/9] overflow-hidden rounded-2xl bg-secondary">
-              <img src={tour.cover_url || PLACEHOLDER} alt={tour.title} className="h-full w-full object-cover" />
+              <img src={tour.cover_url || PLACEHOLDER} alt={localizedTitle} className="h-full w-full object-cover" />
               <WishlistHeart type="tour" id={tour.id} size="lg" className="absolute right-4 top-4" />
             </div>
 
@@ -100,7 +103,7 @@ function TourDetailPage() {
                 <span className="inline-flex items-center gap-1 text-primary"><Car className="h-4 w-4" />Transport included</span>
               )}
             </div>
-            <h1 className="mt-2 font-display text-3xl sm:text-4xl font-semibold">{tour.title}</h1>
+            <h1 className="mt-2 font-display text-3xl sm:text-4xl font-semibold">{localizedTitle}</h1>
             {tour.reviews_count > 0 && (
               <div className="mt-2 inline-flex items-center gap-1.5 text-sm">
                 <div className="flex items-center gap-0.5">
@@ -115,7 +118,7 @@ function TourDetailPage() {
                 <span className="text-muted-foreground">· {tour.reviews_count} {tour.reviews_count === 1 ? "review" : "reviews"}</span>
               </div>
             )}
-            {tour.short_description && <p className="mt-2 text-lg text-muted-foreground">{tour.short_description}</p>}
+            {localizedShort && <p className="mt-2 text-lg text-muted-foreground">{localizedShort}</p>}
 
 
             {langPrices.length > 0 && (
@@ -147,9 +150,9 @@ function TourDetailPage() {
               </section>
             )}
 
-            {tour.description_md && (
+            {localizedDesc && (
               <section className="mt-8 prose prose-sm max-w-none">
-                <p className="whitespace-pre-wrap">{tour.description_md}</p>
+                <p className="whitespace-pre-wrap">{localizedDesc}</p>
               </section>
             )}
 
@@ -176,7 +179,7 @@ function TourDetailPage() {
               )}
             </div>
 
-            <TourReviewsSection tourId={tour.id} tourTitle={tour.title} />
+            <TourReviewsSection tourId={tour.id} tourTitle={localizedTitle} />
           </div>
 
 
@@ -233,7 +236,7 @@ function TourDetailPage() {
                   <div className="relative aspect-[16/10] w-full overflow-hidden bg-secondary">
                     <img
                       src={tr.cover_url || PLACEHOLDER}
-                      alt={tr.title}
+                      alt={pickTourTitle(tr, lang)}
                       className="h-full w-full object-cover group-hover:scale-105 transition-transform"
                       loading="lazy"
                     />
@@ -252,7 +255,7 @@ function TourDetailPage() {
                         <span className="inline-flex items-center gap-0.5"><Clock className="h-2.5 w-2.5" />{Number(tr.duration_hours)}{t("tours.hours")}</span>
                       )}
                     </div>
-                    <h3 className="mt-0.5 text-sm font-semibold leading-snug line-clamp-2">{tr.title}</h3>
+                    <h3 className="mt-0.5 text-sm font-semibold leading-snug line-clamp-2">{pickTourTitle(tr, lang)}</h3>
                     <div className="mt-1.5 text-xs">
                       <span className="text-muted-foreground">{t("tours.priceFrom")} </span>
                       <span className="font-semibold">${Number(tr.price_from).toFixed(0)}</span>

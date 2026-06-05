@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Clock, Car, Star } from "lucide-react";
-import { useTours, useCategories } from "@/lib/content-queries";
+import { useTours, useCategories, pickTourTitle } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
 import { WishlistHeart } from "@/components/WishlistHeart";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -9,7 +9,7 @@ import { HorizontalCarousel } from "@/components/home/HorizontalCarousel";
 
 
 export function TopTours() {
-  const { t, tCategory, tLanguage } = useI18n();
+  const { t, tCategory, tLanguage, lang } = useI18n();
   const { data: tours = [], isLoading } = useTours();
   const { data: categories = [] } = useCategories();
   const [active, setActive] = useState<string | null>(null);
@@ -109,7 +109,7 @@ export function TopTours() {
                         {tour.cover_url ? (
                           <img
                             src={tour.cover_url}
-                            alt={tour.title}
+                            alt={pickTourTitle(tour, lang)}
                             loading="lazy"
                             className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform"
                           />
@@ -124,7 +124,7 @@ export function TopTours() {
 
                       <div className="p-4">
                         <h3 className="font-display text-base font-semibold text-foreground line-clamp-2">
-                          {tour.title}
+                          {pickTourTitle(tour, lang)}
                         </h3>
                         <p className="mt-1 text-xs text-muted-foreground">
                           {[tour.cities?.name, tour.guides?.name].filter(Boolean).join(" · ")}

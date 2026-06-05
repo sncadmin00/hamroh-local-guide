@@ -180,8 +180,12 @@ function TourEditor({
   };
 
   const save = async () => {
-    if (!form.slug || !form.title || !form.city_id || !form.guide_id) {
-      toast.error("Slug, title, city and guide are required");
+    const titleRu = (form as any).title_ru ?? "";
+    const titleUz = (form as any).title_uz ?? "";
+    const titleEn = (form as any).title_en ?? "";
+    const anyTitle = titleRu || titleEn || titleUz || form.title || "";
+    if (!form.slug || !anyTitle || !form.city_id || !form.guide_id) {
+      toast.error("Slug, at least one title, city and guide are required");
       return;
     }
     setSaving(true);
@@ -192,9 +196,18 @@ function TourEditor({
     }
     const payload = {
       slug: form.slug,
-      title: form.title,
-      short_description: form.short_description ?? "",
-      description_md: form.description_md ?? "",
+      title: anyTitle,
+      title_ru: titleRu,
+      title_uz: titleUz,
+      title_en: titleEn,
+      short_description: (form as any).short_description_ru || (form as any).short_description_en || (form as any).short_description_uz || form.short_description || "",
+      short_description_ru: (form as any).short_description_ru ?? "",
+      short_description_uz: (form as any).short_description_uz ?? "",
+      short_description_en: (form as any).short_description_en ?? "",
+      description_md: (form as any).description_md_ru || (form as any).description_md_en || (form as any).description_md_uz || form.description_md || "",
+      description_md_ru: (form as any).description_md_ru ?? "",
+      description_md_uz: (form as any).description_md_uz ?? "",
+      description_md_en: (form as any).description_md_en ?? "",
       cover_url: form.cover_url || null,
       city_id: form.city_id,
       guide_id: form.guide_id,
@@ -209,6 +222,7 @@ function TourEditor({
       published: form.published ?? false,
       sort_order: form.sort_order ?? 0,
     };
+
 
     let tourId = form.id;
     if (tourId) {
@@ -242,21 +256,57 @@ function TourEditor({
           <span className="text-muted-foreground">Slug</span>
           <input value={form.slug ?? ""} onChange={(e) => set("slug", e.target.value)} className="mt-1 w-full h-9 rounded-lg border border-border bg-background px-2" />
         </label>
-        <label className="text-sm">
-          <span className="text-muted-foreground">Title</span>
-          <input value={form.title ?? ""} onChange={(e) => set("title", e.target.value)} className="mt-1 w-full h-9 rounded-lg border border-border bg-background px-2" />
-        </label>
       </div>
 
-      <label className="text-sm block">
-        <span className="text-muted-foreground">Short description (1 line)</span>
-        <input value={form.short_description ?? ""} onChange={(e) => set("short_description", e.target.value)} className="mt-1 w-full h-9 rounded-lg border border-border bg-background px-2" />
-      </label>
+      <div className="rounded-xl border border-border/60 p-3 space-y-3">
+        <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Title (per language)</div>
+        <div className="grid gap-2 sm:grid-cols-3">
+          {(["ru", "uz", "en"] as const).map((lc) => (
+            <label key={lc} className="text-sm">
+              <span className="text-muted-foreground uppercase text-xs">{lc}</span>
+              <input
+                value={(form as any)[`title_${lc}`] ?? ""}
+                onChange={(e) => set(`title_${lc}` as any, e.target.value)}
+                className="mt-1 w-full h-9 rounded-lg border border-border bg-background px-2"
+              />
+            </label>
+          ))}
+        </div>
+      </div>
 
-      <label className="text-sm block">
-        <span className="text-muted-foreground">Full description</span>
-        <textarea value={form.description_md ?? ""} onChange={(e) => set("description_md", e.target.value)} rows={5} className="mt-1 w-full rounded-lg border border-border bg-background p-2" />
-      </label>
+      <div className="rounded-xl border border-border/60 p-3 space-y-3">
+        <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Short description (per language)</div>
+        <div className="grid gap-2 sm:grid-cols-3">
+          {(["ru", "uz", "en"] as const).map((lc) => (
+            <label key={lc} className="text-sm">
+              <span className="text-muted-foreground uppercase text-xs">{lc}</span>
+              <input
+                value={(form as any)[`short_description_${lc}`] ?? ""}
+                onChange={(e) => set(`short_description_${lc}` as any, e.target.value)}
+                className="mt-1 w-full h-9 rounded-lg border border-border bg-background px-2"
+              />
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <div className="rounded-xl border border-border/60 p-3 space-y-3">
+        <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Full description (per language)</div>
+        <div className="grid gap-2 sm:grid-cols-3">
+          {(["ru", "uz", "en"] as const).map((lc) => (
+            <label key={lc} className="text-sm">
+              <span className="text-muted-foreground uppercase text-xs">{lc}</span>
+              <textarea
+                value={(form as any)[`description_md_${lc}`] ?? ""}
+                onChange={(e) => set(`description_md_${lc}` as any, e.target.value)}
+                rows={5}
+                className="mt-1 w-full rounded-lg border border-border bg-background p-2"
+              />
+            </label>
+          ))}
+        </div>
+      </div>
+
 
       <div className="grid gap-3 sm:grid-cols-4">
         <label className="text-sm">
