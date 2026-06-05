@@ -32,12 +32,12 @@ export const translations: Dict = {
   "hero.title": { en: "Find your local guide", uz: "Mahalliy hamrohizni toping", ru: "Найдите своего местного гида" },
   "hero.h1": {
     en: "Explore Uzbekistan with locals",
-    uz: "O'zbekistonni mahalliylar bilan kashf qiling",
+    uz: "Har bir safar uchun ishonchli hamroh",
     ru: "Откройте Узбекистан с местными",
   },
   "hero.h1sub": {
     en: "Verified guides, unique routes and authentic experiences.",
-    uz: "Ishonchli gidlar, o'ziga xos marshrutlar va unutilmas taassurotlar.",
+    uz: "Ishonchli gidlar, noyob tajribalar va unutilmas xotiralar.",
     ru: "Проверенные гиды, уникальные маршруты и настоящие впечатления.",
   },
   "hero.subtitle": {
