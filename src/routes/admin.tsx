@@ -754,6 +754,39 @@ function LanguagesPanel({
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
   const [saving, setSaving] = useState(false);
+  const [suggested, setSuggested] = useState<string[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase.from("guide_applications").select("languages");
+      if (!data) return;
+      const known = new Set(languages.map((l) => l.name.toLowerCase()));
+      const seen = new Map<string, string>();
+      for (const row of data) {
+        for (const raw of (row.languages ?? []) as string[]) {
+          const v = (raw ?? "").trim();
+          if (!v) continue;
+          const key = v.toLowerCase();
+          if (known.has(key) || seen.has(key)) continue;
+          seen.set(key, v);
+        }
+      }
+      setSuggested(Array.from(seen.values()).sort());
+    })();
+  }, [languages]);
+
+  const quickAdd = async (n: string) => {
+    const { error } = await supabase.from("languages").insert({
+      name: n,
+      sort_order: languages.length,
+    });
+    if (error) toast.error(error.message);
+    else {
+      toast.success(`${n} added`);
+      await reload();
+    }
+  };
+
 
   const add = async (e: React.FormEvent) => {
     e.preventDefault();
