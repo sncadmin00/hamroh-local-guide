@@ -368,6 +368,27 @@ export const translations: Dict = {
   "bg.rv.portrait": { en: "Portrait", uz: "Portret", ru: "Портрет" },
   "bg.rv.photos": { en: "Photos", uz: "Rasmlar", ru: "Фото" },
   "bg.rv.video": { en: "Video", uz: "Video", ru: "Видео" },
+
+  "badges.verified": { en: "Verified", uz: "Tasdiqlangan", ru: "Проверено" },
+  "badges.activity": { en: "Activity", uz: "Faollik", ru: "Активность" },
+  "badges.identity": { en: "Identity", uz: "Shaxs", ru: "Личность" },
+  "badges.language": { en: "Language", uz: "Til", ru: "Язык" },
+  "badges.introVideo": { en: "Intro video", uz: "Tanishuv video", ru: "Видео-визитка" },
+  "badges.reviews": { en: "reviews", uz: "sharh", ru: "отзывов" },
+  "badges.tours": { en: "tours", uz: "sayohat", ru: "туров" },
+  "badges.min": { en: "min", uz: "daq", ru: "мин" },
+  "badges.identity.on": { en: "Email, phone & passport verified", uz: "Email, telefon va pasport tasdiqlangan", ru: "Email, телефон и паспорт подтверждены" },
+  "badges.identity.off": { en: "Identity not verified", uz: "Shaxs tasdiqlanmagan", ru: "Личность не подтверждена" },
+  "badges.language.on": { en: "AI language test passed (B1+)", uz: "AI til testidan o'tgan (B1+)", ru: "Тест AI по языку пройден (B1+)" },
+  "badges.language.off": { en: "No verified language", uz: "Tasdiqlangan til yo'q", ru: "Нет подтверждённого языка" },
+  "badges.introVideo.on": { en: "Intro video approved", uz: "Tanishuv video tasdiqlangan", ru: "Видео-визитка подтверждена" },
+  "badges.introVideo.off": { en: "No approved intro video", uz: "Tasdiqlangan tanishuv video yo'q", ru: "Нет подтверждённого видео" },
+  "badges.reviews.on": { en: "{n} reviews from completed tours", uz: "Yakunlangan sayohatlardan {n} ta sharh", ru: "{n} отзывов с завершённых туров" },
+  "badges.reviews.off": { en: "Needs {n}+ verified reviews", uz: "{n}+ tasdiqlangan sharh kerak", ru: "Нужно {n}+ проверенных отзывов" },
+  "badges.tours.count": { en: "{n} completed tours", uz: "{n} ta yakunlangan sayohat", ru: "{n} завершённых туров" },
+  "badges.response.none": { en: "Not enough data to measure response time", uz: "Javob vaqtini o'lchash uchun ma'lumot yetarli emas", ru: "Недостаточно данных для оценки времени ответа" },
+  "badges.response.on": { en: "Median response time {n} min", uz: "O'rtacha javob vaqti {n} daq", ru: "Среднее время ответа {n} мин" },
+  "badges.response.off": { en: "Median response {n} min (badge requires <{limit})", uz: "O'rtacha javob {n} daq (nishon uchun <{limit} kerak)", ru: "Среднее время ответа {n} мин (значок при <{limit})" },
 };
 
 
