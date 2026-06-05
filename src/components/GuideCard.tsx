@@ -54,12 +54,22 @@ export function GuideCard({ guide }: { guide: Guide }) {
         </p>
 
         <div className="mt-4 flex flex-wrap gap-1.5">
-          {guide.languages.slice(0, 4).map((l) => (
-            <span key={l} className="rounded-full bg-secondary px-2.5 py-1 text-xs text-secondary-foreground">
-              {l}
-            </span>
-          ))}
+          {guide.languages.slice(0, 4).map((l) => {
+            const level = guide.verifiedLanguages?.[l];
+            return (
+              <span
+                key={l}
+                title={level ? `AI-verified · CEFR ${level}` : undefined}
+                className="inline-flex items-center gap-1 rounded-full bg-secondary px-2.5 py-1 text-xs text-secondary-foreground"
+              >
+                {l}
+                {level && <BadgeCheck className="h-3 w-3 text-primary" />}
+              </span>
+            );
+          })}
         </div>
+
+
 
         <div className="mt-auto pt-4 flex items-center justify-end border-t border-border/60">
           <span className="text-sm font-medium text-primary group-hover:underline">View tours →</span>

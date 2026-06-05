@@ -43,8 +43,10 @@ type Guide = {
   photo_url: string | null;
   specialties: string[];
   languages: string[];
+  verified_languages: Record<string, string> | null;
   user_id: string | null;
 };
+
 
 type Article = {
   id: string;
@@ -100,7 +102,10 @@ type GuideApplication = {
   portrait_url: string | null;
   video_url: string | null;
   photo_urls: string[] | null;
+  language_tests: Array<{ language: string; level: string; transcript?: string; feedback?: string; skipped?: boolean }> | null;
+  user_id: string | null;
 };
+
 
 type Category = {
   id: string;
@@ -737,9 +742,52 @@ function GuidesPanel({
                     })}
                   </div>
                 )}
+                {(g.languages ?? []).length > 0 && (
+                  <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-border/40">
+                    <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mr-1">
+                      Verified ✓
+                    </span>
+                    {(g.languages ?? []).map((lname) => {
+                      const lvl = (g.verified_languages ?? {})[lname] ?? "";
+                      return (
+                        <label
+                          key={`vl-${g.id}-${lname}`}
+                          className="inline-flex items-center gap-1 rounded-full bg-card ring-1 ring-border/60 px-2 h-7 text-xs"
+                        >
+                          <span className="text-muted-foreground">{lname}</span>
+                          <select
+                            value={lvl}
+                            onChange={async (e) => {
+                              const v = e.target.value;
+                              const next: Record<string, string> = { ...(g.verified_languages ?? {}) };
+                              if (v) next[lname] = v;
+                              else delete next[lname];
+                              const { error } = await supabase
+                                .from("guides")
+                                .update({ verified_languages: next })
+                                .eq("id", g.id);
+                              if (error) toast.error(error.message);
+                              else await reload();
+                            }}
+                            className="bg-transparent border-0 outline-none text-xs font-semibold text-primary"
+                          >
+                            <option value="">—</option>
+                            <option value="A1">A1</option>
+                            <option value="A2">A2</option>
+                            <option value="B1">B1</option>
+                            <option value="B2">B2</option>
+                            <option value="C1">C1</option>
+                            <option value="C2">C2</option>
+                          </select>
+                        </label>
+                      );
+                    })}
+                  </div>
+                )}
               </li>
             );
           })}
+
         </ul>
       </div>
     </div>
@@ -1563,19 +1611,49 @@ function ApplicationsPanel({
 
   const setStatus = async (id: string, status: string) => {
     const { error } = await supabase.from("guide_applications").update({ status }).eq("id", id);
-    if (error) toast.error(error.message);
-    else {
-      toast.success("Status updated");
-      if (status === "approved" || status === "rejected") {
-        try {
-          await notifyGuideApplicationStatus({ data: { application_id: id, status } });
-        } catch (e) {
-          console.error("status email failed", e);
-        }
-      }
-      await reload();
+    if (error) {
+      toast.error(error.message);
+      return;
     }
+    toast.success("Status updated");
+
+    // Auto-copy AI-verified languages (B1+) into the matching guide row when approving.
+    if (status === "approved") {
+      try {
+        const app = applications.find((a) => a.id === id);
+        const tests = app?.language_tests ?? [];
+        const passed: Record<string, string> = {};
+        for (const t of tests) {
+          if (t.skipped) continue;
+          if (["B1", "B2", "C1", "C2"].includes(t.level)) passed[t.language] = t.level;
+        }
+        if (app?.user_id && Object.keys(passed).length > 0) {
+          const { data: g } = await supabase
+            .from("guides")
+            .select("id, verified_languages")
+            .eq("user_id", app.user_id)
+            .maybeSingle();
+          if (g?.id) {
+            const merged = { ...((g.verified_languages as Record<string, string>) ?? {}), ...passed };
+            await supabase.from("guides").update({ verified_languages: merged }).eq("id", g.id);
+            toast.success(`Verified ${Object.keys(passed).length} language(s) on guide profile`);
+          }
+        }
+      } catch (e) {
+        console.error("verified_languages auto-fill failed", e);
+      }
+    }
+
+    if (status === "approved" || status === "rejected") {
+      try {
+        await notifyGuideApplicationStatus({ data: { application_id: id, status } });
+      } catch (e) {
+        console.error("status email failed", e);
+      }
+    }
+    await reload();
   };
+
 
   const remove = async (id: string) => {
     if (!confirm("Delete this application?")) return;

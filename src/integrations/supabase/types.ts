@@ -1003,6 +1003,7 @@ export type Database = {
           updated_at: string
           user_id: string | null
           verified: boolean
+          verified_languages: Json
         }
         Insert: {
           bio?: string
@@ -1026,6 +1027,7 @@ export type Database = {
           updated_at?: string
           user_id?: string | null
           verified?: boolean
+          verified_languages?: Json
         }
         Update: {
           bio?: string
@@ -1049,6 +1051,7 @@ export type Database = {
           updated_at?: string
           user_id?: string | null
           verified?: boolean
+          verified_languages?: Json
         }
         Relationships: [
           {

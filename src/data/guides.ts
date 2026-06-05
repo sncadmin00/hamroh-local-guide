@@ -14,6 +14,7 @@ export interface Guide {
   tagline: string;
   bio: string;
   languages: string[];
+  verifiedLanguages: Record<string, string>;
   specialties: string[];
   pricePerDay: number;
   rating: number;
