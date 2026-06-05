@@ -10,7 +10,11 @@ type ChatBody = { messages?: UIMessage[]; threadId?: string };
 const DAILY_LIMIT = 20;
 const MAX_QUERY_LEN = 300;
 
-async function buildSystemPrompt(client: ReturnType<typeof createClient<any, any, any>>) {
+async function buildSystemPrompt(
+  client: ReturnType<typeof createClient<any, any, any>>,
+  articleContext: Array<{ title: string; slug: string; content: string }> = [],
+) {
+
   const [guidesRes, placesRes] = await Promise.all([
     client
       .from("guides")
