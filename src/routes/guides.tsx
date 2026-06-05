@@ -65,19 +65,12 @@ function GuidesPage() {
           <CityPicker value={city} onChange={setCity} />
 
           <div className="md:ml-auto flex flex-wrap items-center gap-3">
-            <select
-              value={lang}
-              onChange={(e) => setLang(e.target.value)}
-              className="h-10 rounded-full border border-input bg-background px-4 text-sm font-medium outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="All">All languages</option>
-              {allLangs.map((l) => <option key={l} value={l}>{l}</option>)}
-            </select>
             <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-secondary px-4 py-2 text-sm font-medium">
               <input type="checkbox" checked={instant} onChange={(e) => setInstant(e.target.checked)} className="accent-primary" />
               Instant book
             </label>
           </div>
+
         </div>
 
         {categories.length > 0 && (
