@@ -643,6 +643,11 @@ function BecomeAGuidePage() {
           video_url,
           photo_urls,
           category_ids: selectedCategories,
+          language_tests: selectedLanguages.map((l) => ({
+            language: l,
+            ...(languageTests[l] ?? { level: "N/A", transcript: "", feedback: "", skipped: true }),
+          })),
+
         })
         .select("id")
         .single();
