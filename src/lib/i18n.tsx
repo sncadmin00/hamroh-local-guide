@@ -33,7 +33,7 @@ export const translations: Dict = {
   "hero.h1": {
     en: "Explore Uzbekistan with locals",
     uz: "Har bir safar uchun ishonchli hamroh",
-    ru: "Найдите своего надежного спутника в Узбекистане",
+    ru: "Найдите своего надежного спутника",
   },
   "hero.h1sub": {
     en: "Verified guides, unique routes and authentic experiences.",
