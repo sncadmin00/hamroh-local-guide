@@ -26,12 +26,12 @@ export const Route = createFileRoute("/guides")({
 
 
 function GuidesPage() {
-  const { tCategory } = useI18n();
-  const { city: initialCity, category: initialCategory } = Route.useSearch();
+  const { t, tCategory, tLanguage } = useI18n();
+  const { city: initialCity, category: initialCategory, lang: initialLang } = Route.useSearch();
 
   const [city, setCity] = useState<"All" | string>(initialCity ?? "All");
   const [category, setCategory] = useState<"All" | string>(initialCategory ?? "All");
-  const [lang, setLang] = useState<string>("All");
+  const [lang, setLang] = useState<string>(initialLang ?? "All");
   const [instant, setInstant] = useState(false);
   const { data: guides = [], isLoading } = useGuides();
   const { data: categories = [] } = useCategories();
@@ -45,6 +45,7 @@ function GuidesPage() {
       (!instant || g.instantBook) &&
       (category === "All" || g.categories.some((c) => c.slug === category)),
   );
+
 
   return (
     <div className="min-h-screen">
