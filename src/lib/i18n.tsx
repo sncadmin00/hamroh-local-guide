@@ -31,13 +31,13 @@ export const translations: Dict = {
   "common.admin": { en: "Admin", uz: "Admin", ru: "Админ" },
   "hero.title": { en: "Find your local guide", uz: "Mahalliy hamrohizni toping", ru: "Найдите своего местного гида" },
   "hero.h1": {
-    en: "Find trusted local guides across Uzbekistan",
-    uz: "O'zbekiston bo'ylab ishonchli mahalliy hamrohlarni toping",
+    en: "Explore Uzbekistan with locals",
+    uz: "O'zbekistonni mahalliylar bilan kashf eting",
     ru: "Откройте Узбекистан с местными",
   },
   "hero.h1sub": {
-    en: "Book authentic experiences with verified local companions in Tashkent, Samarkand and Bukhara.",
-    uz: "Toshkent, Samarqand va Buxoroda tasdiqlangan mahalliy hamrohlar bilan haqiqiy tajribalarni bron qiling.",
+    en: "Verified guides, unique routes and authentic experiences.",
+    uz: "Tasdiqlangan hamrohlar, noyob yo'nalishlar va haqiqiy tajribalar.",
     ru: "Проверенные гиды, уникальные маршруты и настоящие впечатления.",
   },
   "hero.subtitle": {
