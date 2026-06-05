@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import {
+  AlertCircle,
   ArrowLeft,
   ArrowRight,
   Camera,
@@ -275,13 +276,25 @@ function BecomeAGuidePage() {
       subtitle: t("bg.s0.sub"),
       canNext: () => true,
       render: () => (
-        <div className="space-y-4 text-sm text-muted-foreground">
-          <ul className="space-y-2">
+        <div className="space-y-5 text-sm">
+          <ul className="space-y-2 text-muted-foreground">
             <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-primary mt-0.5 shrink-0" /> {t("bg.s0.b1")}</li>
             <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-primary mt-0.5 shrink-0" /> {t("bg.s0.b2")}</li>
             <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-primary mt-0.5 shrink-0" /> {t("bg.s0.b3")}</li>
             <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-primary mt-0.5 shrink-0" /> {t("bg.s0.b4")}</li>
           </ul>
+          <div className="rounded-xl bg-muted/50 p-4">
+            <p className="font-medium text-foreground flex items-center gap-2 mb-2">
+              <AlertCircle className="h-4 w-4 text-primary shrink-0" />
+              {t("bg.s0.remTitle")}
+            </p>
+            <ul className="space-y-1.5 text-muted-foreground">
+              <li className="flex gap-2"><span className="shrink-0">•</span> {t("bg.s0.rem1")}</li>
+              <li className="flex gap-2"><span className="shrink-0">•</span> {t("bg.s0.rem2")}</li>
+              <li className="flex gap-2"><span className="shrink-0">•</span> {t("bg.s0.rem3")}</li>
+              <li className="flex gap-2"><span className="shrink-0">•</span> {t("bg.s0.rem4")}</li>
+            </ul>
+          </div>
         </div>
       ),
     },
