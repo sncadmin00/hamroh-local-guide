@@ -180,8 +180,12 @@ function TourEditor({
   };
 
   const save = async () => {
-    if (!form.slug || !form.title || !form.city_id || !form.guide_id) {
-      toast.error("Slug, title, city and guide are required");
+    const titleRu = (form as any).title_ru ?? "";
+    const titleUz = (form as any).title_uz ?? "";
+    const titleEn = (form as any).title_en ?? "";
+    const anyTitle = titleRu || titleEn || titleUz || form.title || "";
+    if (!form.slug || !anyTitle || !form.city_id || !form.guide_id) {
+      toast.error("Slug, at least one title, city and guide are required");
       return;
     }
     setSaving(true);
@@ -192,9 +196,18 @@ function TourEditor({
     }
     const payload = {
       slug: form.slug,
-      title: form.title,
-      short_description: form.short_description ?? "",
-      description_md: form.description_md ?? "",
+      title: anyTitle,
+      title_ru: titleRu,
+      title_uz: titleUz,
+      title_en: titleEn,
+      short_description: (form as any).short_description_ru || (form as any).short_description_en || (form as any).short_description_uz || form.short_description || "",
+      short_description_ru: (form as any).short_description_ru ?? "",
+      short_description_uz: (form as any).short_description_uz ?? "",
+      short_description_en: (form as any).short_description_en ?? "",
+      description_md: (form as any).description_md_ru || (form as any).description_md_en || (form as any).description_md_uz || form.description_md || "",
+      description_md_ru: (form as any).description_md_ru ?? "",
+      description_md_uz: (form as any).description_md_uz ?? "",
+      description_md_en: (form as any).description_md_en ?? "",
       cover_url: form.cover_url || null,
       city_id: form.city_id,
       guide_id: form.guide_id,
@@ -209,6 +222,7 @@ function TourEditor({
       published: form.published ?? false,
       sort_order: form.sort_order ?? 0,
     };
+
 
     let tourId = form.id;
     if (tourId) {
