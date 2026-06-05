@@ -12,6 +12,7 @@ import { reindexArticle, reindexAllArticles } from "@/lib/articles-rag.functions
 
 import { SpotlightsPanel } from "@/components/admin/SpotlightsPanel";
 import { ToursPanel } from "@/components/admin/ToursPanel";
+import { VerificationsPanel } from "@/components/admin/VerificationsPanel";
 import hamrohLogo from "@/assets/hamroh-logo.png";
 
 export const Route = createFileRoute("/admin")({
@@ -185,7 +186,7 @@ function sourceBadgeClass(s: string): string {
 function AdminPage() {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
-  const [tab, setTab] = useState<"bookings" | "applications" | "cities" | "guides" | "tours" | "spotlights" | "categories" | "languages" | "places" | "suggestions" | "articles" | "social" | "users">("bookings");
+  const [tab, setTab] = useState<"bookings" | "applications" | "verifications" | "cities" | "guides" | "tours" | "spotlights" | "categories" | "languages" | "places" | "suggestions" | "articles" | "social" | "users">("bookings");
   const [cities, setCities] = useState<City[]>([]);
   const [guides, setGuides] = useState<Guide[]>([]);
   const [articles, setArticles] = useState<Article[]>([]);
@@ -347,6 +348,12 @@ function AdminPage() {
           >
             Users
           </button>
+          <button
+            onClick={() => setTab("verifications")}
+            className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "verifications" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+          >
+            Verifications
+          </button>
         </div>
 
         {tab === "bookings" && <BookingsPanel bookings={bookings} reload={loadData} />}
@@ -362,6 +369,7 @@ function AdminPage() {
         {tab === "articles" && <ArticlesPanel articles={articles} cities={cities} reload={loadData} />}
         {tab === "social" && <SocialPanel embeds={embeds} cities={cities} reload={loadData} />}
         {tab === "users" && <UsersPanel />}
+        {tab === "verifications" && <VerificationsPanel />}
       </div>
     </div>
   );
