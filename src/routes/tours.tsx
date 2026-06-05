@@ -1,12 +1,19 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { useTours, useCities, useCategories, pickTourTitle } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
 import { Clock, MapPin, Car } from "lucide-react";
 
+type ToursSearch = { city?: string; category?: string; lang?: string };
+
 export const Route = createFileRoute("/tours")({
+  validateSearch: (search: Record<string, unknown>): ToursSearch => ({
+    city: typeof search.city === "string" ? search.city : undefined,
+    category: typeof search.category === "string" ? search.category : undefined,
+    lang: typeof search.lang === "string" ? search.lang : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Tours — Hamroh" },
@@ -24,22 +31,31 @@ const PLACEHOLDER =
   "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 3'><rect width='4' height='3' fill='%23e5e7eb'/></svg>";
 
 function ToursPage() {
-  const { t, tCategory, lang } = useI18n();
-  const [citySlug, setCitySlug] = useState<string>("");
-  const [categorySlug, setCategorySlug] = useState<string>("");
+  const { t, tCategory, tLanguage, lang } = useI18n();
+  const { city: citySlug = "", category: categorySlug = "", lang: langFilter = "" } = Route.useSearch();
+  const navigate = Route.useNavigate();
   const { data: cities = [] } = useCities();
   const { data: categories = [] } = useCategories();
   const { data: tours = [], isLoading } = useTours();
+
+  const allLangs = useMemo(
+    () => Array.from(new Set(tours.flatMap((tr) => tr.languages ?? []))).sort(),
+    [tours]
+  );
 
   const filtered = useMemo(
     () =>
       tours.filter((tr) => {
         if (citySlug && tr.cities?.slug !== citySlug) return false;
         if (categorySlug && !tr.tour_categories?.some((tc) => tc.categories?.slug === categorySlug)) return false;
+        if (langFilter && !(tr.languages ?? []).includes(langFilter)) return false;
         return true;
       }),
-    [tours, citySlug, categorySlug]
+    [tours, citySlug, categorySlug, langFilter]
   );
+
+  const setSearch = (patch: Partial<ToursSearch>) =>
+    navigate({ search: (prev) => ({ ...prev, ...patch }), replace: true });
 
   return (
     <div className="min-h-screen bg-background">
@@ -50,7 +66,7 @@ function ToursPage() {
 
         <div className="mt-6 flex flex-wrap gap-2">
           <button
-            onClick={() => setCitySlug("")}
+            onClick={() => setSearch({ city: undefined })}
             className={`px-3 h-8 rounded-full text-sm ${citySlug === "" ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground hover:bg-secondary/80"}`}
           >
             {t("tours.allCities")}
@@ -58,7 +74,7 @@ function ToursPage() {
           {cities.map((c) => (
             <button
               key={c.id}
-              onClick={() => setCitySlug(c.slug)}
+              onClick={() => setSearch({ city: c.slug })}
               className={`px-3 h-8 rounded-full text-sm ${citySlug === c.slug ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground hover:bg-secondary/80"}`}
             >
               {c.name}
@@ -68,7 +84,7 @@ function ToursPage() {
 
         <div className="mt-2 flex flex-wrap gap-2">
           <button
-            onClick={() => setCategorySlug("")}
+            onClick={() => setSearch({ category: undefined })}
             className={`px-3 h-8 rounded-full text-sm ${categorySlug === "" ? "bg-foreground text-background" : "bg-secondary text-foreground hover:bg-secondary/80"}`}
           >
             {t("tours.allCategories")}
@@ -76,13 +92,33 @@ function ToursPage() {
           {categories.map((c) => (
             <button
               key={c.id}
-              onClick={() => setCategorySlug(c.slug)}
+              onClick={() => setSearch({ category: c.slug })}
               className={`px-3 h-8 rounded-full text-sm ${categorySlug === c.slug ? "bg-foreground text-background" : "bg-secondary text-foreground hover:bg-secondary/80"}`}
             >
               {tCategory(c.slug, c.name)}
             </button>
           ))}
         </div>
+
+        {allLangs.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-2">
+            <button
+              onClick={() => setSearch({ lang: undefined })}
+              className={`px-3 h-8 rounded-full text-sm ${langFilter === "" ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground hover:bg-secondary/80"}`}
+            >
+              {t("tours.allLanguages") ?? "All languages"}
+            </button>
+            {allLangs.map((lng) => (
+              <button
+                key={lng}
+                onClick={() => setSearch({ lang: lng })}
+                className={`px-3 h-8 rounded-full text-sm ${langFilter === lng ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground hover:bg-secondary/80"}`}
+              >
+                {tLanguage(lng)}
+              </button>
+            ))}
+          </div>
+        )}
 
         {isLoading ? (
           <p className="mt-10 text-sm text-muted-foreground">{t("tours.loading")}</p>
