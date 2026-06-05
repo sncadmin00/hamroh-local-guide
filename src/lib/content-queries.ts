@@ -355,7 +355,7 @@ export type TourRow = {
 };
 
 const TOUR_SELECT =
-  "id, slug, title, short_description, description_md, cover_url, city_id, duration_hours, price_from, highlights, included, not_included, published, sort_order, guide_id, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, children_free_under, transport_included, languages, rating, reviews_count, cities(name, slug), guides(id, slug, name, photo_url, rating, reviews, languages), tour_categories(category_id, categories(slug, name, icon))";
+  "id, slug, title, short_description, description_md, title_ru, title_uz, title_en, short_description_ru, short_description_uz, short_description_en, description_md_ru, description_md_uz, description_md_en, cover_url, city_id, duration_hours, price_from, highlights, included, not_included, published, sort_order, guide_id, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, children_free_under, transport_included, languages, rating, reviews_count, cities(name, slug), guides(id, slug, name, photo_url, rating, reviews, languages), tour_categories(category_id, categories(slug, name, icon))";
 
 
 function normalizeTour(row: any): TourRow {
