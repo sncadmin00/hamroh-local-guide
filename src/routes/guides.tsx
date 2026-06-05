@@ -105,6 +105,34 @@ function GuidesPage() {
           </div>
         )}
 
+        {allLangs.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-2">
+            <button
+              onClick={() => setLang("All")}
+              className={`inline-flex items-center h-9 px-4 rounded-full text-sm font-medium ring-1 transition ${
+                lang === "All"
+                  ? "bg-primary text-primary-foreground ring-primary"
+                  : "bg-card ring-border/60 text-muted-foreground hover:bg-secondary/60"
+              }`}
+            >
+              {t("tours.allLanguages")}
+            </button>
+            {allLangs.map((l) => (
+              <button
+                key={l}
+                onClick={() => setLang(l)}
+                className={`inline-flex items-center h-9 px-4 rounded-full text-sm font-medium ring-1 transition ${
+                  lang === l
+                    ? "bg-primary text-primary-foreground ring-primary"
+                    : "bg-card ring-border/60 text-muted-foreground hover:bg-secondary/60"
+                }`}
+              >
+                {tLanguage(l)}
+              </button>
+            ))}
+
+        )}
+
         <h2 id="guides-heading" className="sr-only mt-10">
           {isLoading ? "Loading guides" : `${filtered.length} guides found`}
         </h2>
