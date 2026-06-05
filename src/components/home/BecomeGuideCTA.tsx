@@ -13,9 +13,9 @@ export function BecomeGuideCTA() {
           <div className="absolute -top-20 -right-20 w-72 h-72 rounded-full opacity-30 blur-3xl bg-white" />
           <div className="relative">
             <h2 className="font-display text-3xl md:text-4xl font-semibold whitespace-pre-line">{t("cta.title")}</h2>
-            <p className="mt-3 text-base md:text-lg opacity-90 max-w-xl mx-auto">
+            <div className="mt-4 text-base md:text-lg opacity-90 max-w-xl mx-auto space-y-1 whitespace-pre-line">
               {t("cta.subtitle")}
-            </p>
+            </div>
             <Link
               to="/become-a-guide"
               className="mt-7 inline-flex items-center gap-2 h-11 px-6 rounded-full bg-white text-foreground text-sm font-semibold hover:bg-white/90 transition-colors"
