@@ -253,8 +253,11 @@ function BecomeAGuidePage() {
           <Field label="Email">
             <input type="email" className={inputCls} value={form.email} onChange={(e) => update("email", e.target.value)} placeholder="you@example.com" />
           </Field>
-          <Field label="Телефон / WhatsApp">
+          <Field label="Телефон">
             <input className={inputCls} value={form.phone} onChange={(e) => update("phone", e.target.value)} placeholder="+998 ..." />
+          </Field>
+          <Field label="Telegram (необязательно)">
+            <input className={inputCls} value={form.telegram} onChange={(e) => update("telegram", e.target.value)} placeholder="@username" />
           </Field>
         </div>
       ),
