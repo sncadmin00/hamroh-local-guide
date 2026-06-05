@@ -24,7 +24,7 @@ const PLACEHOLDER =
   "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 3'><rect width='4' height='3' fill='%23e5e7eb'/></svg>";
 
 function ToursPage() {
-  const { t, lang } = useI18n();
+  const { t, tCategory, lang } = useI18n();
   const [citySlug, setCitySlug] = useState<string>("");
   const [categorySlug, setCategorySlug] = useState<string>("");
   const { data: cities = [] } = useCities();
@@ -71,7 +71,7 @@ function ToursPage() {
             onClick={() => setCategorySlug("")}
             className={`px-3 h-8 rounded-full text-sm ${categorySlug === "" ? "bg-foreground text-background" : "bg-secondary text-foreground hover:bg-secondary/80"}`}
           >
-            All categories
+            {t("tours.allCategories")}
           </button>
           {categories.map((c) => (
             <button
@@ -79,13 +79,13 @@ function ToursPage() {
               onClick={() => setCategorySlug(c.slug)}
               className={`px-3 h-8 rounded-full text-sm ${categorySlug === c.slug ? "bg-foreground text-background" : "bg-secondary text-foreground hover:bg-secondary/80"}`}
             >
-              {c.name}
+              {tCategory(c.slug, c.name)}
             </button>
           ))}
         </div>
 
         {isLoading ? (
-          <p className="mt-10 text-sm text-muted-foreground">Loading…</p>
+          <p className="mt-10 text-sm text-muted-foreground">{t("tours.loading")}</p>
         ) : filtered.length === 0 ? (
           <p className="mt-10 text-sm text-muted-foreground">{t("tours.empty")}</p>
         ) : (
@@ -125,7 +125,7 @@ function ToursPage() {
                     </div>
                     <h3 className="mt-0.5 text-sm font-semibold leading-snug line-clamp-2">{pickTourTitle(tr, lang)}</h3>
                     {tr.guides?.name && (
-                      <p className="mt-0.5 text-[10px] text-muted-foreground">by {tr.guides.name}</p>
+                      <p className="mt-0.5 text-[10px] text-muted-foreground">{t("tours.by")} {tr.guides.name}</p>
                     )}
                     {langPrices.length > 0 && (
                       <div className="mt-1.5 flex flex-wrap gap-1">
