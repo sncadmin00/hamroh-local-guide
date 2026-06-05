@@ -119,8 +119,12 @@ export const translations: Dict = {
   "reviews.about": { en: "about", uz: "haqida", ru: "о гиде" },
 
   "cta.title": { en: "Got stories to tell?\nBecome a guide in 5 minutes", uz: "Aytadigan hikoyalaringiz bormi?\n5 daqiqada hamroh bo'ling", ru: "Есть что рассказать?\nСтань гидом за 5 минут" },
-  "cta.subtitle": { en: "Share your city.\nEarn money.\nMeet travelers.", uz: "Shaharingizni ulashing.\nPul toping.\nSayohatchilar bilan tanishing.", ru: "Делись своим городом.\nЗарабатывай.\nЗнакомься с путешественниками." },
-  "cta.button": { en: "Apply Now", uz: "Ariza topshirish", ru: "Подать заявку" },
+  "cta.subtitle": { en: "Join Hamroh, explore yourself", uz: "Hamroh'ga qo'shiling, o'zingizni kashf eting", ru: "Присоединяйтесь к Hamroh, откройте себя" },
+  "cta.button": { en: "Become a guide", uz: "Hamroh bo'lish", ru: "Стать гидом" },
+
+  "banner.guide.title": { en: "Got stories to tell?\nBecome a guide in 5 minutes", uz: "Aytadigan hikoyalaringiz bormi?\n5 daqiqada hamroh bo'ling", ru: "Есть что рассказать?\nСтань гидом за 5 минут" },
+  "banner.guide.points": { en: "Share your city.\nEarn money.\nMeet travelers.", uz: "Shaharingizni ulashing.\nPul toping.\nSayohatchilar bilan tanishing.", ru: "Делись своим городом.\nЗарабатывай.\nЗнакомься с путешественниками." },
+  "banner.guide.button": { en: "Apply Now", uz: "Ariza topshirish", ru: "Подать заявку" },
 
   "browse.title": { en: "Browse by interest", uz: "Qiziqish bo'yicha izlash", ru: "По интересам" },
   "browse.subtitle": { en: "Find a guide for what you love", uz: "Sevimli mavzuingiz bo'yicha hamroh toping", ru: "Найдите гида под ваши интересы" },
