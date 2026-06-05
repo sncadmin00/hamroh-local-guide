@@ -725,6 +725,7 @@ function ReviewBlock({
     ["Имя", form.full_name || "—"],
     ["Email", form.email || "—"],
     ["Телефон", form.phone || "—"],
+    ["Telegram", form.telegram || "—"],
     ["Город", form.city || "—"],
     ["Опыт (лет)", form.experience_years || "—"],
     ["Языки", languages.join(", ") || "—"],
