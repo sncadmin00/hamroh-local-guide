@@ -417,6 +417,22 @@ export function offeredCategories(tour: Pick<TourRow, "pricing_mode" | "group_pr
   );
 }
 
+type LocalizableTour = Pick<TourRow, "title" | "title_ru" | "title_uz" | "title_en" | "short_description" | "short_description_ru" | "short_description_uz" | "short_description_en" | "description_md" | "description_md_ru" | "description_md_uz" | "description_md_en">;
+
+export function pickTourTitle(tour: Partial<LocalizableTour>, lang: "ru" | "uz" | "en"): string {
+  return (tour as any)[`title_${lang}`] || tour.title_en || tour.title_ru || tour.title_uz || tour.title || "";
+}
+
+export function pickTourShortDescription(tour: Partial<LocalizableTour>, lang: "ru" | "uz" | "en"): string {
+  return (tour as any)[`short_description_${lang}`] || tour.short_description_en || tour.short_description_ru || tour.short_description_uz || tour.short_description || "";
+}
+
+export function pickTourDescriptionMd(tour: Partial<LocalizableTour>, lang: "ru" | "uz" | "en"): string {
+  return (tour as any)[`description_md_${lang}`] || tour.description_md_en || tour.description_md_ru || tour.description_md_uz || tour.description_md || "";
+}
+
+
+
 
 export function useTours(opts?: { citySlug?: string; categorySlug?: string }) {
   return useQuery({
