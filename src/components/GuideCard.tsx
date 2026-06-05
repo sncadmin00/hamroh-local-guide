@@ -3,6 +3,7 @@ import { Star, BadgeCheck, Zap, MapPin } from "lucide-react";
 import type { Guide } from "@/data/guides";
 import { WishlistHeart } from "@/components/WishlistHeart";
 import { useCities } from "@/lib/content-queries";
+import { GuideBadges } from "@/components/GuideBadges";
 
 export function GuideCard({ guide }: { guide: Guide }) {
   const { data: cities } = useCities();
@@ -10,6 +11,7 @@ export function GuideCard({ guide }: { guide: Guide }) {
     .map((id) => cities?.find((c) => c.id === id)?.name)
     .filter(Boolean) as string[];
   const allCities = [guide.city, ...extraNames].filter(Boolean);
+  const hasVerifiedLanguage = Object.keys(guide.verifiedLanguages ?? {}).length > 0;
   return (
     <Link
       to="/guides/$guideId"
@@ -53,7 +55,7 @@ export function GuideCard({ guide }: { guide: Guide }) {
           <MapPin className="h-3.5 w-3.5" /> {allCities.join(" · ")}
         </p>
 
-        <div className="mt-4 flex flex-wrap gap-1.5">
+        <div className="mt-3 flex flex-wrap gap-1.5">
           {guide.languages.slice(0, 4).map((l) => {
             const level = guide.verifiedLanguages?.[l];
             return (
@@ -69,7 +71,18 @@ export function GuideCard({ guide }: { guide: Guide }) {
           })}
         </div>
 
-
+        <div className="mt-4">
+          <GuideBadges
+            data={{
+              identityVerified: guide.identityVerified,
+              hasVerifiedLanguage,
+              introVideoVerified: guide.introVideoVerified,
+              reviewsCount: guide.reviews,
+              completedToursCount: guide.completedToursCount,
+              avgResponseMinutes: guide.avgResponseMinutes,
+            }}
+          />
+        </div>
 
         <div className="mt-auto pt-4 flex items-center justify-end border-t border-border/60">
           <span className="text-sm font-medium text-primary group-hover:underline">View tours →</span>
@@ -78,3 +91,4 @@ export function GuideCard({ guide }: { guide: Guide }) {
     </Link>
   );
 }
+

@@ -44,6 +44,10 @@ type GuideRow = {
   verified: boolean;
   instant_book: boolean;
   sort_order: number;
+  identity_verified: boolean | null;
+  intro_video_verified: boolean | null;
+  completed_tours_count: number | null;
+  avg_response_minutes: number | null;
   cities: { name: string } | null;
   guide_categories: { categories: { slug: string; name: string; icon: string } | null }[];
 };
@@ -70,6 +74,12 @@ function mapGuide(row: GuideRow): Guide {
     reviews: row.reviews,
     verified: row.verified,
     instantBook: row.instant_book,
+    identityVerified: !!row.identity_verified,
+    introVideoVerified: !!row.intro_video_verified,
+    completedToursCount: Number(row.completed_tours_count ?? 0),
+    avgResponseMinutes: row.avg_response_minutes === null || row.avg_response_minutes === undefined
+      ? null
+      : Number(row.avg_response_minutes),
     categories: (row.guide_categories ?? [])
       .map((gc) => gc.categories)
       .filter((c): c is { slug: string; name: string; icon: string } => !!c),
@@ -77,7 +87,7 @@ function mapGuide(row: GuideRow): Guide {
 }
 
 const GUIDE_SELECT =
-  "id, slug, name, city_id, extra_city_ids, photo_url, tagline, bio, languages, verified_languages, specialties, price_per_day, rating, reviews, verified, instant_book, sort_order, cities(name), guide_categories(categories(slug, name, icon))";
+  "id, slug, name, city_id, extra_city_ids, photo_url, tagline, bio, languages, verified_languages, specialties, price_per_day, rating, reviews, verified, instant_book, sort_order, identity_verified, intro_video_verified, completed_tours_count, avg_response_minutes, cities(name), guide_categories(categories(slug, name, icon))";
 
 async function fetchGuides(): Promise<Guide[]> {
   const { data, error } = await supabase

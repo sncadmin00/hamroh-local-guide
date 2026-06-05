@@ -21,5 +21,9 @@ export interface Guide {
   reviews: number;
   verified: boolean;
   instantBook: boolean;
+  identityVerified: boolean;
+  introVideoVerified: boolean;
+  completedToursCount: number;
+  avgResponseMinutes: number | null;
   categories: { slug: string; name: string; icon: string }[];
 }
