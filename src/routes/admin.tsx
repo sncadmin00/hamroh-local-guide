@@ -8,6 +8,8 @@ import { CategoryIcon } from "@/components/CategoryIcon";
 import { inviteGuideToPortal } from "@/lib/admin-portal.functions";
 import { listAppUsers, setAdminRole, inviteAdminUser, deleteAppUser } from "@/lib/admin-users.functions";
 import { notifyGuideApplicationStatus } from "@/lib/lifecycle-emails.functions";
+import { reindexArticle, reindexAllArticles } from "@/lib/articles-rag.functions";
+
 import { SpotlightsPanel } from "@/components/admin/SpotlightsPanel";
 import { ToursPanel } from "@/components/admin/ToursPanel";
 import hamrohLogo from "@/assets/hamroh-logo.png";
