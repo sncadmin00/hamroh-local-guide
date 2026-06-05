@@ -482,7 +482,7 @@ function BecomeAGuidePage() {
       render: () => (
         <ReviewBlock
           form={form}
-          languages={selectedLanguages}
+          languages={selectedLanguages.map(tLanguage)}
           categories={selectedCategories.map((id) => categories.find((c) => c.id === id)?.name).filter(Boolean) as string[]}
           portrait={portrait}
           photos={photos}
