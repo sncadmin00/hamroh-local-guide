@@ -1077,17 +1077,22 @@ function CitiesPanel({
   );
 }
 
+type CefrLevel = "A1" | "A2" | "B1" | "B2" | "C1" | "C2" | "N/A";
+
 function LanguagesPanel({
   current,
+  verified,
   onSaved,
 }: {
   current: string[];
+  verified: Record<string, string>;
   onSaved: () => void;
 }) {
   const updateFn = useServerFn(updateMyLanguages);
   const [options, setOptions] = useState<Array<{ id: string; name: string }>>([]);
   const [selected, setSelected] = useState<string[]>(current);
   const [saving, setSaving] = useState(false);
+  const [testingLang, setTestingLang] = useState<string | null>(null);
 
   useEffect(() => { setSelected(current); }, [current]);
 
@@ -1119,12 +1124,18 @@ function LanguagesPanel({
     }
   };
 
+  const levelBadge = (lv: string) => {
+    if (lv === "C1" || lv === "C2") return "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300";
+    if (lv === "B1" || lv === "B2") return "bg-amber-500/15 text-amber-700 dark:text-amber-300";
+    return "bg-orange-500/15 text-orange-700 dark:text-orange-300";
+  };
+
   return (
     <div className="rounded-3xl bg-card p-6 ring-1 ring-border space-y-4">
       <div>
         <h2 className="font-display text-lg font-semibold">Languages you speak</h2>
         <p className="text-sm text-muted-foreground mt-1">
-          Pick the languages in which you can run tours. The list is curated by the team.
+          Pick the languages in which you can run tours. Pass a quick voice test (B1+) to earn the ✓ verified badge.
         </p>
       </div>
       {options.length === 0 ? (
@@ -1152,6 +1163,176 @@ function LanguagesPanel({
       >
         {saving ? "Saving…" : "Save languages"}
       </button>
+
+      {selected.length > 0 && (
+        <div className="pt-4 border-t border-border space-y-3">
+          <div>
+            <h3 className="font-display text-base font-semibold">Verification</h3>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Record a ~30s sample. Levels B1 and above show a ✓ badge on your profile.
+            </p>
+          </div>
+          <div className="space-y-2">
+            {selected.map((lang) => {
+              const lv = verified[lang];
+              const isTesting = testingLang === lang;
+              return (
+                <div key={lang} className="rounded-2xl border border-border/60 bg-background p-3 space-y-3">
+                  <div className="flex items-center justify-between gap-3 flex-wrap">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-sm">{lang}</span>
+                      {lv ? (
+                        <span className={`text-xs font-semibold rounded-full px-2 py-0.5 ${levelBadge(lv)}`}>
+                          ✓ {lv}
+                        </span>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">Not verified</span>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => setTestingLang(isTesting ? null : lang)}
+                      className="h-8 px-3 rounded-full bg-secondary text-xs font-medium hover:bg-secondary/80"
+                    >
+                      {isTesting ? "Cancel" : lv ? "Retake test" : "Take test"}
+                    </button>
+                  </div>
+                  {isTesting && (
+                    <InlineLanguageTest
+                      language={lang}
+                      onDone={() => { setTestingLang(null); onSaved(); }}
+                    />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function InlineLanguageTest({
+  language,
+  onDone,
+}: {
+  language: string;
+  onDone: () => void;
+}) {
+  const assess = useServerFn(assessLanguageTest);
+  const record = useServerFn(recordMyLanguageTest);
+  const [recording, setRecording] = useState(false);
+  const [blob, setBlob] = useState<Blob | null>(null);
+  const [elapsed, setElapsed] = useState(0);
+  const [busy, setBusy] = useState(false);
+  const [result, setResult] = useState<{ level: CefrLevel; feedback: string } | null>(null);
+  const recorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<BlobPart[]>([]);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const startedAtRef = useRef<number>(0);
+
+  const prompt = `Speak ~30 seconds in ${language}: introduce yourself and describe one place you love to show tourists.`;
+
+  const start = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mr = new MediaRecorder(stream);
+      recorderRef.current = mr;
+      chunksRef.current = [];
+      mr.ondataavailable = (e) => { if (e.data.size > 0) chunksRef.current.push(e.data); };
+      mr.onstop = () => {
+        stream.getTracks().forEach((t) => t.stop());
+        const b = new Blob(chunksRef.current, { type: mr.mimeType || "audio/webm" });
+        setBlob(b);
+        setRecording(false);
+        if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; }
+      };
+      mr.start();
+      startedAtRef.current = Date.now();
+      setElapsed(0);
+      setBlob(null);
+      setResult(null);
+      timerRef.current = setInterval(() => {
+        const s = Math.floor((Date.now() - startedAtRef.current) / 1000);
+        setElapsed(s);
+        if (s >= 60 && mr.state === "recording") mr.stop();
+      }, 250);
+      setRecording(true);
+    } catch {
+      toast.error("Microphone access denied");
+    }
+  };
+
+  const stop = () => recorderRef.current?.state === "recording" && recorderRef.current.stop();
+
+  const submit = async () => {
+    if (!blob) return;
+    if (elapsed < 5) { toast.error("Recording too short"); return; }
+    setBusy(true);
+    try {
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const r = new FileReader();
+        r.onload = () => {
+          const s = (r.result as string) || "";
+          resolve(s.split(",")[1] || "");
+        };
+        r.onerror = () => reject(new Error("Failed to read audio"));
+        r.readAsDataURL(blob);
+      });
+      const r = await assess({
+        data: {
+          language,
+          audio_base64: base64,
+          mime_type: blob.type || "audio/webm",
+          prompt_text: prompt,
+        },
+      });
+      setResult({ level: r.level as CefrLevel, feedback: r.feedback });
+      await record({ data: { language, level: r.level as CefrLevel } });
+      if (["B1", "B2", "C1", "C2"].includes(r.level)) {
+        toast.success(`Verified at ${r.level}!`);
+      } else {
+        toast.info(`Level: ${r.level}. Try again to earn the verified badge.`);
+      }
+      onDone();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Assessment failed");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="space-y-2">
+      <p className="text-xs text-muted-foreground">{prompt}</p>
+      {!recording && !blob && (
+        <button onClick={start} className="h-9 px-4 rounded-full bg-primary text-primary-foreground text-xs font-semibold">
+          Start recording
+        </button>
+      )}
+      {recording && (
+        <div className="flex items-center gap-3">
+          <span className="inline-flex h-2.5 w-2.5 rounded-full bg-red-500 animate-pulse" />
+          <span className="text-sm">Recording {elapsed}s</span>
+          <button onClick={stop} className="ml-auto h-8 px-3 rounded-full bg-secondary text-xs font-medium">
+            Stop
+          </button>
+        </div>
+      )}
+      {blob && !recording && !result && (
+        <div className="flex flex-wrap gap-2">
+          <button onClick={submit} disabled={busy} className="h-9 px-4 rounded-full bg-primary text-primary-foreground text-xs font-semibold disabled:opacity-50 inline-flex items-center gap-1.5">
+            {busy && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+            {busy ? "Checking…" : "Submit for review"}
+          </button>
+          <button onClick={() => { setBlob(null); setElapsed(0); }} className="h-9 px-4 rounded-full bg-secondary text-xs font-medium">
+            Re-record
+          </button>
+        </div>
+      )}
+      {result && (
+        <p className="text-xs text-muted-foreground">{result.feedback}</p>
+      )}
     </div>
   );
 }
