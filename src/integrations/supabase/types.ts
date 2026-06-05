@@ -982,12 +982,23 @@ export type Database = {
       }
       guides: {
         Row: {
+          avg_response_minutes: number | null
           bio: string
           city_id: string
+          completed_tours_count: number
           created_at: string
           extra_city_ids: string[]
           id: string
+          identity_passport_url: string | null
+          identity_phone: string | null
+          identity_rejected_reason: string | null
+          identity_submitted_at: string | null
+          identity_verified: boolean
           instant_book: boolean
+          intro_video_rejected_reason: string | null
+          intro_video_submitted_at: string | null
+          intro_video_url: string | null
+          intro_video_verified: boolean
           languages: string[]
           locale: string
           name: string
@@ -1006,12 +1017,23 @@ export type Database = {
           verified_languages: Json
         }
         Insert: {
+          avg_response_minutes?: number | null
           bio?: string
           city_id: string
+          completed_tours_count?: number
           created_at?: string
           extra_city_ids?: string[]
           id?: string
+          identity_passport_url?: string | null
+          identity_phone?: string | null
+          identity_rejected_reason?: string | null
+          identity_submitted_at?: string | null
+          identity_verified?: boolean
           instant_book?: boolean
+          intro_video_rejected_reason?: string | null
+          intro_video_submitted_at?: string | null
+          intro_video_url?: string | null
+          intro_video_verified?: boolean
           languages?: string[]
           locale?: string
           name: string
@@ -1030,12 +1052,23 @@ export type Database = {
           verified_languages?: Json
         }
         Update: {
+          avg_response_minutes?: number | null
           bio?: string
           city_id?: string
+          completed_tours_count?: number
           created_at?: string
           extra_city_ids?: string[]
           id?: string
+          identity_passport_url?: string | null
+          identity_phone?: string | null
+          identity_rejected_reason?: string | null
+          identity_submitted_at?: string | null
+          identity_verified?: boolean
           instant_book?: boolean
+          intro_video_rejected_reason?: string | null
+          intro_video_submitted_at?: string | null
+          intro_video_url?: string | null
+          intro_video_verified?: boolean
           languages?: string[]
           locale?: string
           name?: string
@@ -1806,7 +1839,15 @@ export type Database = {
           read_ct: number
         }[]
       }
+      recompute_guide_completed_tours: {
+        Args: { _guide_id: string }
+        Returns: undefined
+      }
       recompute_guide_rating: {
+        Args: { _guide_id: string }
+        Returns: undefined
+      }
+      recompute_guide_response_time: {
         Args: { _guide_id: string }
         Returns: undefined
       }
