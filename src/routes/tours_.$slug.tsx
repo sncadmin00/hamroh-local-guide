@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { useTour, useTours } from "@/lib/content-queries";
+import { useTour, useTours, pickTourTitle, pickTourShortDescription, pickTourDescriptionMd } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
 import { Clock, MapPin, Check, X, Car, Star } from "lucide-react";
 import { WishlistHeart } from "@/components/WishlistHeart";
