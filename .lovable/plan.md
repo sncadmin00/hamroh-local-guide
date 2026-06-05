@@ -1,25 +1,71 @@
-## Проблема
+## Cel'
 
-В шапке (`SiteHeader.tsx`) кнопка-пилюля всегда показывает обобщённую иконку `User` из lucide. После входа через Google/Apple мы никак не подтягиваем `avatar_url` из метаданных пользователя Supabase, поэтому иконка остаётся «пустой».
+Prevratit' odnostranichnuyu formu `/become-a-guide` v poshagoviy interaktivniy master s AI-pomoshchnikom, kotoriy:
+- vedyot kandidata po shagam (odin ekran — odin vopros/blok),
+- pomogaet napisat tekst "Pro sebya" na osnove korotkih otvetov,
+- predlagaet udobnuyu zagruzku foto i syomku video pryamo s kamery,
+- pokazyvaet progress i daet vozmozhnost vernut'sya nazad.
 
-## Что сделать
+Backend (tablitsa `guide_applications`, buckety, notifikatsii) ostayotsya bez izmeneniy — menyaem tol'ko UX i dobavlyaem odnu AI server-funktsiyu.
 
-В `src/components/SiteHeader.tsx`:
+---
 
-1. Добавить состояние `avatarUrl: string | null` и `displayName: string | null`.
-2. В существующих `getSession()` и `onAuthStateChange` обработчиках читать:
-   - `session.user.user_metadata.avatar_url` или `picture` (Google кладёт в `picture`, Apple обычно без фото),
-   - `session.user.user_metadata.full_name` / `name` / `email` для инициалов.
-3. Заменить блок-«аватар» внутри `<SheetTrigger>` (строки 102–104):
-   - Если есть `avatarUrl` → `<img src={avatarUrl} alt="" className="h-7 w-7 rounded-full object-cover" referrerPolicy="no-referrer" />`.
-   - Иначе, если есть имя/почта → круг с инициалом (одна буква, `bg-secondary text-foreground/80`).
-   - Иначе (гость) → текущая иконка `<User />`.
-4. Добавить `onError` на `<img>`, который сбрасывает `avatarUrl` в `null` — на случай, если Google-картинка не загрузится (CORS / 403), чтобы откатиться к инициалу/иконке.
+## Shagi mastera
 
-Меняем только презентацию в шапке, бизнес-логику и auth не трогаем.
+```text
+1. Privetstvie       — chto eto, skol'ko zaymyot (~3 min), knopka "Nachat'"
+2. Kontakty          — imya, email, telefon
+3. Gorod i opyt      — gorod (select), let opyta
+4. Yazyki            — chip-vybor (mozhno neskol'ko)
+5. Spetsializatsiya  — chipy kategoriy + korotkiy text
+6. Pro sebya s AI    — 3-4 bystryh voprosa -> AI sostavlyaet chernovik -> edit
+7. Portret           — kamera ILI vybrat' foto
+8. Foto turov        — do 5 shtuk, drag/multi-select, preview
+9. Video-privetstvie — zapis' s kamery ILI zagruzka (opts.)
+10. Proverka         — vsye dannye, knopka "Otpravit'"
+11. Uspeh            — tekushchiy `submitted` ekran
+```
 
-## Технические детали
+Sverhu — progress-bar (`Shag X iz 10`), snizu — knopki "Nazad" / "Dalee". Validatsiya tekushchego shaga pered perehodom. Sostoyanie hranitsya v `localStorage` (`guide-application-draft-v1`), chtoby ne teryat' progress.
 
-- `referrerPolicy="no-referrer"` нужен для аватарок Google (`lh3.googleusercontent.com`), иначе часть запросов возвращает 403.
-- Инициал берём первым символом `full_name` → `name` → `email`, в `toUpperCase()`.
-- Никаких новых запросов в БД — всё уже есть в `session.user.user_metadata`.
+## AI-pomoshchnik dlya "Pro sebya"
+
+Noviy server-fn `generateGuideBio` v `src/lib/guide-application.functions.ts`:
+- vhod: `{ name, city, years, languages[], specializations[], answers: { highlight, style, why } }`
+- vyzyvayet Lovable AI Gateway (`google/gemini-3-flash-preview`) cherez `createLovableAiGatewayProvider` iz `src/lib/ai-gateway.server.ts`
+- `generateText` s sistemnym promptom: "Napishi tyoplyy, chestnyy tekst 'O sebe' dlya gida ot pervogo litsa, 3-5 predlozheniy, na yazyke otveta pol'zovatelya"
+- vozvrashchaet `{ bio: string }`
+
+Na shage 6:
+- 3 korotkih `<textarea>`: "Chto vy obyazatel'no pokazhete?", "Kak vy vedete tury?", "Pochemu vam eto nravitsya?"
+- knopka "Sostavit' s pomoshchyu AI" -> loader -> rezul'tat popadaet v `form.about`, kotoriy mozhno otredaktirovat'
+- knopka "Peresostavit'" dlya novogo varianta
+
+## Kamera dlya video i foto
+
+Ispol'zuem native `<input type="file" accept="image/*" capture="user">` dlya portreta i `accept="video/*" capture="user"` dlya video — eto otkryvaet kameru na mobil'nyh ustroystvah. Dve knopki ryadom:
+- "Snyat' kameroy" (s `capture`)
+- "Vybrat' iz galerei" (bez `capture`)
+
+Dlya foto turov — `multiple` vybor s preview-setkoy (kak seychas), plyus drag-and-drop zona.
+
+## Tehnicheskie detali
+
+**Noviye/izmenyaemiye fayly:**
+- `src/routes/become-a-guide.tsx` — perepisat' kak `<Wizard>` s shagami. Vsya logika otpravki, validatsiya schemy i zagruzka v Supabase ostayutsya.
+- `src/components/become-guide/WizardShell.tsx` — obyortka: progress, navigatsiya, animatsii perehodov (framer-motion uzhe est').
+- `src/components/become-guide/steps/*.tsx` — po odnomu komponentu na shag (~10 faylov, kazhdyy malen'kiy).
+- `src/lib/guide-application.functions.ts` — `generateGuideBio` server-fn (publichnaya, bez auth, t.k. zayavku mozhet podavat' negost').
+- `src/lib/ai-gateway.server.ts` — uzhe sushchestvuet, pereispol'zuem.
+
+**Sohranenie chernovika:** `useEffect` -> `localStorage`. Ochishchaem posle uspeshnoy otpravki. Fayly (File objects) ne serializuyutsya — sohranyaem tol'ko tekstovye polya.
+
+**Animatsii:** lyogkiy fade/slide mezhdu shagami cherez Framer Motion `AnimatePresence`.
+
+**Dostupnost':** focus na pervoye pole pri smene shaga, Enter = "Dalee" v poslednem pole, ARIA-live dlya progressa.
+
+## Chego NE delaem
+
+- Ne menyaem `guide_applications` shemu, RLS, buckety, admin-notifikatsii.
+- Ne trogaem ostal'noy onboarding (CalendarPanel, GuideAIPanel i t.d.).
+- Ne dobavlyaem golosovoy vvod (mozhno pozzhe).
