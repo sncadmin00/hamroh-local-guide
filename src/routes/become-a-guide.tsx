@@ -52,6 +52,7 @@ type FormState = {
   full_name: string;
   email: string;
   phone: string;
+  telegram: string;
   city: string;
   experience_years: string;
   specialization: string;
@@ -65,6 +66,7 @@ const emptyForm: FormState = {
   full_name: "",
   email: "",
   phone: "",
+  telegram: "",
   city: "",
   experience_years: "",
   specialization: "",
