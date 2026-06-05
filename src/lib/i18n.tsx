@@ -51,7 +51,7 @@ export const translations: Dict = {
     ru: "напр., англоговорящий гид по еде на два дня…",
   },
   "hero.tagline": {
-    en: "Powered by Hamroh AI · Free · No signup to try",
+    en: "Powered by Hamroh AI",
     uz: "Hamroh AI · Bepul · Ro'yxatdan o'tmasdan sinab ko'ring",
     ru: "Hamroh AI · Бесплатно · Без регистрации",
   },
