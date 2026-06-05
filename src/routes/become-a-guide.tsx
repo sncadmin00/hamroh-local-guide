@@ -95,7 +95,9 @@ async function uploadTo(bucket: string, file: File): Promise<string> {
 function BecomeAGuidePage() {
   const notifyAdmins = useServerFn(notifyAdminsOfGuideApplication);
   const generateBio = useServerFn(generateGuideBio);
-  const { tCategory } = useI18n();
+  const { tCategory, tLanguage } = useI18n();
+  const [otherLanguage, setOtherLanguage] = useState("");
+
 
   const [cities, setCities] = useState<{ id: string; name: string }[]>([]);
   const [categories, setCategories] = useState<{ id: string; slug: string; name: string; icon: string }[]>([]);
