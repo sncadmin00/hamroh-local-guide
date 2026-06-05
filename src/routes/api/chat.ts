@@ -176,12 +176,29 @@ export const Route = createFileRoute("/api/chat")({
         // Cheapest fast model for high-volume chat
         const model = gateway("google/gemini-3.1-flash-lite-preview");
 
+        // RAG: retrieve relevant article chunks based on the latest user message
+        let articleContext: Array<{ title: string; slug: string; content: string }> = [];
+        if (last?.role === "user") {
+          const queryText = (last.parts ?? [])
+            .map((p: { type: string; text?: string }) => (p.type === "text" ? p.text ?? "" : ""))
+            .join(" ")
+            .trim();
+          if (queryText) {
+            try {
+              articleContext = await retrieveArticleContext(queryText, key, 4);
+            } catch (e) {
+              console.error("article retrieval failed", e);
+            }
+          }
+        }
+
         const result = streamText({
           model,
-          system: await buildSystemPrompt(userClient),
+          system: await buildSystemPrompt(userClient, articleContext),
           messages: await convertToModelMessages(body.messages),
           stopWhen: stepCountIs(3),
         });
+
 
         return result.toUIMessageStreamResponse({
           originalMessages: body.messages,
