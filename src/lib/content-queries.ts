@@ -48,6 +48,8 @@ type GuideRow = {
   intro_video_verified: boolean | null;
   completed_tours_count: number | null;
   avg_response_minutes: number | null;
+  has_transport: boolean | null;
+  transport_seats: number | null;
   cities: { name: string } | null;
   guide_categories: { categories: { slug: string; name: string; icon: string } | null }[];
 };
