@@ -109,7 +109,7 @@ export function TopTours() {
                         {tour.cover_url ? (
                           <img
                             src={tour.cover_url}
-                            alt={tour.title}
+                            alt={pickTourTitle(tour, lang)}
                             loading="lazy"
                             className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform"
                           />
