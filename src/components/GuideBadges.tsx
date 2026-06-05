@@ -7,6 +7,7 @@ export type GuideBadgesData = {
   hasVerifiedLanguage: boolean;
   introVideoVerified: boolean;
   reviewsCount: number;
+  avgRating?: number | null;
   completedToursCount: number;
   avgResponseMinutes: number | null;
 };
@@ -87,7 +88,11 @@ export function GuideBadges({ data, compact = false }: { data: GuideBadgesData; 
           <BadgePill
             active={reviewsActive}
             icon={Star}
-            label={`${data.reviewsCount} ${t("badges.reviews")}`}
+            label={
+              data.avgRating != null && data.reviewsCount > 0
+                ? `${data.avgRating.toFixed(1)} ★ · ${data.reviewsCount}`
+                : `${data.reviewsCount} ${t("badges.reviews")}`
+            }
             tooltip={reviewsActive
               ? fmt(t("badges.reviews.on"), { n: data.reviewsCount })
               : fmt(t("badges.reviews.off"), { n: REVIEWS_THRESHOLD })}
