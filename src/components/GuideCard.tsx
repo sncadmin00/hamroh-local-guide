@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Star, BadgeCheck, Zap, MapPin } from "lucide-react";
+import { BadgeCheck, Zap, MapPin } from "lucide-react";
 import type { Guide } from "@/data/guides";
 import { WishlistHeart } from "@/components/WishlistHeart";
 import { useCities } from "@/lib/content-queries";
@@ -43,14 +43,8 @@ export function GuideCard({ guide }: { guide: Guide }) {
       </div>
 
       <div className="flex flex-1 flex-col p-6">
-        <div className="flex items-center justify-between gap-2">
-          <h3 className="font-display text-xl font-semibold">{guide.name}</h3>
-          <span className="inline-flex items-center gap-1 text-sm font-medium">
-            <Star className="h-4 w-4 fill-accent text-accent" />
-            {guide.rating}
-            <span className="text-muted-foreground">({guide.reviews})</span>
-          </span>
-        </div>
+        <h3 className="font-display text-xl font-semibold">{guide.name}</h3>
+
         <p className="mt-1 inline-flex items-center gap-1 text-sm text-muted-foreground">
           <MapPin className="h-3.5 w-3.5" /> {allCities.join(" · ")}
         </p>

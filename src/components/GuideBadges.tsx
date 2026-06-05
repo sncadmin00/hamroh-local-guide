@@ -82,6 +82,12 @@ export function GuideBadges({ data, compact = false }: { data: GuideBadgesData; 
             label={t("badges.introVideo")}
             tooltip={data.introVideoVerified ? t("badges.introVideo.on") : t("badges.introVideo.off")}
           />
+        </div>
+
+        {!compact && (
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground/70 pt-1">{t("badges.activity")}</p>
+        )}
+        <div className="flex flex-wrap gap-1">
           <BadgePill
             active={!!data.hasTransport}
             icon={Car}
@@ -98,13 +104,9 @@ export function GuideBadges({ data, compact = false }: { data: GuideBadgesData; 
                 : t("badges.transport.off")
             }
           />
-        </div>
-        {!compact && (
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground/70 pt-1">{t("badges.activity")}</p>
-        )}
-        <div className="flex flex-wrap gap-1">
           <BadgePill
             active={reviewsActive}
+
             icon={Star}
             label={
               data.avgRating != null && data.reviewsCount > 0
