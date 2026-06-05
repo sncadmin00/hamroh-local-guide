@@ -43,8 +43,10 @@ type Guide = {
   photo_url: string | null;
   specialties: string[];
   languages: string[];
+  verified_languages: Record<string, string> | null;
   user_id: string | null;
 };
+
 
 type Article = {
   id: string;
@@ -100,7 +102,10 @@ type GuideApplication = {
   portrait_url: string | null;
   video_url: string | null;
   photo_urls: string[] | null;
+  language_tests: Array<{ language: string; level: string; transcript?: string; feedback?: string; skipped?: boolean }> | null;
+  user_id: string | null;
 };
+
 
 type Category = {
   id: string;
