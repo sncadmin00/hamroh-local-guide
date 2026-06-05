@@ -18,7 +18,7 @@ interface Props {
 }
 
 const Email = ({
-  fullName, email, phone, city, languages, specialization, experienceYears, about, reviewUrl,
+  fullName, email, phone, telegram, city, languages, specialization, experienceYears, about, reviewUrl,
 }: Props) => (
   <Html lang="ru" dir="ltr">
     <Head />
