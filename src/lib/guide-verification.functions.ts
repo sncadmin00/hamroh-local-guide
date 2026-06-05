@@ -80,7 +80,7 @@ export const adminListVerifications = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
-    await ensureAdmin(supabase, userId);
+    await ensureAdmin(userId);
     const { data, error } = await supabaseAdmin
       .from("guides")
       .select("id, name, slug, photo_url, identity_verified, identity_phone, identity_passport_url, identity_submitted_at, identity_rejected_reason, intro_video_url, intro_video_verified, intro_video_submitted_at, intro_video_rejected_reason")
@@ -114,7 +114,7 @@ export const adminSetIdentity = createServerFn({ method: "POST" })
   }).parse(input))
   .handler(async ({ context, data }) => {
     const { supabase, userId } = context;
-    await ensureAdmin(supabase, userId);
+    await ensureAdmin(userId);
     const { error } = await supabaseAdmin
       .from("guides")
       .update({
@@ -135,7 +135,7 @@ export const adminSetIntroVideo = createServerFn({ method: "POST" })
   }).parse(input))
   .handler(async ({ context, data }) => {
     const { supabase, userId } = context;
-    await ensureAdmin(supabase, userId);
+    await ensureAdmin(userId);
     const { error } = await supabaseAdmin
       .from("guides")
       .update({
