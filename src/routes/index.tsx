@@ -257,17 +257,11 @@ function Home() {
           {/* Tagline under input */}
           <p className="mt-3 text-xs text-slate-400">{t("hero.tagline")}</p>
 
-          {/* Stats + trust below input */}
-          <div className="text-center space-y-4 mt-8 md:mt-10">
-            <p className="text-sm text-slate-500 flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
-              <span><span className="font-semibold text-slate-700">1,240</span> {t("hero.stats.guides")}</span>
-              <span className="text-slate-300" aria-hidden>·</span>
-              <span><span className="font-semibold text-slate-700">47</span> {t("hero.stats.cities")}</span>
-              <span className="text-slate-300" aria-hidden>·</span>
-              <span><span className="font-semibold text-slate-700">12,000</span> {t("hero.stats.travelers")}</span>
-            </p>
+          {/* Trust badges below input */}
+          <div className="text-center mt-8 md:mt-10">
             <TrustBar />
           </div>
+
 
         </div>
       </main>
