@@ -391,6 +391,19 @@ export const translations: Dict = {
   "badges.response.none": { en: "Not enough data to measure response time", uz: "Javob vaqtini o'lchash uchun ma'lumot yetarli emas", ru: "Недостаточно данных для оценки времени ответа" },
   "badges.response.on": { en: "Median response time {n} min", uz: "O'rtacha javob vaqti {n} daq", ru: "Среднее время ответа {n} мин" },
   "badges.response.off": { en: "Median response {n} min (badge requires <{limit})", uz: "O'rtacha javob {n} daq (nishon uchun <{limit} kerak)", ru: "Среднее время ответа {n} мин (значок при <{limit})" },
+  "badges.transport": { en: "Transport", uz: "Transport", ru: "Транспорт" },
+  "badges.transport.seats": { en: "{n} seats", uz: "{n} o'rin", ru: "{n} мест" },
+  "badges.transport.on": { en: "Provides transport ({n} seats)", uz: "Transport bilan ta'minlaydi ({n} o'rin)", ru: "Предоставляет транспорт ({n} мест)" },
+  "badges.transport.onNoSeats": { en: "Provides transport", uz: "Transport bilan ta'minlaydi", ru: "Предоставляет транспорт" },
+  "badges.transport.off": { en: "No transport provided", uz: "Transport taqdim etilmaydi", ru: "Транспорт не предоставляется" },
+
+  "bg.tr.title": { en: "Do you provide transport?", uz: "Transport bilan ta'minlaysizmi?", ru: "Предоставляете ли вы транспорт?" },
+  "bg.tr.sub": { en: "Tell travelers if you have a car or van for tours.", uz: "Sayohatchilarga avtomobilingiz yoki mikroavtobusingiz borligini bildiring.", ru: "Сообщите путешественникам, есть ли у вас авто или микроавтобус для туров." },
+  "bg.tr.yes": { en: "Yes, I provide transport", uz: "Ha, transport bilan ta'minlayman", ru: "Да, предоставляю транспорт" },
+  "bg.tr.no": { en: "No transport", uz: "Transport yo'q", ru: "Без транспорта" },
+  "bg.tr.seats": { en: "Number of passenger seats", uz: "Yo'lovchilar uchun o'rinlar soni", ru: "Количество пассажирских мест" },
+  "bg.tr.seatsPh": { en: "e.g. 4", uz: "masalan, 4", ru: "например, 4" },
+  "bg.rv.transport": { en: "Transport", uz: "Transport", ru: "Транспорт" },
 };
 
 
