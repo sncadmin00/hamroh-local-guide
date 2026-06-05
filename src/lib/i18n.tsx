@@ -377,7 +377,7 @@ export const translations: Dict = {
   "badges.language": { en: "Language", uz: "Til", ru: "Язык" },
   "badges.introVideo": { en: "Intro video", uz: "Tanishuv video", ru: "Видео-визитка" },
   "badges.reviews": { en: "reviews", uz: "sharh", ru: "отзывов" },
-  "badges.tours": { en: "tours", uz: "sayohat", ru: "туров" },
+  "badges.tours": { en: "completed tours", uz: "yakunlangan sayohat", ru: "завершённых туров" },
   "badges.min": { en: "min", uz: "daq", ru: "мин" },
   "badges.identity.on": { en: "Email, phone & passport verified", uz: "Email, telefon va pasport tasdiqlangan", ru: "Email, телефон и паспорт подтверждены" },
   "badges.identity.off": { en: "Identity not verified", uz: "Shaxs tasdiqlanmagan", ru: "Личность не подтверждена" },
