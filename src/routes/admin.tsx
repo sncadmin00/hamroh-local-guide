@@ -8,6 +8,8 @@ import { CategoryIcon } from "@/components/CategoryIcon";
 import { inviteGuideToPortal } from "@/lib/admin-portal.functions";
 import { listAppUsers, setAdminRole, inviteAdminUser, deleteAppUser } from "@/lib/admin-users.functions";
 import { notifyGuideApplicationStatus } from "@/lib/lifecycle-emails.functions";
+import { reindexArticle, reindexAllArticles } from "@/lib/articles-rag.functions";
+
 import { SpotlightsPanel } from "@/components/admin/SpotlightsPanel";
 import { ToursPanel } from "@/components/admin/ToursPanel";
 import hamrohLogo from "@/assets/hamroh-logo.png";
@@ -1144,11 +1146,19 @@ function ArticlesPanel({
         .insert(cityIds.map((city_id) => ({ article_id: data.id, city_id })));
       if (linkErr) toast.error(linkErr.message);
     }
+    // Index for AI search
+    try {
+      const res = await reindexArticle({ data: { articleId: data.id } });
+      toast.success(`Article added · indexed ${res.chunks} chunks for AI`);
+    } catch (err) {
+      toast.success("Article added (AI indexing failed — use Re-index button)");
+      console.error(err);
+    }
     setSaving(false);
-    toast.success("Article added");
     setTitle(""); setSlug(""); setExcerpt(""); setCover(""); setBody(""); setCityIds([]);
     await reload();
   };
+
 
   const togglePublished = async (a: Article) => {
     const next = !a.published;
@@ -1201,7 +1211,23 @@ function ArticlesPanel({
       </form>
 
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
-        <h2 className="font-display text-lg font-semibold">Articles</h2>
+        <div className="flex items-center justify-between gap-2">
+          <h2 className="font-display text-lg font-semibold">Articles</h2>
+          <button
+            onClick={async () => {
+              const t = toast.loading("Reindexing all published articles…");
+              try {
+                const res = await reindexAllArticles();
+                toast.success(`Indexed ${res.chunks} chunks across ${res.articles} articles`, { id: t });
+              } catch (e) {
+                toast.error((e as Error).message, { id: t });
+              }
+            }}
+            className="h-9 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-secondary/60"
+          >
+            Reindex all for AI
+          </button>
+        </div>
         <ul className="mt-4 divide-y divide-border/60">
           {articles.length === 0 && <li className="py-4 text-sm text-muted-foreground">No articles yet.</li>}
           {articles.map((a) => (
@@ -1211,6 +1237,20 @@ function ArticlesPanel({
                 <p className="text-xs text-muted-foreground truncate">/{a.slug} · {a.published ? "Published" : "Draft"}</p>
               </div>
               <div className="flex items-center gap-1">
+                <button
+                  onClick={async () => {
+                    const t = toast.loading("Indexing…");
+                    try {
+                      const res = await reindexArticle({ data: { articleId: a.id } });
+                      toast.success(`Indexed ${res.chunks} chunks`, { id: t });
+                    } catch (e) {
+                      toast.error((e as Error).message, { id: t });
+                    }
+                  }}
+                  className="h-9 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-secondary/60"
+                >
+                  Reindex
+                </button>
                 <button
                   onClick={() => togglePublished(a)}
                   className="h-9 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-secondary/60"
@@ -1232,6 +1272,7 @@ function ArticlesPanel({
     </div>
   );
 }
+
 
 function SocialPanel({
   embeds,

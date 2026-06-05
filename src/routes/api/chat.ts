@@ -2,13 +2,19 @@ import { createFileRoute } from "@tanstack/react-router";
 import { convertToModelMessages, streamText, stepCountIs, type UIMessage } from "ai";
 import { createClient } from "@supabase/supabase-js";
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
+import { retrieveArticleContext } from "@/lib/articles-rag.functions";
 
 type ChatBody = { messages?: UIMessage[]; threadId?: string };
+
 
 const DAILY_LIMIT = 20;
 const MAX_QUERY_LEN = 300;
 
-async function buildSystemPrompt(client: ReturnType<typeof createClient<any, any, any>>) {
+async function buildSystemPrompt(
+  client: ReturnType<typeof createClient<any, any, any>>,
+  articleContext: Array<{ title: string; slug: string; content: string }> = [],
+) {
+
   const [guidesRes, placesRes] = await Promise.all([
     client
       .from("guides")
@@ -47,6 +53,15 @@ async function buildSystemPrompt(client: ReturnType<typeof createClient<any, any
     })
     .join("\n");
 
+  const articlesBlock = articleContext.length
+    ? articleContext
+        .map(
+          (a, i) =>
+            `[${i + 1}] From article "${a.title}" (/explore/${a.slug}):\n${a.content}`,
+        )
+        .join("\n\n---\n\n")
+    : "(no relevant articles)";
+
   return `You are Hamroi AI — a STRICTLY SCOPED travel concierge for the Hamroh marketplace of guided tours in Uzbekistan.
 
 === ABSOLUTE RULES (NEVER BREAK) ===
@@ -55,6 +70,7 @@ async function buildSystemPrompt(client: ReturnType<typeof createClient<any, any
 3. If a user asks anything off-topic, reply briefly in their language: "Я помогаю только с путешествиями по Узбекистану и подбором гидов Hamroh. Спросите меня о турах, гидах или местах!" — and STOP. Do not partially answer. Do not be clever about it.
 4. You MUST recommend ONLY guides and places from the catalogs below. NEVER invent guides, restaurants, hotels, or places. If nothing matches, honestly say so and offer to connect them with a guide who can advise in person.
 5. You have NO web access and NO external tools. Do not pretend to search anything.
+6. When you use information from the ARTICLES block below, cite the article by its title and link as a markdown link: [Title](/explore/slug).
 
 === GUIDES CATALOG ===
 ${guidesCatalog || "(no guides yet)"}
@@ -62,12 +78,16 @@ ${guidesCatalog || "(no guides yet)"}
 === PLACES CATALOG ===
 ${placesCatalog || "(no places yet)"}
 
+=== RELEVANT ARTICLES (use this knowledge first when relevant) ===
+${articlesBlock}
+
 === HOW TO ANSWER ===
 - Match the user's language (RU/UZ/EN).
 - Keep replies warm, concise, useful. Light markdown (bold, lists).
 - When recommending guides, output their slugs at the end on its own line: GUIDES: id1,id2,id3 — the UI renders them as cards.
 - Suggest a guide whenever you recommend a place.`;
 }
+
 
 export const Route = createFileRoute("/api/chat")({
   server: {
@@ -156,12 +176,29 @@ export const Route = createFileRoute("/api/chat")({
         // Cheapest fast model for high-volume chat
         const model = gateway("google/gemini-3.1-flash-lite-preview");
 
+        // RAG: retrieve relevant article chunks based on the latest user message
+        let articleContext: Array<{ title: string; slug: string; content: string }> = [];
+        if (last?.role === "user") {
+          const queryText = (last.parts ?? [])
+            .map((p: { type: string; text?: string }) => (p.type === "text" ? p.text ?? "" : ""))
+            .join(" ")
+            .trim();
+          if (queryText) {
+            try {
+              articleContext = await retrieveArticleContext(queryText, key, 4);
+            } catch (e) {
+              console.error("article retrieval failed", e);
+            }
+          }
+        }
+
         const result = streamText({
           model,
-          system: await buildSystemPrompt(userClient),
+          system: await buildSystemPrompt(userClient, articleContext),
           messages: await convertToModelMessages(body.messages),
           stopWhen: stepCountIs(3),
         });
+
 
         return result.toUIMessageStreamResponse({
           originalMessages: body.messages,

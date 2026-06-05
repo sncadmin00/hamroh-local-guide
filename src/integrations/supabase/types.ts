@@ -112,6 +112,44 @@ export type Database = {
         }
         Relationships: []
       }
+      article_chunks: {
+        Row: {
+          article_id: string
+          chunk_index: number
+          content: string
+          created_at: string
+          embedding: string
+          id: string
+          model: string
+        }
+        Insert: {
+          article_id: string
+          chunk_index: number
+          content: string
+          created_at?: string
+          embedding: string
+          id?: string
+          model?: string
+        }
+        Update: {
+          article_id?: string
+          chunk_index?: number
+          content?: string
+          created_at?: string
+          embedding?: string
+          id?: string
+          model?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_chunks_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       article_cities: {
         Row: {
           article_id: string
@@ -1734,6 +1772,16 @@ export type Database = {
       is_guide_owner: {
         Args: { _guide_id: string; _user_id: string }
         Returns: boolean
+      }
+      match_article_chunks: {
+        Args: { match_count?: number; query_embedding: string }
+        Returns: {
+          article_id: string
+          article_slug: string
+          article_title: string
+          content: string
+          similarity: number
+        }[]
       }
       move_to_dlq: {
         Args: {
