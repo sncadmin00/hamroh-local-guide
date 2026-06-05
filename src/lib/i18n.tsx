@@ -33,12 +33,12 @@ export const translations: Dict = {
   "hero.h1": {
     en: "Explore Uzbekistan with locals",
     uz: "Har bir safar uchun ishonchli hamroh",
-    ru: "Откройте Узбекистан с местными",
+    ru: "Найдите своего надежного спутника в Узбекистане",
   },
   "hero.h1sub": {
     en: "Verified guides, unique routes and authentic experiences.",
     uz: "Ishonchli gidlar, noyob tajribalar va unutilmas xotiralar.",
-    ru: "Проверенные гиды, уникальные маршруты и настоящие впечатления.",
+    ru: "Увидьте Узбекистан глазами местных.",
   },
   "hero.subtitle": {
     en: "Describe the trip you want. Hamroh AI matches you with a verified local guide.",
