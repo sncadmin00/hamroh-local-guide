@@ -360,7 +360,7 @@ const I18nContext = createContext<{ lang: Lang; setLang: (l: Lang) => void; t: (
 
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState<Lang>("ru");
+  const [lang, setLangState] = useState<Lang>("en");
 
   useEffect(() => {
     const saved = (typeof window !== "undefined" && localStorage.getItem("lang")) as Lang | null;
