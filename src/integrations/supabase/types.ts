@@ -711,6 +711,7 @@ export type Database = {
           experience_years: number
           full_name: string
           id: string
+          language_tests: Json
           languages: string[]
           phone: string
           photo_urls: string[]
@@ -731,6 +732,7 @@ export type Database = {
           experience_years?: number
           full_name: string
           id?: string
+          language_tests?: Json
           languages?: string[]
           phone?: string
           photo_urls?: string[]
@@ -751,6 +753,7 @@ export type Database = {
           experience_years?: number
           full_name?: string
           id?: string
+          language_tests?: Json
           languages?: string[]
           phone?: string
           photo_urls?: string[]
