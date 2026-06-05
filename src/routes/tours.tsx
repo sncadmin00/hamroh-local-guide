@@ -24,7 +24,7 @@ const PLACEHOLDER =
   "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 3'><rect width='4' height='3' fill='%23e5e7eb'/></svg>";
 
 function ToursPage() {
-  const { t, lang } = useI18n();
+  const { t, tCategory, lang } = useI18n();
   const [citySlug, setCitySlug] = useState<string>("");
   const [categorySlug, setCategorySlug] = useState<string>("");
   const { data: cities = [] } = useCities();
