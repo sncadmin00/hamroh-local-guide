@@ -1,12 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { convertToModelMessages, streamText, stepCountIs, tool, type UIMessage } from "ai";
-import { z } from "zod";
+import { convertToModelMessages, streamText, stepCountIs, type UIMessage } from "ai";
 import { createClient } from "@supabase/supabase-js";
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
 
-
 type ChatBody = { messages?: UIMessage[]; threadId?: string };
+
+const DAILY_LIMIT = 10;
+const MAX_QUERY_LEN = 300;
 
 async function buildSystemPrompt(client: ReturnType<typeof createClient<any, any, any>>) {
   const [guidesRes, placesRes] = await Promise.all([
@@ -47,86 +47,27 @@ async function buildSystemPrompt(client: ReturnType<typeof createClient<any, any
     })
     .join("\n");
 
-  return `You are Hamroi AI, a friendly travel concierge for Uzbekistan helping travelers find the perfect local guide and discover the best places.
+  return `You are Hamroi AI — a STRICTLY SCOPED travel concierge for the Hamroh marketplace of guided tours in Uzbekistan.
 
-You have access to two verified catalogs:
+=== ABSOLUTE RULES (NEVER BREAK) ===
+1. You ONLY answer questions about: travel in Uzbekistan, Hamroh guides, Hamroh places/tours, trip planning inside Uzbekistan, and practical travel info (visa, weather, transport, food, culture) for visiting Uzbekistan.
+2. You MUST REFUSE all other requests, including but not limited to: coding help, homework, essays, translations of arbitrary text, recipes, math, general knowledge questions, news, politics, medical/legal/financial advice, roleplay, jokes, stories, anything unrelated to Uzbekistan travel.
+3. If a user asks anything off-topic, reply briefly in their language: "Я помогаю только с путешествиями по Узбекистану и подбором гидов Hamroh. Спросите меня о турах, гидах или местах!" — and STOP. Do not partially answer. Do not be clever about it.
+4. You MUST recommend ONLY guides and places from the catalogs below. NEVER invent guides, restaurants, hotels, or places. If nothing matches, honestly say so and offer to connect them with a guide who can advise in person.
+5. You have NO web access and NO external tools. Do not pretend to search anything.
 
 === GUIDES CATALOG ===
 ${guidesCatalog || "(no guides yet)"}
 
-=== PLACES CATALOG (restaurants, attractions, activities, routes) ===
+=== PLACES CATALOG ===
 ${placesCatalog || "(no places yet)"}
 
-Rules:
-- When the user asks about places to visit, eat, or things to do — ALWAYS check PLACES CATALOG first. Recommend our verified places by name with a short reason.
-- After recommending a place, suggest a guide who can take them there (look at "Guides who take travelers here" or any guide in that city whose specialties match).
-- When recommending guides directly, mention them by name and explain WHY they fit (language, specialty, vibe).
-- At the end of any recommendation that includes guides, output a line in this exact format on its own line: GUIDES: id1,id2,id3 (using guide slug ids). The UI will render them as cards.
-- If PLACES CATALOG has nothing relevant, you MAY call the web_search tool to find fresh info (events, hours, new spots). Always frame web results as "I found this online" and then suggest a local guide who can verify it in person.
-- Prefer our catalog over web results when both exist. Web search is a fallback, not the default.
-- Do NOT invent specific restaurant or place names. Either use PLACES CATALOG, web_search results, or honestly recommend a guide instead.
-- Keep replies warm, concise, and useful. Use light markdown (bold, lists).
-- If the user asks about something unrelated to travel, gently steer back.`;
+=== HOW TO ANSWER ===
+- Match the user's language (RU/UZ/EN).
+- Keep replies warm, concise, useful. Light markdown (bold, lists).
+- When recommending guides, output their slugs at the end on its own line: GUIDES: id1,id2,id3 — the UI renders them as cards.
+- Suggest a guide whenever you recommend a place.`;
 }
-
-function createWebSearchTool() {
-  return tool({
-    description:
-      "Search the web for fresh information about places, restaurants, events, opening hours, or attractions in Uzbekistan. Use only when PLACES CATALOG has no relevant entry.",
-    inputSchema: z.object({
-      query: z.string().describe("Search query in English or Russian, e.g. 'best plov restaurants Tashkent 2026'"),
-      city: z.string().optional().describe("City name for context, e.g. Tashkent, Samarkand"),
-    }),
-    execute: async ({ query, city }) => {
-      const apiKey = process.env.TAVILY_API_KEY;
-      if (!apiKey) return { error: "Web search not configured" };
-      try {
-        const res = await fetch("https://api.tavily.com/search", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            api_key: apiKey,
-            query: city ? `${query} ${city} Uzbekistan` : `${query} Uzbekistan`,
-            search_depth: "basic",
-            max_results: 5,
-            include_answer: true,
-          }),
-        });
-        if (!res.ok) return { error: `Search failed: ${res.status}` };
-        const data = (await res.json()) as {
-          answer?: string;
-          results?: Array<{ title: string; url: string; content: string }>;
-        };
-        const results = (data.results ?? []).slice(0, 5).map((r) => ({
-          title: r.title,
-          url: r.url,
-          snippet: r.content?.slice(0, 300),
-        }));
-        // Log discovered places for admin moderation (fire-and-forget)
-        if (results.length > 0) {
-          const top = results[0];
-          supabaseAdmin
-            .from("place_suggestions")
-            .insert({
-              name: top.title.slice(0, 200),
-              category: "other",
-              city_name: city ?? "",
-              description: (data.answer ?? top.snippet ?? "").slice(0, 1000),
-              raw_query: query,
-              source_url: top.url,
-              status: "pending",
-            })
-            .then(() => {});
-        }
-
-        return { answer: data.answer ?? null, results };
-      } catch (e) {
-        return { error: e instanceof Error ? e.message : "Search error" };
-      }
-    },
-  });
-}
-
 
 export const Route = createFileRoute("/api/chat")({
   server: {
@@ -144,6 +85,7 @@ export const Route = createFileRoute("/api/chat")({
         });
         const { data: userRes, error: userErr } = await userClient.auth.getUser();
         if (userErr || !userRes.user) return new Response("Unauthorized", { status: 401 });
+        const userId = userRes.user.id;
 
         const body = (await request.json()) as ChatBody;
         if (!Array.isArray(body.messages) || !body.threadId) {
@@ -151,20 +93,49 @@ export const Route = createFileRoute("/api/chat")({
         }
         const threadId = body.threadId;
 
+        // Validate last user message length
+        const last = body.messages[body.messages.length - 1];
+        if (last?.role === "user") {
+          const text = (last.parts ?? [])
+            .map((p: { type: string; text?: string }) => (p.type === "text" ? p.text ?? "" : ""))
+            .join("");
+          if (text.length > MAX_QUERY_LEN) {
+            return new Response(
+              JSON.stringify({ error: `Слишком длинный запрос. Максимум ${MAX_QUERY_LEN} символов.` }),
+              { status: 400, headers: { "Content-Type": "application/json" } },
+            );
+          }
+        }
+
+        // Rate limit: max DAILY_LIMIT AI requests per user per rolling 24h
+        const sinceIso = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+        const { count: usageCount } = await userClient
+          .from("ai_usage_log")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", userId)
+          .gte("created_at", sinceIso);
+        if ((usageCount ?? 0) >= DAILY_LIMIT) {
+          return new Response(
+            JSON.stringify({
+              error: `Вы достигли лимита ${DAILY_LIMIT} запросов к ИИ за 24 часа. Попробуйте завтра или напишите гиду напрямую.`,
+            }),
+            { status: 429, headers: { "Content-Type": "application/json" } },
+          );
+        }
+
         // Verify thread ownership
         const { data: thread } = await userClient.from("ai_threads").select("id, title").eq("id", threadId).maybeSingle();
         if (!thread) return new Response("Thread not found", { status: 404 });
 
-        // Persist the latest user message
-        const last = body.messages[body.messages.length - 1];
+        // Persist the latest user message + log usage
         if (last?.role === "user") {
           await userClient.from("ai_messages").insert({
             thread_id: threadId,
             role: "user",
             parts: last.parts as unknown as object,
           });
+          await userClient.from("ai_usage_log").insert({ user_id: userId });
 
-          // Auto-title from first user message if still default
           if (thread.title === "New search") {
             const text = last.parts
               .map((p: { type: string; text?: string }) => (p.type === "text" ? p.text : ""))
@@ -182,16 +153,15 @@ export const Route = createFileRoute("/api/chat")({
         if (!key) return new Response("AI not configured", { status: 500 });
 
         const gateway = createLovableAiGatewayProvider(key);
-        const model = gateway("google/gemini-3-flash-preview");
+        // Cheapest fast model for high-volume chat
+        const model = gateway("google/gemini-3.1-flash-lite-preview");
 
         const result = streamText({
           model,
           system: await buildSystemPrompt(userClient),
           messages: await convertToModelMessages(body.messages),
-          tools: { web_search: createWebSearchTool() },
-          stopWhen: stepCountIs(50),
+          stopWhen: stepCountIs(3),
         });
-
 
         return result.toUIMessageStreamResponse({
           originalMessages: body.messages,
