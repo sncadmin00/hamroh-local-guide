@@ -710,6 +710,7 @@ export type Database = {
           email: string
           experience_years: number
           full_name: string
+          has_transport: boolean
           id: string
           language_tests: Json
           languages: string[]
@@ -719,6 +720,7 @@ export type Database = {
           specialization: string
           status: string
           telegram: string
+          transport_seats: number | null
           updated_at: string
           user_id: string | null
           video_url: string | null
@@ -731,6 +733,7 @@ export type Database = {
           email: string
           experience_years?: number
           full_name: string
+          has_transport?: boolean
           id?: string
           language_tests?: Json
           languages?: string[]
@@ -740,6 +743,7 @@ export type Database = {
           specialization?: string
           status?: string
           telegram?: string
+          transport_seats?: number | null
           updated_at?: string
           user_id?: string | null
           video_url?: string | null
@@ -752,6 +756,7 @@ export type Database = {
           email?: string
           experience_years?: number
           full_name?: string
+          has_transport?: boolean
           id?: string
           language_tests?: Json
           languages?: string[]
@@ -761,6 +766,7 @@ export type Database = {
           specialization?: string
           status?: string
           telegram?: string
+          transport_seats?: number | null
           updated_at?: string
           user_id?: string | null
           video_url?: string | null
@@ -988,6 +994,7 @@ export type Database = {
           completed_tours_count: number
           created_at: string
           extra_city_ids: string[]
+          has_transport: boolean
           id: string
           identity_passport_url: string | null
           identity_phone: string | null
@@ -1011,6 +1018,7 @@ export type Database = {
           sort_order: number
           specialties: string[]
           tagline: string
+          transport_seats: number | null
           updated_at: string
           user_id: string | null
           verified: boolean
@@ -1023,6 +1031,7 @@ export type Database = {
           completed_tours_count?: number
           created_at?: string
           extra_city_ids?: string[]
+          has_transport?: boolean
           id?: string
           identity_passport_url?: string | null
           identity_phone?: string | null
@@ -1046,6 +1055,7 @@ export type Database = {
           sort_order?: number
           specialties?: string[]
           tagline?: string
+          transport_seats?: number | null
           updated_at?: string
           user_id?: string | null
           verified?: boolean
@@ -1058,6 +1068,7 @@ export type Database = {
           completed_tours_count?: number
           created_at?: string
           extra_city_ids?: string[]
+          has_transport?: boolean
           id?: string
           identity_passport_url?: string | null
           identity_phone?: string | null
@@ -1081,6 +1092,7 @@ export type Database = {
           sort_order?: number
           specialties?: string[]
           tagline?: string
+          transport_seats?: number | null
           updated_at?: string
           user_id?: string | null
           verified?: boolean
