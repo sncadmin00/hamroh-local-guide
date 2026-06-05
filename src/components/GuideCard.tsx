@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { BadgeCheck, Zap, MapPin } from "lucide-react";
+import { BadgeCheck, Zap, MapPin, Globe2, Languages } from "lucide-react";
 import type { Guide } from "@/data/guides";
 import { WishlistHeart } from "@/components/WishlistHeart";
 import { useCities } from "@/lib/content-queries";
@@ -10,7 +10,8 @@ export function GuideCard({ guide }: { guide: Guide }) {
   const extraNames = (guide.extraCityIds ?? [])
     .map((id) => cities?.find((c) => c.id === id)?.name)
     .filter(Boolean) as string[];
-  const allCities = [guide.city, ...extraNames].filter(Boolean);
+  const isMultiCity = extraNames.length > 0;
+  const isBilingual = (guide.languages ?? []).length > 1;
   const hasVerifiedLanguage = Object.keys(guide.verifiedLanguages ?? {}).length > 0;
   return (
     <Link
