@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToursAdmin, useCities, useCategories, useGuidesAdmin, type TourRow } from "@/lib/content-queries";
 import { toast } from "sonner";
-import { Trash2, Plus, Upload } from "lucide-react";
+import { Trash2, Plus, Upload, Languages, Loader2 } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { translateTourContent } from "@/lib/translate-tour.functions";
 
 const EMPTY: Partial<TourRow> = {
   slug: "",
