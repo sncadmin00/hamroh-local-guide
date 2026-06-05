@@ -400,6 +400,59 @@ function BecomeAGuidePage() {
     },
 
     {
+      title: t("bg.lt.title"),
+      subtitle: t("bg.lt.sub"),
+      canNext: () => selectedLanguages.every((l) => !!languageTests[l]),
+      nextHint: t("bg.lt.hint"),
+      render: () => (
+        <div className="space-y-4">
+          {selectedLanguages.map((lng) => (
+            <LanguageTestCard
+              key={lng}
+              language={lng}
+              displayName={tLanguage(lng)}
+              result={languageTests[lng]}
+              onResult={(r) => setLanguageTests((m) => ({ ...m, [lng]: r }))}
+              onSkip={() =>
+                setLanguageTests((m) => ({
+                  ...m,
+                  [lng]: { level: "N/A", transcript: "", feedback: "", skipped: true },
+                }))
+              }
+              onReset={() =>
+                setLanguageTests((m) => {
+                  const next = { ...m };
+                  delete next[lng];
+                  return next;
+                })
+              }
+              assess={async (payload) => {
+                const r = await assessLang({ data: payload });
+                return r;
+              }}
+              labels={{
+                prompt: t("bg.lt.prompt"),
+                start: t("bg.lt.start"),
+                stop: t("bg.lt.stop"),
+                rerecord: t("bg.lt.rerecord"),
+                submit: t("bg.lt.submit"),
+                checking: t("bg.lt.checking"),
+                recording: t("bg.lt.recording"),
+                level: t("bg.lt.level"),
+                skip: t("bg.lt.skip"),
+                tooShort: t("bg.lt.tooShort"),
+                micFail: t("bg.lt.micFail"),
+                assessFail: t("bg.lt.assessFail"),
+                transcript: t("bg.lt.transcript"),
+              }}
+            />
+          ))}
+        </div>
+      ),
+    },
+
+    {
+
       title: t("bg.s4.title"),
       canNext: () => form.specialization.trim().length >= 2,
       nextHint: t("bg.s4.hint"),
