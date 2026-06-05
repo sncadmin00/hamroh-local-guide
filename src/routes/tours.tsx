@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { useTours, useCities, useCategories } from "@/lib/content-queries";
+import { useTours, useCities, useCategories, pickTourTitle } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
 import { Clock, MapPin, Car } from "lucide-react";
 
@@ -24,7 +24,7 @@ const PLACEHOLDER =
   "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 3'><rect width='4' height='3' fill='%23e5e7eb'/></svg>";
 
 function ToursPage() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const [citySlug, setCitySlug] = useState<string>("");
   const [categorySlug, setCategorySlug] = useState<string>("");
   const { data: cities = [] } = useCities();
@@ -104,7 +104,7 @@ function ToursPage() {
                   <div className="relative aspect-[16/10] w-full overflow-hidden bg-secondary">
                     <img
                       src={tr.cover_url || PLACEHOLDER}
-                      alt={tr.title}
+                      alt={pickTourTitle(tr, lang)}
                       className="h-full w-full object-cover group-hover:scale-105 transition-transform"
                       loading="lazy"
                     />
@@ -123,7 +123,7 @@ function ToursPage() {
                         <span className="inline-flex items-center gap-0.5"><Clock className="h-2.5 w-2.5" />{Number(tr.duration_hours)}{t("tours.hours")}</span>
                       )}
                     </div>
-                    <h3 className="mt-0.5 text-sm font-semibold leading-snug line-clamp-2">{tr.title}</h3>
+                    <h3 className="mt-0.5 text-sm font-semibold leading-snug line-clamp-2">{pickTourTitle(tr, lang)}</h3>
                     {tr.guides?.name && (
                       <p className="mt-0.5 text-[10px] text-muted-foreground">by {tr.guides.name}</p>
                     )}
