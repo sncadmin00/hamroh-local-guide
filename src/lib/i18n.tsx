@@ -217,7 +217,26 @@ export const translations: Dict = {
   "book.clearAll": { en: "Clear all filters", uz: "Filtrlarni tozalash", ru: "Сбросить фильтры" },
   "book.autoDetected": { en: "Suggested by your location", uz: "Sizning joylashuvingiz bo'yicha", ru: "Подобрано по вашему местоположению" },
   "book.change": { en: "change", uz: "o'zgartirish", ru: "изменить" },
+
+  // Language names — keyed by lowercased English name
+  "lang.english": { en: "English", uz: "Ingliz", ru: "Английский" },
+  "lang.russian": { en: "Russian", uz: "Rus", ru: "Русский" },
+  "lang.uzbek": { en: "Uzbek", uz: "O'zbek", ru: "Узбекский" },
+  "lang.tajik": { en: "Tajik", uz: "Tojik", ru: "Таджикский" },
+  "lang.kazakh": { en: "Kazakh", uz: "Qozoq", ru: "Казахский" },
+  "lang.kyrgyz": { en: "Kyrgyz", uz: "Qirg'iz", ru: "Киргизский" },
+  "lang.turkish": { en: "Turkish", uz: "Turk", ru: "Турецкий" },
+  "lang.arabic": { en: "Arabic", uz: "Arab", ru: "Арабский" },
+  "lang.persian": { en: "Persian", uz: "Fors", ru: "Персидский" },
+  "lang.french": { en: "French", uz: "Frantsuz", ru: "Французский" },
+  "lang.german": { en: "German", uz: "Nemis", ru: "Немецкий" },
+  "lang.spanish": { en: "Spanish", uz: "Ispan", ru: "Испанский" },
+  "lang.italian": { en: "Italian", uz: "Italyan", ru: "Итальянский" },
+  "lang.chinese": { en: "Chinese", uz: "Xitoy", ru: "Китайский" },
+  "lang.japanese": { en: "Japanese", uz: "Yapon", ru: "Японский" },
+  "lang.korean": { en: "Korean", uz: "Koreys", ru: "Корейский" },
 };
+
 
 const I18nContext = createContext<{ lang: Lang; setLang: (l: Lang) => void; t: (k: keyof typeof translations) => string; tCategory: (slug: string, fallback?: string) => string }>({
   lang: "en",
