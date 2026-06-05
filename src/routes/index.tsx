@@ -279,6 +279,29 @@ function Home() {
       </main>
 
 
+      {/* Promo banner */}
+      <section className="px-6 py-10 md:py-14">
+        <div className="max-w-5xl mx-auto">
+          <div className="relative overflow-hidden rounded-3xl p-8 md:p-12 text-center text-white shadow-[var(--shadow-elegant)]"
+            style={{ background: "linear-gradient(135deg, #8BB5A9 0%, #62A1B1 55%, #D5A08D 100%)" }}
+          >
+            <div className="absolute -top-20 -right-20 w-72 h-72 rounded-full opacity-30 blur-3xl bg-white" />
+            <div className="relative">
+              <h2 className="font-display text-2xl md:text-3xl font-semibold whitespace-pre-line">{t("banner.guide.title")}</h2>
+              <div className="mt-4 text-base md:text-lg opacity-90 max-w-md mx-auto whitespace-pre-line">
+                {t("banner.guide.points")}
+              </div>
+              <Link
+                to="/become-a-guide"
+                className="mt-6 inline-flex items-center gap-2 h-11 px-6 rounded-full bg-white text-foreground text-sm font-semibold hover:bg-white/90 transition-colors"
+              >
+                {t("banner.guide.button")}
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <ExploreTabs />
       <BecomeGuideCTA />
       <WhyHamroh />
