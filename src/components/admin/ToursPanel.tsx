@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToursAdmin, useCities, useCategories, useGuidesAdmin, type TourRow } from "@/lib/content-queries";
 import { toast } from "sonner";
-import { Trash2, Plus, Upload } from "lucide-react";
+import { Trash2, Plus, Upload, Languages, Loader2 } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { translateTourContent } from "@/lib/translate-tour.functions";
 
 const EMPTY: Partial<TourRow> = {
   slug: "",
@@ -144,13 +146,48 @@ function TourEditor({
   const [form, setForm] = useState(initial);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [translating, setTranslating] = useState<null | "ru" | "uz" | "en">(null);
   const [selectedCats, setSelectedCats] = useState<string[]>(
     (initial.tour_categories ?? []).map((tc) => tc.category_id),
   );
+  const translate = useServerFn(translateTourContent);
 
   useEffect(() => { setForm(initial); }, [initial]);
 
   const set = <K extends keyof TourRow>(k: K, v: TourRow[K]) => setForm((f) => ({ ...f, [k]: v }));
+
+  const autoTranslate = async (sourceLang: "ru" | "uz" | "en") => {
+    const title = ((form as any)[`title_${sourceLang}`] ?? "").trim();
+    const short = ((form as any)[`short_description_${sourceLang}`] ?? "").trim();
+    const desc = ((form as any)[`description_md_${sourceLang}`] ?? "").trim();
+    if (!title && !short && !desc) {
+      toast.error(`Fill in the ${sourceLang.toUpperCase()} fields first`);
+      return;
+    }
+    setTranslating(sourceLang);
+    try {
+      const out = await translate({
+        data: { sourceLang, title, short_description: short, description_md: desc },
+      });
+      setForm((f) => {
+        const next: any = { ...f };
+        for (const lc of ["ru", "uz", "en"] as const) {
+          if (lc === sourceLang || !out[lc]) continue;
+          next[`title_${lc}`] = out[lc].title;
+          next[`short_description_${lc}`] = out[lc].short_description;
+          next[`description_md_${lc}`] = out[lc].description_md;
+        }
+        return next;
+      });
+      toast.success("Translated");
+    } catch (e: any) {
+      toast.error(e?.message ?? "Translation failed");
+    } finally {
+      setTranslating(null);
+    }
+  };
+
+
 
   const currentGuide = guides.find((g) => g.dbId === form.guide_id);
   const guideLangs = currentGuide?.languages ?? [];
@@ -257,6 +294,25 @@ function TourEditor({
           <input value={form.slug ?? ""} onChange={(e) => set("slug", e.target.value)} className="mt-1 w-full h-9 rounded-lg border border-border bg-background px-2" />
         </label>
       </div>
+
+      <div className="rounded-xl border border-dashed border-primary/40 bg-primary/5 p-3 flex flex-wrap items-center gap-2">
+        <Languages className="h-4 w-4 text-primary" />
+        <span className="text-sm font-medium">Auto-translate from:</span>
+        {(["ru", "uz", "en"] as const).map((lc) => (
+          <button
+            key={lc}
+            type="button"
+            disabled={translating !== null}
+            onClick={() => autoTranslate(lc)}
+            className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full bg-background ring-1 ring-border text-xs font-medium uppercase hover:bg-secondary disabled:opacity-50"
+          >
+            {translating === lc ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
+            {lc}
+          </button>
+        ))}
+        <span className="text-xs text-muted-foreground ml-auto">Fills the other two languages via Lovable AI</span>
+      </div>
+
 
       <div className="rounded-xl border border-border/60 p-3 space-y-3">
         <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Title (per language)</div>
