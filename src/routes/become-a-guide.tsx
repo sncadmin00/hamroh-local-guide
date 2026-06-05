@@ -485,6 +485,36 @@ function BecomeAGuidePage() {
       ),
     },
     {
+      title: t("bg.tr.title"),
+      subtitle: t("bg.tr.sub"),
+      canNext: () => !hasTransport || (transportSeats !== "" && Number(transportSeats) > 0),
+      render: () => (
+        <div className="space-y-4">
+          <div className="flex flex-wrap gap-2">
+            <button type="button" onClick={() => setHasTransport(true)} className={chipCls(hasTransport)}>
+              {t("bg.tr.yes")}
+            </button>
+            <button type="button" onClick={() => { setHasTransport(false); setTransportSeats(""); }} className={chipCls(!hasTransport)}>
+              {t("bg.tr.no")}
+            </button>
+          </div>
+          {hasTransport && (
+            <Field label={t("bg.tr.seats")}>
+              <input
+                type="number"
+                min={1}
+                max={60}
+                className={inputCls}
+                value={transportSeats}
+                onChange={(e) => setTransportSeats(e.target.value)}
+                placeholder={t("bg.tr.seatsPh")}
+              />
+            </Field>
+          )}
+        </div>
+      ),
+    },
+    {
       title: t("bg.s5.title"),
       subtitle: t("bg.s5.sub"),
       canNext: () => form.about.trim().length >= 20,
