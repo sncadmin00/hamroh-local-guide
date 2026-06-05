@@ -457,6 +457,7 @@ function BecomeAGuidePage() {
           full_name: parsed.data.full_name,
           email: parsed.data.email,
           phone: parsed.data.phone,
+          telegram: parsed.data.telegram ?? "",
           city: parsed.data.city,
           languages: parsed.data.languages,
           specialization: parsed.data.specialization,
