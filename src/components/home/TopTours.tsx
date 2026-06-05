@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Clock, Car, Star } from "lucide-react";
-import { useTours, useCategories } from "@/lib/content-queries";
+import { useTours, useCategories, pickTourTitle } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
 import { WishlistHeart } from "@/components/WishlistHeart";
 import { Skeleton } from "@/components/ui/skeleton";
