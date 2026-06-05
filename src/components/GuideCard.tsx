@@ -47,8 +47,22 @@ export function GuideCard({ guide }: { guide: Guide }) {
         <h3 className="font-display text-xl font-semibold">{guide.name}</h3>
 
         <p className="mt-1 inline-flex items-center gap-1 text-sm text-muted-foreground">
-          <MapPin className="h-3.5 w-3.5" /> {allCities.join(" · ")}
+          <MapPin className="h-3.5 w-3.5" /> {guide.city}
         </p>
+
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {isMultiCity && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+              <Globe2 className="h-3 w-3" /> Multi-city
+            </span>
+          )}
+          {isBilingual && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+              <Languages className="h-3 w-3" /> Bilingual
+            </span>
+          )}
+        </div>
+
 
         <div className="mt-4">
 
