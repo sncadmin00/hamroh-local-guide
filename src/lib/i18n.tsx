@@ -367,6 +367,12 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     if (saved === "en" || saved === "uz" || saved === "ru") setLangState(saved);
   }, []);
 
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      document.documentElement.lang = lang;
+    }
+  }, [lang]);
+
   // Sync current language to authenticated user's metadata and guide profile (if any).
   useEffect(() => {
     let cancelled = false;
