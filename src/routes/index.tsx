@@ -12,7 +12,7 @@ import { WhyHamroh } from "@/components/home/WhyHamroh";
 import { HomeFaq } from "@/components/home/HomeFaq";
 import { LatestPosts } from "@/components/home/LatestPosts";
 import { FeaturedReviews } from "@/components/home/FeaturedReviews";
-import { BecomeGuideCTA } from "@/components/home/BecomeGuideCTA";
+
 import { supabase } from "@/integrations/supabase/client";
 
 import { createThread } from "@/lib/ai-threads.functions";
@@ -303,7 +303,6 @@ function Home() {
       </section>
 
       <ExploreTabs />
-      <BecomeGuideCTA />
       <WhyHamroh />
 
       <LatestPosts />
