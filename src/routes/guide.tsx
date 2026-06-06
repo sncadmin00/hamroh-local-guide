@@ -29,7 +29,7 @@ import { GuidePostsPanel } from "@/components/GuidePostsPanel";
 import { useGuideI18n } from "@/lib/guide-i18n";
 
 export const Route = createFileRoute("/guide")({
-  head: () => ({ meta: [{ title: "Guide portal — Hamroh" }] }),
+  head: () => ({ meta: [{ title: "Hamroh" }] }),
   component: GuidePortal,
 });
 
