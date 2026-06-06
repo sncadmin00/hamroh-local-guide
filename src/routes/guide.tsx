@@ -273,10 +273,11 @@ function GuidePortal() {
 }
 
 function ReferralPanel({ code, clicks }: { code: string | null; clicks: number }) {
+  const { tg } = useGuideI18n();
   if (!code) {
     return (
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border text-sm text-muted-foreground">
-        No referral code assigned yet. Contact an administrator.
+        {tg("referral.noCode")}
       </div>
     );
   }
@@ -284,22 +285,22 @@ function ReferralPanel({ code, clicks }: { code: string | null; clicks: number }
   return (
     <div className="space-y-4">
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border">
-        <h2 className="font-display text-lg font-semibold">Your referral link</h2>
+        <h2 className="font-display text-lg font-semibold">{tg("referral.title")}</h2>
         <p className="text-sm text-muted-foreground mt-1">
-          Share it on social media. Every traveller who books through it counts toward your stats.
+          {tg("referral.text")}
         </p>
         <div className="mt-4 flex items-center gap-2">
           <input readOnly value={link} className="flex-1 h-11 rounded-xl border border-input bg-background px-3 text-sm font-mono" />
           <button
-            onClick={async () => { await navigator.clipboard.writeText(link); toast.success("Copied"); }}
+            onClick={async () => { await navigator.clipboard.writeText(link); toast.success(tg("common.copied")); }}
             className="h-11 px-4 rounded-xl bg-foreground text-background text-sm font-medium inline-flex items-center gap-2"
           >
-            <Copy className="h-4 w-4" /> Copy
+            <Copy className="h-4 w-4" /> {tg("referral.copy")}
           </button>
         </div>
       </div>
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border">
-        <p className="text-xs uppercase tracking-wider text-muted-foreground">Total link clicks</p>
+        <p className="text-xs uppercase tracking-wider text-muted-foreground">{tg("referral.clicks")}</p>
         <p className="mt-1 font-display text-3xl font-semibold">{clicks}</p>
       </div>
     </div>
