@@ -1801,7 +1801,7 @@ function ApplicationsPanel({
     const app = applications.find((a) => a.id === appId);
     const current = app?.photo_urls?.length ?? 0;
     const toAdd = Math.min(files.length, 5 - current);
-    if (toAdd <= 0) { toast.error("Max 5 photos"); return; }
+    if (toAdd <= 0) { toast.error(ta("applications.maxPhotos")); return; }
 
     setUploading((p) => ({ ...p, [appId + "-photos"]: true }));
     const newUrls: string[] = [];
