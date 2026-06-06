@@ -26,9 +26,10 @@ import {
 import { assessLanguageTest } from "@/lib/language-test.functions";
 import { useCities, useCategories } from "@/lib/content-queries";
 import { GuidePostsPanel } from "@/components/GuidePostsPanel";
+import { useGuideI18n } from "@/lib/guide-i18n";
 
 export const Route = createFileRoute("/guide")({
-  head: () => ({ meta: [{ title: "Guide portal — Hamroh" }] }),
+  head: () => ({ meta: [{ title: "Hamroh" }] }),
   component: GuidePortal,
 });
 
@@ -79,6 +80,7 @@ type MyGuide = {
 };
 
 function GuidePortal() {
+  const { tg } = useGuideI18n();
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
   const [guide, setGuide] = useState<MyGuide | null>(null);
@@ -123,16 +125,16 @@ function GuidePortal() {
   if (!guide) {
     return (
       <div className="min-h-screen container mx-auto px-4 py-20 max-w-2xl text-center">
-        <h1 className="font-display text-2xl font-semibold">No guide profile linked</h1>
+        <h1 className="font-display text-2xl font-semibold">{tg("portal.noProfileTitle")}</h1>
         <p className="mt-3 text-muted-foreground">
-          Your account is not linked to a guide profile yet. Ask an administrator to invite you to the portal.
+          {tg("portal.noProfileText")}
         </p>
         <div className="mt-6 flex justify-center gap-3">
-          <Link to="/" className="h-10 px-4 inline-flex items-center rounded-full bg-secondary text-sm font-medium">Home</Link>
+          <Link to="/" className="h-10 px-4 inline-flex items-center rounded-full bg-secondary text-sm font-medium">{tg("common.home")}</Link>
           <button
             onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/login" }); }}
             className="h-10 px-4 inline-flex items-center rounded-full bg-foreground text-background text-sm font-medium"
-          >Sign out</button>
+          >{tg("common.signOut")}</button>
         </div>
       </div>
     );
@@ -143,7 +145,7 @@ function GuidePortal() {
       <header className="border-b border-border bg-background">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="min-w-0">
-            <p className="text-xs uppercase tracking-wider text-muted-foreground">Guide portal</p>
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">{tg("portal.eyebrow")}</p>
             <p className="font-display text-lg font-semibold truncate">{guide.name}</p>
           </div>
           <div className="flex items-center gap-1">
@@ -151,13 +153,13 @@ function GuidePortal() {
               to="/"
               className="inline-flex items-center gap-2 h-9 px-3 rounded-full text-sm hover:bg-muted"
             >
-              <Home className="h-4 w-4" /> <span className="hidden sm:inline">Home</span>
+              <Home className="h-4 w-4" /> <span className="hidden sm:inline">{tg("common.home")}</span>
             </Link>
             <button
               onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/login" }); }}
               className="inline-flex items-center gap-2 h-9 px-3 rounded-full text-sm hover:bg-muted"
             >
-              <LogOut className="h-4 w-4" /> <span className="hidden sm:inline">Sign out</span>
+              <LogOut className="h-4 w-4" /> <span className="hidden sm:inline">{tg("common.signOut")}</span>
             </button>
           </div>
         </div>
@@ -166,34 +168,34 @@ function GuidePortal() {
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="flex gap-2 mb-6 flex-wrap">
           <TabBtn active={tab === "calendar"} onClick={() => setTab("calendar")}>
-            <CalendarDays className="h-4 w-4" /> Calendar
+            <CalendarDays className="h-4 w-4" /> {tg("tab.calendar")}
           </TabBtn>
           <TabBtn active={tab === "ai"} onClick={() => setTab("ai")}>
-            <Sparkles className="h-4 w-4" /> AI
+            <Sparkles className="h-4 w-4" /> {tg("tab.ai")}
           </TabBtn>
           <TabBtn active={tab === "availability"} onClick={() => setTab("availability")}>
-            <Calendar className="h-4 w-4" /> Availability
+            <Calendar className="h-4 w-4" /> {tg("tab.availability")}
           </TabBtn>
           <TabBtn active={tab === "tours"} onClick={() => setTab("tours")}>
-            <Compass className="h-4 w-4" /> My tours
+            <Compass className="h-4 w-4" /> {tg("tab.tours")}
           </TabBtn>
           <TabBtn active={tab === "bookings"} onClick={() => setTab("bookings")}>
-            Bookings ({bookings.length})
+            {tg("tab.bookings", { n: bookings.length })}
           </TabBtn>
           <TabBtn active={tab === "cities"} onClick={() => setTab("cities")}>
-            <MapPin className="h-4 w-4" /> Cities
+            <MapPin className="h-4 w-4" /> {tg("tab.cities")}
           </TabBtn>
           <TabBtn active={tab === "languages"} onClick={() => setTab("languages")}>
-            Languages
+            {tg("tab.languages")}
           </TabBtn>
           <TabBtn active={tab === "posts"} onClick={() => setTab("posts")}>
-            <ImageIcon className="h-4 w-4" /> Posts
+            <ImageIcon className="h-4 w-4" /> {tg("tab.posts")}
           </TabBtn>
           <TabBtn active={tab === "referral"} onClick={() => setTab("referral")}>
-            <Link2 className="h-4 w-4" /> Referral
+            <Link2 className="h-4 w-4" /> {tg("tab.referral")}
           </TabBtn>
           <TabBtn active={tab === "verification"} onClick={() => setTab("verification")}>
-            <ShieldCheck className="h-4 w-4" /> Verification
+            <ShieldCheck className="h-4 w-4" /> {tg("tab.verification")}
           </TabBtn>
         </div>
 
@@ -206,14 +208,14 @@ function GuidePortal() {
             onAdd={async (payload) => {
               try {
                 await addSlotFn({ data: payload });
-                toast.success("Slot added");
+                toast.success(tg("availability.added"));
                 await load();
               } catch (e) { toast.error((e as Error).message); }
             }}
             onDelete={async (id) => {
               try {
                 await deleteSlotFn({ data: { id } });
-                toast.success("Slot removed");
+                toast.success(tg("availability.removed"));
                 await load();
               } catch (e) { toast.error((e as Error).message); }
             }}
@@ -226,14 +228,14 @@ function GuidePortal() {
             onAction={async (id, status) => {
               try {
                 await updateStatusFn({ data: { id, status } });
-                toast.success(`Booking ${status}`);
+                toast.success(tg("bookings.updated", { status: tg(`status.${status}` as Parameters<typeof tg>[0]) }));
                 await load();
               } catch (e) { toast.error((e as Error).message); }
             }}
             onPropose={async (bookingId, date, time, note) => {
               try {
                 await proposeTimeFn({ data: { id: bookingId, date, time, note: note || undefined } });
-                toast.success("Proposal sent to client");
+                toast.success(tg("bookings.proposalSent"));
                 await load();
               } catch (e) { toast.error((e as Error).message); }
             }}
@@ -271,10 +273,11 @@ function GuidePortal() {
 }
 
 function ReferralPanel({ code, clicks }: { code: string | null; clicks: number }) {
+  const { tg } = useGuideI18n();
   if (!code) {
     return (
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border text-sm text-muted-foreground">
-        No referral code assigned yet. Contact an administrator.
+        {tg("referral.noCode")}
       </div>
     );
   }
@@ -282,22 +285,22 @@ function ReferralPanel({ code, clicks }: { code: string | null; clicks: number }
   return (
     <div className="space-y-4">
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border">
-        <h2 className="font-display text-lg font-semibold">Your referral link</h2>
+        <h2 className="font-display text-lg font-semibold">{tg("referral.title")}</h2>
         <p className="text-sm text-muted-foreground mt-1">
-          Share it on social media. Every traveller who books through it counts toward your stats.
+          {tg("referral.text")}
         </p>
         <div className="mt-4 flex items-center gap-2">
           <input readOnly value={link} className="flex-1 h-11 rounded-xl border border-input bg-background px-3 text-sm font-mono" />
           <button
-            onClick={async () => { await navigator.clipboard.writeText(link); toast.success("Copied"); }}
+            onClick={async () => { await navigator.clipboard.writeText(link); toast.success(tg("common.copied")); }}
             className="h-11 px-4 rounded-xl bg-foreground text-background text-sm font-medium inline-flex items-center gap-2"
           >
-            <Copy className="h-4 w-4" /> Copy
+            <Copy className="h-4 w-4" /> {tg("referral.copy")}
           </button>
         </div>
       </div>
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border">
-        <p className="text-xs uppercase tracking-wider text-muted-foreground">Total link clicks</p>
+        <p className="text-xs uppercase tracking-wider text-muted-foreground">{tg("referral.clicks")}</p>
         <p className="mt-1 font-display text-3xl font-semibold">{clicks}</p>
       </div>
     </div>
@@ -320,6 +323,7 @@ function AvailabilityPanel({
   onAdd: (p: { date: string; start_time: string; duration_minutes: number }) => void;
   onDelete: (id: string) => void;
 }) {
+  const { tg } = useGuideI18n();
   const [date, setDate] = useState("");
   const [time, setTime] = useState("10:00");
   const [duration, setDuration] = useState(120);
@@ -327,19 +331,19 @@ function AvailabilityPanel({
   return (
     <div className="space-y-6">
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border">
-        <h2 className="font-display text-lg font-semibold">Add free slot</h2>
-        <p className="text-sm text-muted-foreground mt-1">When you have slots here, travellers can book you instantly. Without slots, all bookings come as requests.</p>
+        <h2 className="font-display text-lg font-semibold">{tg("availability.addTitle")}</h2>
+        <p className="text-sm text-muted-foreground mt-1">{tg("availability.addText")}</p>
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-4 gap-3">
           <label className="text-sm">
-            <span className="text-xs text-muted-foreground">Date</span>
+            <span className="text-xs text-muted-foreground">{tg("availability.date")}</span>
             <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
           </label>
           <label className="text-sm">
-            <span className="text-xs text-muted-foreground">Start time</span>
+            <span className="text-xs text-muted-foreground">{tg("availability.startTime")}</span>
             <input type="time" value={time} onChange={(e) => setTime(e.target.value)} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
           </label>
           <label className="text-sm">
-            <span className="text-xs text-muted-foreground">Duration (min)</span>
+            <span className="text-xs text-muted-foreground">{tg("availability.duration")}</span>
             <input type="number" min={30} max={720} step={30} value={duration} onChange={(e) => setDuration(Number(e.target.value) || 120)} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
           </label>
           <button
@@ -347,22 +351,22 @@ function AvailabilityPanel({
             onClick={() => onAdd({ date, start_time: time, duration_minutes: duration })}
             className="h-11 mt-[18px] rounded-xl bg-foreground text-background text-sm font-medium inline-flex items-center justify-center gap-2 disabled:opacity-50"
           >
-            <Plus className="h-4 w-4" /> Add slot
+            <Plus className="h-4 w-4" /> {tg("availability.addSlot")}
           </button>
         </div>
       </div>
 
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border">
-        <h2 className="font-display text-lg font-semibold">Upcoming slots</h2>
+        <h2 className="font-display text-lg font-semibold">{tg("availability.upcoming")}</h2>
         {slots.length === 0 ? (
-          <p className="mt-3 text-sm text-muted-foreground">No slots yet. Add some above to enable instant booking.</p>
+          <p className="mt-3 text-sm text-muted-foreground">{tg("availability.empty")}</p>
         ) : (
           <ul className="mt-3 divide-y divide-border">
             {slots.map((s) => (
               <li key={s.id} className="py-3 flex items-center justify-between gap-3">
                 <div>
-                  <p className="font-medium">{s.date} · {s.start_time.slice(0, 5)} · {s.duration_minutes} min</p>
-                  <p className="text-xs text-muted-foreground">{s.is_booked ? "Booked" : "Available"}</p>
+                  <p className="font-medium">{s.date} · {s.start_time.slice(0, 5)} · {s.duration_minutes} {tg("common.minutes")}</p>
+                  <p className="text-xs text-muted-foreground">{s.is_booked ? tg("availability.booked") : tg("availability.available")}</p>
                 </div>
                 {!s.is_booked && (
                   <button onClick={() => onDelete(s.id)} className="h-9 w-9 grid place-items-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive">
@@ -385,6 +389,7 @@ function BookingsPanel({
   onAction: (id: string, status: "confirmed" | "declined" | "cancelled") => void;
   onPropose: (bookingId: string, date: string, time: string, note: string) => Promise<void>;
 }) {
+  const { tg } = useGuideI18n();
   const [proposeFor, setProposeFor] = useState<string | null>(null);
   const [pDate, setPDate] = useState("");
   const [pTime, setPTime] = useState("");
@@ -392,7 +397,7 @@ function BookingsPanel({
   const [sending, setSending] = useState(false);
 
   if (bookings.length === 0) {
-    return <div className="rounded-3xl bg-card p-6 ring-1 ring-border text-sm text-muted-foreground">No bookings yet.</div>;
+    return <div className="rounded-3xl bg-card p-6 ring-1 ring-border text-sm text-muted-foreground">{tg("bookings.empty")}</div>;
   }
   return (
     <div className="space-y-3">
@@ -400,35 +405,35 @@ function BookingsPanel({
         <div key={b.id} className="rounded-2xl bg-card p-5 ring-1 ring-border">
           <div className="flex items-start justify-between gap-3 flex-wrap">
             <div className="min-w-0">
-              <p className="font-medium">{b.customer_name} · {b.guests} {b.guests === 1 ? "guest" : "guests"}</p>
+              <p className="font-medium">{b.customer_name} · {b.guests} {b.guests === 1 ? tg("bookings.guestOne") : tg("bookings.guestMany")}</p>
               <p className="text-xs text-muted-foreground truncate">
-                {b.customer_email || (b.customer_telegram_username ? `@${b.customer_telegram_username}` : "Telegram")}
+                {b.customer_email || (b.customer_telegram_username ? `@${b.customer_telegram_username}` : tg("bookings.telegram"))}
               </p>
               <p className="text-sm mt-2">
                 <span className="font-medium">{b.experience}</span> — {b.date}
                 {b.start_time && <> · {b.start_time.slice(0, 5)}</>}
-                {b.duration_minutes && <> · {b.duration_minutes} min</>}
+                {b.duration_minutes && <> · {b.duration_minutes} {tg("common.minutes")}</>}
               </p>
               {b.notes && <p className="text-sm text-muted-foreground mt-1">"{b.notes}"</p>}
               {b.proposed_date && b.proposed_time && (
                 <p className="mt-2 text-xs inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-amber-500/15 text-amber-700">
                   <CalendarClock className="h-3.5 w-3.5" />
-                  Awaiting client response: {b.proposed_date} · {b.proposed_time.slice(0, 5)}
+                  {tg("bookings.awaiting", { date: b.proposed_date, time: b.proposed_time.slice(0, 5) })}
                 </p>
               )}
               <p className="text-xs text-muted-foreground mt-2">
-                Status: <StatusPill status={b.status} /> · ${Number(b.total).toFixed(0)} · {b.slot_id ? "Instant" : "Request"}
+                {tg("bookings.status")}: <StatusPill status={b.status} /> · ${Number(b.total).toFixed(0)} · {b.slot_id ? tg("bookings.instant") : tg("bookings.request")}
               </p>
               {b.status === "pending" && b.expires_at && (() => {
                 const msLeft = new Date(b.expires_at).getTime() - Date.now();
-                if (msLeft <= 0) return <p className="mt-1 text-xs text-destructive">⌛ Deadline passed — will auto-expire shortly</p>;
+                if (msLeft <= 0) return <p className="mt-1 text-xs text-destructive">{tg("bookings.deadlinePassed")}</p>;
                 const hours = Math.floor(msLeft / 3600000);
                 const mins = Math.floor((msLeft % 3600000) / 60000);
                 const label = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
                 const urgent = msLeft < 2 * 3600000;
                 return (
                   <p className={`mt-1 text-xs ${urgent ? "text-destructive font-medium" : "text-amber-700"}`}>
-                    ⏱ Respond within {label} or the request will auto-expire
+                    {tg("bookings.respondWithin", { time: label })}
                   </p>
                 );
               })()}
@@ -436,7 +441,7 @@ function BookingsPanel({
             {b.status === "pending" && (
               <div className="flex gap-2 shrink-0 flex-wrap">
                 <button onClick={() => onAction(b.id, "confirmed")} className="h-9 px-3 rounded-full bg-foreground text-background text-xs font-medium inline-flex items-center gap-1">
-                  <Check className="h-3.5 w-3.5" /> Confirm
+                  <Check className="h-3.5 w-3.5" /> {tg("bookings.confirm")}
                 </button>
                 <button
                   onClick={() => {
@@ -447,10 +452,10 @@ function BookingsPanel({
                   }}
                   className="h-9 px-3 rounded-full bg-muted text-foreground text-xs font-medium inline-flex items-center gap-1"
                 >
-                  <CalendarClock className="h-3.5 w-3.5" /> Propose time
+                  <CalendarClock className="h-3.5 w-3.5" /> {tg("bookings.proposeTime")}
                 </button>
                 <button onClick={() => onAction(b.id, "declined")} className="h-9 px-3 rounded-full bg-muted text-foreground text-xs font-medium inline-flex items-center gap-1">
-                  <X className="h-3.5 w-3.5" /> Decline
+                  <X className="h-3.5 w-3.5" /> {tg("bookings.decline")}
                 </button>
               </div>
             )}
@@ -458,28 +463,28 @@ function BookingsPanel({
 
           {proposeFor === b.id && (
             <div className="mt-4 pt-4 border-t border-border space-y-3">
-              <p className="text-xs text-muted-foreground">Suggest a different date and time. The client will get this as a message.</p>
+              <p className="text-xs text-muted-foreground">{tg("bookings.suggestText")}</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <label className="text-xs font-medium">
-                  Date
+                  {tg("availability.date")}
                   <input type="date" value={pDate} onChange={(e) => setPDate(e.target.value)}
                     className="mt-1 h-10 w-full rounded-lg border border-input bg-background px-3 text-sm" />
                 </label>
                 <label className="text-xs font-medium">
-                  Time
+                  {tg("bookings.time")}
                   <input type="time" value={pTime} onChange={(e) => setPTime(e.target.value)}
                     className="mt-1 h-10 w-full rounded-lg border border-input bg-background px-3 text-sm" />
                 </label>
               </div>
               <label className="text-xs font-medium block">
-                Note (optional)
+                {tg("bookings.note")}
                 <textarea value={pNote} onChange={(e) => setPNote(e.target.value)} rows={2}
-                  placeholder="Why this time works better…"
+                  placeholder={tg("bookings.notePh")}
                   className="mt-1 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm" />
               </label>
               <div className="flex gap-2 justify-end">
                 <button onClick={() => setProposeFor(null)} className="h-9 px-3 rounded-full bg-muted text-foreground text-xs font-medium">
-                  Cancel
+                  {tg("common.cancel")}
                 </button>
                 <button
                   disabled={!pDate || !pTime || sending}
@@ -493,7 +498,7 @@ function BookingsPanel({
                   className="h-9 px-3 rounded-full bg-foreground text-background text-xs font-medium inline-flex items-center gap-1 disabled:opacity-50"
                 >
                   {sending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <CalendarClock className="h-3.5 w-3.5" />}
-                  Send proposal
+                  {tg("bookings.sendProposal")}
                 </button>
               </div>
             </div>
@@ -505,13 +510,15 @@ function BookingsPanel({
 }
 
 function StatusPill({ status }: { status: string }) {
+  const { tg } = useGuideI18n();
   const map: Record<string, string> = {
     pending: "bg-amber-500/15 text-amber-700",
     confirmed: "bg-emerald-500/15 text-emerald-700",
     declined: "bg-destructive/15 text-destructive",
     cancelled: "bg-muted text-muted-foreground",
   };
-  return <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium ${map[status] ?? "bg-muted"}`}>{status}</span>;
+  const labelKey = `status.${status}` as Parameters<typeof tg>[0];
+  return <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium ${map[status] ?? "bg-muted"}`}>{tg(labelKey)}</span>;
 }
 
 type Tour = {
@@ -540,14 +547,9 @@ type Tour = {
 };
 
 const GROUP_KEYS = ["private", "small", "group", "large"] as const;
-const GROUP_LABELS: Record<(typeof GROUP_KEYS)[number], string> = {
-  private: "Private (up to 2)",
-  small: "Small group (up to 6)",
-  group: "Group (up to 12)",
-  large: "Large group (up to 25)",
-};
 
 function ToursPanel() {
+  const { tg } = useGuideI18n();
   const [languages, setLanguages] = useState<string[]>([]);
   const [cities, setCities] = useState<Array<{ id: string; name: string }>>([]);
   const [defaultCityId, setDefaultCityId] = useState<string>("");
@@ -591,7 +593,7 @@ function ToursPanel() {
   useEffect(() => { load(); }, [load]);
 
   if (loading) {
-    return <div className="rounded-3xl bg-card p-6 ring-1 ring-border text-sm text-muted-foreground inline-flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Loading…</div>;
+    return <div className="rounded-3xl bg-card p-6 ring-1 ring-border text-sm text-muted-foreground inline-flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> {tg("common.loading")}</div>;
   }
 
   return (
@@ -599,40 +601,40 @@ function ToursPanel() {
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h2 className="font-display text-lg font-semibold">Your tours</h2>
+            <h2 className="font-display text-lg font-semibold">{tg("tours.title")}</h2>
             <p className="text-sm text-muted-foreground mt-1">
-              Create the tours you offer. Travellers see your prices per language and pick a date.
+              {tg("tours.text")}
             </p>
           </div>
           <button
             onClick={() => setCreating(true)}
             className="h-10 px-4 rounded-full bg-foreground text-background text-sm font-medium inline-flex items-center gap-2"
           >
-            <Plus className="h-4 w-4" /> Add tour
+            <Plus className="h-4 w-4" /> {tg("tours.add")}
           </button>
         </div>
         {languages.length === 0 && (
           <p className="mt-4 text-sm text-amber-700 bg-amber-500/10 rounded-xl p-3">
-            Add languages on the Languages tab first so you can set per-language prices.
+            {tg("tours.needLanguages")}
           </p>
         )}
       </div>
 
       {items.length === 0 ? (
-        <div className="rounded-3xl bg-card p-6 ring-1 ring-border text-sm text-muted-foreground">No tours yet. Click "Add tour" to create one.</div>
+        <div className="rounded-3xl bg-card p-6 ring-1 ring-border text-sm text-muted-foreground">{tg("tours.empty")}</div>
       ) : (
         <div className="space-y-3">
           {items.map((it) => (
             <div key={it.id} className="rounded-2xl bg-card p-5 ring-1 ring-border">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="font-medium">{it.title} {!it.published && <span className="text-[10px] uppercase text-muted-foreground ml-1">draft</span>}</p>
-                  <p className="text-xs text-muted-foreground">{Number(it.duration_hours)}h · {it.pricing_mode === "by_group" ? "by group size" : `$${it.price_from}`} {it.transport_included && "· transport"}</p>
+                  <p className="font-medium">{it.title} {!it.published && <span className="text-[10px] uppercase text-muted-foreground ml-1">{tg("tours.draft")}</span>}</p>
+                  <p className="text-xs text-muted-foreground">{Number(it.duration_hours)}{tg("common.hoursShort")} · {it.pricing_mode === "by_group" ? tg("tours.byGroup") : `$${it.price_from}`} {it.transport_included && `· ${tg("tours.transport")}`}</p>
                   <div className="mt-3 flex flex-wrap gap-1.5">
                     {it.pricing_mode === "by_group"
                       ? GROUP_KEYS.filter((k) => (it.group_prices[k] ?? 0) > 0).map((k) => (
                           <span key={k} className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs bg-primary/10 text-primary ring-1 ring-primary/20">
-                            <span className="font-medium">{GROUP_LABELS[k]}</span>
+                            <span className="font-medium">{tg(`group.${k}` as Parameters<typeof tg>[0])}</span>
                             <span className="tabular-nums">${it.group_prices[k]}</span>
                           </span>
                         ))
@@ -642,7 +644,7 @@ function ToursPanel() {
                           return (
                             <span key={lng} className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs bg-primary/10 text-primary ring-1 ring-primary/20">
                               <span className="font-medium">{lng}</span>
-                              <span className="tabular-nums">{isBase ? "base" : (mult ? `+${mult}%` : "+0%")}</span>
+                              <span className="tabular-nums">{isBase ? tg("tours.base") : (mult ? `+${mult}%` : "+0%")}</span>
                             </span>
                           );
                         })}
@@ -654,8 +656,8 @@ function ToursPanel() {
                   </button>
                   <button
                     onClick={async () => {
-                      if (!confirm(`Delete "${it.title}"?`)) return;
-                      try { await deleteFn({ data: { id: it.id } }); toast.success("Deleted"); load(); }
+                      if (!confirm(tg("tours.deleteConfirm", { title: it.title }))) return;
+                      try { await deleteFn({ data: { id: it.id } }); toast.success(tg("common.deleted")); load(); }
                       catch (e) { toast.error((e as Error).message); }
                     }}
                     className="h-9 w-9 grid place-items-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
@@ -679,7 +681,7 @@ function ToursPanel() {
           onSave={async (payload) => {
             try {
               await upsertFn({ data: payload });
-              toast.success("Saved");
+              toast.success(tg("common.saved"));
               setEditing(null);
               setCreating(false);
               load();
@@ -725,6 +727,7 @@ function TourEditor({
     category_ids: string[];
   }) => void;
 }) {
+  const { tg } = useGuideI18n();
   const { data: categories = [] } = useCategories();
   const [title, setTitle] = useState(initial?.title ?? "");
   const [shortDesc, setShortDesc] = useState(initial?.short_description ?? "");
@@ -782,39 +785,39 @@ function TourEditor({
     <div className="fixed inset-0 z-50 grid place-items-center bg-black/40 p-4 overflow-y-auto" onClick={onClose}>
       <div onClick={(e) => e.stopPropagation()} className="w-full max-w-2xl rounded-3xl bg-background p-6 ring-1 ring-border shadow-xl my-8">
         <div className="flex items-center justify-between">
-          <h3 className="font-display text-lg font-semibold">{initial ? "Edit tour" : "New tour"}</h3>
+          <h3 className="font-display text-lg font-semibold">{initial ? tg("editor.editTitle") : tg("editor.newTitle")}</h3>
           <button onClick={onClose} className="h-9 w-9 grid place-items-center rounded-full hover:bg-muted"><X className="h-4 w-4" /></button>
         </div>
         <div className="mt-4 space-y-4">
           <label className="block text-sm">
-            <span className="text-xs text-muted-foreground">Title</span>
-            <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Old Tashkent walking tour" className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
+            <span className="text-xs text-muted-foreground">{tg("editor.title")}</span>
+            <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={tg("editor.titlePh")} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
           </label>
           <label className="block text-sm">
-            <span className="text-xs text-muted-foreground">Short description (shown on the card)</span>
-            <input value={shortDesc} onChange={(e) => setShortDesc(e.target.value)} placeholder="2-3 hour stroll through the old town" className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
+            <span className="text-xs text-muted-foreground">{tg("editor.shortDesc")}</span>
+            <input value={shortDesc} onChange={(e) => setShortDesc(e.target.value)} placeholder={tg("editor.shortDescPh")} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
           </label>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <label className="block text-sm">
-              <span className="text-xs text-muted-foreground">City</span>
+              <span className="text-xs text-muted-foreground">{tg("editor.city")}</span>
               <select value={cityId} onChange={(e) => setCityId(e.target.value)} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm">
                 {cities.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
               </select>
             </label>
             <label className="block text-sm">
-              <span className="text-xs text-muted-foreground">Duration (h)</span>
+              <span className="text-xs text-muted-foreground">{tg("editor.duration")}</span>
               <input type="number" min={0.5} step={0.5} value={durationHours} onChange={(e) => setDurationHours(Number(e.target.value) || 0)} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
             </label>
             <label className="block text-sm">
-              <span className="text-xs text-muted-foreground">Children free under (age)</span>
+              <span className="text-xs text-muted-foreground">{tg("editor.childrenFree")}</span>
               <input type="number" min={0} max={21} value={childrenFreeUnder} onChange={(e) => setChildrenFreeUnder(Number(e.target.value) || 0)} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
             </label>
             <label className="block text-sm">
               <span className="text-xs text-muted-foreground">&nbsp;</span>
               <label className="mt-1 h-11 w-full inline-flex items-center gap-2 rounded-xl border border-input bg-background px-3 text-sm cursor-pointer">
                 <input type="checkbox" checked={transportIncluded} onChange={(e) => setTransportIncluded(e.target.checked)} className="h-4 w-4" />
-                Transport included
+                {tg("editor.transportIncluded")}
               </label>
             </label>
           </div>
@@ -822,28 +825,28 @@ function TourEditor({
           {/* Pricing */}
           <div className="rounded-2xl border border-border bg-card/40 p-4 space-y-3">
             <div className="flex items-center gap-2">
-              <p className="text-sm font-medium">Pricing</p>
+              <p className="text-sm font-medium">{tg("editor.pricing")}</p>
             </div>
             <div className="flex flex-wrap gap-2">
               <label className={`inline-flex items-center gap-2 rounded-full px-3 h-9 text-sm cursor-pointer ${pricingMode === "fixed" ? "bg-foreground text-background" : "bg-secondary"}`}>
                 <input type="radio" name="pmode" className="hidden" checked={pricingMode === "fixed"} onChange={() => setPricingMode("fixed")} />
-                Fixed price
+                {tg("editor.fixedPrice")}
               </label>
               <label className={`inline-flex items-center gap-2 rounded-full px-3 h-9 text-sm cursor-pointer ${pricingMode === "by_group" ? "bg-foreground text-background" : "bg-secondary"}`}>
                 <input type="radio" name="pmode" className="hidden" checked={pricingMode === "by_group"} onChange={() => setPricingMode("by_group")} />
-                Price by group size
+                {tg("editor.priceByGroup")}
               </label>
             </div>
             {pricingMode === "fixed" ? (
               <label className="block text-sm max-w-xs">
-                <span className="text-xs text-muted-foreground">Price ($, in base language)</span>
+                <span className="text-xs text-muted-foreground">{tg("editor.priceBase")}</span>
                 <input type="number" min={0} value={fixedPrice || ""} onChange={(e) => setFixedPrice(Number(e.target.value) || 0)} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
               </label>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {GROUP_KEYS.map((k) => (
                   <div key={k} className="flex items-center gap-2 rounded-xl border border-input bg-background px-3 h-11 text-sm">
-                    <span className="flex-1 font-medium">{GROUP_LABELS[k]}</span>
+                    <span className="flex-1 font-medium">{tg(`group.${k}` as Parameters<typeof tg>[0])}</span>
                     <span className="text-muted-foreground">$</span>
                     <input
                       type="number"
@@ -855,13 +858,13 @@ function TourEditor({
                     />
                   </div>
                 ))}
-                <p className="col-span-full text-xs text-muted-foreground">Leave empty to skip a group size. Larger groups can still contact you directly.</p>
+                <p className="col-span-full text-xs text-muted-foreground">{tg("editor.skipGroup")}</p>
               </div>
             )}
           </div>
 
           <div className="space-y-2">
-            <p className="text-sm font-medium">Cover image</p>
+            <p className="text-sm font-medium">{tg("editor.cover")}</p>
             <div className="flex items-center gap-3">
               {coverUrl ? (
                 <img src={coverUrl} alt="" className="h-20 w-28 rounded-lg object-cover ring-1 ring-border" />
@@ -869,24 +872,24 @@ function TourEditor({
                 <div className="h-20 w-28 rounded-lg bg-secondary" />
               )}
               <label className="inline-flex items-center gap-2 h-9 px-3 rounded-full bg-secondary text-sm cursor-pointer hover:bg-secondary/80">
-                {uploading ? "Uploading…" : "Upload"}
+                {uploading ? tg("common.uploading") : tg("common.upload")}
                 <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) upload(f); }} />
               </label>
-              {coverUrl && <button onClick={() => setCoverUrl("")} className="text-xs text-destructive">Remove</button>}
+              {coverUrl && <button onClick={() => setCoverUrl("")} className="text-xs text-destructive">{tg("common.remove")}</button>}
             </div>
           </div>
 
           <div>
-            <p className="text-sm font-medium">Tour languages & surcharge %</p>
+            <p className="text-sm font-medium">{tg("editor.tourLanguages")}</p>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Pick a base language (= 100% price). For other languages set a % surcharge — system computes the final price automatically. Leave at 0 if the price is the same.
+              {tg("editor.tourLanguagesText")}
             </p>
             {languages.length === 0 ? (
-              <p className="mt-2 text-xs text-muted-foreground">No languages on your profile yet.</p>
+              <p className="mt-2 text-xs text-muted-foreground">{tg("editor.noProfileLanguages")}</p>
             ) : (
               <>
                 <div className="mt-3 flex items-center gap-2 text-sm">
-                  <span className="text-xs text-muted-foreground">Base language:</span>
+                  <span className="text-xs text-muted-foreground">{tg("editor.baseLanguage")}</span>
                   <select
                     value={baseLanguage}
                     onChange={(e) => setBaseLanguage(e.target.value)}
@@ -904,7 +907,7 @@ function TourEditor({
                         <label className="inline-flex items-center gap-2 flex-1 cursor-pointer">
                           <input type="checkbox" checked={enabled} onChange={() => toggleLang(lng)} className="h-4 w-4" />
                           <span className="font-medium">{lng}</span>
-                          {isBase && <span className="text-[10px] uppercase text-muted-foreground">base</span>}
+                          {isBase && <span className="text-[10px] uppercase text-muted-foreground">{tg("tours.base")}</span>}
                         </label>
                         {!isBase && (
                           <>
@@ -931,24 +934,24 @@ function TourEditor({
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <label className="block text-sm">
-              <span className="text-xs text-muted-foreground">Highlights (one per line)</span>
+              <span className="text-xs text-muted-foreground">{tg("editor.highlights")}</span>
               <textarea value={highlights} onChange={(e) => setHighlights(e.target.value)} rows={4} className="mt-1 w-full rounded-xl border border-input bg-background p-2 text-sm" />
             </label>
             <label className="block text-sm">
-              <span className="text-xs text-muted-foreground">Included</span>
+              <span className="text-xs text-muted-foreground">{tg("editor.included")}</span>
               <textarea value={included} onChange={(e) => setIncluded(e.target.value)} rows={4} className="mt-1 w-full rounded-xl border border-input bg-background p-2 text-sm" />
             </label>
             <label className="block text-sm">
-              <span className="text-xs text-muted-foreground">Not included</span>
+              <span className="text-xs text-muted-foreground">{tg("editor.notIncluded")}</span>
               <textarea value={notIncluded} onChange={(e) => setNotIncluded(e.target.value)} rows={4} className="mt-1 w-full rounded-xl border border-input bg-background p-2 text-sm" />
             </label>
           </div>
 
           <div>
-            <p className="text-sm font-medium">Categories</p>
-            <p className="text-xs text-muted-foreground mt-0.5">Pick the categories that best describe this tour. Travellers filter by these.</p>
+            <p className="text-sm font-medium">{tg("editor.categories")}</p>
+            <p className="text-xs text-muted-foreground mt-0.5">{tg("editor.categoriesText")}</p>
             {categories.length === 0 ? (
-              <p className="mt-2 text-xs text-muted-foreground">No categories available yet.</p>
+              <p className="mt-2 text-xs text-muted-foreground">{tg("editor.noCategories")}</p>
             ) : (
               <div className="mt-2 flex flex-wrap gap-1.5">
                 {categories.map((c) => {
@@ -970,11 +973,11 @@ function TourEditor({
 
           <label className="inline-flex items-center gap-2 text-sm">
             <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} className="h-4 w-4" />
-            <span>Published (visible to travellers)</span>
+            <span>{tg("editor.published")}</span>
           </label>
         </div>
         <div className="mt-6 flex justify-end gap-2">
-          <button onClick={onClose} className="h-10 px-4 rounded-full bg-muted text-sm font-medium">Cancel</button>
+          <button onClick={onClose} className="h-10 px-4 rounded-full bg-muted text-sm font-medium">{tg("common.cancel")}</button>
           <button
             disabled={!title.trim() || !cityId}
             onClick={() => {
@@ -1013,7 +1016,7 @@ function TourEditor({
               });
             }}
             className="h-10 px-5 rounded-full bg-foreground text-background text-sm font-medium disabled:opacity-50"
-          >Save</button>
+          >{tg("common.save")}</button>
         </div>
       </div>
     </div>
@@ -1027,6 +1030,7 @@ function CitiesPanel({
   currentExtra: string[];
   onSaved: () => void;
 }) {
+  const { tg } = useGuideI18n();
   const { data: cities = [] } = useCities();
   const updateFn = useServerFn(updateMyCities);
   const [selected, setSelected] = useState<string[]>(currentExtra);
@@ -1043,7 +1047,7 @@ function CitiesPanel({
     setSaving(true);
     try {
       await updateFn({ data: { extra_city_ids: selected } });
-      toast.success("Saved");
+      toast.success(tg("common.saved"));
       onSaved();
     } catch (e) {
       toast.error((e as Error).message);
@@ -1057,12 +1061,12 @@ function CitiesPanel({
   return (
     <div className="rounded-3xl bg-card p-6 ring-1 ring-border space-y-4">
       <div>
-        <h2 className="font-display text-lg font-semibold">Cities you work in</h2>
-        <p className="text-sm text-muted-foreground mt-1">Your home city is set by an administrator. Tick any additional cities where you also offer tours.</p>
+        <h2 className="font-display text-lg font-semibold">{tg("cities.title")}</h2>
+        <p className="text-sm text-muted-foreground mt-1">{tg("cities.text")}</p>
       </div>
       {homeCity && (
         <div className="text-sm">
-          <span className="text-muted-foreground">Home city:</span>{" "}
+          <span className="text-muted-foreground">{tg("cities.homeCity")}</span>{" "}
           <span className="font-medium">{homeCity.name}</span>
         </div>
       )}
@@ -1085,7 +1089,7 @@ function CitiesPanel({
         disabled={saving}
         className="h-10 px-5 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-50"
       >
-        {saving ? "Saving…" : "Save cities"}
+        {saving ? tg("common.loading") : tg("cities.save")}
       </button>
     </div>
   );
@@ -1102,6 +1106,7 @@ function LanguagesPanel({
   verified: Record<string, string>;
   onSaved: () => void;
 }) {
+  const { tg } = useGuideI18n();
   const updateFn = useServerFn(updateMyLanguages);
   const [options, setOptions] = useState<Array<{ id: string; name: string }>>([]);
   const [selected, setSelected] = useState<string[]>(current);
@@ -1129,7 +1134,7 @@ function LanguagesPanel({
     setSaving(true);
     try {
       await updateFn({ data: { languages: selected } });
-      toast.success("Saved");
+      toast.success(tg("common.saved"));
       onSaved();
     } catch (e) {
       toast.error((e as Error).message);
@@ -1147,13 +1152,13 @@ function LanguagesPanel({
   return (
     <div className="rounded-3xl bg-card p-6 ring-1 ring-border space-y-4">
       <div>
-        <h2 className="font-display text-lg font-semibold">Languages you speak</h2>
+        <h2 className="font-display text-lg font-semibold">{tg("languages.title")}</h2>
         <p className="text-sm text-muted-foreground mt-1">
-          Pick the languages in which you can run tours. Pass a quick voice test (B1+) to earn the ✓ verified badge.
+          {tg("languages.text")}
         </p>
       </div>
       {options.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No languages available yet.</p>
+        <p className="text-sm text-muted-foreground">{tg("languages.empty")}</p>
       ) : (
         <div className="flex flex-wrap gap-2">
           {options.map((l) => {
@@ -1175,15 +1180,15 @@ function LanguagesPanel({
         disabled={saving}
         className="h-10 px-5 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-50"
       >
-        {saving ? "Saving…" : "Save languages"}
+        {saving ? tg("common.loading") : tg("languages.save")}
       </button>
 
       {selected.length > 0 && (
         <div className="pt-4 border-t border-border space-y-3">
           <div>
-            <h3 className="font-display text-base font-semibold">Verification</h3>
+            <h3 className="font-display text-base font-semibold">{tg("languages.verification")}</h3>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Record a ~30s sample. Levels B1 and above show a ✓ badge on your profile.
+              {tg("languages.verificationText")}
             </p>
           </div>
           <div className="space-y-2">
@@ -1200,14 +1205,14 @@ function LanguagesPanel({
                           ✓ {lv}
                         </span>
                       ) : (
-                        <span className="text-xs text-muted-foreground">Not verified</span>
+                        <span className="text-xs text-muted-foreground">{tg("languages.notVerified")}</span>
                       )}
                     </div>
                     <button
                       onClick={() => setTestingLang(isTesting ? null : lang)}
                       className="h-8 px-3 rounded-full bg-secondary text-xs font-medium hover:bg-secondary/80"
                     >
-                      {isTesting ? "Cancel" : lv ? "Retake test" : "Take test"}
+                      {isTesting ? tg("common.cancel") : lv ? tg("languages.retakeTest") : tg("languages.takeTest")}
                     </button>
                   </div>
                   {isTesting && (
@@ -1233,6 +1238,7 @@ function InlineLanguageTest({
   language: string;
   onDone: () => void;
 }) {
+  const { tg } = useGuideI18n();
   const assess = useServerFn(assessLanguageTest);
   const record = useServerFn(recordMyLanguageTest);
   const [recording, setRecording] = useState(false);
@@ -1245,7 +1251,7 @@ function InlineLanguageTest({
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const startedAtRef = useRef<number>(0);
 
-  const prompt = `Speak ~30 seconds in ${language}: introduce yourself and describe one place you love to show tourists.`;
+  const prompt = tg("languageTest.prompt", { language });
 
   const start = async () => {
     try {
@@ -1273,7 +1279,7 @@ function InlineLanguageTest({
       }, 250);
       setRecording(true);
     } catch {
-      toast.error("Microphone access denied");
+      toast.error(tg("languageTest.micDenied"));
     }
   };
 
@@ -1281,7 +1287,7 @@ function InlineLanguageTest({
 
   const submit = async () => {
     if (!blob) return;
-    if (elapsed < 5) { toast.error("Recording too short"); return; }
+    if (elapsed < 5) { toast.error(tg("languageTest.tooShort")); return; }
     setBusy(true);
     try {
       const base64 = await new Promise<string>((resolve, reject) => {
@@ -1290,7 +1296,7 @@ function InlineLanguageTest({
           const s = (r.result as string) || "";
           resolve(s.split(",")[1] || "");
         };
-        r.onerror = () => reject(new Error("Failed to read audio"));
+        r.onerror = () => reject(new Error(tg("languageTest.readFail")));
         r.readAsDataURL(blob);
       });
       const r = await assess({
@@ -1304,13 +1310,13 @@ function InlineLanguageTest({
       setResult({ level: r.level as CefrLevel, feedback: r.feedback });
       await record({ data: { language, level: r.level as CefrLevel } });
       if (["B1", "B2", "C1", "C2"].includes(r.level)) {
-        toast.success(`Verified at ${r.level}!`);
+        toast.success(tg("languageTest.verified", { level: r.level }));
       } else {
-        toast.info(`Level: ${r.level}. Try again to earn the verified badge.`);
+        toast.info(tg("languageTest.tryAgain", { level: r.level }));
       }
       onDone();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Assessment failed");
+      toast.error(err instanceof Error ? err.message : tg("languageTest.assessFail"));
     } finally {
       setBusy(false);
     }
@@ -1321,15 +1327,15 @@ function InlineLanguageTest({
       <p className="text-xs text-muted-foreground">{prompt}</p>
       {!recording && !blob && (
         <button onClick={start} className="h-9 px-4 rounded-full bg-primary text-primary-foreground text-xs font-semibold">
-          Start recording
+          {tg("languageTest.start")}
         </button>
       )}
       {recording && (
         <div className="flex items-center gap-3">
           <span className="inline-flex h-2.5 w-2.5 rounded-full bg-red-500 animate-pulse" />
-          <span className="text-sm">Recording {elapsed}s</span>
+          <span className="text-sm">{tg("languageTest.recording", { seconds: elapsed })}</span>
           <button onClick={stop} className="ml-auto h-8 px-3 rounded-full bg-secondary text-xs font-medium">
-            Stop
+            {tg("languageTest.stop")}
           </button>
         </div>
       )}
@@ -1337,10 +1343,10 @@ function InlineLanguageTest({
         <div className="flex flex-wrap gap-2">
           <button onClick={submit} disabled={busy} className="h-9 px-4 rounded-full bg-primary text-primary-foreground text-xs font-semibold disabled:opacity-50 inline-flex items-center gap-1.5">
             {busy && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-            {busy ? "Checking…" : "Submit for review"}
+            {busy ? tg("languageTest.checking") : tg("languageTest.submit")}
           </button>
           <button onClick={() => { setBlob(null); setElapsed(0); }} className="h-9 px-4 rounded-full bg-secondary text-xs font-medium">
-            Re-record
+            {tg("languageTest.rerecord")}
           </button>
         </div>
       )}
