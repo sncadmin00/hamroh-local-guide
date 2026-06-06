@@ -13,6 +13,7 @@ export const translations: Dict = {
   "nav.howItWorks": { en: "How it works", uz: "Qanday ishlaydi", ru: "Как это работает" },
   "nav.becomeGuide": { en: "Become a guide", uz: "Hamroh bo'ling", ru: "Стать гидом" },
   "nav.faq": { en: "FAQ", uz: "FAQ", ru: "FAQ" },
+  "nav.guideDashboard": { en: "Guide Dashboard", uz: "Gid kabineti", ru: "Кабинет гида" },
   "nav.wishlist": { en: "Wishlist", uz: "Saralangan", ru: "Избранное" },
   "wishlist.title": { en: "My wishlist", uz: "Saralanganlarim", ru: "Моё избранное" },
   "wishlist.empty": { en: "Tap the heart on any guide, tour or city to save it here.", uz: "Saralash uchun gid, sayohat yoki shahar yonidagi yurakni bosing.", ru: "Нажмите на сердечко у гида, тура или города, чтобы сохранить его сюда." },
