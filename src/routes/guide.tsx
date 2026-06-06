@@ -1244,6 +1244,7 @@ function InlineLanguageTest({
   language: string;
   onDone: () => void;
 }) {
+  const { tg } = useGuideI18n();
   const assess = useServerFn(assessLanguageTest);
   const record = useServerFn(recordMyLanguageTest);
   const [recording, setRecording] = useState(false);
@@ -1256,7 +1257,7 @@ function InlineLanguageTest({
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const startedAtRef = useRef<number>(0);
 
-  const prompt = `Speak ~30 seconds in ${language}: introduce yourself and describe one place you love to show tourists.`;
+  const prompt = tg("languageTest.prompt", { language });
 
   const start = async () => {
     try {
@@ -1284,7 +1285,7 @@ function InlineLanguageTest({
       }, 250);
       setRecording(true);
     } catch {
-      toast.error("Microphone access denied");
+      toast.error(tg("languageTest.micDenied"));
     }
   };
 
@@ -1292,7 +1293,7 @@ function InlineLanguageTest({
 
   const submit = async () => {
     if (!blob) return;
-    if (elapsed < 5) { toast.error("Recording too short"); return; }
+    if (elapsed < 5) { toast.error(tg("languageTest.tooShort")); return; }
     setBusy(true);
     try {
       const base64 = await new Promise<string>((resolve, reject) => {
@@ -1301,7 +1302,7 @@ function InlineLanguageTest({
           const s = (r.result as string) || "";
           resolve(s.split(",")[1] || "");
         };
-        r.onerror = () => reject(new Error("Failed to read audio"));
+        r.onerror = () => reject(new Error(tg("languageTest.readFail")));
         r.readAsDataURL(blob);
       });
       const r = await assess({
@@ -1315,13 +1316,13 @@ function InlineLanguageTest({
       setResult({ level: r.level as CefrLevel, feedback: r.feedback });
       await record({ data: { language, level: r.level as CefrLevel } });
       if (["B1", "B2", "C1", "C2"].includes(r.level)) {
-        toast.success(`Verified at ${r.level}!`);
+        toast.success(tg("languageTest.verified", { level: r.level }));
       } else {
-        toast.info(`Level: ${r.level}. Try again to earn the verified badge.`);
+        toast.info(tg("languageTest.tryAgain", { level: r.level }));
       }
       onDone();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Assessment failed");
+      toast.error(err instanceof Error ? err.message : tg("languageTest.assessFail"));
     } finally {
       setBusy(false);
     }
@@ -1332,15 +1333,15 @@ function InlineLanguageTest({
       <p className="text-xs text-muted-foreground">{prompt}</p>
       {!recording && !blob && (
         <button onClick={start} className="h-9 px-4 rounded-full bg-primary text-primary-foreground text-xs font-semibold">
-          Start recording
+          {tg("languageTest.start")}
         </button>
       )}
       {recording && (
         <div className="flex items-center gap-3">
           <span className="inline-flex h-2.5 w-2.5 rounded-full bg-red-500 animate-pulse" />
-          <span className="text-sm">Recording {elapsed}s</span>
+          <span className="text-sm">{tg("languageTest.recording", { seconds: elapsed })}</span>
           <button onClick={stop} className="ml-auto h-8 px-3 rounded-full bg-secondary text-xs font-medium">
-            Stop
+            {tg("languageTest.stop")}
           </button>
         </div>
       )}
@@ -1348,10 +1349,10 @@ function InlineLanguageTest({
         <div className="flex flex-wrap gap-2">
           <button onClick={submit} disabled={busy} className="h-9 px-4 rounded-full bg-primary text-primary-foreground text-xs font-semibold disabled:opacity-50 inline-flex items-center gap-1.5">
             {busy && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-            {busy ? "Checking…" : "Submit for review"}
+            {busy ? tg("languageTest.checking") : tg("languageTest.submit")}
           </button>
           <button onClick={() => { setBlob(null); setElapsed(0); }} className="h-9 px-4 rounded-full bg-secondary text-xs font-medium">
-            Re-record
+            {tg("languageTest.rerecord")}
           </button>
         </div>
       )}
