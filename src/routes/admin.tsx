@@ -1354,6 +1354,7 @@ function SocialPanel({
   cities: City[];
   reload: () => Promise<void>;
 }) {
+  const { ta } = useAdminI18n();
   const [platform, setPlatform] = useState<Embed["platform"]>("instagram");
   const [url, setUrl] = useState("");
   const [caption, setCaption] = useState("");
@@ -1362,14 +1363,14 @@ function SocialPanel({
 
   const add = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!url) { toast.error("URL required"); return; }
+    if (!url) { toast.error(ta("common.urlRequired")); return; }
     setSaving(true);
     const { data, error } = await supabase
       .from("social_embeds")
       .insert({ platform, url, caption, sort_order: embeds.length, visible: true })
       .select("id")
       .single();
-    if (error || !data) { setSaving(false); toast.error(error?.message ?? "Failed"); return; }
+    if (error || !data) { setSaving(false); toast.error(error?.message ?? ta("common.failed")); return; }
     if (cityIds.length > 0) {
       const { error: linkErr } = await supabase
         .from("social_embed_cities")
@@ -1377,7 +1378,7 @@ function SocialPanel({
       if (linkErr) toast.error(linkErr.message);
     }
     setSaving(false);
-    toast.success("Embed added");
+    toast.success(ta("social.added"));
     setUrl(""); setCaption(""); setCityIds([]);
     await reload();
   };
@@ -1389,16 +1390,16 @@ function SocialPanel({
   };
 
   const remove = async (id: string) => {
-    if (!confirm("Delete this embed?")) return;
+    if (!confirm(ta("social.confirmDelete"))) return;
     const { error } = await supabase.from("social_embeds").delete().eq("id", id);
     if (error) toast.error(error.message);
-    else { toast.success("Deleted"); await reload(); }
+    else { toast.success(ta("common.deleted")); await reload(); }
   };
 
   return (
     <div className="mt-6 grid gap-6 lg:grid-cols-2">
       <form onSubmit={add} className="rounded-3xl bg-card p-6 ring-1 ring-border/60 h-fit">
-        <h2 className="font-display text-lg font-semibold">Add a social embed</h2>
+        <h2 className="font-display text-lg font-semibold">{ta("social.title")}</h2>
         <div className="mt-4 space-y-3">
           <div>
             <label className="text-xs font-medium text-muted-foreground">Platform</label>
@@ -1422,18 +1423,18 @@ function SocialPanel({
           disabled={saving}
           className="mt-5 inline-flex items-center gap-2 h-11 px-6 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-60"
         >
-          <Plus className="h-4 w-4" /> {saving ? "Saving…" : "Add embed"}
+          <Plus className="h-4 w-4" /> {saving ? ta("common.saving") : ta("common.add")}
         </button>
       </form>
 
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
-        <h2 className="font-display text-lg font-semibold">Social embeds</h2>
+        <h2 className="font-display text-lg font-semibold">{ta("social.title")}</h2>
         <ul className="mt-4 divide-y divide-border/60">
-          {embeds.length === 0 && <li className="py-4 text-sm text-muted-foreground">No embeds yet.</li>}
+          {embeds.length === 0 && <li className="py-4 text-sm text-muted-foreground">—</li>}
           {embeds.map((em) => (
             <li key={em.id} className="py-3 flex items-center justify-between gap-3">
               <div className="min-w-0">
-                <p className="font-medium truncate capitalize">{em.platform} · {em.visible ? "Visible" : "Hidden"}</p>
+                <p className="font-medium truncate capitalize">{em.platform} · {em.visible ? ta("common.active") : ta("common.hidden")}</p>
                 <p className="text-xs text-muted-foreground truncate">{em.url}</p>
               </div>
               <div className="flex items-center gap-1">
@@ -1441,12 +1442,12 @@ function SocialPanel({
                   onClick={() => toggleVisible(em)}
                   className="h-9 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-secondary/60"
                 >
-                  {em.visible ? "Hide" : "Show"}
+                  {em.visible ? ta("common.hide") : ta("common.show")}
                 </button>
                 <button
                   onClick={() => remove(em.id)}
                   className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                  aria-label="Delete"
+                  aria-label={ta("common.delete")}
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
@@ -1458,6 +1459,7 @@ function SocialPanel({
     </div>
   );
 }
+
 
 function BookingsPanel({ bookings, reload }: { bookings: Booking[]; reload: () => Promise<void> }) {
   const [filter, setFilter] = useState<"all" | "pending" | "confirmed" | "cancelled">("all");
