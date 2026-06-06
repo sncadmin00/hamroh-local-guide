@@ -612,7 +612,7 @@ function GuidesPanel({
           <div>
             <label className="text-xs font-medium text-muted-foreground">Languages</label>
             {languageList.length === 0 ? (
-              <p className="mt-1 text-xs text-muted-foreground">No languages yet. Add some in the Languages tab.</p>
+              <p className="mt-1 text-xs text-muted-foreground">{ta("guides.noLanguagesYet")}</p>
             ) : (
               <div className="mt-1 flex flex-wrap gap-2">
                 {languageList.map((lng) => {
