@@ -38,11 +38,11 @@ export function ToursPanel() {
   const startEdit = (t: TourRow) => setEditing({ ...t });
 
   const remove = async (id: string) => {
-    if (!confirm("Delete this tour?")) return;
+    if (!confirm(ta("tours.confirmDelete"))) return;
     await (supabase as any).from("tour_categories").delete().eq("tour_id", id);
     const { error } = await (supabase as any).from("tours").delete().eq("id", id);
     if (error) toast.error(error.message);
-    else { toast.success("Deleted"); refetch(); }
+    else { toast.success(ta("common.deleted")); refetch(); }
   };
 
   const togglePublished = async (t: TourRow) => {
