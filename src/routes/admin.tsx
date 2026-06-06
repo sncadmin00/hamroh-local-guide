@@ -760,7 +760,7 @@ function GuidesPanel({
                 {(g.languages ?? []).length > 0 && (
                   <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-border/40">
                     <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mr-1">
-                      Verified ✓
+                      {ta("guides.verifiedShort")}
                     </span>
                     {(g.languages ?? []).map((lname) => {
                       const lvl = (g.verified_languages ?? {})[lname] ?? "";
