@@ -510,13 +510,15 @@ function BookingsPanel({
 }
 
 function StatusPill({ status }: { status: string }) {
+  const { tg } = useGuideI18n();
   const map: Record<string, string> = {
     pending: "bg-amber-500/15 text-amber-700",
     confirmed: "bg-emerald-500/15 text-emerald-700",
     declined: "bg-destructive/15 text-destructive",
     cancelled: "bg-muted text-muted-foreground",
   };
-  return <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium ${map[status] ?? "bg-muted"}`}>{status}</span>;
+  const labelKey = `status.${status}` as Parameters<typeof tg>[0];
+  return <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium ${map[status] ?? "bg-muted"}`}>{tg(labelKey)}</span>;
 }
 
 type Tour = {
