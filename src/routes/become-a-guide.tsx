@@ -697,9 +697,11 @@ function BecomeAGuidePage() {
       for (const p of photos) photo_urls.push(await uploadTo("guide-application-photos", p));
       if (video) video_url = await uploadTo("guide-application-videos", video);
 
-      const { data: inserted, error } = await supabase
+      const applicationId = crypto.randomUUID();
+      const { error } = await supabase
         .from("guide_applications")
         .insert({
+          id: applicationId,
           full_name: parsed.data.full_name,
           email: parsed.data.email,
           phone: parsed.data.phone,
@@ -723,16 +725,12 @@ function BecomeAGuidePage() {
           })),
 
 
-        })
-        .select("id")
-        .single();
+        });
       if (error) throw error;
 
-      if (inserted?.id) {
-        notifyAdmins({ data: { application_id: inserted.id } }).catch((err: unknown) =>
-          console.error("Admin notify failed", err),
-        );
-      }
+      notifyAdmins({ data: { application_id: applicationId } }).catch((err: unknown) =>
+        console.error("Admin notify failed", err),
+      );
 
       try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
 
