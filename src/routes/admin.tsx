@@ -2366,10 +2366,11 @@ function SuggestionsPanel({
   cities: City[];
   reload: () => Promise<void>;
 }) {
+  const { ta } = useAdminI18n();
   const approve = async (s: PlaceSuggestion) => {
     const cityId = s.city_id ?? cities.find((c) => c.name.toLowerCase() === s.city_name.toLowerCase())?.id;
     if (!cityId) {
-      toast.error("City not found — add it first or set manually");
+      toast.error(ta("suggestions.cityNotFound"));
       return;
     }
     const baseSlug = s.name
@@ -2392,7 +2393,7 @@ function SuggestionsPanel({
       return;
     }
     await supabase.from("place_suggestions").update({ status: "approved" }).eq("id", s.id);
-    toast.success("Added to Places as draft. Edit and publish from the Places tab.");
+    toast.success(ta("suggestions.added"));
     await reload();
   };
 
@@ -2404,12 +2405,12 @@ function SuggestionsPanel({
 
   return (
     <div className="mt-6 rounded-3xl bg-card p-6 ring-1 ring-border/60">
-      <h2 className="font-display text-lg font-semibold">AI Suggestions</h2>
+      <h2 className="font-display text-lg font-semibold">{ta("suggestions.title")}</h2>
       <p className="mt-1 text-xs text-muted-foreground">
-        Places the AI found online via user queries. Approve to add to Places (as draft) or reject.
+        {ta("suggestions.subtitle")}
       </p>
       {suggestions.length === 0 ? (
-        <p className="mt-4 text-sm text-muted-foreground">No pending suggestions.</p>
+        <p className="mt-4 text-sm text-muted-foreground">{ta("suggestions.empty")}</p>
       ) : (
         <ul className="mt-4 divide-y divide-border/60">
           {suggestions.map((s) => (
@@ -2430,12 +2431,12 @@ function SuggestionsPanel({
                       rel="noreferrer"
                       className="mt-1 inline-block text-xs text-primary hover:underline"
                     >
-                      Source ↗
+                      {ta("suggestions.source")}
                     </a>
                   )}
                   {s.raw_query && (
                     <p className="mt-1 text-[11px] text-muted-foreground italic">
-                      User query: "{s.raw_query}"
+                      {ta("suggestions.userQuery")} "{s.raw_query}"
                     </p>
                   )}
                 </div>
@@ -2444,13 +2445,13 @@ function SuggestionsPanel({
                     onClick={() => approve(s)}
                     className="px-3 h-9 rounded-full bg-primary text-primary-foreground text-xs font-semibold"
                   >
-                    Approve
+                    {ta("common.approve")}
                   </button>
                   <button
                     onClick={() => reject(s.id)}
                     className="px-3 h-9 rounded-full ring-1 ring-border/60 text-xs font-medium hover:bg-destructive/10 hover:text-destructive"
                   >
-                    Reject
+                    {ta("common.reject")}
                   </button>
                 </div>
               </div>
@@ -2461,6 +2462,7 @@ function SuggestionsPanel({
     </div>
   );
 }
+
 
 type AppUser = {
   id: string;
