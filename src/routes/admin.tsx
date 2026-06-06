@@ -105,6 +105,7 @@ type GuideApplication = {
   portrait_url: string | null;
   video_url: string | null;
   photo_urls: string[] | null;
+  id_document_url: string | null;
   language_tests: Array<{ language: string; level: string; transcript?: string; feedback?: string; skipped?: boolean }> | null;
   user_id: string | null;
 };
