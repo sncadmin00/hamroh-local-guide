@@ -1034,6 +1034,7 @@ function ReviewBlock({
       </div>
       <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
         <span>{labels.portrait}: {portrait ? "✓" : "—"}</span>
+        <span>· {labels.idDoc}: {idDocument ? "✓" : "—"}</span>
         <span>· {labels.photos}: {photos.length}</span>
         <span>· {labels.video}: {video ? "✓" : "—"}</span>
       </div>
