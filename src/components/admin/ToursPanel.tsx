@@ -27,6 +27,7 @@ const EMPTY: Partial<TourRow> = {
 };
 
 export function ToursPanel() {
+  const { ta } = useAdminI18n();
   const { data: tours = [], refetch } = useToursAdmin();
   const { data: cities = [] } = useCities();
   const { data: categories = [] } = useCategories();
