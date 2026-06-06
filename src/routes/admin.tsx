@@ -1634,6 +1634,7 @@ function ApplicationsPanel({
   applications: GuideApplication[];
   reload: () => Promise<void>;
 }) {
+  const { ta } = useAdminI18n();
   const [filter, setFilter] = useState<"all" | "pending" | "approved" | "rejected">("pending");
   const [expanded, setExpanded] = useState<string | null>(null);
   const [uploading, setUploading] = useState<Record<string, boolean>>({});
