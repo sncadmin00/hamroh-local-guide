@@ -891,7 +891,7 @@ function LanguagesPanel({
   return (
     <div className="mt-6 grid gap-6 lg:grid-cols-2">
       <form onSubmit={add} className="rounded-3xl bg-card p-6 ring-1 ring-border/60 h-fit">
-        <h2 className="font-display text-lg font-semibold">Add a language</h2>
+        <h2 className="font-display text-lg font-semibold">{ta("languages.add")}</h2>
         <div className="mt-4 space-y-3">
           <Field label="Name" value={name} onChange={setName} placeholder="French" />
           <Field label="Code (optional)" value={code} onChange={setCode} placeholder="fr" />
@@ -901,14 +901,14 @@ function LanguagesPanel({
           disabled={saving}
           className="mt-5 inline-flex items-center gap-2 h-11 px-6 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-60"
         >
-          <Plus className="h-4 w-4" /> {saving ? "Saving…" : "Add language"}
+          <Plus className="h-4 w-4" /> {saving ? ta("common.saving") : ta("languages.addBtn")}
         </button>
 
         {suggested.length > 0 && (
           <div className="mt-6 pt-5 border-t border-border/60">
-            <h3 className="text-sm font-semibold">Suggested from applications</h3>
+            <h3 className="text-sm font-semibold">{ta("languages.suggested")}</h3>
             <p className="mt-1 text-xs text-muted-foreground">
-              Languages entered by guides that aren't in the list yet.
+              {ta("languages.suggestedHint")}
             </p>
             <ul className="mt-3 space-y-2">
               {suggested.map((s) => (
@@ -919,7 +919,7 @@ function LanguagesPanel({
                     onClick={() => quickAdd(s)}
                     className="inline-flex items-center gap-1 h-8 px-3 rounded-full bg-primary/10 text-primary text-xs font-semibold hover:bg-primary/20"
                   >
-                    <Plus className="h-3 w-3" /> Add
+                    <Plus className="h-3 w-3" /> {ta("common.add")}
                   </button>
                 </li>
               ))}
@@ -930,13 +930,13 @@ function LanguagesPanel({
 
 
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
-        <h2 className="font-display text-lg font-semibold">Languages</h2>
+        <h2 className="font-display text-lg font-semibold">{ta("languages.title")}</h2>
         <p className="mt-1 text-xs text-muted-foreground">
-          Guides pick from this list on their profile and applications.
+          {ta("languages.subtitle")}
         </p>
         <ul className="mt-4 divide-y divide-border/60">
           {languages.length === 0 && (
-            <li className="py-4 text-sm text-muted-foreground">No languages yet.</li>
+            <li className="py-4 text-sm text-muted-foreground">{ta("languages.empty")}</li>
           )}
           {languages.map((l) => (
             <li key={l.id} className="py-3 flex items-center justify-between gap-3">
@@ -947,7 +947,7 @@ function LanguagesPanel({
               <button
                 onClick={() => remove(l.id)}
                 className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                aria-label="Delete"
+                aria-label={ta("common.delete")}
               >
                 <Trash2 className="h-4 w-4" />
               </button>
@@ -958,6 +958,7 @@ function LanguagesPanel({
     </div>
   );
 }
+
 
 function CategoriesPanel({ categories, reload }: { categories: Category[]; reload: () => Promise<void> }) {
   const [name, setName] = useState("");
