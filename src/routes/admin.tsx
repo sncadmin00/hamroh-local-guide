@@ -1827,7 +1827,7 @@ function ApplicationsPanel({
     const next = (app.photo_urls ?? []).filter((u) => u !== url);
     const { error } = await supabase.from("guide_applications").update({ photo_urls: next }).eq("id", appId);
     if (error) toast.error(error.message);
-    else { toast.success("Photo removed"); await reload(); }
+    else { toast.success(ta("applications.photoRemoved")); await reload(); }
   };
 
   const handleVideoUpload = async (appId: string, file: File) => {
