@@ -4,10 +4,12 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Sparkles, ArrowUp, Loader2, Wrench, Trash2, Mic, MicOff } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import { guideSpeechLocale, useGuideI18n } from "@/lib/guide-i18n";
 
 const STORAGE_KEY = "guide-ai-history-v1";
 
 export function GuideAIPanel() {
+  const { tg } = useGuideI18n();
   const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
@@ -19,7 +21,7 @@ export function GuideAIPanel() {
   if (!token) {
     return (
       <div className="flex items-center justify-center py-12 text-sm text-muted-foreground">
-        <Loader2 className="h-4 w-4 animate-spin mr-2" /> Loading assistant…
+        <Loader2 className="h-4 w-4 animate-spin mr-2" /> {tg("ai.loading")}
       </div>
     );
   }
@@ -28,6 +30,7 @@ export function GuideAIPanel() {
 }
 
 function AIChat({ token }: { token: string }) {
+  const { tg } = useGuideI18n();
   const initialMessages = useMemo<UIMessage[]>(() => {
     if (typeof window === "undefined") return [];
     try {
@@ -93,10 +96,10 @@ function AIChat({ token }: { token: string }) {
   const isBusy = status === "submitted" || status === "streaming";
 
   const suggestions = [
-    "Что у меня сегодня?",
-    "Заблокируй завтра с 14:00 до 18:00 — личное",
-    "Напомни в пятницу 09:00 встретить туристов в аэропорту",
-    "Сколько я заработал в этом месяце?",
+    tg("ai.suggest1"),
+    tg("ai.suggest2"),
+    tg("ai.suggest3"),
+    tg("ai.suggest4"),
   ];
 
   return (
@@ -105,14 +108,14 @@ function AIChat({ token }: { token: string }) {
         <div className="flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-primary" />
           <h3 className="text-sm font-semibold">Hamroh AI</h3>
-          <span className="text-xs text-muted-foreground">— твой ассистент</span>
+          <span className="text-xs text-muted-foreground">{tg("ai.subtitle")}</span>
         </div>
         {messages.length > 0 && (
           <button
             onClick={clear}
             className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1"
           >
-            <Trash2 className="h-3 w-3" /> Очистить
+            <Trash2 className="h-3 w-3" /> {tg("ai.clear")}
           </button>
         )}
       </div>
@@ -121,9 +124,9 @@ function AIChat({ token }: { token: string }) {
         {messages.length === 0 && (
           <div className="text-center py-8">
             <Sparkles className="h-8 w-8 text-primary mx-auto mb-3" />
-            <p className="text-sm font-medium mb-1">Чем могу помочь?</p>
+            <p className="text-sm font-medium mb-1">{tg("ai.welcome")}</p>
             <p className="text-xs text-muted-foreground mb-4">
-              Управляй календарём, напоминаниями и доходом голосом или текстом.
+              {tg("ai.help")}
             </p>
             <div className="grid gap-2 max-w-md mx-auto">
               {suggestions.map((s) => (
@@ -148,7 +151,7 @@ function AIChat({ token }: { token: string }) {
 
         {isBusy && (
           <div className="text-xs text-muted-foreground flex items-center gap-2 px-2">
-            <Loader2 className="h-3 w-3 animate-spin" /> Думаю…
+            <Loader2 className="h-3 w-3 animate-spin" /> {tg("ai.thinking")}
           </div>
         )}
         <div ref={endRef} />
@@ -173,7 +176,7 @@ function AIChat({ token }: { token: string }) {
             }
           }}
           rows={1}
-          placeholder="Напиши или скажи…"
+          placeholder={tg("ai.placeholder")}
           className="flex-1 resize-none rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary min-h-[44px] max-h-32"
           disabled={isBusy}
         />
@@ -202,6 +205,7 @@ type SpeechRecognitionLike = {
 };
 
 function VoiceButton({ onTranscript, disabled }: { onTranscript: (t: string) => void; disabled?: boolean }) {
+  const { lang, tg } = useGuideI18n();
   const [listening, setListening] = useState(false);
   const recRef = useRef<SpeechRecognitionLike | null>(null);
   const [supported, setSupported] = useState(false);
@@ -226,7 +230,7 @@ function VoiceButton({ onTranscript, disabled }: { onTranscript: (t: string) => 
       (window as unknown as { webkitSpeechRecognition?: new () => SpeechRecognitionLike }).webkitSpeechRecognition;
     if (!Ctor) return;
     const rec = new Ctor();
-    rec.lang = "ru-RU";
+    rec.lang = guideSpeechLocale(lang);
     rec.continuous = false;
     rec.interimResults = false;
     rec.onresult = (event) => {
@@ -248,7 +252,7 @@ function VoiceButton({ onTranscript, disabled }: { onTranscript: (t: string) => 
       type="button"
       onClick={toggle}
       disabled={disabled}
-      aria-label={listening ? "Остановить запись" : "Голосовой ввод"}
+      aria-label={listening ? tg("ai.voiceStop") : tg("ai.voiceStart")}
       className={
         "h-11 w-11 flex items-center justify-center rounded-lg border disabled:opacity-40 " +
         (listening ? "bg-destructive text-destructive-foreground animate-pulse" : "bg-background")
