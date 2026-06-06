@@ -90,6 +90,7 @@ function Home() {
   const navigate = useNavigate();
   const create = useServerFn(createThread);
   const { t } = useI18n();
+  const [isGuide, setIsGuide] = useState(false);
 
 
   const [input, setInput] = useState("");
@@ -137,6 +138,11 @@ function Home() {
       sessionStorage.removeItem("pendingAiPrompt");
       setInput(pending);
     }
+    supabase.auth.getSession().then(({ data }) => {
+      const uid = data.session?.user.id;
+      if (!uid) return;
+      supabase.from("guides").select("id").eq("user_id", uid).maybeSingle().then(({ data: g }) => setIsGuide(!!g));
+    });
   }, []);
 
   const submit = async (text: string) => {
@@ -280,10 +286,10 @@ function Home() {
                 {t("banner.guide.points")}
               </div>
               <Link
-                to="/become-a-guide"
+                to={isGuide ? "/guide" : "/become-a-guide"}
                 className="mt-6 inline-flex items-center gap-2 h-11 px-6 rounded-full bg-white text-foreground text-sm font-semibold hover:bg-white/90 transition-colors"
               >
-                {t("banner.guide.button")}
+                {isGuide ? "Кабинет гида" : t("banner.guide.button")}
               </Link>
             </div>
           </div>
