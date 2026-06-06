@@ -105,6 +105,7 @@ type GuideApplication = {
   portrait_url: string | null;
   video_url: string | null;
   photo_urls: string[] | null;
+  id_document_url: string | null;
   language_tests: Array<{ language: string; level: string; transcript?: string; feedback?: string; skipped?: boolean }> | null;
   user_id: string | null;
 };
@@ -1954,6 +1955,36 @@ function ApplicationsPanel({
                         />
                       </div>
                     </div>
+
+
+                    {/* ID document */}
+                    <div>
+                      <p className="text-xs font-medium text-muted-foreground mb-2">{ta("applications.idDocument")}</p>
+                      {a.id_document_url ? (
+                        <button
+                          onClick={async () => {
+                            try {
+                              const marker = "/guide-application-photos/";
+                              const idx = a.id_document_url!.indexOf(marker);
+                              const path = idx >= 0 ? a.id_document_url!.slice(idx + marker.length) : a.id_document_url!;
+                              const { data, error } = await supabase.storage
+                                .from("guide-application-photos")
+                                .createSignedUrl(path, 3600);
+                              if (error) throw error;
+                              window.open(data.signedUrl, "_blank", "noopener,noreferrer");
+                            } catch (err) {
+                              toast.error((err as Error).message);
+                            }
+                          }}
+                          className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-secondary/60"
+                        >
+                          {ta("applications.openIdDocument")}
+                        </button>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">{ta("applications.noIdDocument")}</span>
+                      )}
+                    </div>
+
 
                     {/* Photos */}
                     <div>
