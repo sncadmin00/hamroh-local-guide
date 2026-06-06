@@ -547,12 +547,6 @@ type Tour = {
 };
 
 const GROUP_KEYS = ["private", "small", "group", "large"] as const;
-const GROUP_LABELS: Record<(typeof GROUP_KEYS)[number], string> = {
-  private: "Private (up to 2)",
-  small: "Small group (up to 6)",
-  group: "Group (up to 12)",
-  large: "Large group (up to 25)",
-};
 
 function ToursPanel() {
   const { tg } = useGuideI18n();
