@@ -660,10 +660,10 @@ function GuidesPanel({
       </form>
 
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
-        <h2 className="font-display text-lg font-semibold">Guides</h2>
+        <h2 className="font-display text-lg font-semibold">{ta("guides.title")}</h2>
         <ul className="mt-4 divide-y divide-border/60">
           {guides.length === 0 && (
-            <li className="py-4 text-sm text-muted-foreground">No guides yet.</li>
+            <li className="py-4 text-sm text-muted-foreground">{ta("guides.empty")}</li>
           )}
           {guides.map((g) => {
             const city = cities.find((c) => c.id === g.city_id);
