@@ -92,7 +92,7 @@ function randomKey(name: string) {
 }
 
 async function uploadTo(bucket: string, file: File): Promise<string> {
-  const key = randomKey(file.name);
+  const key = `applications/${randomKey(file.name)}`;
   const { error } = await supabase.storage.from(bucket).upload(key, file, {
     contentType: file.type,
     cacheControl: "3600",
