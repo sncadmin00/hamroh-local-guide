@@ -379,6 +379,7 @@ function AdminPage() {
 }
 
 function CitiesPanel({ cities, reload }: { cities: City[]; reload: () => Promise<void> }) {
+  const { ta } = useAdminI18n();
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [lat, setLat] = useState("");
@@ -388,7 +389,7 @@ function CitiesPanel({ cities, reload }: { cities: City[]; reload: () => Promise
   const add = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !slug || !lat || !lng) {
-      toast.error("Fill all fields");
+      toast.error(ta("common.fillFields"));
       return;
     }
     setSaving(true);
@@ -404,7 +405,7 @@ function CitiesPanel({ cities, reload }: { cities: City[]; reload: () => Promise
       toast.error(error.message);
       return;
     }
-    toast.success("City added");
+    toast.success(ta("cities.added"));
     setName("");
     setSlug("");
     setLat("");
@@ -413,11 +414,11 @@ function CitiesPanel({ cities, reload }: { cities: City[]; reload: () => Promise
   };
 
   const remove = async (id: string) => {
-    if (!confirm("Delete this city?")) return;
+    if (!confirm(ta("cities.confirmDelete"))) return;
     const { error } = await supabase.from("cities").delete().eq("id", id);
     if (error) toast.error(error.message);
     else {
-      toast.success("Deleted");
+      toast.success(ta("common.deleted"));
       await reload();
     }
   };
@@ -425,7 +426,7 @@ function CitiesPanel({ cities, reload }: { cities: City[]; reload: () => Promise
   return (
     <div className="mt-6 grid gap-6 md:grid-cols-2">
       <form onSubmit={add} className="rounded-3xl bg-card p-6 ring-1 ring-border/60 h-fit">
-        <h2 className="font-display text-lg font-semibold">Add a city</h2>
+        <h2 className="font-display text-lg font-semibold">{ta("cities.add")}</h2>
         <div className="mt-4 space-y-3">
           <Field label="Name" value={name} onChange={setName} placeholder="Samarkand" />
           <Field
@@ -444,15 +445,15 @@ function CitiesPanel({ cities, reload }: { cities: City[]; reload: () => Promise
           disabled={saving}
           className="mt-5 inline-flex items-center gap-2 h-11 px-6 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-60"
         >
-          <Plus className="h-4 w-4" /> {saving ? "Saving…" : "Add city"}
+          <Plus className="h-4 w-4" /> {saving ? ta("common.saving") : ta("cities.addBtn")}
         </button>
       </form>
 
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
-        <h2 className="font-display text-lg font-semibold">Cities</h2>
+        <h2 className="font-display text-lg font-semibold">{ta("cities.title")}</h2>
         <ul className="mt-4 divide-y divide-border/60">
           {cities.length === 0 && (
-            <li className="py-4 text-sm text-muted-foreground">No cities yet.</li>
+            <li className="py-4 text-sm text-muted-foreground">{ta("cities.empty")}</li>
           )}
           {cities.map((c) => (
             <li key={c.id} className="py-3 flex items-center justify-between gap-3">
@@ -465,7 +466,7 @@ function CitiesPanel({ cities, reload }: { cities: City[]; reload: () => Promise
               <button
                 onClick={() => remove(c.id)}
                 className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                aria-label="Delete"
+                aria-label={ta("common.delete")}
               >
                 <Trash2 className="h-4 w-4" />
               </button>
@@ -476,6 +477,7 @@ function CitiesPanel({ cities, reload }: { cities: City[]; reload: () => Promise
     </div>
   );
 }
+
 
 function GuidesPanel({
   guides,
