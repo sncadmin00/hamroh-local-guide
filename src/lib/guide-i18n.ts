@@ -263,7 +263,7 @@ export function guideSpeechLocale(lang: Lang) {
 export function useGuideI18n() {
   const { lang } = useI18n();
   const tg = (key: GuideTextKey, vars?: Record<string, string | number>) => {
-    let value = guideTranslations[key]?.[lang] ?? guideTranslations[key]?.en ?? String(key);
+    let value: string = guideTranslations[key]?.[lang] ?? guideTranslations[key]?.en ?? String(key);
     if (vars) {
       for (const [name, replacement] of Object.entries(vars)) {
         value = value.replaceAll(`{${name}}`, String(replacement));
