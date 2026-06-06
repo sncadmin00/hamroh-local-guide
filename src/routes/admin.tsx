@@ -1852,7 +1852,7 @@ function ApplicationsPanel({
   return (
     <div className="mt-6 rounded-3xl bg-card p-6 ring-1 ring-border/60">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="font-display text-lg font-semibold">Guide applications</h2>
+        <h2 className="font-display text-lg font-semibold">{ta("applications.title")}</h2>
         <div className="inline-flex rounded-full bg-secondary/60 p-1">
           {(["pending", "approved", "rejected", "all"] as const).map((s) => (
             <button
@@ -1860,7 +1860,7 @@ function ApplicationsPanel({
               onClick={() => setFilter(s)}
               className={`px-3 h-8 rounded-full text-xs font-medium capitalize ${filter === s ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
             >
-              {s}
+              {ta(`filter.${s}` as "filter.pending")}
             </button>
           ))}
         </div>
