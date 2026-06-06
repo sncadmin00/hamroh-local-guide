@@ -198,11 +198,13 @@ export function CalendarPanel() {
 }
 
 function TodayTimeline({ events, onEventClick }: { events: CalendarEvent[]; onEventClick: (e: CalendarEvent) => void }) {
+  const { lang, tg } = useGuideI18n();
+  const locale = guideDateLocale(lang);
   if (events.length === 0) {
     return (
       <div className="py-16 text-center text-muted-foreground">
-        <p className="text-sm">Free day — nothing scheduled</p>
-        <p className="text-xs mt-2 opacity-70">Tap "Add" to plan something</p>
+        <p className="text-sm">{tg("calendar.freeDay")}</p>
+        <p className="text-xs mt-2 opacity-70">{tg("calendar.tapAdd")}</p>
       </div>
     );
   }
@@ -225,7 +227,7 @@ function TodayTimeline({ events, onEventClick }: { events: CalendarEvent[]; onEv
                   <div className="flex items-baseline justify-between gap-2">
                     <p className="font-semibold truncate">{ev.title}</p>
                     <p className="text-xs tabular-nums text-muted-foreground shrink-0">
-                      {ev.all_day ? "all day" : `${fmtTime(ev.starts_at)} — ${fmtTime(ev.ends_at)}`}
+                      {ev.all_day ? tg("calendar.allDay") : `${fmtTime(ev.starts_at, locale)} — ${fmtTime(ev.ends_at, locale)}`}
                     </p>
                   </div>
                   {ev.location ? (
@@ -247,6 +249,8 @@ function TodayTimeline({ events, onEventClick }: { events: CalendarEvent[]; onEv
 function WeekView({ from, events, onEventClick, onDayClick }: {
   from: Date; events: CalendarEvent[]; onEventClick: (e: CalendarEvent) => void; onDayClick: (d: Date) => void;
 }) {
+  const { lang, tg } = useGuideI18n();
+  const locale = guideDateLocale(lang);
   const days = Array.from({ length: 7 }, (_, i) => addDays(from, i));
   const today = new Date();
   return (
@@ -262,12 +266,12 @@ function WeekView({ from, events, onEventClick, onDayClick }: {
             >
               <div>
                 <p className={`text-sm font-semibold ${isToday ? "text-primary" : ""}`}>
-                  {d.toLocaleDateString([], { weekday: "long" })}
+                  {d.toLocaleDateString(locale, { weekday: "long" })}
                 </p>
-                <p className="text-xs text-muted-foreground">{d.toLocaleDateString([], { day: "numeric", month: "long" })}</p>
+                <p className="text-xs text-muted-foreground">{d.toLocaleDateString(locale, { day: "numeric", month: "long" })}</p>
               </div>
               <span className="text-xs text-muted-foreground">
-                {dayEvents.length === 0 ? "Free" : `${dayEvents.length} event${dayEvents.length>1?"s":""}`}
+                {dayEvents.length === 0 ? tg("calendar.free") : tg("calendar.events", { n: dayEvents.length, plural: dayEvents.length > 1 ? "s" : "" })}
               </span>
             </button>
             {dayEvents.length > 0 ? (
@@ -282,7 +286,7 @@ function WeekView({ from, events, onEventClick, onDayClick }: {
                       >
                         <span className={`h-2 w-2 rounded-full ${meta.chip}`} />
                         <span className="text-xs tabular-nums text-muted-foreground w-10 shrink-0">
-                          {ev.all_day ? "all" : fmtTime(ev.starts_at)}
+                          {ev.all_day ? tg("calendar.all") : fmtTime(ev.starts_at, locale)}
                         </span>
                         <span className="text-sm truncate flex-1">{ev.title}</span>
                       </button>
