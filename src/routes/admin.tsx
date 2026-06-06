@@ -816,6 +816,7 @@ function LanguagesPanel({
   languages: Language[];
   reload: () => Promise<void>;
 }) {
+  const { ta } = useAdminI18n();
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
   const [saving, setSaving] = useState(false);
@@ -847,7 +848,7 @@ function LanguagesPanel({
     });
     if (error) toast.error(error.message);
     else {
-      toast.success(`${n} added`);
+      toast.success(`${n} ${ta("common.add").toLowerCase()}`);
       await reload();
     }
   };
@@ -856,7 +857,7 @@ function LanguagesPanel({
   const add = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
-      toast.error("Name required");
+      toast.error(ta("common.nameRequired"));
       return;
     }
     setSaving(true);
@@ -870,21 +871,22 @@ function LanguagesPanel({
       toast.error(error.message);
       return;
     }
-    toast.success("Language added");
+    toast.success(ta("languages.added"));
     setName("");
     setCode("");
     await reload();
   };
 
   const remove = async (id: string) => {
-    if (!confirm("Delete this language?")) return;
+    if (!confirm(ta("languages.confirmDelete"))) return;
     const { error } = await supabase.from("languages").delete().eq("id", id);
     if (error) toast.error(error.message);
     else {
-      toast.success("Deleted");
+      toast.success(ta("common.deleted"));
       await reload();
     }
   };
+
 
   return (
     <div className="mt-6 grid gap-6 lg:grid-cols-2">
