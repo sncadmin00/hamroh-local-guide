@@ -710,6 +710,7 @@ function BecomeAGuidePage() {
           user_id: userData.user?.id ?? null,
           portrait_url,
           video_url,
+          id_document_url,
           photo_urls,
           category_ids: selectedCategories,
           has_transport: hasTransport,
