@@ -1462,6 +1462,7 @@ function SocialPanel({
 
 
 function BookingsPanel({ bookings, reload }: { bookings: Booking[]; reload: () => Promise<void> }) {
+  const { ta } = useAdminI18n();
   const [filter, setFilter] = useState<"all" | "pending" | "confirmed" | "cancelled">("all");
   const [sourceFilter, setSourceFilter] = useState<"all" | SourceKey>("all");
 
@@ -1482,17 +1483,17 @@ function BookingsPanel({ bookings, reload }: { bookings: Booking[]; reload: () =
     const { error } = await supabase.from("bookings").update({ status }).eq("id", id);
     if (error) toast.error(error.message);
     else {
-      toast.success("Status updated");
+      toast.success(ta("common.statusUpdated"));
       await reload();
     }
   };
 
   const remove = async (id: string) => {
-    if (!confirm("Delete this booking?")) return;
+    if (!confirm(ta("bookings.confirmDelete"))) return;
     const { error } = await supabase.from("bookings").delete().eq("id", id);
     if (error) toast.error(error.message);
     else {
-      toast.success("Deleted");
+      toast.success(ta("common.deleted"));
       await reload();
     }
   };
@@ -1504,11 +1505,19 @@ function BookingsPanel({ bookings, reload }: { bookings: Booking[]; reload: () =
     return `${base} bg-accent/15 text-accent-foreground`;
   };
 
+  const filterLabel = (s: string) => {
+    if (s === "all") return ta("filter.all");
+    if (s === "pending") return ta("filter.pending");
+    if (s === "confirmed") return ta("filter.confirmed");
+    if (s === "cancelled") return ta("filter.cancelled");
+    return s;
+  };
+
   return (
     <div className="mt-6 space-y-4">
       {/* Source stats */}
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
-        <h2 className="font-display text-lg font-semibold">Источники за 30 дней</h2>
+        <h2 className="font-display text-lg font-semibold">{ta("bookings.sourcesLast30")}</h2>
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
           {recentStats.map((s) => (
             <div key={s.source} className="rounded-2xl bg-secondary/40 p-3">
@@ -1521,14 +1530,14 @@ function BookingsPanel({ bookings, reload }: { bookings: Booking[]; reload: () =
 
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="font-display text-lg font-semibold">Orders</h2>
+          <h2 className="font-display text-lg font-semibold">{ta("bookings.title")}</h2>
           <div className="flex flex-wrap items-center gap-2">
             <select
               value={sourceFilter}
               onChange={(e) => setSourceFilter(e.target.value as "all" | SourceKey)}
               className="h-8 rounded-full border border-input bg-background px-3 text-xs"
             >
-              <option value="all">All sources</option>
+              <option value="all">{ta("common.allSources")}</option>
               {SOURCES.map((s) => (
                 <option key={s} value={s}>{s}</option>
               ))}
@@ -1540,7 +1549,7 @@ function BookingsPanel({ bookings, reload }: { bookings: Booking[]; reload: () =
                   onClick={() => setFilter(s)}
                   className={`px-3 h-8 rounded-full text-xs font-medium capitalize ${filter === s ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
                 >
-                  {s}
+                  {filterLabel(s)}
                 </button>
               ))}
             </div>
@@ -1548,21 +1557,21 @@ function BookingsPanel({ bookings, reload }: { bookings: Booking[]; reload: () =
         </div>
 
         {filtered.length === 0 ? (
-          <p className="mt-6 text-sm text-muted-foreground">No orders yet.</p>
+          <p className="mt-6 text-sm text-muted-foreground">{ta("bookings.empty")}</p>
         ) : (
           <div className="mt-4 overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="text-left text-xs uppercase text-muted-foreground">
                 <tr className="border-b border-border/60">
-                  <th className="py-2 pr-3">Created</th>
-                  <th className="py-2 pr-3">Source</th>
-                  <th className="py-2 pr-3">Date</th>
-                  <th className="py-2 pr-3">Guide</th>
-                  <th className="py-2 pr-3">Customer</th>
-                  <th className="py-2 pr-3">Guests</th>
-                  <th className="py-2 pr-3">Total</th>
-                  <th className="py-2 pr-3">Status</th>
-                  <th className="py-2 pr-3 text-right">Actions</th>
+                  <th className="py-2 pr-3">{ta("bookings.created")}</th>
+                  <th className="py-2 pr-3">{ta("bookings.source")}</th>
+                  <th className="py-2 pr-3">{ta("bookings.date")}</th>
+                  <th className="py-2 pr-3">{ta("bookings.guide")}</th>
+                  <th className="py-2 pr-3">{ta("bookings.customer")}</th>
+                  <th className="py-2 pr-3">{ta("bookings.guests")}</th>
+                  <th className="py-2 pr-3">{ta("bookings.total")}</th>
+                  <th className="py-2 pr-3">{ta("bookings.status")}</th>
+                  <th className="py-2 pr-3 text-right">{ta("common.actions")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/60">
@@ -1587,7 +1596,7 @@ function BookingsPanel({ bookings, reload }: { bookings: Booking[]; reload: () =
                     <td className="py-3 pr-3">{b.guests}</td>
                     <td className="py-3 pr-3 font-medium">${Number(b.total).toFixed(0)}</td>
                     <td className="py-3 pr-3">
-                      <span className={statusBadge(b.status)}>{b.status}</span>
+                      <span className={statusBadge(b.status)}>{filterLabel(b.status)}</span>
                     </td>
                     <td className="py-3 pr-3 text-right whitespace-nowrap">
                       <select
@@ -1595,14 +1604,14 @@ function BookingsPanel({ bookings, reload }: { bookings: Booking[]; reload: () =
                         onChange={(e) => setStatus(b.id, e.target.value)}
                         className="h-8 rounded-md border border-input bg-background px-2 text-xs"
                       >
-                        <option value="pending">pending</option>
-                        <option value="confirmed">confirmed</option>
-                        <option value="cancelled">cancelled</option>
+                        <option value="pending">{ta("filter.pending")}</option>
+                        <option value="confirmed">{ta("filter.confirmed")}</option>
+                        <option value="cancelled">{ta("filter.cancelled")}</option>
                       </select>
                       <button
                         onClick={() => remove(b.id)}
                         className="ml-2 inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                        aria-label="Delete"
+                        aria-label={ta("common.delete")}
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
