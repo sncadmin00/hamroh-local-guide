@@ -1724,7 +1724,7 @@ function ApplicationsPanel({
                     .from("guide_categories")
                     .insert(cats.map((cid) => ({ guide_id: created.id, category_id: cid })));
                 }
-                toast.success("Guide profile created");
+                toast.success(ta("applications.guideCreated"));
               }
             }
           } else if (Object.keys(passed).length > 0) {
