@@ -107,23 +107,56 @@ function GuidePage() {
       <section className="container mx-auto px-4 py-8 md:py-12">
         <div className="grid gap-10 lg:grid-cols-[1.2fr_1fr]">
           <div>
-            <div className="relative overflow-hidden rounded-3xl">
-              <img src={guide.photo} alt={guide.name} width={1200} height={900} className="aspect-[4/3] w-full object-cover" />
-              <WishlistHeart type="guide" id={guide.dbId} size="lg" className="absolute right-4 top-4" />
+            <div className={`grid gap-4 ${guide.introVideoUrl ? "sm:grid-cols-2" : ""}`}>
+              <div className="relative overflow-hidden rounded-2xl ring-1 ring-border/60">
+                <img
+                  src={guide.photo}
+                  alt={guide.name}
+                  width={800}
+                  height={800}
+                  className="aspect-square w-full object-cover"
+                />
+                <WishlistHeart type="guide" id={guide.dbId} size="lg" className="absolute right-3 top-3" />
+              </div>
+
+              {guide.introVideoUrl && (
+                <div className="overflow-hidden rounded-2xl bg-card ring-1 ring-border/60 flex flex-col">
+                  <div className="flex items-center gap-2 border-b border-border/60 px-3 py-2 text-xs font-medium text-muted-foreground">
+                    <Video className="h-3.5 w-3.5 text-primary" /> Video greeting
+                  </div>
+                  <video
+                    src={guide.introVideoUrl}
+                    controls
+                    playsInline
+                    preload="metadata"
+                    poster={guide.photo}
+                    className="aspect-square w-full flex-1 bg-muted object-cover"
+                  />
+                </div>
+              )}
             </div>
 
-            {guide.introVideoUrl && (
-              <div className="mt-5 overflow-hidden rounded-3xl bg-card ring-1 ring-border/60">
-                <div className="flex items-center gap-2 border-b border-border/60 px-4 py-3 text-sm font-medium">
-                  <Video className="h-4 w-4 text-primary" /> Video greeting from {guide.name}
-                </div>
-                <video
-                  src={guide.introVideoUrl}
-                  controls
-                  playsInline
-                  preload="metadata"
-                  className="aspect-video w-full bg-muted object-contain"
-                />
+            {tours.length > 0 && tours.some((t) => t.cover_url) && (
+              <div className="mt-4 grid grid-cols-3 gap-2 sm:grid-cols-4">
+                {tours.filter((t) => t.cover_url).slice(0, 8).map((t) => (
+                  <Link
+                    key={t.id}
+                    to="/tours/$slug"
+                    params={{ slug: t.slug }}
+                    className="group relative aspect-square overflow-hidden rounded-xl ring-1 ring-border/60"
+                    title={t.title}
+                  >
+                    <img
+                      src={t.cover_url!}
+                      alt={t.title}
+                      loading="lazy"
+                      className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                    />
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+                      <p className="line-clamp-2 text-[10px] font-medium leading-tight text-white">{t.title}</p>
+                    </div>
+                  </Link>
+                ))}
               </div>
             )}
 
