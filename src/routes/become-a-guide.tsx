@@ -687,9 +687,11 @@ function BecomeAGuidePage() {
       const { data: userData } = await supabase.auth.getUser();
       let portrait_url: string | null = null;
       let video_url: string | null = null;
+      let id_document_url: string | null = null;
       const photo_urls: string[] = [];
 
       if (portrait) portrait_url = await uploadTo("guide-application-photos", portrait);
+      if (idDocument) id_document_url = await uploadTo("guide-application-photos", idDocument);
       for (const p of photos) photo_urls.push(await uploadTo("guide-application-photos", p));
       if (video) video_url = await uploadTo("guide-application-videos", video);
 
