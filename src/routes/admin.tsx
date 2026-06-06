@@ -1838,7 +1838,7 @@ function ApplicationsPanel({
     if (url) {
       const { error } = await supabase.from("guide_applications").update({ video_url: url }).eq("id", appId);
       if (error) toast.error(error.message);
-      else { toast.success("Video uploaded"); await reload(); }
+      else { toast.success(ta("applications.videoUploaded")); await reload(); }
     }
     setUploading((p) => ({ ...p, [appId + "-video"]: false }));
   };
