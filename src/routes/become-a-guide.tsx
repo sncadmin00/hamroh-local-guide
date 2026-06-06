@@ -973,6 +973,7 @@ function ReviewBlock({
   languageTests,
   categories,
   portrait,
+  idDocument,
   photos,
   video,
   labels,
@@ -982,12 +983,13 @@ function ReviewBlock({
   languageTests: Array<{ language: string; result?: LangTestResult }>;
   categories: string[];
   portrait: File | null;
+  idDocument: File | null;
   photos: File[];
   video: File | null;
   labels: {
     name: string; email: string; phone: string; telegram: string; city: string; years: string;
     languages: string; categories: string; specialization: string; about: string;
-    portrait: string; photos: string; video: string; languageTests: string; level: string;
+    portrait: string; idDoc: string; photos: string; video: string; languageTests: string; level: string;
   };
 }) {
   const rows: Array<[string, string]> = [
