@@ -555,6 +555,7 @@ const GROUP_LABELS: Record<(typeof GROUP_KEYS)[number], string> = {
 };
 
 function ToursPanel() {
+  const { tg } = useGuideI18n();
   const [languages, setLanguages] = useState<string[]>([]);
   const [cities, setCities] = useState<Array<{ id: string; name: string }>>([]);
   const [defaultCityId, setDefaultCityId] = useState<string>("");
@@ -598,7 +599,7 @@ function ToursPanel() {
   useEffect(() => { load(); }, [load]);
 
   if (loading) {
-    return <div className="rounded-3xl bg-card p-6 ring-1 ring-border text-sm text-muted-foreground inline-flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Loading…</div>;
+    return <div className="rounded-3xl bg-card p-6 ring-1 ring-border text-sm text-muted-foreground inline-flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> {tg("common.loading")}</div>;
   }
 
   return (
@@ -606,40 +607,40 @@ function ToursPanel() {
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h2 className="font-display text-lg font-semibold">Your tours</h2>
+            <h2 className="font-display text-lg font-semibold">{tg("tours.title")}</h2>
             <p className="text-sm text-muted-foreground mt-1">
-              Create the tours you offer. Travellers see your prices per language and pick a date.
+              {tg("tours.text")}
             </p>
           </div>
           <button
             onClick={() => setCreating(true)}
             className="h-10 px-4 rounded-full bg-foreground text-background text-sm font-medium inline-flex items-center gap-2"
           >
-            <Plus className="h-4 w-4" /> Add tour
+            <Plus className="h-4 w-4" /> {tg("tours.add")}
           </button>
         </div>
         {languages.length === 0 && (
           <p className="mt-4 text-sm text-amber-700 bg-amber-500/10 rounded-xl p-3">
-            Add languages on the Languages tab first so you can set per-language prices.
+            {tg("tours.needLanguages")}
           </p>
         )}
       </div>
 
       {items.length === 0 ? (
-        <div className="rounded-3xl bg-card p-6 ring-1 ring-border text-sm text-muted-foreground">No tours yet. Click "Add tour" to create one.</div>
+        <div className="rounded-3xl bg-card p-6 ring-1 ring-border text-sm text-muted-foreground">{tg("tours.empty")}</div>
       ) : (
         <div className="space-y-3">
           {items.map((it) => (
             <div key={it.id} className="rounded-2xl bg-card p-5 ring-1 ring-border">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="font-medium">{it.title} {!it.published && <span className="text-[10px] uppercase text-muted-foreground ml-1">draft</span>}</p>
-                  <p className="text-xs text-muted-foreground">{Number(it.duration_hours)}h · {it.pricing_mode === "by_group" ? "by group size" : `$${it.price_from}`} {it.transport_included && "· transport"}</p>
+                  <p className="font-medium">{it.title} {!it.published && <span className="text-[10px] uppercase text-muted-foreground ml-1">{tg("tours.draft")}</span>}</p>
+                  <p className="text-xs text-muted-foreground">{Number(it.duration_hours)}{tg("common.hoursShort")} · {it.pricing_mode === "by_group" ? tg("tours.byGroup") : `$${it.price_from}`} {it.transport_included && `· ${tg("tours.transport")}`}</p>
                   <div className="mt-3 flex flex-wrap gap-1.5">
                     {it.pricing_mode === "by_group"
                       ? GROUP_KEYS.filter((k) => (it.group_prices[k] ?? 0) > 0).map((k) => (
                           <span key={k} className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs bg-primary/10 text-primary ring-1 ring-primary/20">
-                            <span className="font-medium">{GROUP_LABELS[k]}</span>
+                            <span className="font-medium">{tg(`group.${k}` as Parameters<typeof tg>[0])}</span>
                             <span className="tabular-nums">${it.group_prices[k]}</span>
                           </span>
                         ))
@@ -649,7 +650,7 @@ function ToursPanel() {
                           return (
                             <span key={lng} className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs bg-primary/10 text-primary ring-1 ring-primary/20">
                               <span className="font-medium">{lng}</span>
-                              <span className="tabular-nums">{isBase ? "base" : (mult ? `+${mult}%` : "+0%")}</span>
+                              <span className="tabular-nums">{isBase ? tg("tours.base") : (mult ? `+${mult}%` : "+0%")}</span>
                             </span>
                           );
                         })}
@@ -661,8 +662,8 @@ function ToursPanel() {
                   </button>
                   <button
                     onClick={async () => {
-                      if (!confirm(`Delete "${it.title}"?`)) return;
-                      try { await deleteFn({ data: { id: it.id } }); toast.success("Deleted"); load(); }
+                      if (!confirm(tg("tours.deleteConfirm", { title: it.title }))) return;
+                      try { await deleteFn({ data: { id: it.id } }); toast.success(tg("common.deleted")); load(); }
                       catch (e) { toast.error((e as Error).message); }
                     }}
                     className="h-9 w-9 grid place-items-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
@@ -686,7 +687,7 @@ function ToursPanel() {
           onSave={async (payload) => {
             try {
               await upsertFn({ data: payload });
-              toast.success("Saved");
+              toast.success(tg("common.saved"));
               setEditing(null);
               setCreating(false);
               load();
