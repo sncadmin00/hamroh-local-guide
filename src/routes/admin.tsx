@@ -1625,7 +1625,7 @@ function ApplicationsPanel({
     }
     toast.success("Status updated");
 
-    // Auto-copy AI-verified languages (B1+) into the matching guide row when approving.
+    // On approval: create a guide row if one doesn't exist yet, and copy verified languages.
     if (status === "approved") {
       try {
         const app = applications.find((a) => a.id === id);
@@ -1635,20 +1635,79 @@ function ApplicationsPanel({
           if (t.skipped) continue;
           if (["B1", "B2", "C1", "C2"].includes(t.level)) passed[t.language] = t.level;
         }
-        if (app?.user_id && Object.keys(passed).length > 0) {
-          const { data: g } = await supabase
-            .from("guides")
-            .select("id, verified_languages")
-            .eq("user_id", app.user_id)
-            .maybeSingle();
-          if (g?.id) {
-            const merged = { ...((g.verified_languages as Record<string, string>) ?? {}), ...passed };
-            await supabase.from("guides").update({ verified_languages: merged }).eq("id", g.id);
+
+        if (app) {
+          let existing: { id: string; verified_languages: unknown } | null = null;
+          if (app.user_id) {
+            const { data: g } = await supabase
+              .from("guides")
+              .select("id, verified_languages")
+              .eq("user_id", app.user_id)
+              .maybeSingle();
+            existing = g ?? null;
+          }
+
+          if (!existing) {
+            const { data: cityRow } = await supabase
+              .from("cities")
+              .select("id")
+              .ilike("name", app.city)
+              .maybeSingle();
+            if (!cityRow?.id) {
+              toast.error(`Could not find city "${app.city}" — create a guide manually`);
+            } else {
+              const baseSlug = (app.full_name || "guide")
+                .toLowerCase()
+                .normalize("NFKD")
+                .replace(/[^a-z0-9]+/g, "-")
+                .replace(/(^-|-$)/g, "") || "guide";
+              const slug = `${baseSlug}-${Math.random().toString(36).slice(2, 6)}`;
+              const appExt = app as unknown as {
+                has_transport?: boolean;
+                transport_seats?: number | null;
+                category_ids?: string[];
+                specialization?: string;
+                about?: string;
+              };
+              const { data: created, error: gErr } = await supabase
+                .from("guides")
+                .insert({
+                  name: app.full_name,
+                  slug,
+                  city_id: cityRow.id,
+                  user_id: app.user_id,
+                  photo_url: app.portrait_url,
+                  intro_video_url: app.video_url,
+                  bio: appExt.about ?? "",
+                  tagline: appExt.specialization ?? "",
+                  languages: app.languages ?? [],
+                  verified_languages: passed,
+                  has_transport: appExt.has_transport ?? false,
+                  transport_seats: appExt.transport_seats ?? null,
+                  verified: true,
+                })
+                .select("id")
+                .single();
+              if (gErr) {
+                toast.error(`Guide creation failed: ${gErr.message}`);
+              } else if (created?.id) {
+                const cats = appExt.category_ids ?? [];
+                if (cats.length > 0) {
+                  await supabase
+                    .from("guide_categories")
+                    .insert(cats.map((cid) => ({ guide_id: created.id, category_id: cid })));
+                }
+                toast.success("Guide profile created");
+              }
+            }
+          } else if (Object.keys(passed).length > 0) {
+            const merged = { ...((existing.verified_languages as Record<string, string>) ?? {}), ...passed };
+            await supabase.from("guides").update({ verified_languages: merged }).eq("id", existing.id);
             toast.success(`Verified ${Object.keys(passed).length} language(s) on guide profile`);
           }
         }
       } catch (e) {
-        console.error("verified_languages auto-fill failed", e);
+        console.error("guide creation on approval failed", e);
       }
     }
 
