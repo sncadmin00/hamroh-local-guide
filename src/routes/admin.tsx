@@ -676,7 +676,7 @@ function GuidesPanel({
                   <div className="min-w-0">
                     <p className="font-medium truncate">{g.name}</p>
                     <p className="text-xs text-muted-foreground truncate">
-                      {city?.name ?? "—"} · ${Number(g.price_per_day).toFixed(0)}/day {g.user_id && <span className="ml-1 text-emerald-600">· portal linked</span>}
+                      {city?.name ?? "—"} · ${Number(g.price_per_day).toFixed(0)}/day {g.user_id && <span className="ml-1 text-emerald-600">· {ta("guides.portalLinked")}</span>}
                     </p>
                   </div>
                   <div className="flex items-center gap-1">
