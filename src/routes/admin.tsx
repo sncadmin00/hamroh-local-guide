@@ -2473,6 +2473,7 @@ type AppUser = {
 };
 
 function UsersPanel() {
+  const { ta } = useAdminI18n();
   const listFn = useServerFn(listAppUsers);
   const setRoleFn = useServerFn(setAdminRole);
   const inviteFn = useServerFn(inviteAdminUser);
@@ -2499,10 +2500,10 @@ function UsersPanel() {
   }, [load]);
 
   const toggle = async (u: AppUser) => {
-    if (u.is_admin && !confirm(`Remove admin role from ${u.email}?`)) return;
+    if (u.is_admin && !confirm(ta("users.confirmRemoveAdmin", { email: u.email }))) return;
     try {
       await setRoleFn({ data: { user_id: u.id, grant: !u.is_admin } });
-      toast.success(u.is_admin ? "Admin role removed" : "Admin role granted");
+      toast.success(u.is_admin ? ta("users.adminRemoved") : ta("users.adminGranted"));
       await load();
     } catch (e) {
       toast.error((e as Error).message);
@@ -2510,10 +2511,10 @@ function UsersPanel() {
   };
 
   const removeUser = async (u: AppUser) => {
-    if (!confirm(`Permanently delete ${u.email}? This cannot be undone.`)) return;
+    if (!confirm(ta("users.confirmDelete", { email: u.email }))) return;
     try {
       await deleteFn({ data: { user_id: u.id } });
-      toast.success("User deleted");
+      toast.success(ta("users.deleted"));
       await load();
     } catch (e) {
       toast.error((e as Error).message);
@@ -2526,7 +2527,7 @@ function UsersPanel() {
     setInviting(true);
     try {
       const res = await inviteFn({ data: { email } });
-      toast.success(res.existed ? "Admin role granted to existing user" : "Invite sent");
+      toast.success(res.existed ? ta("users.adminGrantedExisting") : ta("users.inviteSentSimple"));
       setEmail("");
       await load();
     } catch (err) {
@@ -2539,9 +2540,9 @@ function UsersPanel() {
   return (
     <div className="mt-6 grid gap-6 md:grid-cols-2">
       <form onSubmit={invite} className="rounded-3xl bg-card p-6 ring-1 ring-border/60 h-fit">
-        <h2 className="font-display text-lg font-semibold">Invite admin</h2>
+        <h2 className="font-display text-lg font-semibold">{ta("users.inviteAdmin")}</h2>
         <p className="mt-1 text-xs text-muted-foreground">
-          Send an invite email. If the user already exists, admin role will be granted immediately.
+          {ta("users.inviteHint")}
         </p>
         <div className="mt-4">
           <Field label="Email" value={email} onChange={setEmail} placeholder="new-admin@example.com" />
@@ -2551,18 +2552,18 @@ function UsersPanel() {
           disabled={inviting}
           className="mt-5 inline-flex items-center gap-2 h-11 px-6 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-60"
         >
-          <Plus className="h-4 w-4" /> {inviting ? "Sending…" : "Invite admin"}
+          <Plus className="h-4 w-4" /> {inviting ? ta("common.sending") : ta("users.inviteBtn")}
         </button>
       </form>
 
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
-        <h2 className="font-display text-lg font-semibold">All users ({users.length})</h2>
+        <h2 className="font-display text-lg font-semibold">{ta("users.all", { n: users.length })}</h2>
         {loading ? (
-          <p className="mt-4 text-sm text-muted-foreground">Loading…</p>
+          <p className="mt-4 text-sm text-muted-foreground">{ta("common.loading")}</p>
         ) : (
           <ul className="mt-4 divide-y divide-border/60">
             {users.length === 0 && (
-              <li className="py-4 text-sm text-muted-foreground">No users.</li>
+              <li className="py-4 text-sm text-muted-foreground">{ta("users.empty")}</li>
             )}
             {users.map((u) => (
               <li key={u.id} className="py-3 flex items-center justify-between gap-3">
@@ -2571,13 +2572,13 @@ function UsersPanel() {
                     {u.email}
                     {u.is_admin && (
                       <span className="inline-flex items-center rounded-full bg-primary/10 text-primary px-2 py-0.5 text-[10px] font-semibold uppercase">
-                        Admin
+                        {ta("users.adminBadge")}
                       </span>
                     )}
                   </p>
                   <p className="text-xs text-muted-foreground truncate">
-                    Joined {new Date(u.created_at).toLocaleDateString()}
-                    {u.last_sign_in_at && ` · Last login ${new Date(u.last_sign_in_at).toLocaleDateString()}`}
+                    {ta("users.joined")} {new Date(u.created_at).toLocaleDateString()}
+                    {u.last_sign_in_at && ` · ${ta("users.lastLogin")} ${new Date(u.last_sign_in_at).toLocaleDateString()}`}
                   </p>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
@@ -2589,13 +2590,13 @@ function UsersPanel() {
                         : "bg-primary text-primary-foreground hover:opacity-90"
                     }`}
                   >
-                    {u.is_admin ? "Remove admin" : "Make admin"}
+                    {u.is_admin ? ta("users.removeAdmin") : ta("users.makeAdmin")}
                   </button>
                   <button
                     onClick={() => removeUser(u)}
                     className="h-9 px-3 rounded-full text-xs font-semibold border border-destructive/40 text-destructive hover:bg-destructive/10"
                   >
-                    Delete
+                    {ta("common.delete")}
                   </button>
                 </div>
               </li>
@@ -2606,4 +2607,5 @@ function UsersPanel() {
     </div>
   );
 }
+
 
