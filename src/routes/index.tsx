@@ -289,7 +289,7 @@ function Home() {
                 to={isGuide ? "/guide" : "/become-a-guide"}
                 className="mt-6 inline-flex items-center gap-2 h-11 px-6 rounded-full bg-white text-foreground text-sm font-semibold hover:bg-white/90 transition-colors"
               >
-                {isGuide ? "Guide Dashboard" : t("banner.guide.button")}
+                {isGuide ? t("nav.guideDashboard") : t("banner.guide.button")}
               </Link>
             </div>
           </div>
