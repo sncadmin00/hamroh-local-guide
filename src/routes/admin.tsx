@@ -1816,7 +1816,7 @@ function ApplicationsPanel({
       const merged = [...(app?.photo_urls ?? []), ...newUrls];
       const { error } = await supabase.from("guide_applications").update({ photo_urls: merged }).eq("id", appId);
       if (error) toast.error(error.message);
-      else { toast.success("Photos uploaded"); await reload(); }
+      else { toast.success(ta("applications.photosUploaded")); await reload(); }
     }
     setUploading((p) => ({ ...p, [appId + "-photos"]: false }));
   };
