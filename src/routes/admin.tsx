@@ -2312,12 +2312,12 @@ function PlacesPanel({
                           : "bg-secondary text-muted-foreground ring-border/60"
                       }`}
                     >
-                      {p.published ? "Live" : "Draft"}
+                      {p.published ? ta("common.live") : ta("common.draft")}
                     </button>
                     <button
                       onClick={() => remove(p.id)}
                       className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                      aria-label="Delete"
+                      aria-label={ta("common.delete")}
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
