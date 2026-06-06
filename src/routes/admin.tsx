@@ -1650,7 +1650,7 @@ function ApplicationsPanel({
       toast.error(error.message);
       return;
     }
-    toast.success("Status updated");
+    toast.success(ta("common.statusUpdated"));
 
     // On approval: create a guide row if one doesn't exist yet, and copy verified languages.
     if (status === "approved") {
