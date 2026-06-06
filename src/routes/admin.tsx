@@ -257,7 +257,7 @@ function AdminPage() {
   if (checking) {
     return (
       <div className="min-h-screen flex items-center justify-center text-sm text-muted-foreground">
-        Loading…
+        {ta("common.loading")}
       </div>
     );
   }
@@ -269,93 +269,93 @@ function AdminPage() {
           <img src={hamrohLogo} alt="Hamroh" className="h-12 w-auto object-contain" />
         </Link>
 
-        <h1 className="font-display text-3xl font-semibold">Admin</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Manage cities, guides, articles and social embeds.</p>
+        <h1 className="font-display text-3xl font-semibold">{ta("page.title")}</h1>
+        <p className="mt-1 text-sm text-muted-foreground">{ta("page.subtitle")}</p>
 
         <div className="mt-6 inline-flex flex-wrap rounded-full bg-card p-1 ring-1 ring-border/60">
           <button
             onClick={() => setTab("bookings")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "bookings" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
-            Orders ({bookings.length})
+            {ta("tab.orders", { n: bookings.length })}
           </button>
           <button
             onClick={() => setTab("applications")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "applications" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
-            Applications ({applications.filter((a) => a.status === "pending").length})
+            {ta("tab.applications", { n: applications.filter((a) => a.status === "pending").length })}
           </button>
           <button
             onClick={() => setTab("cities")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "cities" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
-            Cities ({cities.length})
+            {ta("tab.cities", { n: cities.length })}
           </button>
           <button
             onClick={() => setTab("guides")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "guides" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
-            Guides ({guides.length})
+            {ta("tab.guides", { n: guides.length })}
           </button>
           <button
             onClick={() => setTab("tours")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "tours" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
-            Tours
+            {ta("tab.tours")}
           </button>
           <button
             onClick={() => setTab("spotlights")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "spotlights" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
-            Spotlight
+            {ta("tab.spotlights")}
           </button>
           <button
             onClick={() => setTab("categories")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "categories" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
-            Categories ({categories.length})
+            {ta("tab.categories", { n: categories.length })}
           </button>
           <button
             onClick={() => setTab("languages")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "languages" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
-            Languages ({languages.length})
+            {ta("tab.languages", { n: languages.length })}
           </button>
           <button
             onClick={() => setTab("places")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "places" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
-            Places ({places.length})
+            {ta("tab.places", { n: places.length })}
           </button>
           <button
             onClick={() => setTab("suggestions")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "suggestions" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
-            AI Suggestions ({suggestions.length})
+            {ta("tab.suggestions", { n: suggestions.length })}
           </button>
           <button
             onClick={() => setTab("articles")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "articles" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
-            Articles ({articles.length})
+            {ta("tab.articles", { n: articles.length })}
           </button>
           <button
             onClick={() => setTab("social")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "social" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
-            Social ({embeds.length})
+            {ta("tab.social", { n: embeds.length })}
           </button>
           <button
             onClick={() => setTab("users")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "users" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
-            Users
+            {ta("tab.users")}
           </button>
           <button
             onClick={() => setTab("verifications")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "verifications" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
-            Verifications
+            {ta("tab.verifications")}
           </button>
         </div>
 
