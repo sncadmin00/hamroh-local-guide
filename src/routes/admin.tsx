@@ -2115,7 +2115,7 @@ function PlacesPanel({
       toast.error(error.message);
       return;
     }
-    toast.success("Place added");
+    toast.success(ta("places.added"));
     setName("");
     setSlug("");
     setShortDescription("");
