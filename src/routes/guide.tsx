@@ -870,7 +870,7 @@ function TourEditor({
           </div>
 
           <div className="space-y-2">
-            <p className="text-sm font-medium">Cover image</p>
+            <p className="text-sm font-medium">{tg("editor.cover")}</p>
             <div className="flex items-center gap-3">
               {coverUrl ? (
                 <img src={coverUrl} alt="" className="h-20 w-28 rounded-lg object-cover ring-1 ring-border" />
@@ -878,24 +878,24 @@ function TourEditor({
                 <div className="h-20 w-28 rounded-lg bg-secondary" />
               )}
               <label className="inline-flex items-center gap-2 h-9 px-3 rounded-full bg-secondary text-sm cursor-pointer hover:bg-secondary/80">
-                {uploading ? "Uploading…" : "Upload"}
+                {uploading ? tg("common.uploading") : tg("common.upload")}
                 <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) upload(f); }} />
               </label>
-              {coverUrl && <button onClick={() => setCoverUrl("")} className="text-xs text-destructive">Remove</button>}
+              {coverUrl && <button onClick={() => setCoverUrl("")} className="text-xs text-destructive">{tg("common.remove")}</button>}
             </div>
           </div>
 
           <div>
-            <p className="text-sm font-medium">Tour languages & surcharge %</p>
+            <p className="text-sm font-medium">{tg("editor.tourLanguages")}</p>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Pick a base language (= 100% price). For other languages set a % surcharge — system computes the final price automatically. Leave at 0 if the price is the same.
+              {tg("editor.tourLanguagesText")}
             </p>
             {languages.length === 0 ? (
-              <p className="mt-2 text-xs text-muted-foreground">No languages on your profile yet.</p>
+              <p className="mt-2 text-xs text-muted-foreground">{tg("editor.noProfileLanguages")}</p>
             ) : (
               <>
                 <div className="mt-3 flex items-center gap-2 text-sm">
-                  <span className="text-xs text-muted-foreground">Base language:</span>
+                  <span className="text-xs text-muted-foreground">{tg("editor.baseLanguage")}</span>
                   <select
                     value={baseLanguage}
                     onChange={(e) => setBaseLanguage(e.target.value)}
@@ -913,7 +913,7 @@ function TourEditor({
                         <label className="inline-flex items-center gap-2 flex-1 cursor-pointer">
                           <input type="checkbox" checked={enabled} onChange={() => toggleLang(lng)} className="h-4 w-4" />
                           <span className="font-medium">{lng}</span>
-                          {isBase && <span className="text-[10px] uppercase text-muted-foreground">base</span>}
+                          {isBase && <span className="text-[10px] uppercase text-muted-foreground">{tg("tours.base")}</span>}
                         </label>
                         {!isBase && (
                           <>
@@ -940,24 +940,24 @@ function TourEditor({
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <label className="block text-sm">
-              <span className="text-xs text-muted-foreground">Highlights (one per line)</span>
+              <span className="text-xs text-muted-foreground">{tg("editor.highlights")}</span>
               <textarea value={highlights} onChange={(e) => setHighlights(e.target.value)} rows={4} className="mt-1 w-full rounded-xl border border-input bg-background p-2 text-sm" />
             </label>
             <label className="block text-sm">
-              <span className="text-xs text-muted-foreground">Included</span>
+              <span className="text-xs text-muted-foreground">{tg("editor.included")}</span>
               <textarea value={included} onChange={(e) => setIncluded(e.target.value)} rows={4} className="mt-1 w-full rounded-xl border border-input bg-background p-2 text-sm" />
             </label>
             <label className="block text-sm">
-              <span className="text-xs text-muted-foreground">Not included</span>
+              <span className="text-xs text-muted-foreground">{tg("editor.notIncluded")}</span>
               <textarea value={notIncluded} onChange={(e) => setNotIncluded(e.target.value)} rows={4} className="mt-1 w-full rounded-xl border border-input bg-background p-2 text-sm" />
             </label>
           </div>
 
           <div>
-            <p className="text-sm font-medium">Categories</p>
-            <p className="text-xs text-muted-foreground mt-0.5">Pick the categories that best describe this tour. Travellers filter by these.</p>
+            <p className="text-sm font-medium">{tg("editor.categories")}</p>
+            <p className="text-xs text-muted-foreground mt-0.5">{tg("editor.categoriesText")}</p>
             {categories.length === 0 ? (
-              <p className="mt-2 text-xs text-muted-foreground">No categories available yet.</p>
+              <p className="mt-2 text-xs text-muted-foreground">{tg("editor.noCategories")}</p>
             ) : (
               <div className="mt-2 flex flex-wrap gap-1.5">
                 {categories.map((c) => {
@@ -979,11 +979,11 @@ function TourEditor({
 
           <label className="inline-flex items-center gap-2 text-sm">
             <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} className="h-4 w-4" />
-            <span>Published (visible to travellers)</span>
+            <span>{tg("editor.published")}</span>
           </label>
         </div>
         <div className="mt-6 flex justify-end gap-2">
-          <button onClick={onClose} className="h-10 px-4 rounded-full bg-muted text-sm font-medium">Cancel</button>
+          <button onClick={onClose} className="h-10 px-4 rounded-full bg-muted text-sm font-medium">{tg("common.cancel")}</button>
           <button
             disabled={!title.trim() || !cityId}
             onClick={() => {
@@ -1022,7 +1022,7 @@ function TourEditor({
               });
             }}
             className="h-10 px-5 rounded-full bg-foreground text-background text-sm font-medium disabled:opacity-50"
-          >Save</button>
+          >{tg("common.save")}</button>
         </div>
       </div>
     </div>
