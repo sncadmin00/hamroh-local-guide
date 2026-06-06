@@ -2093,7 +2093,7 @@ function PlacesPanel({
   const add = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !slug || !cityId) {
-      toast.error("Name, slug and city are required");
+      toast.error(ta("places.needFields"));
       return;
     }
     setSaving(true);
