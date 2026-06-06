@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Star, BadgeCheck, Zap, MapPin, Globe2, Clock, ArrowLeft, Car, CarTaxiFront } from "lucide-react";
+import { Star, BadgeCheck, Zap, MapPin, Globe2, Clock, ArrowLeft, Car, CarTaxiFront, Video } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { useGuide, useGuideTours, useCities } from "@/lib/content-queries";
@@ -111,6 +111,21 @@ function GuidePage() {
               <img src={guide.photo} alt={guide.name} width={1200} height={900} className="aspect-[4/3] w-full object-cover" />
               <WishlistHeart type="guide" id={guide.dbId} size="lg" className="absolute right-4 top-4" />
             </div>
+
+            {guide.introVideoUrl && (
+              <div className="mt-5 overflow-hidden rounded-3xl bg-card ring-1 ring-border/60">
+                <div className="flex items-center gap-2 border-b border-border/60 px-4 py-3 text-sm font-medium">
+                  <Video className="h-4 w-4 text-primary" /> Video greeting from {guide.name}
+                </div>
+                <video
+                  src={guide.introVideoUrl}
+                  controls
+                  playsInline
+                  preload="metadata"
+                  className="aspect-video w-full bg-muted object-contain"
+                />
+              </div>
+            )}
 
             <div className="mt-6 flex flex-wrap items-center gap-2">
               {guide.verified && (

@@ -11,6 +11,7 @@ export interface Guide {
   cityId: string;
   extraCityIds: string[];
   photo: string;
+  introVideoUrl: string | null;
   tagline: string;
   bio: string;
   languages: string[];
