@@ -286,10 +286,10 @@ function Home() {
                 {t("banner.guide.points")}
               </div>
               <Link
-                to="/become-a-guide"
+                to={isGuide ? "/guide" : "/become-a-guide"}
                 className="mt-6 inline-flex items-center gap-2 h-11 px-6 rounded-full bg-white text-foreground text-sm font-semibold hover:bg-white/90 transition-colors"
               >
-                {t("banner.guide.button")}
+                {isGuide ? "Кабинет гида" : t("banner.guide.button")}
               </Link>
             </div>
           </div>
