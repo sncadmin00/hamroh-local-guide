@@ -90,6 +90,7 @@ function Home() {
   const navigate = useNavigate();
   const create = useServerFn(createThread);
   const { t } = useI18n();
+  const [isGuide, setIsGuide] = useState(false);
 
 
   const [input, setInput] = useState("");
