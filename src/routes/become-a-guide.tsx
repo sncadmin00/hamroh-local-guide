@@ -634,6 +634,7 @@ function BecomeAGuidePage() {
           }))}
           categories={selectedCategories.map((id) => categories.find((c) => c.id === id)?.name).filter(Boolean) as string[]}
           portrait={portrait}
+          idDocument={idDocument}
           photos={photos}
           video={video}
           labels={{
@@ -648,6 +649,7 @@ function BecomeAGuidePage() {
             specialization: t("bg.rv.specialization"),
             about: t("bg.rv.about"),
             portrait: t("bg.rv.portrait"),
+            idDoc: t("bg.rv.idDoc"),
             photos: t("bg.rv.photos"),
             video: t("bg.rv.video"),
             languageTests: t("bg.rv.languageTests"),
