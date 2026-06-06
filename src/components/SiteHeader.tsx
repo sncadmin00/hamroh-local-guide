@@ -28,6 +28,7 @@ export function SiteHeader() {
   const navigate = useNavigate();
   const [signedIn, setSignedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isGuide, setIsGuide] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [displayName, setDisplayName] = useState<string | null>(null);
   useEffect(() => {
@@ -35,6 +36,11 @@ export function SiteHeader() {
       if (!userId) { setIsAdmin(false); return; }
       const { data } = await supabase.from("user_roles").select("role").eq("user_id", userId);
       setIsAdmin((data ?? []).some((r) => r.role === "admin"));
+    };
+    const checkGuide = async (userId: string | undefined) => {
+      if (!userId) { setIsGuide(false); return; }
+      const { data } = await supabase.from("guides").select("id").eq("user_id", userId).maybeSingle();
+      setIsGuide(!!data);
     };
     const applyUser = (user: { user_metadata?: Record<string, unknown>; email?: string | null } | null | undefined) => {
       const meta = (user?.user_metadata ?? {}) as Record<string, unknown>;
@@ -46,11 +52,13 @@ export function SiteHeader() {
     supabase.auth.getSession().then(({ data }) => {
       setSignedIn(!!data.session);
       checkAdmin(data.session?.user.id);
+      checkGuide(data.session?.user.id);
       applyUser(data.session?.user);
     });
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
       setSignedIn(!!session);
       checkAdmin(session?.user.id);
+      checkGuide(session?.user.id);
       applyUser(session?.user);
     });
     return () => sub.subscription.unsubscribe();
