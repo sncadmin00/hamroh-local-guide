@@ -1846,7 +1846,7 @@ function ApplicationsPanel({
   const removeVideo = async (appId: string) => {
     const { error } = await supabase.from("guide_applications").update({ video_url: null }).eq("id", appId);
     if (error) toast.error(error.message);
-    else { toast.success("Video removed"); await reload(); }
+    else { toast.success(ta("applications.videoRemoved")); await reload(); }
   };
 
   return (
