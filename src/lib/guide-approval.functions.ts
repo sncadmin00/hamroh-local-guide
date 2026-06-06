@@ -3,8 +3,10 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const PHOTO_BUCKET_SRC = "guide-application-photos";
 const VIDEO_BUCKET_SRC = "guide-application-videos";
+// guide-photos is the only public bucket (workspace policy blocks turning others public),
+// so both portrait images AND the intro video are copied there.
 const PHOTO_BUCKET_DST = "guide-photos";
-const VIDEO_BUCKET_DST = "guide-intro-videos";
+const VIDEO_BUCKET_DST = "guide-photos";
 
 function pathFromPublicUrl(url: string, bucket: string): string | null {
   const marker = `/storage/v1/object/public/${bucket}/`;
