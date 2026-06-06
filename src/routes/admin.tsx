@@ -2274,7 +2274,7 @@ function PlacesPanel({
             onChange={(e) => setFilterCategory(e.target.value)}
             className="h-9 rounded-full border border-input bg-background px-3 text-xs"
           >
-            <option value="">All categories</option>
+            <option value="">{ta("common.allCategories")}</option>
             {PLACE_CATEGORIES.map((c) => (
               <option key={c.value} value={c.value}>
                 {c.label}
