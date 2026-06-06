@@ -733,6 +733,7 @@ function TourEditor({
     category_ids: string[];
   }) => void;
 }) {
+  const { tg } = useGuideI18n();
   const { data: categories = [] } = useCategories();
   const [title, setTitle] = useState(initial?.title ?? "");
   const [shortDesc, setShortDesc] = useState(initial?.short_description ?? "");
@@ -790,39 +791,39 @@ function TourEditor({
     <div className="fixed inset-0 z-50 grid place-items-center bg-black/40 p-4 overflow-y-auto" onClick={onClose}>
       <div onClick={(e) => e.stopPropagation()} className="w-full max-w-2xl rounded-3xl bg-background p-6 ring-1 ring-border shadow-xl my-8">
         <div className="flex items-center justify-between">
-          <h3 className="font-display text-lg font-semibold">{initial ? "Edit tour" : "New tour"}</h3>
+          <h3 className="font-display text-lg font-semibold">{initial ? tg("editor.editTitle") : tg("editor.newTitle")}</h3>
           <button onClick={onClose} className="h-9 w-9 grid place-items-center rounded-full hover:bg-muted"><X className="h-4 w-4" /></button>
         </div>
         <div className="mt-4 space-y-4">
           <label className="block text-sm">
-            <span className="text-xs text-muted-foreground">Title</span>
-            <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Old Tashkent walking tour" className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
+            <span className="text-xs text-muted-foreground">{tg("editor.title")}</span>
+            <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={tg("editor.titlePh")} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
           </label>
           <label className="block text-sm">
-            <span className="text-xs text-muted-foreground">Short description (shown on the card)</span>
-            <input value={shortDesc} onChange={(e) => setShortDesc(e.target.value)} placeholder="2-3 hour stroll through the old town" className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
+            <span className="text-xs text-muted-foreground">{tg("editor.shortDesc")}</span>
+            <input value={shortDesc} onChange={(e) => setShortDesc(e.target.value)} placeholder={tg("editor.shortDescPh")} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
           </label>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <label className="block text-sm">
-              <span className="text-xs text-muted-foreground">City</span>
+              <span className="text-xs text-muted-foreground">{tg("editor.city")}</span>
               <select value={cityId} onChange={(e) => setCityId(e.target.value)} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm">
                 {cities.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
               </select>
             </label>
             <label className="block text-sm">
-              <span className="text-xs text-muted-foreground">Duration (h)</span>
+              <span className="text-xs text-muted-foreground">{tg("editor.duration")}</span>
               <input type="number" min={0.5} step={0.5} value={durationHours} onChange={(e) => setDurationHours(Number(e.target.value) || 0)} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
             </label>
             <label className="block text-sm">
-              <span className="text-xs text-muted-foreground">Children free under (age)</span>
+              <span className="text-xs text-muted-foreground">{tg("editor.childrenFree")}</span>
               <input type="number" min={0} max={21} value={childrenFreeUnder} onChange={(e) => setChildrenFreeUnder(Number(e.target.value) || 0)} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
             </label>
             <label className="block text-sm">
               <span className="text-xs text-muted-foreground">&nbsp;</span>
               <label className="mt-1 h-11 w-full inline-flex items-center gap-2 rounded-xl border border-input bg-background px-3 text-sm cursor-pointer">
                 <input type="checkbox" checked={transportIncluded} onChange={(e) => setTransportIncluded(e.target.checked)} className="h-4 w-4" />
-                Transport included
+                {tg("editor.transportIncluded")}
               </label>
             </label>
           </div>
@@ -830,28 +831,28 @@ function TourEditor({
           {/* Pricing */}
           <div className="rounded-2xl border border-border bg-card/40 p-4 space-y-3">
             <div className="flex items-center gap-2">
-              <p className="text-sm font-medium">Pricing</p>
+              <p className="text-sm font-medium">{tg("editor.pricing")}</p>
             </div>
             <div className="flex flex-wrap gap-2">
               <label className={`inline-flex items-center gap-2 rounded-full px-3 h-9 text-sm cursor-pointer ${pricingMode === "fixed" ? "bg-foreground text-background" : "bg-secondary"}`}>
                 <input type="radio" name="pmode" className="hidden" checked={pricingMode === "fixed"} onChange={() => setPricingMode("fixed")} />
-                Fixed price
+                {tg("editor.fixedPrice")}
               </label>
               <label className={`inline-flex items-center gap-2 rounded-full px-3 h-9 text-sm cursor-pointer ${pricingMode === "by_group" ? "bg-foreground text-background" : "bg-secondary"}`}>
                 <input type="radio" name="pmode" className="hidden" checked={pricingMode === "by_group"} onChange={() => setPricingMode("by_group")} />
-                Price by group size
+                {tg("editor.priceByGroup")}
               </label>
             </div>
             {pricingMode === "fixed" ? (
               <label className="block text-sm max-w-xs">
-                <span className="text-xs text-muted-foreground">Price ($, in base language)</span>
+                <span className="text-xs text-muted-foreground">{tg("editor.priceBase")}</span>
                 <input type="number" min={0} value={fixedPrice || ""} onChange={(e) => setFixedPrice(Number(e.target.value) || 0)} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
               </label>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {GROUP_KEYS.map((k) => (
                   <div key={k} className="flex items-center gap-2 rounded-xl border border-input bg-background px-3 h-11 text-sm">
-                    <span className="flex-1 font-medium">{GROUP_LABELS[k]}</span>
+                    <span className="flex-1 font-medium">{tg(`group.${k}` as Parameters<typeof tg>[0])}</span>
                     <span className="text-muted-foreground">$</span>
                     <input
                       type="number"
@@ -863,7 +864,7 @@ function TourEditor({
                     />
                   </div>
                 ))}
-                <p className="col-span-full text-xs text-muted-foreground">Leave empty to skip a group size. Larger groups can still contact you directly.</p>
+                <p className="col-span-full text-xs text-muted-foreground">{tg("editor.skipGroup")}</p>
               </div>
             )}
           </div>
