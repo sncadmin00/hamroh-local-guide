@@ -2283,7 +2283,7 @@ function PlacesPanel({
           </select>
         </div>
         <ul className="mt-4 divide-y divide-border/60">
-          {filtered.length === 0 && <li className="py-4 text-sm text-muted-foreground">No places yet.</li>}
+          {filtered.length === 0 && <li className="py-4 text-sm text-muted-foreground">{ta("places.empty")}</li>}
           {filtered.map((p) => {
             const city = cities.find((c) => c.id === p.city_id);
             const linkedGuideIds = new Set(
