@@ -136,5 +136,51 @@ export const finalizeApprovedGuide = createServerFn({ method: "POST" })
       .eq("id", guide.id);
     if (upErr) throw new Error(upErr.message);
 
+    // Import application gallery photos as guide_posts so they appear on the public profile.
+    const gallery = (app.photo_urls as string[] | null) ?? [];
+    if (gallery.length > 0) {
+      const { count } = await supabaseAdmin
+        .from("guide_posts")
+        .select("id", { count: "exact", head: true })
+        .eq("guide_id", guide.id);
+      if (!count) {
+        const rows: Array<{
+          guide_id: string;
+          platform: string;
+          url: string;
+          thumbnail_url: string;
+          caption: string;
+          sort_order: number;
+          visible: boolean;
+        }> = [];
+        for (let i = 0; i < gallery.length; i++) {
+          try {
+            const publicUrl = await copyToPublic({
+              url: gallery[i],
+              srcBucket: PHOTO_BUCKET_SRC,
+              dstBucket: PHOTO_BUCKET_DST,
+              dstPrefix: `approved/${guide.id}/gallery`,
+            });
+            rows.push({
+              guide_id: guide.id,
+              platform: "other",
+              url: publicUrl,
+              thumbnail_url: publicUrl,
+              caption: "",
+              sort_order: i,
+              visible: true,
+            });
+          } catch (e) {
+            console.error("gallery copy failed", e);
+          }
+        }
+        if (rows.length > 0) {
+          await supabaseAdmin.from("guide_posts").insert(rows);
+        }
+      }
+    }
+
+
+
     return { ok: true, guide_id: guide.id, photo_url: photoUrl, intro_video_url: videoUrl };
   });
