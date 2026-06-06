@@ -224,7 +224,7 @@ function AdminPage() {
     if (a.data) setArticles(a.data as Article[]);
     if (e.data) setEmbeds(e.data as Embed[]);
     if (b.data) setBookings(b.data as Booking[]);
-    if (ap.data) setApplications(ap.data as GuideApplication[]);
+    if (ap.data) setApplications(await signApplicationMedia(ap.data as GuideApplication[]));
     if (cat.data) setCategories(cat.data as Category[]);
     if (gc.data) setGuideCategories(gc.data as GuideCategoryLink[]);
     if (p.data) setPlaces(p.data as Place[]);
