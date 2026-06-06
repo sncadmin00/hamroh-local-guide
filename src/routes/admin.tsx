@@ -8,6 +8,7 @@ import { CategoryIcon } from "@/components/CategoryIcon";
 import { inviteGuideToPortal } from "@/lib/admin-portal.functions";
 import { listAppUsers, setAdminRole, inviteAdminUser, deleteAppUser } from "@/lib/admin-users.functions";
 import { notifyGuideApplicationStatus } from "@/lib/lifecycle-emails.functions";
+import { finalizeApprovedGuide } from "@/lib/guide-approval.functions";
 import { reindexArticle, reindexAllArticles } from "@/lib/articles-rag.functions";
 
 import { SpotlightsPanel } from "@/components/admin/SpotlightsPanel";
