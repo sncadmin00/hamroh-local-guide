@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Calendar, CalendarClock, CalendarDays, Plus, Trash2, Check, X, LogOut, Loader2, Copy, Link2, Image as ImageIcon, Compass, Pencil, MapPin, Sparkles, ShieldCheck } from "lucide-react";
+import { Calendar, CalendarClock, CalendarDays, Plus, Trash2, Check, X, LogOut, Loader2, Copy, Link2, Image as ImageIcon, Compass, Pencil, MapPin, Sparkles, ShieldCheck, Home } from "lucide-react";
 import { CalendarPanel } from "@/components/guide/CalendarPanel";
 import { GuideAIPanel } from "@/components/guide/GuideAIPanel";
 import { VerificationPanel } from "@/components/guide/VerificationPanel";
@@ -146,12 +146,20 @@ function GuidePortal() {
             <p className="text-xs uppercase tracking-wider text-muted-foreground">Guide portal</p>
             <p className="font-display text-lg font-semibold truncate">{guide.name}</p>
           </div>
-          <button
-            onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/login" }); }}
-            className="inline-flex items-center gap-2 h-9 px-3 rounded-full text-sm hover:bg-muted"
-          >
-            <LogOut className="h-4 w-4" /> Sign out
-          </button>
+          <div className="flex items-center gap-1">
+            <Link
+              to="/"
+              className="inline-flex items-center gap-2 h-9 px-3 rounded-full text-sm hover:bg-muted"
+            >
+              <Home className="h-4 w-4" /> <span className="hidden sm:inline">Home</span>
+            </Link>
+            <button
+              onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/login" }); }}
+              className="inline-flex items-center gap-2 h-9 px-3 rounded-full text-sm hover:bg-muted"
+            >
+              <LogOut className="h-4 w-4" /> <span className="hidden sm:inline">Sign out</span>
+            </button>
+          </div>
         </div>
       </header>
 
