@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Trash2, Plus, Upload, Languages, Loader2 } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
 import { translateTourContent } from "@/lib/translate-tour.functions";
+import { useAdminI18n } from "@/lib/admin-i18n";
 
 const EMPTY: Partial<TourRow> = {
   slug: "",
@@ -26,6 +27,7 @@ const EMPTY: Partial<TourRow> = {
 };
 
 export function ToursPanel() {
+  const { ta } = useAdminI18n();
   const { data: tours = [], refetch } = useToursAdmin();
   const { data: cities = [] } = useCities();
   const { data: categories = [] } = useCategories();
@@ -36,11 +38,11 @@ export function ToursPanel() {
   const startEdit = (t: TourRow) => setEditing({ ...t });
 
   const remove = async (id: string) => {
-    if (!confirm("Delete this tour?")) return;
+    if (!confirm(ta("tours.confirmDelete"))) return;
     await (supabase as any).from("tour_categories").delete().eq("tour_id", id);
     const { error } = await (supabase as any).from("tours").delete().eq("id", id);
     if (error) toast.error(error.message);
-    else { toast.success("Deleted"); refetch(); }
+    else { toast.success(ta("common.deleted")); refetch(); }
   };
 
   const togglePublished = async (t: TourRow) => {

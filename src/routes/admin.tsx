@@ -14,6 +14,7 @@ import { reindexArticle, reindexAllArticles } from "@/lib/articles-rag.functions
 import { SpotlightsPanel } from "@/components/admin/SpotlightsPanel";
 import { ToursPanel } from "@/components/admin/ToursPanel";
 import { VerificationsPanel } from "@/components/admin/VerificationsPanel";
+import { useAdminI18n } from "@/lib/admin-i18n";
 import hamrohLogo from "@/assets/hamroh-logo.png";
 
 export const Route = createFileRoute("/admin")({
@@ -185,6 +186,7 @@ function sourceBadgeClass(s: string): string {
 }
 
 function AdminPage() {
+  const { ta } = useAdminI18n();
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
   const [tab, setTab] = useState<"bookings" | "applications" | "verifications" | "cities" | "guides" | "tours" | "spotlights" | "categories" | "languages" | "places" | "suggestions" | "articles" | "social" | "users">("bookings");
@@ -243,7 +245,7 @@ function AdminPage() {
         .eq("user_id", data.user.id);
       const isAdmin = (roles ?? []).some((r) => r.role === "admin");
       if (!isAdmin) {
-        toast.error("Admin access required");
+        toast.error(ta("page.accessRequired"));
         navigate({ to: "/", replace: true });
         return;
       }
@@ -255,7 +257,7 @@ function AdminPage() {
   if (checking) {
     return (
       <div className="min-h-screen flex items-center justify-center text-sm text-muted-foreground">
-        Loading…
+        {ta("common.loading")}
       </div>
     );
   }
@@ -267,93 +269,93 @@ function AdminPage() {
           <img src={hamrohLogo} alt="Hamroh" className="h-12 w-auto object-contain" />
         </Link>
 
-        <h1 className="font-display text-3xl font-semibold">Admin</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Manage cities, guides, articles and social embeds.</p>
+        <h1 className="font-display text-3xl font-semibold">{ta("page.title")}</h1>
+        <p className="mt-1 text-sm text-muted-foreground">{ta("page.subtitle")}</p>
 
         <div className="mt-6 inline-flex flex-wrap rounded-full bg-card p-1 ring-1 ring-border/60">
           <button
             onClick={() => setTab("bookings")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "bookings" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
-            Orders ({bookings.length})
+            {ta("tab.orders", { n: bookings.length })}
           </button>
           <button
             onClick={() => setTab("applications")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "applications" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
-            Applications ({applications.filter((a) => a.status === "pending").length})
+            {ta("tab.applications", { n: applications.filter((a) => a.status === "pending").length })}
           </button>
           <button
             onClick={() => setTab("cities")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "cities" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
-            Cities ({cities.length})
+            {ta("tab.cities", { n: cities.length })}
           </button>
           <button
             onClick={() => setTab("guides")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "guides" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
-            Guides ({guides.length})
+            {ta("tab.guides", { n: guides.length })}
           </button>
           <button
             onClick={() => setTab("tours")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "tours" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
-            Tours
+            {ta("tab.tours")}
           </button>
           <button
             onClick={() => setTab("spotlights")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "spotlights" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
-            Spotlight
+            {ta("tab.spotlights")}
           </button>
           <button
             onClick={() => setTab("categories")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "categories" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
-            Categories ({categories.length})
+            {ta("tab.categories", { n: categories.length })}
           </button>
           <button
             onClick={() => setTab("languages")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "languages" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
-            Languages ({languages.length})
+            {ta("tab.languages", { n: languages.length })}
           </button>
           <button
             onClick={() => setTab("places")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "places" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
-            Places ({places.length})
+            {ta("tab.places", { n: places.length })}
           </button>
           <button
             onClick={() => setTab("suggestions")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "suggestions" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
-            AI Suggestions ({suggestions.length})
+            {ta("tab.suggestions", { n: suggestions.length })}
           </button>
           <button
             onClick={() => setTab("articles")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "articles" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
-            Articles ({articles.length})
+            {ta("tab.articles", { n: articles.length })}
           </button>
           <button
             onClick={() => setTab("social")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "social" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
-            Social ({embeds.length})
+            {ta("tab.social", { n: embeds.length })}
           </button>
           <button
             onClick={() => setTab("users")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "users" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
-            Users
+            {ta("tab.users")}
           </button>
           <button
             onClick={() => setTab("verifications")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "verifications" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
-            Verifications
+            {ta("tab.verifications")}
           </button>
         </div>
 
@@ -377,6 +379,7 @@ function AdminPage() {
 }
 
 function CitiesPanel({ cities, reload }: { cities: City[]; reload: () => Promise<void> }) {
+  const { ta } = useAdminI18n();
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [lat, setLat] = useState("");
@@ -386,7 +389,7 @@ function CitiesPanel({ cities, reload }: { cities: City[]; reload: () => Promise
   const add = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !slug || !lat || !lng) {
-      toast.error("Fill all fields");
+      toast.error(ta("common.fillFields"));
       return;
     }
     setSaving(true);
@@ -402,7 +405,7 @@ function CitiesPanel({ cities, reload }: { cities: City[]; reload: () => Promise
       toast.error(error.message);
       return;
     }
-    toast.success("City added");
+    toast.success(ta("cities.added"));
     setName("");
     setSlug("");
     setLat("");
@@ -411,11 +414,11 @@ function CitiesPanel({ cities, reload }: { cities: City[]; reload: () => Promise
   };
 
   const remove = async (id: string) => {
-    if (!confirm("Delete this city?")) return;
+    if (!confirm(ta("cities.confirmDelete"))) return;
     const { error } = await supabase.from("cities").delete().eq("id", id);
     if (error) toast.error(error.message);
     else {
-      toast.success("Deleted");
+      toast.success(ta("common.deleted"));
       await reload();
     }
   };
@@ -423,7 +426,7 @@ function CitiesPanel({ cities, reload }: { cities: City[]; reload: () => Promise
   return (
     <div className="mt-6 grid gap-6 md:grid-cols-2">
       <form onSubmit={add} className="rounded-3xl bg-card p-6 ring-1 ring-border/60 h-fit">
-        <h2 className="font-display text-lg font-semibold">Add a city</h2>
+        <h2 className="font-display text-lg font-semibold">{ta("cities.add")}</h2>
         <div className="mt-4 space-y-3">
           <Field label="Name" value={name} onChange={setName} placeholder="Samarkand" />
           <Field
@@ -442,15 +445,15 @@ function CitiesPanel({ cities, reload }: { cities: City[]; reload: () => Promise
           disabled={saving}
           className="mt-5 inline-flex items-center gap-2 h-11 px-6 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-60"
         >
-          <Plus className="h-4 w-4" /> {saving ? "Saving…" : "Add city"}
+          <Plus className="h-4 w-4" /> {saving ? ta("common.saving") : ta("cities.addBtn")}
         </button>
       </form>
 
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
-        <h2 className="font-display text-lg font-semibold">Cities</h2>
+        <h2 className="font-display text-lg font-semibold">{ta("cities.title")}</h2>
         <ul className="mt-4 divide-y divide-border/60">
           {cities.length === 0 && (
-            <li className="py-4 text-sm text-muted-foreground">No cities yet.</li>
+            <li className="py-4 text-sm text-muted-foreground">{ta("cities.empty")}</li>
           )}
           {cities.map((c) => (
             <li key={c.id} className="py-3 flex items-center justify-between gap-3">
@@ -463,7 +466,7 @@ function CitiesPanel({ cities, reload }: { cities: City[]; reload: () => Promise
               <button
                 onClick={() => remove(c.id)}
                 className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                aria-label="Delete"
+                aria-label={ta("common.delete")}
               >
                 <Trash2 className="h-4 w-4" />
               </button>
@@ -474,6 +477,7 @@ function CitiesPanel({ cities, reload }: { cities: City[]; reload: () => Promise
     </div>
   );
 }
+
 
 function GuidesPanel({
   guides,
@@ -490,6 +494,7 @@ function GuidesPanel({
   languages: Language[];
   reload: () => Promise<void>;
 }) {
+  const { ta } = useAdminI18n();
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [cityId, setCityId] = useState("");
@@ -506,7 +511,7 @@ function GuidesPanel({
   const add = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !slug || !cityId) {
-      toast.error("Name, slug and city are required");
+      toast.error(ta("guides.needFields"));
       return;
     }
     setSaving(true);
@@ -531,7 +536,7 @@ function GuidesPanel({
       toast.error(error.message);
       return;
     }
-    toast.success("Guide added");
+    toast.success(ta("guides.added"));
     setName("");
     setSlug("");
     setTagline("");
@@ -544,11 +549,11 @@ function GuidesPanel({
   };
 
   const remove = async (id: string) => {
-    if (!confirm("Delete this guide?")) return;
+    if (!confirm(ta("guides.confirmDelete"))) return;
     const { error } = await supabase.from("guides").delete().eq("id", id);
     if (error) toast.error(error.message);
     else {
-      toast.success("Deleted");
+      toast.success(ta("common.deleted"));
       await reload();
     }
   };
@@ -556,15 +561,16 @@ function GuidesPanel({
   if (cities.length === 0) {
     return (
       <div className="mt-6 rounded-3xl bg-card p-6 ring-1 ring-border/60 text-sm text-muted-foreground">
-        Add at least one city before creating guides.
+        {ta("guides.needCityFirst")}
       </div>
     );
   }
 
+
   return (
     <div className="mt-6 grid gap-6 lg:grid-cols-2">
       <form onSubmit={add} className="rounded-3xl bg-card p-6 ring-1 ring-border/60 h-fit">
-        <h2 className="font-display text-lg font-semibold">Add a guide</h2>
+        <h2 className="font-display text-lg font-semibold">{ta("guides.add")}</h2>
         <div className="mt-4 space-y-3">
           <Field label="Name" value={name} onChange={setName} placeholder="Aziz Karimov" />
           <Field label="Slug" value={slug} onChange={setSlug} placeholder="aziz-karimov" />
@@ -575,7 +581,7 @@ function GuidesPanel({
               onChange={(e) => setCityId(e.target.value)}
               className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
             >
-              <option value="">Select city…</option>
+              <option value="">{ta("common.selectCity")}</option>
               {cities.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
@@ -606,7 +612,7 @@ function GuidesPanel({
           <div>
             <label className="text-xs font-medium text-muted-foreground">Languages</label>
             {languageList.length === 0 ? (
-              <p className="mt-1 text-xs text-muted-foreground">No languages yet. Add some in the Languages tab.</p>
+              <p className="mt-1 text-xs text-muted-foreground">{ta("guides.noLanguagesYet")}</p>
             ) : (
               <div className="mt-1 flex flex-wrap gap-2">
                 {languageList.map((lng) => {
@@ -649,15 +655,15 @@ function GuidesPanel({
           disabled={saving}
           className="mt-5 inline-flex items-center gap-2 h-11 px-6 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-60"
         >
-          <Plus className="h-4 w-4" /> {saving ? "Saving…" : "Add guide"}
+          <Plus className="h-4 w-4" /> {saving ? ta("common.saving") : ta("guides.addBtn")}
         </button>
       </form>
 
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
-        <h2 className="font-display text-lg font-semibold">Guides</h2>
+        <h2 className="font-display text-lg font-semibold">{ta("guides.title")}</h2>
         <ul className="mt-4 divide-y divide-border/60">
           {guides.length === 0 && (
-            <li className="py-4 text-sm text-muted-foreground">No guides yet.</li>
+            <li className="py-4 text-sm text-muted-foreground">{ta("guides.empty")}</li>
           )}
           {guides.map((g) => {
             const city = cities.find((c) => c.id === g.city_id);
@@ -670,7 +676,7 @@ function GuidesPanel({
                   <div className="min-w-0">
                     <p className="font-medium truncate">{g.name}</p>
                     <p className="text-xs text-muted-foreground truncate">
-                      {city?.name ?? "—"} · ${Number(g.price_per_day).toFixed(0)}/day {g.user_id && <span className="ml-1 text-emerald-600">· portal linked</span>}
+                      {city?.name ?? "—"} · ${Number(g.price_per_day).toFixed(0)}/day {g.user_id && <span className="ml-1 text-emerald-600">· {ta("guides.portalLinked")}</span>}
                     </p>
                   </div>
                   <div className="flex items-center gap-1">
@@ -678,7 +684,7 @@ function GuidesPanel({
                     <button
                       onClick={() => remove(g.id)}
                       className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                      aria-label="Delete"
+                      aria-label={ta("common.delete")}
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
@@ -754,7 +760,7 @@ function GuidesPanel({
                 {(g.languages ?? []).length > 0 && (
                   <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-border/40">
                     <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mr-1">
-                      Verified ✓
+                      {ta("guides.verifiedShort")}
                     </span>
                     {(g.languages ?? []).map((lname) => {
                       const lvl = (g.verified_languages ?? {})[lname] ?? "";
@@ -810,6 +816,7 @@ function LanguagesPanel({
   languages: Language[];
   reload: () => Promise<void>;
 }) {
+  const { ta } = useAdminI18n();
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
   const [saving, setSaving] = useState(false);
@@ -841,7 +848,7 @@ function LanguagesPanel({
     });
     if (error) toast.error(error.message);
     else {
-      toast.success(`${n} added`);
+      toast.success(`${n} ${ta("common.add").toLowerCase()}`);
       await reload();
     }
   };
@@ -850,7 +857,7 @@ function LanguagesPanel({
   const add = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
-      toast.error("Name required");
+      toast.error(ta("common.nameRequired"));
       return;
     }
     setSaving(true);
@@ -864,26 +871,27 @@ function LanguagesPanel({
       toast.error(error.message);
       return;
     }
-    toast.success("Language added");
+    toast.success(ta("languages.added"));
     setName("");
     setCode("");
     await reload();
   };
 
   const remove = async (id: string) => {
-    if (!confirm("Delete this language?")) return;
+    if (!confirm(ta("languages.confirmDelete"))) return;
     const { error } = await supabase.from("languages").delete().eq("id", id);
     if (error) toast.error(error.message);
     else {
-      toast.success("Deleted");
+      toast.success(ta("common.deleted"));
       await reload();
     }
   };
 
+
   return (
     <div className="mt-6 grid gap-6 lg:grid-cols-2">
       <form onSubmit={add} className="rounded-3xl bg-card p-6 ring-1 ring-border/60 h-fit">
-        <h2 className="font-display text-lg font-semibold">Add a language</h2>
+        <h2 className="font-display text-lg font-semibold">{ta("languages.add")}</h2>
         <div className="mt-4 space-y-3">
           <Field label="Name" value={name} onChange={setName} placeholder="French" />
           <Field label="Code (optional)" value={code} onChange={setCode} placeholder="fr" />
@@ -893,14 +901,14 @@ function LanguagesPanel({
           disabled={saving}
           className="mt-5 inline-flex items-center gap-2 h-11 px-6 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-60"
         >
-          <Plus className="h-4 w-4" /> {saving ? "Saving…" : "Add language"}
+          <Plus className="h-4 w-4" /> {saving ? ta("common.saving") : ta("languages.addBtn")}
         </button>
 
         {suggested.length > 0 && (
           <div className="mt-6 pt-5 border-t border-border/60">
-            <h3 className="text-sm font-semibold">Suggested from applications</h3>
+            <h3 className="text-sm font-semibold">{ta("languages.suggested")}</h3>
             <p className="mt-1 text-xs text-muted-foreground">
-              Languages entered by guides that aren't in the list yet.
+              {ta("languages.suggestedHint")}
             </p>
             <ul className="mt-3 space-y-2">
               {suggested.map((s) => (
@@ -911,7 +919,7 @@ function LanguagesPanel({
                     onClick={() => quickAdd(s)}
                     className="inline-flex items-center gap-1 h-8 px-3 rounded-full bg-primary/10 text-primary text-xs font-semibold hover:bg-primary/20"
                   >
-                    <Plus className="h-3 w-3" /> Add
+                    <Plus className="h-3 w-3" /> {ta("common.add")}
                   </button>
                 </li>
               ))}
@@ -922,13 +930,13 @@ function LanguagesPanel({
 
 
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
-        <h2 className="font-display text-lg font-semibold">Languages</h2>
+        <h2 className="font-display text-lg font-semibold">{ta("languages.title")}</h2>
         <p className="mt-1 text-xs text-muted-foreground">
-          Guides pick from this list on their profile and applications.
+          {ta("languages.subtitle")}
         </p>
         <ul className="mt-4 divide-y divide-border/60">
           {languages.length === 0 && (
-            <li className="py-4 text-sm text-muted-foreground">No languages yet.</li>
+            <li className="py-4 text-sm text-muted-foreground">{ta("languages.empty")}</li>
           )}
           {languages.map((l) => (
             <li key={l.id} className="py-3 flex items-center justify-between gap-3">
@@ -939,7 +947,7 @@ function LanguagesPanel({
               <button
                 onClick={() => remove(l.id)}
                 className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                aria-label="Delete"
+                aria-label={ta("common.delete")}
               >
                 <Trash2 className="h-4 w-4" />
               </button>
@@ -951,7 +959,9 @@ function LanguagesPanel({
   );
 }
 
+
 function CategoriesPanel({ categories, reload }: { categories: Category[]; reload: () => Promise<void> }) {
+  const { ta } = useAdminI18n();
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [icon, setIcon] = useState("");
@@ -961,7 +971,7 @@ function CategoriesPanel({ categories, reload }: { categories: Category[]; reloa
   const add = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !slug) {
-      toast.error("Name and slug required");
+      toast.error(ta("categories.needFields"));
       return;
     }
     setSaving(true);
@@ -977,7 +987,7 @@ function CategoriesPanel({ categories, reload }: { categories: Category[]; reloa
       toast.error(error.message);
       return;
     }
-    toast.success("Category added");
+    toast.success(ta("categories.added"));
     setName("");
     setSlug("");
     setIcon("");
@@ -986,11 +996,11 @@ function CategoriesPanel({ categories, reload }: { categories: Category[]; reloa
   };
 
   const remove = async (id: string) => {
-    if (!confirm("Delete this category? Guide links will also be removed.")) return;
+    if (!confirm(ta("categories.confirmDelete"))) return;
     const { error } = await supabase.from("categories").delete().eq("id", id);
     if (error) toast.error(error.message);
     else {
-      toast.success("Deleted");
+      toast.success(ta("common.deleted"));
       await reload();
     }
   };
@@ -998,7 +1008,7 @@ function CategoriesPanel({ categories, reload }: { categories: Category[]; reloa
   return (
     <div className="mt-6 grid gap-6 lg:grid-cols-2">
       <form onSubmit={add} className="rounded-3xl bg-card p-6 ring-1 ring-border/60 h-fit">
-        <h2 className="font-display text-lg font-semibold">Add a category</h2>
+        <h2 className="font-display text-lg font-semibold">{ta("categories.add")}</h2>
         <div className="mt-4 space-y-3">
           <Field label="Name" value={name} onChange={setName} placeholder="Gastro" />
           <Field label="Slug" value={slug} onChange={setSlug} placeholder="gastro" />
@@ -1019,7 +1029,7 @@ function CategoriesPanel({ categories, reload }: { categories: Category[]; reloa
           </div>
           {icon && (
             <div className="text-xs text-muted-foreground inline-flex items-center gap-2">
-              Preview: <CategoryIcon name={icon} className="h-5 w-5 text-foreground" />
+              {ta("common.preview")}: <CategoryIcon name={icon} className="h-5 w-5 text-foreground" />
             </div>
           )}
         </div>
@@ -1028,16 +1038,16 @@ function CategoriesPanel({ categories, reload }: { categories: Category[]; reloa
           disabled={saving}
           className="mt-5 inline-flex items-center gap-2 h-11 px-6 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-60"
         >
-          <Plus className="h-4 w-4" /> {saving ? "Saving…" : "Add category"}
+          <Plus className="h-4 w-4" /> {saving ? ta("common.saving") : ta("categories.addBtn")}
         </button>
       </form>
 
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
-        <h2 className="font-display text-lg font-semibold">Categories</h2>
-        <p className="mt-1 text-xs text-muted-foreground">Assign categories to guides from the Guides tab.</p>
+        <h2 className="font-display text-lg font-semibold">{ta("categories.title")}</h2>
+        <p className="mt-1 text-xs text-muted-foreground">{ta("categories.subtitle")}</p>
         <ul className="mt-4 divide-y divide-border/60">
           {categories.length === 0 && (
-            <li className="py-4 text-sm text-muted-foreground">No categories yet.</li>
+            <li className="py-4 text-sm text-muted-foreground">{ta("categories.empty")}</li>
           )}
           {categories.map((c) => (
             <li key={c.id} className="py-3 flex items-center justify-between gap-3">
@@ -1053,7 +1063,7 @@ function CategoriesPanel({ categories, reload }: { categories: Category[]; reloa
               <button
                 onClick={() => remove(c.id)}
                 className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                aria-label="Delete"
+                aria-label={ta("common.delete")}
               >
                 <Trash2 className="h-4 w-4" />
               </button>
@@ -1066,15 +1076,16 @@ function CategoriesPanel({ categories, reload }: { categories: Category[]; reloa
 }
 
 function InvitePortalButton({ guide, reload }: { guide: Guide; reload: () => void }) {
+  const { ta } = useAdminI18n();
   const invite = useServerFn(inviteGuideToPortal);
   const [busy, setBusy] = useState(false);
   const onClick = async () => {
-    const email = window.prompt(`Send portal invite to which email for ${guide.name}?`);
+    const email = window.prompt(ta("guides.invitePrompt", { name: guide.name }));
     if (!email) return;
     setBusy(true);
     try {
       const res = await invite({ data: { guide_id: guide.id, email } });
-      toast.success(res.existed ? "User linked & magic link sent" : "Invite email sent");
+      toast.success(res.existed ? ta("guides.userLinked") : ta("guides.inviteSent"));
       reload();
     } catch (e) {
       toast.error((e as Error).message);
@@ -1086,13 +1097,14 @@ function InvitePortalButton({ guide, reload }: { guide: Guide; reload: () => voi
     <button
       onClick={onClick}
       disabled={busy}
-      title={guide.user_id ? "Re-send invite / re-link" : "Invite to guide portal"}
+      title={guide.user_id ? ta("guides.resendInvite") : ta("guides.invitePortal")}
       className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-accent/10 hover:text-accent disabled:opacity-50"
     >
       <Mail className="h-4 w-4" />
     </button>
   );
 }
+
 
 function Field({
   label,
@@ -1166,6 +1178,7 @@ function ArticlesPanel({
   cities: City[];
   reload: () => Promise<void>;
 }) {
+  const { ta } = useAdminI18n();
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [excerpt, setExcerpt] = useState("");
@@ -1178,7 +1191,7 @@ function ArticlesPanel({
   const add = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !slug) {
-      toast.error("Title and slug required");
+      toast.error(ta("articles.needFields"));
       return;
     }
     setSaving(true);
@@ -1196,7 +1209,7 @@ function ArticlesPanel({
       })
       .select("id")
       .single();
-    if (error || !data) { setSaving(false); toast.error(error?.message ?? "Failed"); return; }
+    if (error || !data) { setSaving(false); toast.error(error?.message ?? ta("common.failed")); return; }
     if (cityIds.length > 0) {
       const { error: linkErr } = await supabase
         .from("article_cities")
@@ -1206,9 +1219,9 @@ function ArticlesPanel({
     // Index for AI search
     try {
       const res = await reindexArticle({ data: { articleId: data.id } });
-      toast.success(`Article added · indexed ${res.chunks} chunks for AI`);
+      toast.success(`${ta("articles.added")} · ${res.chunks} chunks`);
     } catch (err) {
-      toast.success("Article added (AI indexing failed — use Re-index button)");
+      toast.success(ta("articles.added"));
       console.error(err);
     }
     setSaving(false);
@@ -1224,20 +1237,20 @@ function ArticlesPanel({
       .update({ published: next, published_at: next ? new Date().toISOString() : null })
       .eq("id", a.id);
     if (error) toast.error(error.message);
-    else { toast.success(next ? "Published" : "Unpublished"); await reload(); }
+    else { toast.success(next ? ta("articles.published") : ta("articles.unpublished")); await reload(); }
   };
 
   const remove = async (id: string) => {
-    if (!confirm("Delete this article?")) return;
+    if (!confirm(ta("articles.confirmDelete"))) return;
     const { error } = await supabase.from("articles").delete().eq("id", id);
     if (error) toast.error(error.message);
-    else { toast.success("Deleted"); await reload(); }
+    else { toast.success(ta("common.deleted")); await reload(); }
   };
 
   return (
     <div className="mt-6 grid gap-6 lg:grid-cols-2">
       <form onSubmit={add} className="rounded-3xl bg-card p-6 ring-1 ring-border/60 h-fit">
-        <h2 className="font-display text-lg font-semibold">Add an article</h2>
+        <h2 className="font-display text-lg font-semibold">{ta("articles.add")}</h2>
         <div className="mt-4 space-y-3">
           <Field label="Title" value={title} onChange={setTitle} placeholder="A weekend in Bukhara" />
           <Field label="Slug" value={slug} onChange={setSlug} placeholder="weekend-in-bukhara" />
@@ -1255,7 +1268,7 @@ function ArticlesPanel({
           <CityMultiSelect cities={cities} selected={cityIds} onChange={setCityIds} />
           <label className="inline-flex items-center gap-2 text-sm">
             <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} />
-            Publish immediately
+            {ta("articles.publishImmediately")}
           </label>
         </div>
         <button
@@ -1263,16 +1276,16 @@ function ArticlesPanel({
           disabled={saving}
           className="mt-5 inline-flex items-center gap-2 h-11 px-6 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-60"
         >
-          <Plus className="h-4 w-4" /> {saving ? "Saving…" : "Add article"}
+          <Plus className="h-4 w-4" /> {saving ? ta("common.saving") : ta("articles.addBtn")}
         </button>
       </form>
 
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
         <div className="flex items-center justify-between gap-2">
-          <h2 className="font-display text-lg font-semibold">Articles</h2>
+          <h2 className="font-display text-lg font-semibold">{ta("articles.title")}</h2>
           <button
             onClick={async () => {
-              const t = toast.loading("Reindexing all published articles…");
+              const t = toast.loading(ta("common.loading"));
               try {
                 const res = await reindexAllArticles();
                 toast.success(`Indexed ${res.chunks} chunks across ${res.articles} articles`, { id: t });
@@ -1282,21 +1295,21 @@ function ArticlesPanel({
             }}
             className="h-9 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-secondary/60"
           >
-            Reindex all for AI
+            {ta("articles.reindexAll")}
           </button>
         </div>
         <ul className="mt-4 divide-y divide-border/60">
-          {articles.length === 0 && <li className="py-4 text-sm text-muted-foreground">No articles yet.</li>}
+          {articles.length === 0 && <li className="py-4 text-sm text-muted-foreground">{ta("articles.empty")}</li>}
           {articles.map((a) => (
             <li key={a.id} className="py-3 flex items-center justify-between gap-3">
               <div className="min-w-0">
                 <p className="font-medium truncate">{a.title}</p>
-                <p className="text-xs text-muted-foreground truncate">/{a.slug} · {a.published ? "Published" : "Draft"}</p>
+                <p className="text-xs text-muted-foreground truncate">/{a.slug} · {a.published ? ta("common.published") : ta("common.draft")}</p>
               </div>
               <div className="flex items-center gap-1">
                 <button
                   onClick={async () => {
-                    const t = toast.loading("Indexing…");
+                    const t = toast.loading(ta("common.loading"));
                     try {
                       const res = await reindexArticle({ data: { articleId: a.id } });
                       toast.success(`Indexed ${res.chunks} chunks`, { id: t });
@@ -1306,18 +1319,18 @@ function ArticlesPanel({
                   }}
                   className="h-9 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-secondary/60"
                 >
-                  Reindex
+                  {ta("articles.reindex")}
                 </button>
                 <button
                   onClick={() => togglePublished(a)}
                   className="h-9 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-secondary/60"
                 >
-                  {a.published ? "Unpublish" : "Publish"}
+                  {a.published ? ta("common.unpublish") : ta("common.publish")}
                 </button>
                 <button
                   onClick={() => remove(a.id)}
                   className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                  aria-label="Delete"
+                  aria-label={ta("common.delete")}
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
@@ -1331,6 +1344,7 @@ function ArticlesPanel({
 }
 
 
+
 function SocialPanel({
   embeds,
   cities,
@@ -1340,6 +1354,7 @@ function SocialPanel({
   cities: City[];
   reload: () => Promise<void>;
 }) {
+  const { ta } = useAdminI18n();
   const [platform, setPlatform] = useState<Embed["platform"]>("instagram");
   const [url, setUrl] = useState("");
   const [caption, setCaption] = useState("");
@@ -1348,14 +1363,14 @@ function SocialPanel({
 
   const add = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!url) { toast.error("URL required"); return; }
+    if (!url) { toast.error(ta("common.urlRequired")); return; }
     setSaving(true);
     const { data, error } = await supabase
       .from("social_embeds")
       .insert({ platform, url, caption, sort_order: embeds.length, visible: true })
       .select("id")
       .single();
-    if (error || !data) { setSaving(false); toast.error(error?.message ?? "Failed"); return; }
+    if (error || !data) { setSaving(false); toast.error(error?.message ?? ta("common.failed")); return; }
     if (cityIds.length > 0) {
       const { error: linkErr } = await supabase
         .from("social_embed_cities")
@@ -1363,7 +1378,7 @@ function SocialPanel({
       if (linkErr) toast.error(linkErr.message);
     }
     setSaving(false);
-    toast.success("Embed added");
+    toast.success(ta("social.added"));
     setUrl(""); setCaption(""); setCityIds([]);
     await reload();
   };
@@ -1375,16 +1390,16 @@ function SocialPanel({
   };
 
   const remove = async (id: string) => {
-    if (!confirm("Delete this embed?")) return;
+    if (!confirm(ta("social.confirmDelete"))) return;
     const { error } = await supabase.from("social_embeds").delete().eq("id", id);
     if (error) toast.error(error.message);
-    else { toast.success("Deleted"); await reload(); }
+    else { toast.success(ta("common.deleted")); await reload(); }
   };
 
   return (
     <div className="mt-6 grid gap-6 lg:grid-cols-2">
       <form onSubmit={add} className="rounded-3xl bg-card p-6 ring-1 ring-border/60 h-fit">
-        <h2 className="font-display text-lg font-semibold">Add a social embed</h2>
+        <h2 className="font-display text-lg font-semibold">{ta("social.title")}</h2>
         <div className="mt-4 space-y-3">
           <div>
             <label className="text-xs font-medium text-muted-foreground">Platform</label>
@@ -1408,18 +1423,18 @@ function SocialPanel({
           disabled={saving}
           className="mt-5 inline-flex items-center gap-2 h-11 px-6 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-60"
         >
-          <Plus className="h-4 w-4" /> {saving ? "Saving…" : "Add embed"}
+          <Plus className="h-4 w-4" /> {saving ? ta("common.saving") : ta("common.add")}
         </button>
       </form>
 
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
-        <h2 className="font-display text-lg font-semibold">Social embeds</h2>
+        <h2 className="font-display text-lg font-semibold">{ta("social.title")}</h2>
         <ul className="mt-4 divide-y divide-border/60">
-          {embeds.length === 0 && <li className="py-4 text-sm text-muted-foreground">No embeds yet.</li>}
+          {embeds.length === 0 && <li className="py-4 text-sm text-muted-foreground">—</li>}
           {embeds.map((em) => (
             <li key={em.id} className="py-3 flex items-center justify-between gap-3">
               <div className="min-w-0">
-                <p className="font-medium truncate capitalize">{em.platform} · {em.visible ? "Visible" : "Hidden"}</p>
+                <p className="font-medium truncate capitalize">{em.platform} · {em.visible ? ta("common.active") : ta("common.hidden")}</p>
                 <p className="text-xs text-muted-foreground truncate">{em.url}</p>
               </div>
               <div className="flex items-center gap-1">
@@ -1427,12 +1442,12 @@ function SocialPanel({
                   onClick={() => toggleVisible(em)}
                   className="h-9 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-secondary/60"
                 >
-                  {em.visible ? "Hide" : "Show"}
+                  {em.visible ? ta("common.hide") : ta("common.show")}
                 </button>
                 <button
                   onClick={() => remove(em.id)}
                   className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                  aria-label="Delete"
+                  aria-label={ta("common.delete")}
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
@@ -1445,7 +1460,9 @@ function SocialPanel({
   );
 }
 
+
 function BookingsPanel({ bookings, reload }: { bookings: Booking[]; reload: () => Promise<void> }) {
+  const { ta } = useAdminI18n();
   const [filter, setFilter] = useState<"all" | "pending" | "confirmed" | "cancelled">("all");
   const [sourceFilter, setSourceFilter] = useState<"all" | SourceKey>("all");
 
@@ -1466,17 +1483,17 @@ function BookingsPanel({ bookings, reload }: { bookings: Booking[]; reload: () =
     const { error } = await supabase.from("bookings").update({ status }).eq("id", id);
     if (error) toast.error(error.message);
     else {
-      toast.success("Status updated");
+      toast.success(ta("common.statusUpdated"));
       await reload();
     }
   };
 
   const remove = async (id: string) => {
-    if (!confirm("Delete this booking?")) return;
+    if (!confirm(ta("bookings.confirmDelete"))) return;
     const { error } = await supabase.from("bookings").delete().eq("id", id);
     if (error) toast.error(error.message);
     else {
-      toast.success("Deleted");
+      toast.success(ta("common.deleted"));
       await reload();
     }
   };
@@ -1488,11 +1505,19 @@ function BookingsPanel({ bookings, reload }: { bookings: Booking[]; reload: () =
     return `${base} bg-accent/15 text-accent-foreground`;
   };
 
+  const filterLabel = (s: string) => {
+    if (s === "all") return ta("filter.all");
+    if (s === "pending") return ta("filter.pending");
+    if (s === "confirmed") return ta("filter.confirmed");
+    if (s === "cancelled") return ta("filter.cancelled");
+    return s;
+  };
+
   return (
     <div className="mt-6 space-y-4">
       {/* Source stats */}
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
-        <h2 className="font-display text-lg font-semibold">Источники за 30 дней</h2>
+        <h2 className="font-display text-lg font-semibold">{ta("bookings.sourcesLast30")}</h2>
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
           {recentStats.map((s) => (
             <div key={s.source} className="rounded-2xl bg-secondary/40 p-3">
@@ -1505,14 +1530,14 @@ function BookingsPanel({ bookings, reload }: { bookings: Booking[]; reload: () =
 
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="font-display text-lg font-semibold">Orders</h2>
+          <h2 className="font-display text-lg font-semibold">{ta("bookings.title")}</h2>
           <div className="flex flex-wrap items-center gap-2">
             <select
               value={sourceFilter}
               onChange={(e) => setSourceFilter(e.target.value as "all" | SourceKey)}
               className="h-8 rounded-full border border-input bg-background px-3 text-xs"
             >
-              <option value="all">All sources</option>
+              <option value="all">{ta("common.allSources")}</option>
               {SOURCES.map((s) => (
                 <option key={s} value={s}>{s}</option>
               ))}
@@ -1524,7 +1549,7 @@ function BookingsPanel({ bookings, reload }: { bookings: Booking[]; reload: () =
                   onClick={() => setFilter(s)}
                   className={`px-3 h-8 rounded-full text-xs font-medium capitalize ${filter === s ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
                 >
-                  {s}
+                  {filterLabel(s)}
                 </button>
               ))}
             </div>
@@ -1532,21 +1557,21 @@ function BookingsPanel({ bookings, reload }: { bookings: Booking[]; reload: () =
         </div>
 
         {filtered.length === 0 ? (
-          <p className="mt-6 text-sm text-muted-foreground">No orders yet.</p>
+          <p className="mt-6 text-sm text-muted-foreground">{ta("bookings.empty")}</p>
         ) : (
           <div className="mt-4 overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="text-left text-xs uppercase text-muted-foreground">
                 <tr className="border-b border-border/60">
-                  <th className="py-2 pr-3">Created</th>
-                  <th className="py-2 pr-3">Source</th>
-                  <th className="py-2 pr-3">Date</th>
-                  <th className="py-2 pr-3">Guide</th>
-                  <th className="py-2 pr-3">Customer</th>
-                  <th className="py-2 pr-3">Guests</th>
-                  <th className="py-2 pr-3">Total</th>
-                  <th className="py-2 pr-3">Status</th>
-                  <th className="py-2 pr-3 text-right">Actions</th>
+                  <th className="py-2 pr-3">{ta("bookings.created")}</th>
+                  <th className="py-2 pr-3">{ta("bookings.source")}</th>
+                  <th className="py-2 pr-3">{ta("bookings.date")}</th>
+                  <th className="py-2 pr-3">{ta("bookings.guide")}</th>
+                  <th className="py-2 pr-3">{ta("bookings.customer")}</th>
+                  <th className="py-2 pr-3">{ta("bookings.guests")}</th>
+                  <th className="py-2 pr-3">{ta("bookings.total")}</th>
+                  <th className="py-2 pr-3">{ta("bookings.status")}</th>
+                  <th className="py-2 pr-3 text-right">{ta("common.actions")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/60">
@@ -1571,7 +1596,7 @@ function BookingsPanel({ bookings, reload }: { bookings: Booking[]; reload: () =
                     <td className="py-3 pr-3">{b.guests}</td>
                     <td className="py-3 pr-3 font-medium">${Number(b.total).toFixed(0)}</td>
                     <td className="py-3 pr-3">
-                      <span className={statusBadge(b.status)}>{b.status}</span>
+                      <span className={statusBadge(b.status)}>{filterLabel(b.status)}</span>
                     </td>
                     <td className="py-3 pr-3 text-right whitespace-nowrap">
                       <select
@@ -1579,14 +1604,14 @@ function BookingsPanel({ bookings, reload }: { bookings: Booking[]; reload: () =
                         onChange={(e) => setStatus(b.id, e.target.value)}
                         className="h-8 rounded-md border border-input bg-background px-2 text-xs"
                       >
-                        <option value="pending">pending</option>
-                        <option value="confirmed">confirmed</option>
-                        <option value="cancelled">cancelled</option>
+                        <option value="pending">{ta("filter.pending")}</option>
+                        <option value="confirmed">{ta("filter.confirmed")}</option>
+                        <option value="cancelled">{ta("filter.cancelled")}</option>
                       </select>
                       <button
                         onClick={() => remove(b.id)}
                         className="ml-2 inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                        aria-label="Delete"
+                        aria-label={ta("common.delete")}
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -1609,6 +1634,7 @@ function ApplicationsPanel({
   applications: GuideApplication[];
   reload: () => Promise<void>;
 }) {
+  const { ta } = useAdminI18n();
   const [filter, setFilter] = useState<"all" | "pending" | "approved" | "rejected">("pending");
   const [expanded, setExpanded] = useState<string | null>(null);
   const [uploading, setUploading] = useState<Record<string, boolean>>({});
@@ -1624,7 +1650,7 @@ function ApplicationsPanel({
       toast.error(error.message);
       return;
     }
-    toast.success("Status updated");
+    toast.success(ta("common.statusUpdated"));
 
     // On approval: create a guide row if one doesn't exist yet, and copy verified languages.
     if (status === "approved") {
@@ -1698,7 +1724,7 @@ function ApplicationsPanel({
                     .from("guide_categories")
                     .insert(cats.map((cid) => ({ guide_id: created.id, category_id: cid })));
                 }
-                toast.success("Guide profile created");
+                toast.success(ta("applications.guideCreated"));
               }
             }
           } else if (Object.keys(passed).length > 0) {
@@ -1732,11 +1758,11 @@ function ApplicationsPanel({
 
 
   const remove = async (id: string) => {
-    if (!confirm("Delete this application?")) return;
+    if (!confirm(ta("applications.confirmDelete"))) return;
     const { error } = await supabase.from("guide_applications").delete().eq("id", id);
     if (error) toast.error(error.message);
     else {
-      toast.success("Deleted");
+      toast.success(ta("common.deleted"));
       await reload();
     }
   };
@@ -1766,7 +1792,7 @@ function ApplicationsPanel({
     if (url) {
       const { error } = await supabase.from("guide_applications").update({ portrait_url: url }).eq("id", appId);
       if (error) toast.error(error.message);
-      else { toast.success("Portrait uploaded"); await reload(); }
+      else { toast.success(ta("applications.portraitUploaded")); await reload(); }
     }
     setUploading((p) => ({ ...p, [appId + "-portrait"]: false }));
   };
@@ -1775,7 +1801,7 @@ function ApplicationsPanel({
     const app = applications.find((a) => a.id === appId);
     const current = app?.photo_urls?.length ?? 0;
     const toAdd = Math.min(files.length, 5 - current);
-    if (toAdd <= 0) { toast.error("Max 5 photos"); return; }
+    if (toAdd <= 0) { toast.error(ta("applications.maxPhotos")); return; }
 
     setUploading((p) => ({ ...p, [appId + "-photos"]: true }));
     const newUrls: string[] = [];
@@ -1790,7 +1816,7 @@ function ApplicationsPanel({
       const merged = [...(app?.photo_urls ?? []), ...newUrls];
       const { error } = await supabase.from("guide_applications").update({ photo_urls: merged }).eq("id", appId);
       if (error) toast.error(error.message);
-      else { toast.success("Photos uploaded"); await reload(); }
+      else { toast.success(ta("applications.photosUploaded")); await reload(); }
     }
     setUploading((p) => ({ ...p, [appId + "-photos"]: false }));
   };
@@ -1801,7 +1827,7 @@ function ApplicationsPanel({
     const next = (app.photo_urls ?? []).filter((u) => u !== url);
     const { error } = await supabase.from("guide_applications").update({ photo_urls: next }).eq("id", appId);
     if (error) toast.error(error.message);
-    else { toast.success("Photo removed"); await reload(); }
+    else { toast.success(ta("applications.photoRemoved")); await reload(); }
   };
 
   const handleVideoUpload = async (appId: string, file: File) => {
@@ -1812,7 +1838,7 @@ function ApplicationsPanel({
     if (url) {
       const { error } = await supabase.from("guide_applications").update({ video_url: url }).eq("id", appId);
       if (error) toast.error(error.message);
-      else { toast.success("Video uploaded"); await reload(); }
+      else { toast.success(ta("applications.videoUploaded")); await reload(); }
     }
     setUploading((p) => ({ ...p, [appId + "-video"]: false }));
   };
@@ -1820,13 +1846,13 @@ function ApplicationsPanel({
   const removeVideo = async (appId: string) => {
     const { error } = await supabase.from("guide_applications").update({ video_url: null }).eq("id", appId);
     if (error) toast.error(error.message);
-    else { toast.success("Video removed"); await reload(); }
+    else { toast.success(ta("applications.videoRemoved")); await reload(); }
   };
 
   return (
     <div className="mt-6 rounded-3xl bg-card p-6 ring-1 ring-border/60">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="font-display text-lg font-semibold">Guide applications</h2>
+        <h2 className="font-display text-lg font-semibold">{ta("applications.title")}</h2>
         <div className="inline-flex rounded-full bg-secondary/60 p-1">
           {(["pending", "approved", "rejected", "all"] as const).map((s) => (
             <button
@@ -1834,14 +1860,14 @@ function ApplicationsPanel({
               onClick={() => setFilter(s)}
               className={`px-3 h-8 rounded-full text-xs font-medium capitalize ${filter === s ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
             >
-              {s}
+              {ta(`filter.${s}` as "filter.pending")}
             </button>
           ))}
         </div>
       </div>
 
       {filtered.length === 0 ? (
-        <p className="mt-6 text-sm text-muted-foreground">No applications.</p>
+        <p className="mt-6 text-sm text-muted-foreground">{ta("applications.empty")}</p>
       ) : (
         <ul className="mt-4 divide-y divide-border/60">
           {filtered.map((a) => {
@@ -1853,10 +1879,10 @@ function ApplicationsPanel({
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <p className="font-medium">{a.full_name}</p>
-                      <span className={badge(a.status)}>{a.status}</span>
+                      <span className={badge(a.status)}>{ta(`filter.${a.status}` as "filter.pending")}</span>
                     </div>
                     <p className="mt-1 text-xs text-muted-foreground">
-                      {a.city} · {a.experience_years} yr · {new Date(a.created_at).toLocaleDateString()}
+                      {a.city} · {a.experience_years} {ta("applications.yrShort")} · {new Date(a.created_at).toLocaleDateString()}
                     </p>
                     <p className="mt-1 text-xs text-muted-foreground truncate">
                       {a.email} · {a.phone}{a.telegram ? ` · ${a.telegram}` : ""}
@@ -1867,14 +1893,14 @@ function ApplicationsPanel({
                       onClick={() => setExpanded(open ? null : a.id)}
                       className="h-8 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-secondary/60"
                     >
-                      {open ? "Hide" : "Details"}
+                      {open ? ta("common.hide") : ta("common.details")}
                     </button>
                     {a.status !== "approved" && (
                       <button
                         onClick={() => setStatus(a.id, "approved")}
                         className="h-8 px-3 rounded-full text-xs font-medium bg-primary text-primary-foreground"
                       >
-                        Approve
+                        {ta("common.approve")}
                       </button>
                     )}
                     {a.status !== "rejected" && (
@@ -1882,13 +1908,13 @@ function ApplicationsPanel({
                         onClick={() => setStatus(a.id, "rejected")}
                         className="h-8 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-destructive/10 hover:text-destructive"
                       >
-                        Reject
+                        {ta("common.reject")}
                       </button>
                     )}
                     <button
                       onClick={() => remove(a.id)}
                       className="inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                      aria-label="Delete"
+                      aria-label={ta("common.delete")}
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
@@ -1898,14 +1924,14 @@ function ApplicationsPanel({
                   <div className="mt-3 rounded-2xl bg-secondary/40 p-4 text-sm space-y-4">
                     {/* Portrait */}
                     <div>
-                      <p className="text-xs font-medium text-muted-foreground mb-2">Portrait</p>
+                      <p className="text-xs font-medium text-muted-foreground mb-2">{ta("applications.portrait")}</p>
                       <div className="flex flex-wrap items-center gap-2">
                         {a.portrait_url ? (
                           <a href={a.portrait_url} target="_blank" rel="noreferrer">
                             <img src={a.portrait_url} alt="Portrait" className="h-24 w-24 rounded-xl object-cover ring-1 ring-border/60" />
                           </a>
                         ) : (
-                          <span className="text-xs text-muted-foreground">No portrait</span>
+                          <span className="text-xs text-muted-foreground">{ta("applications.noPortrait")}</span>
                         )}
                         <button
                           onClick={() => portraitRef.current?.click()}
@@ -1913,7 +1939,7 @@ function ApplicationsPanel({
                           className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-secondary/60 disabled:opacity-50"
                         >
                           <Upload className="h-3.5 w-3.5" />
-                          {uploading[a.id + "-portrait"] ? "Uploading…" : a.portrait_url ? "Replace" : "Upload portrait"}
+                          {uploading[a.id + "-portrait"] ? ta("common.uploading") : a.portrait_url ? ta("common.replace") : ta("applications.uploadPortrait")}
                         </button>
                         <input
                           ref={portraitRef}
@@ -1931,7 +1957,7 @@ function ApplicationsPanel({
 
                     {/* Photos */}
                     <div>
-                      <p className="text-xs font-medium text-muted-foreground mb-2">Tour photos ({photoCount}/5)</p>
+                      <p className="text-xs font-medium text-muted-foreground mb-2">{ta("applications.tourPhotos")} ({photoCount}/5)</p>
                       <div className="flex flex-wrap items-center gap-2">
                         {a.photo_urls?.map((url) => (
                           <div key={url} className="relative group">
@@ -1941,7 +1967,7 @@ function ApplicationsPanel({
                             <button
                               onClick={() => removePhoto(a.id, url)}
                               className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-destructive text-white flex items-center justify-center text-[10px] opacity-0 group-hover:opacity-100 transition"
-                              title="Remove"
+                              title={ta("common.remove")}
                             >
                               <Trash2 className="h-3 w-3" />
                             </button>
@@ -1954,7 +1980,7 @@ function ApplicationsPanel({
                             className="inline-flex flex-col items-center justify-center gap-1 h-24 w-24 rounded-xl ring-1 ring-border/60 border-dashed border-2 border-border/60 text-muted-foreground hover:bg-secondary/40 disabled:opacity-50"
                           >
                             <ImageIcon className="h-5 w-5" />
-                            <span className="text-[10px]">{uploading[a.id + "-photos"] ? "…" : "Add photo"}</span>
+                            <span className="text-[10px]">{uploading[a.id + "-photos"] ? "…" : ta("applications.addPhoto")}</span>
                           </button>
                         )}
                         <input
@@ -1975,7 +2001,7 @@ function ApplicationsPanel({
 
                     {/* Video */}
                     <div>
-                      <p className="text-xs font-medium text-muted-foreground mb-2">Video greeting</p>
+                      <p className="text-xs font-medium text-muted-foreground mb-2">{ta("applications.videoGreeting")}</p>
                       <div className="flex flex-wrap items-center gap-2">
                         {a.video_url ? (
                           <div className="relative group">
@@ -1983,13 +2009,13 @@ function ApplicationsPanel({
                             <button
                               onClick={() => removeVideo(a.id)}
                               className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-destructive text-white flex items-center justify-center text-[10px]"
-                              title="Remove video"
+                              title={ta("applications.removeVideo")}
                             >
                               <Trash2 className="h-3 w-3" />
                             </button>
                           </div>
                         ) : (
-                          <span className="text-xs text-muted-foreground">No video</span>
+                          <span className="text-xs text-muted-foreground">{ta("applications.noVideo")}</span>
                         )}
                         <button
                           onClick={() => videoRef.current?.click()}
@@ -1997,7 +2023,7 @@ function ApplicationsPanel({
                           className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-secondary/60 disabled:opacity-50"
                         >
                           <Video className="h-3.5 w-3.5" />
-                          {uploading[a.id + "-video"] ? "Uploading…" : a.video_url ? "Replace" : "Upload video"}
+                          {uploading[a.id + "-video"] ? ta("common.uploading") : a.video_url ? ta("common.replace") : ta("applications.uploadVideo")}
                         </button>
                         <input
                           ref={videoRef}
@@ -2014,15 +2040,15 @@ function ApplicationsPanel({
                     </div>
 
                     <div>
-                      <span className="text-xs text-muted-foreground">Specialization: </span>
+                      <span className="text-xs text-muted-foreground">{ta("applications.specialization")}</span>
                       {a.specialization}
                     </div>
                     <div>
-                      <span className="text-xs text-muted-foreground">Languages: </span>
+                      <span className="text-xs text-muted-foreground">{ta("applications.languages")}</span>
                       {a.languages.join(", ")}
                     </div>
                     <div>
-                      <span className="text-xs text-muted-foreground">About:</span>
+                      <span className="text-xs text-muted-foreground">{ta("applications.about")}</span>
                       <p className="mt-1 whitespace-pre-wrap">{a.about}</p>
                     </div>
                   </div>
@@ -2049,6 +2075,7 @@ function PlacesPanel({
   placeGuides: PlaceGuideLink[];
   reload: () => Promise<void>;
 }) {
+  const { ta } = useAdminI18n();
   const [cityId, setCityId] = useState("");
   const [category, setCategory] = useState<string>("food");
   const [name, setName] = useState("");
@@ -2066,7 +2093,7 @@ function PlacesPanel({
   const add = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !slug || !cityId) {
-      toast.error("Name, slug and city are required");
+      toast.error(ta("places.needFields"));
       return;
     }
     setSaving(true);
@@ -2088,7 +2115,7 @@ function PlacesPanel({
       toast.error(error.message);
       return;
     }
-    toast.success("Place added");
+    toast.success(ta("places.added"));
     setName("");
     setSlug("");
     setShortDescription("");
@@ -2100,11 +2127,11 @@ function PlacesPanel({
   };
 
   const remove = async (id: string) => {
-    if (!confirm("Delete this place?")) return;
+    if (!confirm(ta("places.confirmDelete"))) return;
     const { error } = await supabase.from("places").delete().eq("id", id);
     if (error) toast.error(error.message);
     else {
-      toast.success("Deleted");
+      toast.success(ta("common.deleted"));
       await reload();
     }
   };
@@ -2134,7 +2161,7 @@ function PlacesPanel({
   if (cities.length === 0) {
     return (
       <div className="mt-6 rounded-3xl bg-card p-6 ring-1 ring-border/60 text-sm text-muted-foreground">
-        Add at least one city before creating places.
+        {ta("places.needCityFirst")}
       </div>
     );
   }
@@ -2146,9 +2173,9 @@ function PlacesPanel({
   return (
     <div className="mt-6 grid gap-6 lg:grid-cols-2">
       <form onSubmit={add} className="rounded-3xl bg-card p-6 ring-1 ring-border/60 h-fit">
-        <h2 className="font-display text-lg font-semibold">Add a place</h2>
+        <h2 className="font-display text-lg font-semibold">{ta("places.add")}</h2>
         <p className="mt-1 text-xs text-muted-foreground">
-          Places appear in AI recommendations and on the public site. AI sees only published places.
+          {ta("places.subtitle")}
         </p>
         <div className="mt-4 space-y-3">
           <div className="grid grid-cols-2 gap-3">
@@ -2159,7 +2186,7 @@ function PlacesPanel({
                 onChange={(e) => setCityId(e.target.value)}
                 className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
               >
-                <option value="">Select city…</option>
+                <option value="">{ta("common.selectCity")}</option>
                 {cities.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.name}
@@ -2223,19 +2250,19 @@ function PlacesPanel({
           disabled={saving}
           className="mt-5 inline-flex items-center gap-2 h-11 px-6 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-60"
         >
-          <Plus className="h-4 w-4" /> {saving ? "Saving…" : "Add place"}
+          <Plus className="h-4 w-4" /> {saving ? ta("common.saving") : ta("places.addBtn")}
         </button>
       </form>
 
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
-        <h2 className="font-display text-lg font-semibold">Places</h2>
+        <h2 className="font-display text-lg font-semibold">{ta("places.title")}</h2>
         <div className="mt-3 flex flex-wrap gap-2">
           <select
             value={filterCity}
             onChange={(e) => setFilterCity(e.target.value)}
             className="h-9 rounded-full border border-input bg-background px-3 text-xs"
           >
-            <option value="">All cities</option>
+            <option value="">{ta("common.allCities")}</option>
             {cities.map((c) => (
               <option key={c.id} value={c.id}>
                 {c.name}
@@ -2247,7 +2274,7 @@ function PlacesPanel({
             onChange={(e) => setFilterCategory(e.target.value)}
             className="h-9 rounded-full border border-input bg-background px-3 text-xs"
           >
-            <option value="">All categories</option>
+            <option value="">{ta("common.allCategories")}</option>
             {PLACE_CATEGORIES.map((c) => (
               <option key={c.value} value={c.value}>
                 {c.label}
@@ -2256,7 +2283,7 @@ function PlacesPanel({
           </select>
         </div>
         <ul className="mt-4 divide-y divide-border/60">
-          {filtered.length === 0 && <li className="py-4 text-sm text-muted-foreground">No places yet.</li>}
+          {filtered.length === 0 && <li className="py-4 text-sm text-muted-foreground">{ta("places.empty")}</li>}
           {filtered.map((p) => {
             const city = cities.find((c) => c.id === p.city_id);
             const linkedGuideIds = new Set(
@@ -2285,12 +2312,12 @@ function PlacesPanel({
                           : "bg-secondary text-muted-foreground ring-border/60"
                       }`}
                     >
-                      {p.published ? "Live" : "Draft"}
+                      {p.published ? ta("common.live") : ta("common.draft")}
                     </button>
                     <button
                       onClick={() => remove(p.id)}
                       className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                      aria-label="Delete"
+                      aria-label={ta("common.delete")}
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
@@ -2299,7 +2326,7 @@ function PlacesPanel({
                 {cityGuides.length > 0 && (
                   <div>
                     <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
-                      Guides who take travelers here
+                      {ta("places.guidesWhoTake")}
                     </p>
                     <div className="mt-1 flex flex-wrap gap-1.5">
                       {cityGuides.map((g) => {
@@ -2339,10 +2366,11 @@ function SuggestionsPanel({
   cities: City[];
   reload: () => Promise<void>;
 }) {
+  const { ta } = useAdminI18n();
   const approve = async (s: PlaceSuggestion) => {
     const cityId = s.city_id ?? cities.find((c) => c.name.toLowerCase() === s.city_name.toLowerCase())?.id;
     if (!cityId) {
-      toast.error("City not found — add it first or set manually");
+      toast.error(ta("suggestions.cityNotFound"));
       return;
     }
     const baseSlug = s.name
@@ -2365,7 +2393,7 @@ function SuggestionsPanel({
       return;
     }
     await supabase.from("place_suggestions").update({ status: "approved" }).eq("id", s.id);
-    toast.success("Added to Places as draft. Edit and publish from the Places tab.");
+    toast.success(ta("suggestions.added"));
     await reload();
   };
 
@@ -2377,12 +2405,12 @@ function SuggestionsPanel({
 
   return (
     <div className="mt-6 rounded-3xl bg-card p-6 ring-1 ring-border/60">
-      <h2 className="font-display text-lg font-semibold">AI Suggestions</h2>
+      <h2 className="font-display text-lg font-semibold">{ta("suggestions.title")}</h2>
       <p className="mt-1 text-xs text-muted-foreground">
-        Places the AI found online via user queries. Approve to add to Places (as draft) or reject.
+        {ta("suggestions.subtitle")}
       </p>
       {suggestions.length === 0 ? (
-        <p className="mt-4 text-sm text-muted-foreground">No pending suggestions.</p>
+        <p className="mt-4 text-sm text-muted-foreground">{ta("suggestions.empty")}</p>
       ) : (
         <ul className="mt-4 divide-y divide-border/60">
           {suggestions.map((s) => (
@@ -2403,12 +2431,12 @@ function SuggestionsPanel({
                       rel="noreferrer"
                       className="mt-1 inline-block text-xs text-primary hover:underline"
                     >
-                      Source ↗
+                      {ta("suggestions.source")}
                     </a>
                   )}
                   {s.raw_query && (
                     <p className="mt-1 text-[11px] text-muted-foreground italic">
-                      User query: "{s.raw_query}"
+                      {ta("suggestions.userQuery")} "{s.raw_query}"
                     </p>
                   )}
                 </div>
@@ -2417,13 +2445,13 @@ function SuggestionsPanel({
                     onClick={() => approve(s)}
                     className="px-3 h-9 rounded-full bg-primary text-primary-foreground text-xs font-semibold"
                   >
-                    Approve
+                    {ta("common.approve")}
                   </button>
                   <button
                     onClick={() => reject(s.id)}
                     className="px-3 h-9 rounded-full ring-1 ring-border/60 text-xs font-medium hover:bg-destructive/10 hover:text-destructive"
                   >
-                    Reject
+                    {ta("common.reject")}
                   </button>
                 </div>
               </div>
@@ -2435,6 +2463,7 @@ function SuggestionsPanel({
   );
 }
 
+
 type AppUser = {
   id: string;
   email: string;
@@ -2444,6 +2473,7 @@ type AppUser = {
 };
 
 function UsersPanel() {
+  const { ta } = useAdminI18n();
   const listFn = useServerFn(listAppUsers);
   const setRoleFn = useServerFn(setAdminRole);
   const inviteFn = useServerFn(inviteAdminUser);
@@ -2470,10 +2500,10 @@ function UsersPanel() {
   }, [load]);
 
   const toggle = async (u: AppUser) => {
-    if (u.is_admin && !confirm(`Remove admin role from ${u.email}?`)) return;
+    if (u.is_admin && !confirm(ta("users.confirmRemoveAdmin", { email: u.email }))) return;
     try {
       await setRoleFn({ data: { user_id: u.id, grant: !u.is_admin } });
-      toast.success(u.is_admin ? "Admin role removed" : "Admin role granted");
+      toast.success(u.is_admin ? ta("users.adminRemoved") : ta("users.adminGranted"));
       await load();
     } catch (e) {
       toast.error((e as Error).message);
@@ -2481,10 +2511,10 @@ function UsersPanel() {
   };
 
   const removeUser = async (u: AppUser) => {
-    if (!confirm(`Permanently delete ${u.email}? This cannot be undone.`)) return;
+    if (!confirm(ta("users.confirmDelete", { email: u.email }))) return;
     try {
       await deleteFn({ data: { user_id: u.id } });
-      toast.success("User deleted");
+      toast.success(ta("users.deleted"));
       await load();
     } catch (e) {
       toast.error((e as Error).message);
@@ -2497,7 +2527,7 @@ function UsersPanel() {
     setInviting(true);
     try {
       const res = await inviteFn({ data: { email } });
-      toast.success(res.existed ? "Admin role granted to existing user" : "Invite sent");
+      toast.success(res.existed ? ta("users.adminGrantedExisting") : ta("users.inviteSentSimple"));
       setEmail("");
       await load();
     } catch (err) {
@@ -2510,9 +2540,9 @@ function UsersPanel() {
   return (
     <div className="mt-6 grid gap-6 md:grid-cols-2">
       <form onSubmit={invite} className="rounded-3xl bg-card p-6 ring-1 ring-border/60 h-fit">
-        <h2 className="font-display text-lg font-semibold">Invite admin</h2>
+        <h2 className="font-display text-lg font-semibold">{ta("users.inviteAdmin")}</h2>
         <p className="mt-1 text-xs text-muted-foreground">
-          Send an invite email. If the user already exists, admin role will be granted immediately.
+          {ta("users.inviteHint")}
         </p>
         <div className="mt-4">
           <Field label="Email" value={email} onChange={setEmail} placeholder="new-admin@example.com" />
@@ -2522,18 +2552,18 @@ function UsersPanel() {
           disabled={inviting}
           className="mt-5 inline-flex items-center gap-2 h-11 px-6 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-60"
         >
-          <Plus className="h-4 w-4" /> {inviting ? "Sending…" : "Invite admin"}
+          <Plus className="h-4 w-4" /> {inviting ? ta("common.sending") : ta("users.inviteBtn")}
         </button>
       </form>
 
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
-        <h2 className="font-display text-lg font-semibold">All users ({users.length})</h2>
+        <h2 className="font-display text-lg font-semibold">{ta("users.all", { n: users.length })}</h2>
         {loading ? (
-          <p className="mt-4 text-sm text-muted-foreground">Loading…</p>
+          <p className="mt-4 text-sm text-muted-foreground">{ta("common.loading")}</p>
         ) : (
           <ul className="mt-4 divide-y divide-border/60">
             {users.length === 0 && (
-              <li className="py-4 text-sm text-muted-foreground">No users.</li>
+              <li className="py-4 text-sm text-muted-foreground">{ta("users.empty")}</li>
             )}
             {users.map((u) => (
               <li key={u.id} className="py-3 flex items-center justify-between gap-3">
@@ -2542,13 +2572,13 @@ function UsersPanel() {
                     {u.email}
                     {u.is_admin && (
                       <span className="inline-flex items-center rounded-full bg-primary/10 text-primary px-2 py-0.5 text-[10px] font-semibold uppercase">
-                        Admin
+                        {ta("users.adminBadge")}
                       </span>
                     )}
                   </p>
                   <p className="text-xs text-muted-foreground truncate">
-                    Joined {new Date(u.created_at).toLocaleDateString()}
-                    {u.last_sign_in_at && ` · Last login ${new Date(u.last_sign_in_at).toLocaleDateString()}`}
+                    {ta("users.joined")} {new Date(u.created_at).toLocaleDateString()}
+                    {u.last_sign_in_at && ` · ${ta("users.lastLogin")} ${new Date(u.last_sign_in_at).toLocaleDateString()}`}
                   </p>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
@@ -2560,13 +2590,13 @@ function UsersPanel() {
                         : "bg-primary text-primary-foreground hover:opacity-90"
                     }`}
                   >
-                    {u.is_admin ? "Remove admin" : "Make admin"}
+                    {u.is_admin ? ta("users.removeAdmin") : ta("users.makeAdmin")}
                   </button>
                   <button
                     onClick={() => removeUser(u)}
                     className="h-9 px-3 rounded-full text-xs font-semibold border border-destructive/40 text-destructive hover:bg-destructive/10"
                   >
-                    Delete
+                    {ta("common.delete")}
                   </button>
                 </div>
               </li>
@@ -2577,4 +2607,5 @@ function UsersPanel() {
     </div>
   );
 }
+
 

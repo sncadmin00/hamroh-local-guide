@@ -4,14 +4,7 @@ import { useSpotlightsAdmin, SPOTLIGHT_KINDS } from "@/lib/content-queries";
 import type { SpotlightBadge, SpotlightKind, SpotlightRow } from "@/lib/spotlights";
 import { toast } from "sonner";
 import { Trash2, Plus, Upload } from "lucide-react";
-
-const BADGE_OPTIONS: { value: SpotlightBadge | ""; label: string }[] = [
-  { value: "", label: "No badge" },
-  { value: "new", label: "New" },
-  { value: "featured", label: "Featured" },
-  { value: "trending", label: "Trending" },
-  { value: "limited", label: "Limited availability" },
-];
+import { useAdminI18n } from "@/lib/admin-i18n";
 
 const EMPTY: Partial<SpotlightRow> = {
   kind: "news",
@@ -29,6 +22,7 @@ const EMPTY: Partial<SpotlightRow> = {
 };
 
 export function SpotlightsPanel() {
+  const { ta } = useAdminI18n();
   const { data: items = [], refetch } = useSpotlightsAdmin();
   const [editing, setEditing] = useState<Partial<SpotlightRow> | null>(null);
 
@@ -36,10 +30,10 @@ export function SpotlightsPanel() {
   const startEdit = (s: SpotlightRow) => setEditing({ ...s });
 
   const remove = async (id: string) => {
-    if (!confirm("Delete this spotlight?")) return;
+    if (!confirm(ta("spotlights.confirmDelete"))) return;
     const { error } = await (supabase as any).from("spotlights").delete().eq("id", id);
     if (error) toast.error(error.message);
-    else { toast.success("Deleted"); refetch(); }
+    else { toast.success(ta("common.deleted")); refetch(); }
   };
 
   const toggleActive = async (s: SpotlightRow) => {
@@ -51,16 +45,16 @@ export function SpotlightsPanel() {
   return (
     <section className="mt-6 space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="font-display text-xl font-semibold">Spotlight banner</h2>
+        <h2 className="font-display text-xl font-semibold">{ta("spotlights.title")}</h2>
         <button
           onClick={startNew}
           className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:opacity-90"
         >
-          <Plus className="h-4 w-4" /> Add spotlight
+          <Plus className="h-4 w-4" /> {ta("spotlights.addBtn")}
         </button>
       </div>
 
-      <p className="text-sm text-muted-foreground">Rotating cards shown above the AI input on the home page. Inactive items are hidden from the site.</p>
+      <p className="text-sm text-muted-foreground">{ta("spotlights.subtitle")}</p>
 
       {editing && (
         <SpotlightEditor
@@ -74,11 +68,11 @@ export function SpotlightsPanel() {
         <table className="w-full text-sm">
           <thead className="bg-secondary/40 text-xs uppercase tracking-wider text-muted-foreground">
             <tr>
-              <th className="text-left px-4 py-2">Order</th>
-              <th className="text-left px-4 py-2">Kind</th>
-              <th className="text-left px-4 py-2">Image</th>
-              <th className="text-left px-4 py-2">Title (EN)</th>
-              <th className="text-left px-4 py-2">Active</th>
+              <th className="text-left px-4 py-2">{ta("spotlights.col.order")}</th>
+              <th className="text-left px-4 py-2">{ta("spotlights.col.kind")}</th>
+              <th className="text-left px-4 py-2">{ta("spotlights.col.image")}</th>
+              <th className="text-left px-4 py-2">{ta("spotlights.col.titleEn")}</th>
+              <th className="text-left px-4 py-2">{ta("spotlights.col.active")}</th>
               <th className="px-4 py-2"></th>
             </tr>
           </thead>
@@ -90,23 +84,23 @@ export function SpotlightsPanel() {
                 <td className="px-4 py-2 w-16">
                   {s.image_url ? <img src={s.image_url} alt="" className="h-10 w-10 rounded object-cover" /> : <span className="text-xs text-muted-foreground">—</span>}
                 </td>
-                <td className="px-4 py-2">{s.title_en || <span className="text-muted-foreground italic">empty</span>}</td>
+                <td className="px-4 py-2">{s.title_en || <span className="text-muted-foreground italic">{ta("spotlights.empty.title")}</span>}</td>
                 <td className="px-4 py-2">
                   <button
                     onClick={() => toggleActive(s)}
                     className={`px-2 py-0.5 rounded-full text-xs ${s.is_active ? "bg-green-100 text-green-700" : "bg-secondary text-muted-foreground"}`}
                   >
-                    {s.is_active ? "active" : "hidden"}
+                    {s.is_active ? ta("common.active") : ta("common.hidden")}
                   </button>
                 </td>
                 <td className="px-4 py-2 text-right whitespace-nowrap">
-                  <button onClick={() => startEdit(s)} className="text-primary text-xs mr-3">Edit</button>
+                  <button onClick={() => startEdit(s)} className="text-primary text-xs mr-3">{ta("common.edit")}</button>
                   <button onClick={() => remove(s.id)} className="text-destructive"><Trash2 className="h-4 w-4 inline" /></button>
                 </td>
               </tr>
             ))}
             {items.length === 0 && (
-              <tr><td colSpan={6} className="px-4 py-8 text-center text-sm text-muted-foreground">No spotlights yet.</td></tr>
+              <tr><td colSpan={6} className="px-4 py-8 text-center text-sm text-muted-foreground">{ta("spotlights.empty")}</td></tr>
             )}
           </tbody>
         </table>
@@ -124,6 +118,14 @@ function SpotlightEditor({
   onClose: () => void;
   onSaved: () => void;
 }) {
+  const { ta } = useAdminI18n();
+  const BADGE_OPTIONS: { value: SpotlightBadge | ""; label: string }[] = [
+    { value: "", label: ta("spotlights.badge.none") },
+    { value: "new", label: ta("spotlights.badge.new") },
+    { value: "featured", label: ta("spotlights.badge.featured") },
+    { value: "trending", label: ta("spotlights.badge.trending") },
+    { value: "limited", label: ta("spotlights.badge.limited") },
+  ];
   const [form, setForm] = useState(initial);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -166,20 +168,20 @@ function SpotlightEditor({
     const { error } = await q;
     setSaving(false);
     if (error) { toast.error(error.message); return; }
-    toast.success("Saved");
+    toast.success(ta("common.saved"));
     onSaved();
   };
 
   return (
     <div className="rounded-2xl bg-card ring-1 ring-border/60 p-5 space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="font-semibold">{form.id ? "Edit spotlight" : "New spotlight"}</h3>
-        <button onClick={onClose} className="text-sm text-muted-foreground">Cancel</button>
+        <h3 className="font-semibold">{form.id ? ta("spotlights.edit") : ta("spotlights.new")}</h3>
+        <button onClick={onClose} className="text-sm text-muted-foreground">{ta("common.cancel")}</button>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-3">
         <label className="text-sm">
-          <span className="text-muted-foreground">Kind</span>
+          <span className="text-muted-foreground">{ta("spotlights.field.kind")}</span>
           <select
             value={form.kind ?? "news"}
             onChange={(e) => set("kind", e.target.value as SpotlightKind)}
@@ -189,7 +191,7 @@ function SpotlightEditor({
           </select>
         </label>
         <label className="text-sm">
-          <span className="text-muted-foreground">Badge</span>
+          <span className="text-muted-foreground">{ta("spotlights.field.badge")}</span>
           <select
             value={form.badge ?? ""}
             onChange={(e) => set("badge", (e.target.value || null) as SpotlightBadge | null)}
@@ -199,7 +201,7 @@ function SpotlightEditor({
           </select>
         </label>
         <label className="text-sm">
-          <span className="text-muted-foreground">Sort order</span>
+          <span className="text-muted-foreground">{ta("spotlights.field.sortOrder")}</span>
           <input
             type="number"
             value={form.sort_order ?? 0}
@@ -233,7 +235,7 @@ function SpotlightEditor({
 
       <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
         <label className="text-sm">
-          <span className="text-muted-foreground">Link (href)</span>
+          <span className="text-muted-foreground">{ta("spotlights.field.link")}</span>
           <input
             placeholder="/guides/aziz or /tours/aral-tour"
             value={form.href ?? "/"}
@@ -248,12 +250,12 @@ function SpotlightEditor({
             onChange={(e) => set("is_active", e.target.checked)}
             className="h-4 w-4"
           />
-          <span>Active</span>
+          <span>{ta("spotlights.field.active")}</span>
         </label>
       </div>
 
       <div className="space-y-2">
-        <div className="text-sm text-muted-foreground">Image</div>
+        <div className="text-sm text-muted-foreground">{ta("spotlights.field.image")}</div>
         <div className="flex items-center gap-3">
           {form.image_url ? (
             <img src={form.image_url} alt="" className="h-16 w-16 rounded-lg object-cover ring-1 ring-border" />
@@ -262,7 +264,7 @@ function SpotlightEditor({
           )}
           <label className="inline-flex items-center gap-2 h-9 px-3 rounded-full bg-secondary text-sm cursor-pointer hover:bg-secondary/80">
             <Upload className="h-4 w-4" />
-            {uploading ? "Uploading…" : "Upload image"}
+            {uploading ? ta("common.uploading") : ta("spotlights.uploadImage")}
             <input
               type="file"
               accept="image/*"
@@ -271,7 +273,7 @@ function SpotlightEditor({
             />
           </label>
           {form.image_url && (
-            <button onClick={() => set("image_url", "")} className="text-xs text-destructive">Remove</button>
+            <button onClick={() => set("image_url", "")} className="text-xs text-destructive">{ta("common.remove")}</button>
           )}
         </div>
       </div>
@@ -282,7 +284,7 @@ function SpotlightEditor({
           disabled={saving}
           className="h-10 px-5 rounded-full bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 disabled:opacity-50"
         >
-          {saving ? "Saving…" : "Save"}
+          {saving ? ta("common.saving") : ta("common.save")}
         </button>
       </div>
     </div>

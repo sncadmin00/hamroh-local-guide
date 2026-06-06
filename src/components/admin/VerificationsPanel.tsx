@@ -7,10 +7,12 @@ import {
   adminSetIdentity,
   adminSetIntroVideo,
 } from "@/lib/guide-verification.functions";
+import { useAdminI18n } from "@/lib/admin-i18n";
 
 type Row = Awaited<ReturnType<typeof adminListVerifications>>[number];
 
 export function VerificationsPanel() {
+  const { ta } = useAdminI18n();
   const fetchList = useServerFn(adminListVerifications);
   const setId = useServerFn(adminSetIdentity);
   const setVideo = useServerFn(adminSetIntroVideo);
@@ -26,7 +28,7 @@ export function VerificationsPanel() {
   useEffect(() => { load(); }, [load]);
 
   if (loading) return <div className="py-10 grid place-items-center"><Loader2 className="h-5 w-5 animate-spin" /></div>;
-  if (!rows.length) return <p className="text-sm text-muted-foreground py-10 text-center">No submissions yet.</p>;
+  if (!rows.length) return <p className="text-sm text-muted-foreground py-10 text-center">{ta("verifs.empty")}</p>;
 
   const act = async (fn: (i: any) => Promise<unknown>, payload: any, msg: string) => {
     try { await fn(payload); toast.success(msg); await load(); }
@@ -47,62 +49,62 @@ export function VerificationsPanel() {
 
           <div className="grid md:grid-cols-2 gap-4">
             <div className="rounded-lg bg-muted/40 p-3 space-y-2">
-              <p className="text-sm font-medium flex items-center gap-1.5"><ShieldCheck className="h-4 w-4" /> Identity {g.identity_verified ? "✓" : ""}</p>
-              <p className="text-xs">Phone: {g.identity_phone || "—"}</p>
+              <p className="text-sm font-medium flex items-center gap-1.5"><ShieldCheck className="h-4 w-4" /> {ta("verifs.identity")} {g.identity_verified ? "✓" : ""}</p>
+              <p className="text-xs">{ta("verifs.phone")} {g.identity_phone || "—"}</p>
               {g.passport_signed ? (
-                <a href={g.passport_signed} target="_blank" rel="noreferrer" className="text-xs text-primary underline">Open passport photo</a>
-              ) : <p className="text-xs text-muted-foreground">No file</p>}
+                <a href={g.passport_signed} target="_blank" rel="noreferrer" className="text-xs text-primary underline">{ta("verifs.openPassport")}</a>
+              ) : <p className="text-xs text-muted-foreground">{ta("verifs.noFile")}</p>}
               {g.identity_submitted_at && (
-                <p className="text-[10px] text-muted-foreground">Submitted {new Date(g.identity_submitted_at).toLocaleString()}</p>
+                <p className="text-[10px] text-muted-foreground">{ta("verifs.submitted")} {new Date(g.identity_submitted_at).toLocaleString()}</p>
               )}
               {g.identity_rejected_reason && <p className="text-xs text-destructive">{g.identity_rejected_reason}</p>}
               <div className="flex gap-2 pt-1">
                 <button
-                  onClick={() => act(setId, { data: { guide_id: g.id, approved: true } }, "Identity approved")}
+                  onClick={() => act(setId, { data: { guide_id: g.id, approved: true } }, ta("verifs.identityApproved"))}
                   className="inline-flex items-center gap-1 h-8 px-3 rounded-full bg-primary text-primary-foreground text-xs font-medium"
                   disabled={!g.identity_submitted_at}
                 >
-                  <Check className="h-3 w-3" /> Approve
+                  <Check className="h-3 w-3" /> {ta("common.approve")}
                 </button>
                 <button
                   onClick={() => {
-                    const reason = prompt("Reason for rejection?") ?? undefined;
-                    act(setId, { data: { guide_id: g.id, approved: false, reason } }, "Identity rejected");
+                    const reason = prompt(ta("verifs.rejectionReason")) ?? undefined;
+                    act(setId, { data: { guide_id: g.id, approved: false, reason } }, ta("verifs.identityRejected"));
                   }}
                   className="inline-flex items-center gap-1 h-8 px-3 rounded-full bg-destructive/10 text-destructive text-xs font-medium"
                   disabled={!g.identity_submitted_at}
                 >
-                  <X className="h-3 w-3" /> Reject
+                  <X className="h-3 w-3" /> {ta("common.reject")}
                 </button>
               </div>
             </div>
 
             <div className="rounded-lg bg-muted/40 p-3 space-y-2">
-              <p className="text-sm font-medium flex items-center gap-1.5"><Video className="h-4 w-4" /> Intro video {g.intro_video_verified ? "✓" : ""}</p>
+              <p className="text-sm font-medium flex items-center gap-1.5"><Video className="h-4 w-4" /> {ta("verifs.introVideo")} {g.intro_video_verified ? "✓" : ""}</p>
               {g.video_signed ? (
                 <video src={g.video_signed} controls className="w-full rounded max-h-60 bg-black" />
-              ) : <p className="text-xs text-muted-foreground">No file</p>}
+              ) : <p className="text-xs text-muted-foreground">{ta("verifs.noFile")}</p>}
               {g.intro_video_submitted_at && (
-                <p className="text-[10px] text-muted-foreground">Submitted {new Date(g.intro_video_submitted_at).toLocaleString()}</p>
+                <p className="text-[10px] text-muted-foreground">{ta("verifs.submitted")} {new Date(g.intro_video_submitted_at).toLocaleString()}</p>
               )}
               {g.intro_video_rejected_reason && <p className="text-xs text-destructive">{g.intro_video_rejected_reason}</p>}
               <div className="flex gap-2 pt-1">
                 <button
-                  onClick={() => act(setVideo, { data: { guide_id: g.id, approved: true } }, "Video approved")}
+                  onClick={() => act(setVideo, { data: { guide_id: g.id, approved: true } }, ta("verifs.videoApproved"))}
                   className="inline-flex items-center gap-1 h-8 px-3 rounded-full bg-primary text-primary-foreground text-xs font-medium"
                   disabled={!g.intro_video_submitted_at}
                 >
-                  <Check className="h-3 w-3" /> Approve
+                  <Check className="h-3 w-3" /> {ta("common.approve")}
                 </button>
                 <button
                   onClick={() => {
-                    const reason = prompt("Reason for rejection?") ?? undefined;
-                    act(setVideo, { data: { guide_id: g.id, approved: false, reason } }, "Video rejected");
+                    const reason = prompt(ta("verifs.rejectionReason")) ?? undefined;
+                    act(setVideo, { data: { guide_id: g.id, approved: false, reason } }, ta("verifs.videoRejected"));
                   }}
                   className="inline-flex items-center gap-1 h-8 px-3 rounded-full bg-destructive/10 text-destructive text-xs font-medium"
                   disabled={!g.intro_video_submitted_at}
                 >
-                  <X className="h-3 w-3" /> Reject
+                  <X className="h-3 w-3" /> {ta("common.reject")}
                 </button>
               </div>
             </div>
