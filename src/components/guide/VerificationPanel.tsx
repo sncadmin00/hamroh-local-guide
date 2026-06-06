@@ -8,39 +8,42 @@ import {
   submitIdentity,
   submitIntroVideo,
 } from "@/lib/guide-verification.functions";
+import { useGuideI18n } from "@/lib/guide-i18n";
 
 type V = Awaited<ReturnType<typeof getMyVerification>>;
 
 function StatusPill({ verified, submittedAt, rejected }: { verified: boolean; submittedAt: string | null; rejected: string | null }) {
+  const { tg } = useGuideI18n();
   if (verified) {
     return (
       <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary px-2.5 py-1 text-xs font-medium">
-        <CheckCircle2 className="h-3.5 w-3.5" /> Verified
+        <CheckCircle2 className="h-3.5 w-3.5" /> {tg("verification.verified")}
       </span>
     );
   }
   if (rejected) {
     return (
       <span className="inline-flex items-center gap-1 rounded-full bg-destructive/10 text-destructive px-2.5 py-1 text-xs font-medium">
-        <AlertCircle className="h-3.5 w-3.5" /> Rejected: {rejected}
+        <AlertCircle className="h-3.5 w-3.5" /> {tg("verification.rejected", { reason: rejected })}
       </span>
     );
   }
   if (submittedAt) {
     return (
       <span className="inline-flex items-center gap-1 rounded-full bg-muted text-muted-foreground px-2.5 py-1 text-xs font-medium">
-        <Clock className="h-3.5 w-3.5" /> Pending review
+        <Clock className="h-3.5 w-3.5" /> {tg("verification.pending")}
       </span>
     );
   }
   return (
     <span className="inline-flex items-center gap-1 rounded-full bg-muted text-muted-foreground px-2.5 py-1 text-xs">
-      Not submitted
+      {tg("verification.notSubmitted")}
     </span>
   );
 }
 
 export function VerificationPanel() {
+  const { tg } = useGuideI18n();
   const fetchV = useServerFn(getMyVerification);
   const subIdentity = useServerFn(submitIdentity);
   const subVideo = useServerFn(submitIntroVideo);
@@ -82,14 +85,14 @@ export function VerificationPanel() {
 
   const onSubmitIdentity = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!phone.trim()) { toast.error("Enter phone"); return; }
-    if (!passportFile && !data.identity_passport_url) { toast.error("Upload passport photo"); return; }
+    if (!phone.trim()) { toast.error(tg("verification.enterPhone")); return; }
+    if (!passportFile && !data.identity_passport_url) { toast.error(tg("verification.uploadPassport")); return; }
     setSavingId(true);
     try {
       let path = data.identity_passport_url ?? "";
       if (passportFile) path = await uploadFile(passportFile, "guide-identity", "passport");
       await subIdentity({ data: { phone: phone.trim(), passport_path: path } });
-      toast.success("Submitted for review");
+      toast.success(tg("verification.submitted"));
       setPassportFile(null);
       await load();
     } catch (e) { toast.error((e as Error).message); }
@@ -98,13 +101,13 @@ export function VerificationPanel() {
 
   const onSubmitVideo = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!videoFile) { toast.error("Choose a video"); return; }
-    if (videoFile.size > 80 * 1024 * 1024) { toast.error("Video too large (max 80 MB)"); return; }
+    if (!videoFile) { toast.error(tg("verification.chooseVideo")); return; }
+    if (videoFile.size > 80 * 1024 * 1024) { toast.error(tg("verification.videoTooLarge")); return; }
     setSavingVideo(true);
     try {
       const path = await uploadFile(videoFile, "guide-intro-videos", "intro");
       await subVideo({ data: { video_path: path } });
-      toast.success("Submitted for review");
+      toast.success(tg("verification.submitted"));
       setVideoFile(null);
       await load();
     } catch (e) { toast.error((e as Error).message); }
@@ -114,34 +117,34 @@ export function VerificationPanel() {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl bg-card ring-1 ring-border p-5">
-        <p className="text-xs uppercase tracking-wider text-muted-foreground mb-3">Verification status</p>
+        <p className="text-xs uppercase tracking-wider text-muted-foreground mb-3">{tg("verification.status")}</p>
         <div className="grid sm:grid-cols-3 gap-3 text-sm">
           <div className="rounded-lg bg-muted/40 p-3">
-            <p className="font-medium flex items-center gap-1.5"><ShieldCheck className="h-4 w-4" /> Identity</p>
+            <p className="font-medium flex items-center gap-1.5"><ShieldCheck className="h-4 w-4" /> {tg("verification.identity")}</p>
             <div className="mt-2"><StatusPill verified={!!data.identity_verified} submittedAt={data.identity_submitted_at} rejected={data.identity_rejected_reason} /></div>
           </div>
           <div className="rounded-lg bg-muted/40 p-3">
-            <p className="font-medium">Language</p>
+            <p className="font-medium">{tg("verification.language")}</p>
             <div className="mt-2">
               {hasVerifiedLanguage ? (
-                <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary px-2.5 py-1 text-xs font-medium"><CheckCircle2 className="h-3.5 w-3.5" /> Verified</span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary px-2.5 py-1 text-xs font-medium"><CheckCircle2 className="h-3.5 w-3.5" /> {tg("verification.verified")}</span>
               ) : (
-                <span className="text-xs text-muted-foreground">Pass the AI language test (B1+)</span>
+                <span className="text-xs text-muted-foreground">{tg("verification.passLang")}</span>
               )}
             </div>
           </div>
           <div className="rounded-lg bg-muted/40 p-3">
-            <p className="font-medium flex items-center gap-1.5"><Video className="h-4 w-4" /> Intro video</p>
+            <p className="font-medium flex items-center gap-1.5"><Video className="h-4 w-4" /> {tg("verification.introVideo")}</p>
             <div className="mt-2"><StatusPill verified={!!data.intro_video_verified} submittedAt={data.intro_video_submitted_at} rejected={data.intro_video_rejected_reason} /></div>
           </div>
         </div>
       </div>
 
       <form onSubmit={onSubmitIdentity} className="rounded-2xl bg-card ring-1 ring-border p-5 space-y-3">
-        <p className="font-display text-lg font-semibold flex items-center gap-2"><ShieldCheck className="h-5 w-5" /> Identity verification</p>
-        <p className="text-sm text-muted-foreground">Email is verified via your login. Provide phone + a clear photo of your passport / ID. Admin will review within 1–2 days.</p>
+        <p className="font-display text-lg font-semibold flex items-center gap-2"><ShieldCheck className="h-5 w-5" /> {tg("verification.identityTitle")}</p>
+        <p className="text-sm text-muted-foreground">{tg("verification.identityText")}</p>
         <div>
-          <label className="text-xs font-medium text-muted-foreground">Phone</label>
+          <label className="text-xs font-medium text-muted-foreground">{tg("verification.phone")}</label>
           <input
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
@@ -150,7 +153,7 @@ export function VerificationPanel() {
           />
         </div>
         <div>
-          <label className="text-xs font-medium text-muted-foreground">Passport / ID photo</label>
+          <label className="text-xs font-medium text-muted-foreground">{tg("verification.passport")}</label>
           <input
             type="file"
             accept="image/*"
@@ -158,7 +161,7 @@ export function VerificationPanel() {
             className="mt-1 w-full text-sm"
           />
           {data.identity_passport_url && !passportFile && (
-            <p className="text-xs text-muted-foreground mt-1">Existing file kept. Choose new to replace.</p>
+            <p className="text-xs text-muted-foreground mt-1">{tg("verification.existingFile")}</p>
           )}
         </div>
         <button
@@ -167,13 +170,13 @@ export function VerificationPanel() {
           className="inline-flex items-center gap-2 h-10 px-4 rounded-full bg-primary text-primary-foreground text-sm font-medium disabled:opacity-50"
         >
           {savingId ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-          Submit for review
+          {tg("verification.submit")}
         </button>
       </form>
 
       <form onSubmit={onSubmitVideo} className="rounded-2xl bg-card ring-1 ring-border p-5 space-y-3">
-        <p className="font-display text-lg font-semibold flex items-center gap-2"><Video className="h-5 w-5" /> Intro video</p>
-        <p className="text-sm text-muted-foreground">Record a short video (up to 60 sec): introduce yourself, your city, your style. Admin will review within 1–2 days.</p>
+        <p className="font-display text-lg font-semibold flex items-center gap-2"><Video className="h-5 w-5" /> {tg("verification.introVideo")}</p>
+        <p className="text-sm text-muted-foreground">{tg("verification.videoText")}</p>
         <input
           type="file"
           accept="video/*"
@@ -186,16 +189,16 @@ export function VerificationPanel() {
           className="inline-flex items-center gap-2 h-10 px-4 rounded-full bg-primary text-primary-foreground text-sm font-medium disabled:opacity-50"
         >
           {savingVideo ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-          Submit for review
+          {tg("verification.submit")}
         </button>
       </form>
 
       <div className="rounded-2xl bg-muted/40 ring-1 ring-border p-5">
-        <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">Auto-tracked stats</p>
+        <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">{tg("verification.stats")}</p>
         <div className="grid sm:grid-cols-3 gap-3 text-sm">
-          <div><p className="text-xs text-muted-foreground">Completed tours</p><p className="font-medium">{data.completed_tours_count}</p></div>
-          <div><p className="text-xs text-muted-foreground">Median response</p><p className="font-medium">{data.avg_response_minutes === null ? "—" : `${Math.round(Number(data.avg_response_minutes))} min`}</p></div>
-          <div><p className="text-xs text-muted-foreground">Verified languages</p><p className="font-medium">{Object.keys((data.verified_languages ?? {}) as Record<string, string>).length}</p></div>
+          <div><p className="text-xs text-muted-foreground">{tg("verification.completed")}</p><p className="font-medium">{data.completed_tours_count}</p></div>
+          <div><p className="text-xs text-muted-foreground">{tg("verification.median")}</p><p className="font-medium">{data.avg_response_minutes === null ? "—" : `${Math.round(Number(data.avg_response_minutes))} ${tg("common.minutes")}`}</p></div>
+          <div><p className="text-xs text-muted-foreground">{tg("verification.verifiedLanguages")}</p><p className="font-medium">{Object.keys((data.verified_languages ?? {}) as Record<string, string>).length}</p></div>
         </div>
       </div>
     </div>
