@@ -328,6 +328,7 @@ function EventSheet({ open, onClose, onSave, onDelete, defaultDate, event }: {
   defaultDate?: Date;
   event?: CalendarEvent;
 }) {
+  const { tg } = useGuideI18n();
   const isEdit = !!event;
   const isBooking = event?.source === "booking";
 
@@ -361,7 +362,7 @@ function EventSheet({ open, onClose, onSave, onDelete, defaultDate, event }: {
   }, [open, event?.id]);
 
   const handleSave = async () => {
-    if (!title.trim()) { toast.error("Title is required"); return; }
+    if (!title.trim()) { toast.error(tg("calendar.titleRequired")); return; }
     setSaving(true);
     try {
       await onSave({
@@ -384,20 +385,20 @@ function EventSheet({ open, onClose, onSave, onDelete, defaultDate, event }: {
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 bg-black/40 z-50" />
         <Drawer.Content className="fixed bottom-0 left-0 right-0 z-50 bg-background rounded-t-3xl max-h-[92vh] flex flex-col">
-          <Drawer.Title className="sr-only">{isEdit ? "Edit event" : "New event"}</Drawer.Title>
+          <Drawer.Title className="sr-only">{isEdit ? tg("calendar.editEvent") : tg("calendar.newEvent")}</Drawer.Title>
           <Drawer.Description className="sr-only">
-            {isBooking ? "Read-only tour booking" : "Create or edit a calendar event"}
+            {isBooking ? tg("calendar.booking") : tg("calendar.eventDesc")}
           </Drawer.Description>
           <div className="mx-auto mt-3 h-1.5 w-12 rounded-full bg-muted-foreground/30" />
           <div className="px-5 py-4 border-b border-border">
             <h3 className="font-display text-lg font-semibold">
-              {isBooking ? "Tour booking" : isEdit ? "Edit event" : "New event"}
+              {isBooking ? tg("calendar.booking") : isEdit ? tg("calendar.editEvent") : tg("calendar.newEvent")}
             </h3>
           </div>
           <div className="px-5 py-5 space-y-4 overflow-y-auto">
             {isBooking ? (
               <div className="text-sm text-muted-foreground rounded-xl bg-muted p-3">
-                This event is linked to a confirmed booking. Manage it from the Bookings tab.
+                {tg("calendar.bookingLinked")}
               </div>
             ) : (
               <div className="grid grid-cols-3 gap-2">
@@ -411,7 +412,7 @@ function EventSheet({ open, onClose, onSave, onDelete, defaultDate, event }: {
                       className={`flex flex-col items-center gap-1 py-3 rounded-xl ring-1 transition ${type === t ? `${meta.bg} ${meta.ring} ring-2` : "bg-muted/40 ring-border"}`}
                     >
                       <Icon className="h-4 w-4" />
-                      <span className="text-xs font-medium">{meta.label}</span>
+                      <span className="text-xs font-medium">{tg(meta.labelKey)}</span>
                     </button>
                   );
                 })}
@@ -419,19 +420,19 @@ function EventSheet({ open, onClose, onSave, onDelete, defaultDate, event }: {
             )}
 
             <div>
-              <label className="text-xs font-medium text-muted-foreground">Title</label>
+              <label className="text-xs font-medium text-muted-foreground">{tg("calendar.title")}</label>
               <input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 disabled={isBooking}
-                placeholder={type === "block" ? "Busy — vacation" : type === "reminder" ? "Confirm restaurant" : "Coffee with friend"}
+                placeholder={type === "block" ? tg("event.busyPh") : type === "reminder" ? tg("event.reminderPh") : tg("event.personalPh")}
                 className="mt-1 w-full h-11 px-3 rounded-xl bg-muted border-0 text-sm focus:ring-2 focus:ring-primary/30 outline-none disabled:opacity-60"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-medium text-muted-foreground">Starts</label>
+                <label className="text-xs font-medium text-muted-foreground">{tg("calendar.starts")}</label>
                 <input
                   type="datetime-local"
                   value={startsAt}
@@ -441,7 +442,7 @@ function EventSheet({ open, onClose, onSave, onDelete, defaultDate, event }: {
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-muted-foreground">Ends</label>
+                <label className="text-xs font-medium text-muted-foreground">{tg("calendar.ends")}</label>
                 <input
                   type="datetime-local"
                   value={endsAt}
@@ -453,18 +454,18 @@ function EventSheet({ open, onClose, onSave, onDelete, defaultDate, event }: {
             </div>
 
             <div>
-              <label className="text-xs font-medium text-muted-foreground">Location (optional)</label>
+              <label className="text-xs font-medium text-muted-foreground">{tg("calendar.location")}</label>
               <input
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 disabled={isBooking}
-                placeholder="Address or place name"
+                placeholder={tg("calendar.locationPh")}
                 className="mt-1 w-full h-11 px-3 rounded-xl bg-muted border-0 text-sm outline-none disabled:opacity-60"
               />
             </div>
 
             <div>
-              <label className="text-xs font-medium text-muted-foreground">Notes (optional)</label>
+              <label className="text-xs font-medium text-muted-foreground">{tg("calendar.notes")}</label>
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
@@ -480,7 +481,7 @@ function EventSheet({ open, onClose, onSave, onDelete, defaultDate, event }: {
               <button
                 onClick={async () => { await onDelete(); }}
                 className="h-11 w-11 grid place-items-center rounded-full text-destructive hover:bg-destructive/10"
-                aria-label="Delete"
+                aria-label={tg("posts.delete")}
               >
                 <Trash2 className="h-4 w-4" />
               </button>
@@ -488,7 +489,7 @@ function EventSheet({ open, onClose, onSave, onDelete, defaultDate, event }: {
             <button
               onClick={onClose}
               className="flex-1 h-11 rounded-full bg-muted text-sm font-medium"
-            >Cancel</button>
+            >{tg("common.cancel")}</button>
             {!isBooking ? (
               <button
                 onClick={handleSave}
@@ -496,7 +497,7 @@ function EventSheet({ open, onClose, onSave, onDelete, defaultDate, event }: {
                 className="flex-1 h-11 rounded-full bg-foreground text-background text-sm font-semibold disabled:opacity-60 inline-flex items-center justify-center gap-2"
               >
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-                {isEdit ? "Save" : "Create"}
+                {isEdit ? tg("common.save") : tg("common.create")}
               </button>
             ) : null}
           </div>
