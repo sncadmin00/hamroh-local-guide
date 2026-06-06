@@ -14,6 +14,7 @@ import {
   startGoogleOAuth,
   disconnectGoogleCalendar,
 } from "@/lib/google-calendar.functions";
+import { guideDateLocale, useGuideI18n } from "@/lib/guide-i18n";
 
 type CalendarEvent = {
   id: string;
@@ -32,11 +33,11 @@ type CalendarEvent = {
 
 type View = "today" | "week";
 
-const TYPE_META: Record<CalendarEvent["type"], { label: string; icon: typeof Briefcase; bg: string; ring: string; chip: string }> = {
-  booking:  { label: "Tour",      icon: Briefcase, bg: "bg-emerald-500/10", ring: "ring-emerald-500/30", chip: "bg-emerald-500" },
-  personal: { label: "Personal",  icon: Coffee,    bg: "bg-sky-500/10",     ring: "ring-sky-500/30",     chip: "bg-sky-500" },
-  block:    { label: "Busy",      icon: Ban,       bg: "bg-zinc-500/10",    ring: "ring-zinc-500/30",    chip: "bg-zinc-500" },
-  reminder: { label: "Reminder",  icon: Bell,      bg: "bg-amber-500/10",   ring: "ring-amber-500/30",   chip: "bg-amber-500" },
+const TYPE_META: Record<CalendarEvent["type"], { labelKey: Parameters<ReturnType<typeof useGuideI18n>["tg"]>[0]; icon: typeof Briefcase; bg: string; ring: string; chip: string }> = {
+  booking:  { labelKey: "event.tour",      icon: Briefcase, bg: "bg-emerald-500/10", ring: "ring-emerald-500/30", chip: "bg-emerald-500" },
+  personal: { labelKey: "event.personal",  icon: Coffee,    bg: "bg-sky-500/10",     ring: "ring-sky-500/30",     chip: "bg-sky-500" },
+  block:    { labelKey: "event.busy",      icon: Ban,       bg: "bg-zinc-500/10",    ring: "ring-zinc-500/30",    chip: "bg-zinc-500" },
+  reminder: { labelKey: "event.reminder",  icon: Bell,      bg: "bg-amber-500/10",   ring: "ring-amber-500/30",   chip: "bg-amber-500" },
 };
 
 function startOfDay(d: Date): Date { const x = new Date(d); x.setHours(0,0,0,0); return x; }
@@ -44,10 +45,12 @@ function endOfDay(d: Date): Date   { const x = new Date(d); x.setHours(23,59,59,
 function addDays(d: Date, n: number): Date { const x = new Date(d); x.setDate(x.getDate()+n); return x; }
 function startOfWeek(d: Date): Date { const x = startOfDay(d); const day = (x.getDay()+6)%7; x.setDate(x.getDate()-day); return x; }
 function isSameDay(a: Date, b: Date): boolean { return a.toDateString() === b.toDateString(); }
-function fmtTime(iso: string): string { return new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }); }
-function fmtDayShort(d: Date): string { return d.toLocaleDateString([], { weekday: "short", day: "numeric", month: "short" }); }
+function fmtTime(iso: string, locale?: string): string { return new Date(iso).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" }); }
+function fmtDayShort(d: Date, locale?: string): string { return d.toLocaleDateString(locale, { weekday: "short", day: "numeric", month: "short" }); }
 
 export function CalendarPanel() {
+  const { lang, tg } = useGuideI18n();
+  const locale = guideDateLocale(lang);
   const [view, setView] = useState<View>("today");
   const [anchorDate, setAnchorDate] = useState<Date>(new Date());
   const [events, setEvents] = useState<CalendarEvent[]>([]);
@@ -88,8 +91,8 @@ export function CalendarPanel() {
 
   const today = new Date();
   const headerLabel = view === "today"
-    ? isSameDay(anchorDate, today) ? "Today" : fmtDayShort(anchorDate)
-    : `${fmtDayShort(from)} — ${fmtDayShort(to)}`;
+    ? isSameDay(anchorDate, today) ? tg("calendar.today") : fmtDayShort(anchorDate, locale)
+    : `${fmtDayShort(from, locale)} — ${fmtDayShort(to, locale)}`;
 
   return (
     <section className="space-y-4">
@@ -102,11 +105,11 @@ export function CalendarPanel() {
           <button
             className={`h-8 px-4 rounded-full font-medium transition ${view === "today" ? "bg-background shadow-sm" : "text-muted-foreground"}`}
             onClick={() => setView("today")}
-          >Today</button>
+          >{tg("calendar.today")}</button>
           <button
             className={`h-8 px-4 rounded-full font-medium transition ${view === "week" ? "bg-background shadow-sm" : "text-muted-foreground"}`}
             onClick={() => setView("week")}
-          >Week</button>
+          >{tg("calendar.week")}</button>
         </div>
         <div className="flex items-center gap-1">
           <button onClick={() => move(-1)} className="h-9 w-9 grid place-items-center rounded-full hover:bg-muted">
@@ -115,7 +118,7 @@ export function CalendarPanel() {
           <button
             onClick={() => setAnchorDate(new Date())}
             className="h-9 px-3 rounded-full text-sm font-medium hover:bg-muted"
-          >Today</button>
+          >{tg("calendar.today")}</button>
           <button onClick={() => move(1)} className="h-9 w-9 grid place-items-center rounded-full hover:bg-muted">
             <ChevronRight className="h-4 w-4" />
           </button>
@@ -128,7 +131,7 @@ export function CalendarPanel() {
           onClick={() => setShowCreate(true)}
           className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full bg-foreground text-background text-sm font-medium"
         >
-          <Plus className="h-4 w-4" /> Add
+          <Plus className="h-4 w-4" /> {tg("common.add")}
         </button>
       </div>
 
@@ -150,7 +153,7 @@ export function CalendarPanel() {
         onSave={async (payload) => {
           try {
             await create({ data: payload });
-            toast.success("Event added");
+            toast.success(tg("calendar.added"));
             setShowCreate(false);
             await load();
           } catch (e) { toast.error((e as Error).message); }
@@ -175,7 +178,7 @@ export function CalendarPanel() {
               notes: payload.notes,
               color: payload.color,
             } });
-            toast.success("Event updated");
+            toast.success(tg("calendar.updated"));
             setEditing(null);
             await load();
           } catch (e) { toast.error((e as Error).message); }
@@ -184,7 +187,7 @@ export function CalendarPanel() {
           if (!editing) return;
           try {
             await remove({ data: { id: editing.id } });
-            toast.success("Event removed");
+            toast.success(tg("calendar.removed"));
             setEditing(null);
             await load();
           } catch (e) { toast.error((e as Error).message); }
