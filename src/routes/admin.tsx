@@ -1953,7 +1953,9 @@ function ApplicationsPanel({
                             e.target.value = "";
                           }}
                         />
+                      </div>
                     </div>
+
 
                     {/* ID document */}
                     <div>
