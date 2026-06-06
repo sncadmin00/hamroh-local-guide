@@ -961,6 +961,7 @@ function LanguagesPanel({
 
 
 function CategoriesPanel({ categories, reload }: { categories: Category[]; reload: () => Promise<void> }) {
+  const { ta } = useAdminI18n();
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [icon, setIcon] = useState("");
@@ -970,7 +971,7 @@ function CategoriesPanel({ categories, reload }: { categories: Category[]; reloa
   const add = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !slug) {
-      toast.error("Name and slug required");
+      toast.error(ta("categories.needFields"));
       return;
     }
     setSaving(true);
@@ -986,7 +987,7 @@ function CategoriesPanel({ categories, reload }: { categories: Category[]; reloa
       toast.error(error.message);
       return;
     }
-    toast.success("Category added");
+    toast.success(ta("categories.added"));
     setName("");
     setSlug("");
     setIcon("");
@@ -995,11 +996,11 @@ function CategoriesPanel({ categories, reload }: { categories: Category[]; reloa
   };
 
   const remove = async (id: string) => {
-    if (!confirm("Delete this category? Guide links will also be removed.")) return;
+    if (!confirm(ta("categories.confirmDelete"))) return;
     const { error } = await supabase.from("categories").delete().eq("id", id);
     if (error) toast.error(error.message);
     else {
-      toast.success("Deleted");
+      toast.success(ta("common.deleted"));
       await reload();
     }
   };
@@ -1007,7 +1008,7 @@ function CategoriesPanel({ categories, reload }: { categories: Category[]; reloa
   return (
     <div className="mt-6 grid gap-6 lg:grid-cols-2">
       <form onSubmit={add} className="rounded-3xl bg-card p-6 ring-1 ring-border/60 h-fit">
-        <h2 className="font-display text-lg font-semibold">Add a category</h2>
+        <h2 className="font-display text-lg font-semibold">{ta("categories.add")}</h2>
         <div className="mt-4 space-y-3">
           <Field label="Name" value={name} onChange={setName} placeholder="Gastro" />
           <Field label="Slug" value={slug} onChange={setSlug} placeholder="gastro" />
@@ -1028,7 +1029,7 @@ function CategoriesPanel({ categories, reload }: { categories: Category[]; reloa
           </div>
           {icon && (
             <div className="text-xs text-muted-foreground inline-flex items-center gap-2">
-              Preview: <CategoryIcon name={icon} className="h-5 w-5 text-foreground" />
+              {ta("common.preview")}: <CategoryIcon name={icon} className="h-5 w-5 text-foreground" />
             </div>
           )}
         </div>
@@ -1037,16 +1038,16 @@ function CategoriesPanel({ categories, reload }: { categories: Category[]; reloa
           disabled={saving}
           className="mt-5 inline-flex items-center gap-2 h-11 px-6 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-60"
         >
-          <Plus className="h-4 w-4" /> {saving ? "Saving…" : "Add category"}
+          <Plus className="h-4 w-4" /> {saving ? ta("common.saving") : ta("categories.addBtn")}
         </button>
       </form>
 
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
-        <h2 className="font-display text-lg font-semibold">Categories</h2>
-        <p className="mt-1 text-xs text-muted-foreground">Assign categories to guides from the Guides tab.</p>
+        <h2 className="font-display text-lg font-semibold">{ta("categories.title")}</h2>
+        <p className="mt-1 text-xs text-muted-foreground">{ta("categories.subtitle")}</p>
         <ul className="mt-4 divide-y divide-border/60">
           {categories.length === 0 && (
-            <li className="py-4 text-sm text-muted-foreground">No categories yet.</li>
+            <li className="py-4 text-sm text-muted-foreground">{ta("categories.empty")}</li>
           )}
           {categories.map((c) => (
             <li key={c.id} className="py-3 flex items-center justify-between gap-3">
@@ -1062,7 +1063,7 @@ function CategoriesPanel({ categories, reload }: { categories: Category[]; reloa
               <button
                 onClick={() => remove(c.id)}
                 className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                aria-label="Delete"
+                aria-label={ta("common.delete")}
               >
                 <Trash2 className="h-4 w-4" />
               </button>
@@ -1075,15 +1076,16 @@ function CategoriesPanel({ categories, reload }: { categories: Category[]; reloa
 }
 
 function InvitePortalButton({ guide, reload }: { guide: Guide; reload: () => void }) {
+  const { ta } = useAdminI18n();
   const invite = useServerFn(inviteGuideToPortal);
   const [busy, setBusy] = useState(false);
   const onClick = async () => {
-    const email = window.prompt(`Send portal invite to which email for ${guide.name}?`);
+    const email = window.prompt(ta("guides.invitePrompt", { name: guide.name }));
     if (!email) return;
     setBusy(true);
     try {
       const res = await invite({ data: { guide_id: guide.id, email } });
-      toast.success(res.existed ? "User linked & magic link sent" : "Invite email sent");
+      toast.success(res.existed ? ta("guides.userLinked") : ta("guides.inviteSent"));
       reload();
     } catch (e) {
       toast.error((e as Error).message);
@@ -1095,13 +1097,14 @@ function InvitePortalButton({ guide, reload }: { guide: Guide; reload: () => voi
     <button
       onClick={onClick}
       disabled={busy}
-      title={guide.user_id ? "Re-send invite / re-link" : "Invite to guide portal"}
+      title={guide.user_id ? ta("guides.resendInvite") : ta("guides.invitePortal")}
       className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-accent/10 hover:text-accent disabled:opacity-50"
     >
       <Mail className="h-4 w-4" />
     </button>
   );
 }
+
 
 function Field({
   label,
