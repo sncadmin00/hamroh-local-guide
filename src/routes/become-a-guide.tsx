@@ -123,6 +123,7 @@ function BecomeAGuidePage() {
   const [saving, setSaving] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
   const [portrait, setPortrait] = useState<File | null>(null);
+  const [idDocument, setIdDocument] = useState<File | null>(null);
   const [photos, setPhotos] = useState<File[]>([]);
   const [video, setVideo] = useState<File | null>(null);
   const [form, setForm] = useState<FormState>(emptyForm);
@@ -556,6 +557,23 @@ function BecomeAGuidePage() {
       ),
     },
     {
+      title: t("bg.sId.title"),
+      subtitle: t("bg.sId.sub"),
+      canNext: () => !!idDocument,
+      render: () => (
+        <PhotoSlot
+          file={idDocument}
+          onPick={(f) => setOnePhoto(f, MAX_PHOTO_BYTES, setIdDocument, t("bg.sId.tooBig"))}
+          onClear={() => setIdDocument(null)}
+          accept="image/*"
+          captureMode="environment"
+          takeLabel={t("bg.s6.takeCamera")}
+          pickLabel={t("bg.s6.pickGallery")}
+          removeLabel={t("bg.remove")}
+        />
+      ),
+    },
+    {
       title: t("bg.s6.title"),
       subtitle: t("bg.s6.sub"),
       canNext: () => true,
@@ -616,6 +634,7 @@ function BecomeAGuidePage() {
           }))}
           categories={selectedCategories.map((id) => categories.find((c) => c.id === id)?.name).filter(Boolean) as string[]}
           portrait={portrait}
+          idDocument={idDocument}
           photos={photos}
           video={video}
           labels={{
@@ -630,6 +649,7 @@ function BecomeAGuidePage() {
             specialization: t("bg.rv.specialization"),
             about: t("bg.rv.about"),
             portrait: t("bg.rv.portrait"),
+            idDoc: t("bg.rv.idDoc"),
             photos: t("bg.rv.photos"),
             video: t("bg.rv.video"),
             languageTests: t("bg.rv.languageTests"),
@@ -669,9 +689,11 @@ function BecomeAGuidePage() {
       const { data: userData } = await supabase.auth.getUser();
       let portrait_url: string | null = null;
       let video_url: string | null = null;
+      let id_document_url: string | null = null;
       const photo_urls: string[] = [];
 
       if (portrait) portrait_url = await uploadTo("guide-application-photos", portrait);
+      if (idDocument) id_document_url = await uploadTo("guide-application-photos", idDocument);
       for (const p of photos) photo_urls.push(await uploadTo("guide-application-photos", p));
       if (video) video_url = await uploadTo("guide-application-videos", video);
 
@@ -690,6 +712,7 @@ function BecomeAGuidePage() {
           user_id: userData.user?.id ?? null,
           portrait_url,
           video_url,
+          id_document_url,
           photo_urls,
           category_ids: selectedCategories,
           has_transport: hasTransport,
@@ -950,6 +973,7 @@ function ReviewBlock({
   languageTests,
   categories,
   portrait,
+  idDocument,
   photos,
   video,
   labels,
@@ -959,12 +983,13 @@ function ReviewBlock({
   languageTests: Array<{ language: string; result?: LangTestResult }>;
   categories: string[];
   portrait: File | null;
+  idDocument: File | null;
   photos: File[];
   video: File | null;
   labels: {
     name: string; email: string; phone: string; telegram: string; city: string; years: string;
     languages: string; categories: string; specialization: string; about: string;
-    portrait: string; photos: string; video: string; languageTests: string; level: string;
+    portrait: string; idDoc: string; photos: string; video: string; languageTests: string; level: string;
   };
 }) {
   const rows: Array<[string, string]> = [
@@ -1009,6 +1034,7 @@ function ReviewBlock({
       </div>
       <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
         <span>{labels.portrait}: {portrait ? "✓" : "—"}</span>
+        <span>· {labels.idDoc}: {idDocument ? "✓" : "—"}</span>
         <span>· {labels.photos}: {photos.length}</span>
         <span>· {labels.video}: {video ? "✓" : "—"}</span>
       </div>

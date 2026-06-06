@@ -712,6 +712,7 @@ export type Database = {
           full_name: string
           has_transport: boolean
           id: string
+          id_document_url: string | null
           language_tests: Json
           languages: string[]
           phone: string
@@ -735,6 +736,7 @@ export type Database = {
           full_name: string
           has_transport?: boolean
           id?: string
+          id_document_url?: string | null
           language_tests?: Json
           languages?: string[]
           phone?: string
@@ -758,6 +760,7 @@ export type Database = {
           full_name?: string
           has_transport?: boolean
           id?: string
+          id_document_url?: string | null
           language_tests?: Json
           languages?: string[]
           phone?: string

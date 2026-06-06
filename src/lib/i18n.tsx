@@ -351,6 +351,12 @@ export const translations: Dict = {
   "bg.s6.pickGallery": { en: "Pick from gallery", uz: "Galereyadan tanlash", ru: "Выбрать из галереи" },
   "bg.s6.portraitTooBig": { en: "Portrait is too large", uz: "Portret juda katta", ru: "Портрет слишком большой" },
 
+  "bg.sId.title": { en: "Passport or ID", uz: "Pasport yoki ID", ru: "Паспорт или ID" },
+  "bg.sId.sub": { en: "Upload a clear photo of your passport or national ID. Used only for verification — never shown publicly.", uz: "Pasport yoki shaxsiy guvohnomangizning aniq rasmini yuklang. Faqat tekshirish uchun — hech qachon ommaviy ko'rsatilmaydi.", ru: "Загрузите чёткое фото паспорта или ID. Используется только для проверки — публично не отображается." },
+  "bg.sId.tooBig": { en: "Document is too large", uz: "Hujjat juda katta", ru: "Документ слишком большой" },
+  "bg.rv.idDoc": { en: "ID document", uz: "Hujjat", ru: "Документ" },
+
+
   "bg.s7.title": { en: "Photos of your tours", uz: "Ekskursiyalaringiz rasmlari", ru: "Фото ваших туров" },
   "bg.s7.sub": { en: "Up to {n} photos. Show the vibe — places, people, moments.", uz: "{n} tagacha rasm. Atmosferani ko'rsating — joylar, odamlar, lahzalar.", ru: "До {n} фотографий. Покажите атмосферу — места, людей, моменты." },
   "bg.s7.tooBig": { en: "{name} is over 8 MB", uz: "{name} 8 MB dan katta", ru: "{name} больше 8 MB" },
