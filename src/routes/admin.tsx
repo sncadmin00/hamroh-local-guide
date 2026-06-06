@@ -1712,6 +1712,14 @@ function ApplicationsPanel({
       }
     }
 
+    if (status === "approved") {
+      try {
+        await finalizeApprovedGuide({ data: { application_id: id } });
+      } catch (e) {
+        console.error("finalizeApprovedGuide failed", e);
+      }
+    }
+
     if (status === "approved" || status === "rejected") {
       try {
         await notifyGuideApplicationStatus({ data: { application_id: id, status } });
