@@ -1178,6 +1178,7 @@ function ArticlesPanel({
   cities: City[];
   reload: () => Promise<void>;
 }) {
+  const { ta } = useAdminI18n();
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [excerpt, setExcerpt] = useState("");
@@ -1190,7 +1191,7 @@ function ArticlesPanel({
   const add = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !slug) {
-      toast.error("Title and slug required");
+      toast.error(ta("articles.needFields"));
       return;
     }
     setSaving(true);
@@ -1208,7 +1209,7 @@ function ArticlesPanel({
       })
       .select("id")
       .single();
-    if (error || !data) { setSaving(false); toast.error(error?.message ?? "Failed"); return; }
+    if (error || !data) { setSaving(false); toast.error(error?.message ?? ta("common.failed")); return; }
     if (cityIds.length > 0) {
       const { error: linkErr } = await supabase
         .from("article_cities")
@@ -1218,9 +1219,9 @@ function ArticlesPanel({
     // Index for AI search
     try {
       const res = await reindexArticle({ data: { articleId: data.id } });
-      toast.success(`Article added · indexed ${res.chunks} chunks for AI`);
+      toast.success(`${ta("articles.added")} · ${res.chunks} chunks`);
     } catch (err) {
-      toast.success("Article added (AI indexing failed — use Re-index button)");
+      toast.success(ta("articles.added"));
       console.error(err);
     }
     setSaving(false);
@@ -1236,20 +1237,20 @@ function ArticlesPanel({
       .update({ published: next, published_at: next ? new Date().toISOString() : null })
       .eq("id", a.id);
     if (error) toast.error(error.message);
-    else { toast.success(next ? "Published" : "Unpublished"); await reload(); }
+    else { toast.success(next ? ta("articles.published") : ta("articles.unpublished")); await reload(); }
   };
 
   const remove = async (id: string) => {
-    if (!confirm("Delete this article?")) return;
+    if (!confirm(ta("articles.confirmDelete"))) return;
     const { error } = await supabase.from("articles").delete().eq("id", id);
     if (error) toast.error(error.message);
-    else { toast.success("Deleted"); await reload(); }
+    else { toast.success(ta("common.deleted")); await reload(); }
   };
 
   return (
     <div className="mt-6 grid gap-6 lg:grid-cols-2">
       <form onSubmit={add} className="rounded-3xl bg-card p-6 ring-1 ring-border/60 h-fit">
-        <h2 className="font-display text-lg font-semibold">Add an article</h2>
+        <h2 className="font-display text-lg font-semibold">{ta("articles.add")}</h2>
         <div className="mt-4 space-y-3">
           <Field label="Title" value={title} onChange={setTitle} placeholder="A weekend in Bukhara" />
           <Field label="Slug" value={slug} onChange={setSlug} placeholder="weekend-in-bukhara" />
@@ -1267,7 +1268,7 @@ function ArticlesPanel({
           <CityMultiSelect cities={cities} selected={cityIds} onChange={setCityIds} />
           <label className="inline-flex items-center gap-2 text-sm">
             <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} />
-            Publish immediately
+            {ta("articles.publishImmediately")}
           </label>
         </div>
         <button
@@ -1275,16 +1276,16 @@ function ArticlesPanel({
           disabled={saving}
           className="mt-5 inline-flex items-center gap-2 h-11 px-6 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-60"
         >
-          <Plus className="h-4 w-4" /> {saving ? "Saving…" : "Add article"}
+          <Plus className="h-4 w-4" /> {saving ? ta("common.saving") : ta("articles.addBtn")}
         </button>
       </form>
 
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
         <div className="flex items-center justify-between gap-2">
-          <h2 className="font-display text-lg font-semibold">Articles</h2>
+          <h2 className="font-display text-lg font-semibold">{ta("articles.title")}</h2>
           <button
             onClick={async () => {
-              const t = toast.loading("Reindexing all published articles…");
+              const t = toast.loading(ta("common.loading"));
               try {
                 const res = await reindexAllArticles();
                 toast.success(`Indexed ${res.chunks} chunks across ${res.articles} articles`, { id: t });
@@ -1294,21 +1295,21 @@ function ArticlesPanel({
             }}
             className="h-9 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-secondary/60"
           >
-            Reindex all for AI
+            {ta("articles.reindexAll")}
           </button>
         </div>
         <ul className="mt-4 divide-y divide-border/60">
-          {articles.length === 0 && <li className="py-4 text-sm text-muted-foreground">No articles yet.</li>}
+          {articles.length === 0 && <li className="py-4 text-sm text-muted-foreground">{ta("articles.empty")}</li>}
           {articles.map((a) => (
             <li key={a.id} className="py-3 flex items-center justify-between gap-3">
               <div className="min-w-0">
                 <p className="font-medium truncate">{a.title}</p>
-                <p className="text-xs text-muted-foreground truncate">/{a.slug} · {a.published ? "Published" : "Draft"}</p>
+                <p className="text-xs text-muted-foreground truncate">/{a.slug} · {a.published ? ta("common.published") : ta("common.draft")}</p>
               </div>
               <div className="flex items-center gap-1">
                 <button
                   onClick={async () => {
-                    const t = toast.loading("Indexing…");
+                    const t = toast.loading(ta("common.loading"));
                     try {
                       const res = await reindexArticle({ data: { articleId: a.id } });
                       toast.success(`Indexed ${res.chunks} chunks`, { id: t });
@@ -1318,18 +1319,18 @@ function ArticlesPanel({
                   }}
                   className="h-9 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-secondary/60"
                 >
-                  Reindex
+                  {ta("articles.reindex")}
                 </button>
                 <button
                   onClick={() => togglePublished(a)}
                   className="h-9 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-secondary/60"
                 >
-                  {a.published ? "Unpublish" : "Publish"}
+                  {a.published ? ta("common.unpublish") : ta("common.publish")}
                 </button>
                 <button
                   onClick={() => remove(a.id)}
                   className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                  aria-label="Delete"
+                  aria-label={ta("common.delete")}
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
@@ -1341,6 +1342,7 @@ function ArticlesPanel({
     </div>
   );
 }
+
 
 
 function SocialPanel({
