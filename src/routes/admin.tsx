@@ -2186,7 +2186,7 @@ function PlacesPanel({
                 onChange={(e) => setCityId(e.target.value)}
                 className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
               >
-                <option value="">Select city…</option>
+                <option value="">{ta("common.selectCity")}</option>
                 {cities.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.name}
