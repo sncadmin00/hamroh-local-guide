@@ -110,6 +110,30 @@ type GuideApplication = {
   user_id: string | null;
 };
 
+async function toSignedUrl(rawUrl: string | null | undefined): Promise<string | null> {
+  if (!rawUrl) return null;
+  const m = rawUrl.match(/\/object\/(?:public|sign)\/([^/]+)\/([^?]+)/);
+  if (!m) return rawUrl;
+  const [, bucket, path] = m;
+  try {
+    const { data } = await supabase.storage.from(bucket).createSignedUrl(decodeURIComponent(path), 3600);
+    return data?.signedUrl ?? rawUrl;
+  } catch {
+    return rawUrl;
+  }
+}
+
+async function signApplicationMedia(apps: GuideApplication[]): Promise<GuideApplication[]> {
+  return Promise.all(apps.map(async (a) => ({
+    ...a,
+    portrait_url: await toSignedUrl(a.portrait_url),
+    video_url: await toSignedUrl(a.video_url),
+    id_document_url: await toSignedUrl(a.id_document_url),
+    photo_urls: a.photo_urls ? await Promise.all(a.photo_urls.map((u) => toSignedUrl(u).then((s) => s ?? u))) : a.photo_urls,
+  })));
+}
+
+
 
 type Category = {
   id: string;
@@ -224,7 +248,7 @@ function AdminPage() {
     if (a.data) setArticles(a.data as Article[]);
     if (e.data) setEmbeds(e.data as Embed[]);
     if (b.data) setBookings(b.data as Booking[]);
-    if (ap.data) setApplications(ap.data as GuideApplication[]);
+    if (ap.data) setApplications(await signApplicationMedia(ap.data as GuideApplication[]));
     if (cat.data) setCategories(cat.data as Category[]);
     if (gc.data) setGuideCategories(gc.data as GuideCategoryLink[]);
     if (p.data) setPlaces(p.data as Place[]);
@@ -1961,25 +1985,14 @@ function ApplicationsPanel({
                     <div>
                       <p className="text-xs font-medium text-muted-foreground mb-2">{ta("applications.idDocument")}</p>
                       {a.id_document_url ? (
-                        <button
-                          onClick={async () => {
-                            try {
-                              const marker = "/guide-application-photos/";
-                              const idx = a.id_document_url!.indexOf(marker);
-                              const path = idx >= 0 ? a.id_document_url!.slice(idx + marker.length) : a.id_document_url!;
-                              const { data, error } = await supabase.storage
-                                .from("guide-application-photos")
-                                .createSignedUrl(path, 3600);
-                              if (error) throw error;
-                              window.open(data.signedUrl, "_blank", "noopener,noreferrer");
-                            } catch (err) {
-                              toast.error((err as Error).message);
-                            }
-                          }}
+                        <a
+                          href={a.id_document_url}
+                          target="_blank"
+                          rel="noreferrer"
                           className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-secondary/60"
                         >
                           {ta("applications.openIdDocument")}
-                        </button>
+                        </a>
                       ) : (
                         <span className="text-xs text-muted-foreground">{ta("applications.noIdDocument")}</span>
                       )}
