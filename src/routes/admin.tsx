@@ -2326,7 +2326,7 @@ function PlacesPanel({
                 {cityGuides.length > 0 && (
                   <div>
                     <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
-                      Guides who take travelers here
+                      {ta("places.guidesWhoTake")}
                     </p>
                     <div className="mt-1 flex flex-wrap gap-1.5">
                       {cityGuides.map((g) => {
