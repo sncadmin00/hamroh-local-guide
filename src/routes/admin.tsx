@@ -2075,6 +2075,7 @@ function PlacesPanel({
   placeGuides: PlaceGuideLink[];
   reload: () => Promise<void>;
 }) {
+  const { ta } = useAdminI18n();
   const [cityId, setCityId] = useState("");
   const [category, setCategory] = useState<string>("food");
   const [name, setName] = useState("");
