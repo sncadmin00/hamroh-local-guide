@@ -39,7 +39,7 @@ export function SiteHeader() {
     };
     const checkGuide = async (userId: string | undefined) => {
       if (!userId) { setIsGuide(false); return; }
-      const { data } = await supabase.from("guides").select("id").eq("user_id", userId).maybeSingle();
+      const { data } = await supabase.from("guides").select("id, verified").eq("user_id", userId).maybeSingle();
       setIsGuide(!!data);
     };
     const applyUser = (user: { user_metadata?: Record<string, unknown>; email?: string | null } | null | undefined) => {
