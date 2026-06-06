@@ -161,6 +161,9 @@ const adminTranslations = {
   "applications.about": { en: "About:", uz: "Haqida:", ru: "О себе:" },
   "applications.guideCreated": { en: "Guide profile created", uz: "Gid profili yaratildi", ru: "Профиль гида создан" },
   "applications.yrShort": { en: "yr", uz: "yil", ru: "лет" },
+  "applications.idDocument": { en: "ID document", uz: "Shaxsni tasdiqlovchi hujjat", ru: "Документ (ID)" },
+  "applications.noIdDocument": { en: "No ID document uploaded", uz: "Hujjat yuklanmagan", ru: "Документ не загружен" },
+  "applications.openIdDocument": { en: "Open ID document", uz: "Hujjatni ochish", ru: "Открыть документ" },
 
   // Filters
   "filter.all": { en: "all", uz: "barchasi", ru: "все" },
