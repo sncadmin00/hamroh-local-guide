@@ -1758,11 +1758,11 @@ function ApplicationsPanel({
 
 
   const remove = async (id: string) => {
-    if (!confirm("Delete this application?")) return;
+    if (!confirm(ta("applications.confirmDelete"))) return;
     const { error } = await supabase.from("guide_applications").delete().eq("id", id);
     if (error) toast.error(error.message);
     else {
-      toast.success("Deleted");
+      toast.success(ta("common.deleted"));
       await reload();
     }
   };
