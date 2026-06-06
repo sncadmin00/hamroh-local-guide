@@ -1867,7 +1867,7 @@ function ApplicationsPanel({
       </div>
 
       {filtered.length === 0 ? (
-        <p className="mt-6 text-sm text-muted-foreground">No applications.</p>
+        <p className="mt-6 text-sm text-muted-foreground">{ta("applications.empty")}</p>
       ) : (
         <ul className="mt-4 divide-y divide-border/60">
           {filtered.map((a) => {
@@ -1879,10 +1879,10 @@ function ApplicationsPanel({
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <p className="font-medium">{a.full_name}</p>
-                      <span className={badge(a.status)}>{a.status}</span>
+                      <span className={badge(a.status)}>{ta(`filter.${a.status}` as "filter.pending")}</span>
                     </div>
                     <p className="mt-1 text-xs text-muted-foreground">
-                      {a.city} · {a.experience_years} yr · {new Date(a.created_at).toLocaleDateString()}
+                      {a.city} · {a.experience_years} {ta("applications.yrShort")} · {new Date(a.created_at).toLocaleDateString()}
                     </p>
                     <p className="mt-1 text-xs text-muted-foreground truncate">
                       {a.email} · {a.phone}{a.telegram ? ` · ${a.telegram}` : ""}
@@ -1893,14 +1893,14 @@ function ApplicationsPanel({
                       onClick={() => setExpanded(open ? null : a.id)}
                       className="h-8 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-secondary/60"
                     >
-                      {open ? "Hide" : "Details"}
+                      {open ? ta("common.hide") : ta("common.details")}
                     </button>
                     {a.status !== "approved" && (
                       <button
                         onClick={() => setStatus(a.id, "approved")}
                         className="h-8 px-3 rounded-full text-xs font-medium bg-primary text-primary-foreground"
                       >
-                        Approve
+                        {ta("common.approve")}
                       </button>
                     )}
                     {a.status !== "rejected" && (
@@ -1908,13 +1908,13 @@ function ApplicationsPanel({
                         onClick={() => setStatus(a.id, "rejected")}
                         className="h-8 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-destructive/10 hover:text-destructive"
                       >
-                        Reject
+                        {ta("common.reject")}
                       </button>
                     )}
                     <button
                       onClick={() => remove(a.id)}
                       className="inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                      aria-label="Delete"
+                      aria-label={ta("common.delete")}
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
@@ -1924,14 +1924,14 @@ function ApplicationsPanel({
                   <div className="mt-3 rounded-2xl bg-secondary/40 p-4 text-sm space-y-4">
                     {/* Portrait */}
                     <div>
-                      <p className="text-xs font-medium text-muted-foreground mb-2">Portrait</p>
+                      <p className="text-xs font-medium text-muted-foreground mb-2">{ta("applications.portrait")}</p>
                       <div className="flex flex-wrap items-center gap-2">
                         {a.portrait_url ? (
                           <a href={a.portrait_url} target="_blank" rel="noreferrer">
                             <img src={a.portrait_url} alt="Portrait" className="h-24 w-24 rounded-xl object-cover ring-1 ring-border/60" />
                           </a>
                         ) : (
-                          <span className="text-xs text-muted-foreground">No portrait</span>
+                          <span className="text-xs text-muted-foreground">{ta("applications.noPortrait")}</span>
                         )}
                         <button
                           onClick={() => portraitRef.current?.click()}
@@ -1939,7 +1939,7 @@ function ApplicationsPanel({
                           className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-secondary/60 disabled:opacity-50"
                         >
                           <Upload className="h-3.5 w-3.5" />
-                          {uploading[a.id + "-portrait"] ? "Uploading…" : a.portrait_url ? "Replace" : "Upload portrait"}
+                          {uploading[a.id + "-portrait"] ? ta("common.uploading") : a.portrait_url ? ta("common.replace") : ta("applications.uploadPortrait")}
                         </button>
                         <input
                           ref={portraitRef}
@@ -1957,7 +1957,7 @@ function ApplicationsPanel({
 
                     {/* Photos */}
                     <div>
-                      <p className="text-xs font-medium text-muted-foreground mb-2">Tour photos ({photoCount}/5)</p>
+                      <p className="text-xs font-medium text-muted-foreground mb-2">{ta("applications.tourPhotos")} ({photoCount}/5)</p>
                       <div className="flex flex-wrap items-center gap-2">
                         {a.photo_urls?.map((url) => (
                           <div key={url} className="relative group">
@@ -1967,7 +1967,7 @@ function ApplicationsPanel({
                             <button
                               onClick={() => removePhoto(a.id, url)}
                               className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-destructive text-white flex items-center justify-center text-[10px] opacity-0 group-hover:opacity-100 transition"
-                              title="Remove"
+                              title={ta("common.remove")}
                             >
                               <Trash2 className="h-3 w-3" />
                             </button>
@@ -1980,7 +1980,7 @@ function ApplicationsPanel({
                             className="inline-flex flex-col items-center justify-center gap-1 h-24 w-24 rounded-xl ring-1 ring-border/60 border-dashed border-2 border-border/60 text-muted-foreground hover:bg-secondary/40 disabled:opacity-50"
                           >
                             <ImageIcon className="h-5 w-5" />
-                            <span className="text-[10px]">{uploading[a.id + "-photos"] ? "…" : "Add photo"}</span>
+                            <span className="text-[10px]">{uploading[a.id + "-photos"] ? "…" : ta("applications.addPhoto")}</span>
                           </button>
                         )}
                         <input
@@ -2001,7 +2001,7 @@ function ApplicationsPanel({
 
                     {/* Video */}
                     <div>
-                      <p className="text-xs font-medium text-muted-foreground mb-2">Video greeting</p>
+                      <p className="text-xs font-medium text-muted-foreground mb-2">{ta("applications.videoGreeting")}</p>
                       <div className="flex flex-wrap items-center gap-2">
                         {a.video_url ? (
                           <div className="relative group">
@@ -2009,13 +2009,13 @@ function ApplicationsPanel({
                             <button
                               onClick={() => removeVideo(a.id)}
                               className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-destructive text-white flex items-center justify-center text-[10px]"
-                              title="Remove video"
+                              title={ta("applications.removeVideo")}
                             >
                               <Trash2 className="h-3 w-3" />
                             </button>
                           </div>
                         ) : (
-                          <span className="text-xs text-muted-foreground">No video</span>
+                          <span className="text-xs text-muted-foreground">{ta("applications.noVideo")}</span>
                         )}
                         <button
                           onClick={() => videoRef.current?.click()}
@@ -2023,7 +2023,7 @@ function ApplicationsPanel({
                           className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-secondary/60 disabled:opacity-50"
                         >
                           <Video className="h-3.5 w-3.5" />
-                          {uploading[a.id + "-video"] ? "Uploading…" : a.video_url ? "Replace" : "Upload video"}
+                          {uploading[a.id + "-video"] ? ta("common.uploading") : a.video_url ? ta("common.replace") : ta("applications.uploadVideo")}
                         </button>
                         <input
                           ref={videoRef}
@@ -2040,15 +2040,15 @@ function ApplicationsPanel({
                     </div>
 
                     <div>
-                      <span className="text-xs text-muted-foreground">Specialization: </span>
+                      <span className="text-xs text-muted-foreground">{ta("applications.specialization")}</span>
                       {a.specialization}
                     </div>
                     <div>
-                      <span className="text-xs text-muted-foreground">Languages: </span>
+                      <span className="text-xs text-muted-foreground">{ta("applications.languages")}</span>
                       {a.languages.join(", ")}
                     </div>
                     <div>
-                      <span className="text-xs text-muted-foreground">About:</span>
+                      <span className="text-xs text-muted-foreground">{ta("applications.about")}</span>
                       <p className="mt-1 whitespace-pre-wrap">{a.about}</p>
                     </div>
                   </div>
