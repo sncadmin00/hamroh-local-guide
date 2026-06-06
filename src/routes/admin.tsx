@@ -2255,7 +2255,7 @@ function PlacesPanel({
       </form>
 
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
-        <h2 className="font-display text-lg font-semibold">Places</h2>
+        <h2 className="font-display text-lg font-semibold">{ta("places.title")}</h2>
         <div className="mt-3 flex flex-wrap gap-2">
           <select
             value={filterCity}
