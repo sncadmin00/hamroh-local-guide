@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Trash2, Plus, Upload, Languages, Loader2 } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
 import { translateTourContent } from "@/lib/translate-tour.functions";
+import { useAdminI18n } from "@/lib/admin-i18n";
 
 const EMPTY: Partial<TourRow> = {
   slug: "",
