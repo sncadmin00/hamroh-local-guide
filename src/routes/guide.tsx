@@ -208,14 +208,14 @@ function GuidePortal() {
             onAdd={async (payload) => {
               try {
                 await addSlotFn({ data: payload });
-                toast.success("Slot added");
+                toast.success(tg("availability.added"));
                 await load();
               } catch (e) { toast.error((e as Error).message); }
             }}
             onDelete={async (id) => {
               try {
                 await deleteSlotFn({ data: { id } });
-                toast.success("Slot removed");
+                toast.success(tg("availability.removed"));
                 await load();
               } catch (e) { toast.error((e as Error).message); }
             }}
@@ -228,14 +228,14 @@ function GuidePortal() {
             onAction={async (id, status) => {
               try {
                 await updateStatusFn({ data: { id, status } });
-                toast.success(`Booking ${status}`);
+                toast.success(tg("bookings.updated", { status: tg(`status.${status}` as Parameters<typeof tg>[0]) }));
                 await load();
               } catch (e) { toast.error((e as Error).message); }
             }}
             onPropose={async (bookingId, date, time, note) => {
               try {
                 await proposeTimeFn({ data: { id: bookingId, date, time, note: note || undefined } });
-                toast.success("Proposal sent to client");
+                toast.success(tg("bookings.proposalSent"));
                 await load();
               } catch (e) { toast.error((e as Error).message); }
             }}
