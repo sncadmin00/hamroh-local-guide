@@ -739,7 +739,13 @@ function BecomeAGuidePage() {
       toast.success(t("bg.applicationSent"));
       setSubmitted(true);
     } catch (err) {
-      const msg = err instanceof Error ? err.message : t("bg.sthWrong");
+      console.error("Guide application submit failed", err);
+      const msg =
+        err instanceof Error
+          ? err.message
+          : err && typeof err === "object" && "message" in err && typeof (err as { message: unknown }).message === "string"
+            ? (err as { message: string }).message
+            : t("bg.sthWrong");
       toast.error(msg);
     } finally {
       setSaving(false);
