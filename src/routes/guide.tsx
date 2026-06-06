@@ -1036,6 +1036,7 @@ function CitiesPanel({
   currentExtra: string[];
   onSaved: () => void;
 }) {
+  const { tg } = useGuideI18n();
   const { data: cities = [] } = useCities();
   const updateFn = useServerFn(updateMyCities);
   const [selected, setSelected] = useState<string[]>(currentExtra);
@@ -1052,7 +1053,7 @@ function CitiesPanel({
     setSaving(true);
     try {
       await updateFn({ data: { extra_city_ids: selected } });
-      toast.success("Saved");
+      toast.success(tg("common.saved"));
       onSaved();
     } catch (e) {
       toast.error((e as Error).message);
@@ -1066,12 +1067,12 @@ function CitiesPanel({
   return (
     <div className="rounded-3xl bg-card p-6 ring-1 ring-border space-y-4">
       <div>
-        <h2 className="font-display text-lg font-semibold">Cities you work in</h2>
-        <p className="text-sm text-muted-foreground mt-1">Your home city is set by an administrator. Tick any additional cities where you also offer tours.</p>
+        <h2 className="font-display text-lg font-semibold">{tg("cities.title")}</h2>
+        <p className="text-sm text-muted-foreground mt-1">{tg("cities.text")}</p>
       </div>
       {homeCity && (
         <div className="text-sm">
-          <span className="text-muted-foreground">Home city:</span>{" "}
+          <span className="text-muted-foreground">{tg("cities.homeCity")}</span>{" "}
           <span className="font-medium">{homeCity.name}</span>
         </div>
       )}
@@ -1094,7 +1095,7 @@ function CitiesPanel({
         disabled={saving}
         className="h-10 px-5 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-50"
       >
-        {saving ? "Saving…" : "Save cities"}
+        {saving ? tg("common.loading") : tg("cities.save")}
       </button>
     </div>
   );
