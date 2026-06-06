@@ -114,8 +114,6 @@ export const translations: Dict = {
   "cities.title": { en: "Popular cities", uz: "Mashhur shaharlar", ru: "Популярные города" },
   "cities.subtitle": { en: "Pick a destination and meet your guide", uz: "Yo'nalishni tanlang va hamroh toping", ru: "Выберите город и найдите гида" },
 
-  "latest.title": { en: "Latest from our guides", uz: "Hamrohlarimizdan yangiliklar", ru: "Свежее от гидов" },
-  "latest.subtitle": { en: "What locals are sharing right now", uz: "Mahalliylar hozir ulashayotgan", ru: "Чем делятся локалы прямо сейчас" },
 
   "reviews.title": { en: "Loved by travelers", uz: "Sayohatchilar yaxshi ko'radi", ru: "Путешественники нас любят" },
   "reviews.subtitle": { en: "Real stories from real trips", uz: "Haqiqiy sayohatlardan haqiqiy hikoyalar", ru: "Реальные истории из реальных поездок" },
