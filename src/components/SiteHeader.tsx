@@ -163,6 +163,15 @@ export function SiteHeader() {
                     <Settings className="h-4 w-4" /> {t("common.settings")}
                   </Link>
                 )}
+                {isGuide && (
+                  <Link
+                    to="/guide"
+                    className="px-3 py-3 rounded-lg text-base font-medium text-foreground hover:bg-secondary/60 inline-flex items-center gap-2"
+                    activeProps={{ className: "px-3 py-3 rounded-lg text-base font-medium bg-secondary text-foreground inline-flex items-center gap-2" }}
+                  >
+                    <Briefcase className="h-4 w-4" /> Кабинет гида
+                  </Link>
+                )}
                 {isAdmin && (
                   <Link
                     to="/admin"
