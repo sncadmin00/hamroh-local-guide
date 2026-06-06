@@ -2161,7 +2161,7 @@ function PlacesPanel({
   if (cities.length === 0) {
     return (
       <div className="mt-6 rounded-3xl bg-card p-6 ring-1 ring-border/60 text-sm text-muted-foreground">
-        Add at least one city before creating places.
+        {ta("places.needCityFirst")}
       </div>
     );
   }
