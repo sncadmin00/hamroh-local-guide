@@ -70,7 +70,7 @@ export const finalizeApprovedGuide = createServerFn({ method: "POST" })
 
     const { data: app, error: appErr } = await supabaseAdmin
       .from("guide_applications")
-      .select("id, user_id, full_name, portrait_url, video_url, language_tests")
+      .select("id, user_id, full_name, portrait_url, video_url, photo_urls, language_tests")
       .eq("id", data.application_id)
       .maybeSingle();
     if (appErr) throw new Error(appErr.message);
