@@ -557,6 +557,23 @@ function BecomeAGuidePage() {
       ),
     },
     {
+      title: t("bg.sId.title"),
+      subtitle: t("bg.sId.sub"),
+      canNext: () => !!idDocument,
+      render: () => (
+        <PhotoSlot
+          file={idDocument}
+          onPick={(f) => setOnePhoto(f, MAX_PHOTO_BYTES, setIdDocument, t("bg.sId.tooBig"))}
+          onClear={() => setIdDocument(null)}
+          accept="image/*"
+          captureMode="environment"
+          takeLabel={t("bg.s6.takeCamera")}
+          pickLabel={t("bg.s6.pickGallery")}
+          removeLabel={t("bg.remove")}
+        />
+      ),
+    },
+    {
       title: t("bg.s6.title"),
       subtitle: t("bg.s6.sub"),
       canNext: () => true,
