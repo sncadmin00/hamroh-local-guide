@@ -2127,11 +2127,11 @@ function PlacesPanel({
   };
 
   const remove = async (id: string) => {
-    if (!confirm("Delete this place?")) return;
+    if (!confirm(ta("places.confirmDelete"))) return;
     const { error } = await supabase.from("places").delete().eq("id", id);
     if (error) toast.error(error.message);
     else {
-      toast.success("Deleted");
+      toast.success(ta("common.deleted"));
       await reload();
     }
   };
