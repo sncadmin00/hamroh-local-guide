@@ -1112,6 +1112,7 @@ function LanguagesPanel({
   verified: Record<string, string>;
   onSaved: () => void;
 }) {
+  const { tg } = useGuideI18n();
   const updateFn = useServerFn(updateMyLanguages);
   const [options, setOptions] = useState<Array<{ id: string; name: string }>>([]);
   const [selected, setSelected] = useState<string[]>(current);
@@ -1139,7 +1140,7 @@ function LanguagesPanel({
     setSaving(true);
     try {
       await updateFn({ data: { languages: selected } });
-      toast.success("Saved");
+      toast.success(tg("common.saved"));
       onSaved();
     } catch (e) {
       toast.error((e as Error).message);
@@ -1157,13 +1158,13 @@ function LanguagesPanel({
   return (
     <div className="rounded-3xl bg-card p-6 ring-1 ring-border space-y-4">
       <div>
-        <h2 className="font-display text-lg font-semibold">Languages you speak</h2>
+        <h2 className="font-display text-lg font-semibold">{tg("languages.title")}</h2>
         <p className="text-sm text-muted-foreground mt-1">
-          Pick the languages in which you can run tours. Pass a quick voice test (B1+) to earn the ✓ verified badge.
+          {tg("languages.text")}
         </p>
       </div>
       {options.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No languages available yet.</p>
+        <p className="text-sm text-muted-foreground">{tg("languages.empty")}</p>
       ) : (
         <div className="flex flex-wrap gap-2">
           {options.map((l) => {
@@ -1185,15 +1186,15 @@ function LanguagesPanel({
         disabled={saving}
         className="h-10 px-5 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-50"
       >
-        {saving ? "Saving…" : "Save languages"}
+        {saving ? tg("common.loading") : tg("languages.save")}
       </button>
 
       {selected.length > 0 && (
         <div className="pt-4 border-t border-border space-y-3">
           <div>
-            <h3 className="font-display text-base font-semibold">Verification</h3>
+            <h3 className="font-display text-base font-semibold">{tg("languages.verification")}</h3>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Record a ~30s sample. Levels B1 and above show a ✓ badge on your profile.
+              {tg("languages.verificationText")}
             </p>
           </div>
           <div className="space-y-2">
@@ -1210,14 +1211,14 @@ function LanguagesPanel({
                           ✓ {lv}
                         </span>
                       ) : (
-                        <span className="text-xs text-muted-foreground">Not verified</span>
+                        <span className="text-xs text-muted-foreground">{tg("languages.notVerified")}</span>
                       )}
                     </div>
                     <button
                       onClick={() => setTestingLang(isTesting ? null : lang)}
                       className="h-8 px-3 rounded-full bg-secondary text-xs font-medium hover:bg-secondary/80"
                     >
-                      {isTesting ? "Cancel" : lv ? "Retake test" : "Take test"}
+                      {isTesting ? tg("common.cancel") : lv ? tg("languages.retakeTest") : tg("languages.takeTest")}
                     </button>
                   </div>
                   {isTesting && (
