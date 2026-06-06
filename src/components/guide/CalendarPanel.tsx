@@ -508,6 +508,7 @@ function EventSheet({ open, onClose, onSave, onDelete, defaultDate, event }: {
 }
 
 function GoogleCalendarCard() {
+  const { tg } = useGuideI18n();
   const [loading, setLoading] = useState(true);
   const [connected, setConnected] = useState(false);
   const [email, setEmail] = useState<string | null>(null);
@@ -534,8 +535,8 @@ function GoogleCalendarCard() {
     // Show toast if returning from OAuth callback
     const params = new URLSearchParams(window.location.search);
     const gcal = params.get("gcal");
-    if (gcal === "connected") toast.success("Google Calendar connected");
-    if (gcal === "error") toast.error("Google Calendar connection failed");
+    if (gcal === "connected") toast.success(tg("gcal.connected"));
+    if (gcal === "error") toast.error(tg("gcal.failed"));
     if (gcal) {
       params.delete("gcal");
       const newUrl = window.location.pathname + (params.toString() ? `?${params}` : "");
@@ -556,11 +557,11 @@ function GoogleCalendarCard() {
   };
 
   const handleDisconnect = async () => {
-    if (!confirm("Disconnect Google Calendar? Existing events stay, but new changes won't sync.")) return;
+    if (!confirm(tg("gcal.disconnectConfirm"))) return;
     setBusy(true);
     try {
       await disconnect();
-      toast.success("Disconnected");
+      toast.success(tg("gcal.disconnected"));
       await refresh();
     } catch (e) {
       toast.error((e as Error).message);
@@ -579,7 +580,7 @@ function GoogleCalendarCard() {
       <div className="flex-1 min-w-0">
         <p className="text-sm font-semibold">Google Calendar</p>
         <p className="text-xs text-muted-foreground truncate">
-          {connected ? `Synced${email ? ` · ${email}` : ""}` : "Connect to mirror events to your Google Calendar"}
+          {connected ? `${tg("gcal.synced")}${email ? ` · ${email}` : ""}` : tg("gcal.connectText")}
         </p>
       </div>
       {connected ? (
@@ -589,7 +590,7 @@ function GoogleCalendarCard() {
           className="h-9 px-3 rounded-full text-xs font-medium bg-background ring-1 ring-border inline-flex items-center gap-1.5 disabled:opacity-50"
         >
           {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Unlink className="h-3.5 w-3.5" />}
-          Disconnect
+          {tg("gcal.disconnect")}
         </button>
       ) : (
         <button
@@ -598,7 +599,7 @@ function GoogleCalendarCard() {
           className="h-9 px-3 rounded-full text-xs font-semibold bg-foreground text-background inline-flex items-center gap-1.5 disabled:opacity-50"
         >
           {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
-          Connect
+          {tg("gcal.connect")}
         </button>
       )}
     </div>
