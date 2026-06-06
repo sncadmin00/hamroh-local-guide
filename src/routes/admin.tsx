@@ -570,7 +570,7 @@ function GuidesPanel({
   return (
     <div className="mt-6 grid gap-6 lg:grid-cols-2">
       <form onSubmit={add} className="rounded-3xl bg-card p-6 ring-1 ring-border/60 h-fit">
-        <h2 className="font-display text-lg font-semibold">Add a guide</h2>
+        <h2 className="font-display text-lg font-semibold">{ta("guides.add")}</h2>
         <div className="mt-4 space-y-3">
           <Field label="Name" value={name} onChange={setName} placeholder="Aziz Karimov" />
           <Field label="Slug" value={slug} onChange={setSlug} placeholder="aziz-karimov" />
