@@ -2262,7 +2262,7 @@ function PlacesPanel({
             onChange={(e) => setFilterCity(e.target.value)}
             className="h-9 rounded-full border border-input bg-background px-3 text-xs"
           >
-            <option value="">All cities</option>
+            <option value="">{ta("common.allCities")}</option>
             {cities.map((c) => (
               <option key={c.id} value={c.id}>
                 {c.name}
