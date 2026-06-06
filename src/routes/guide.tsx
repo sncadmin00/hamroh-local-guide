@@ -26,6 +26,7 @@ import {
 import { assessLanguageTest } from "@/lib/language-test.functions";
 import { useCities, useCategories } from "@/lib/content-queries";
 import { GuidePostsPanel } from "@/components/GuidePostsPanel";
+import { useGuideI18n } from "@/lib/guide-i18n";
 
 export const Route = createFileRoute("/guide")({
   head: () => ({ meta: [{ title: "Guide portal — Hamroh" }] }),
@@ -79,6 +80,7 @@ type MyGuide = {
 };
 
 function GuidePortal() {
+  const { tg } = useGuideI18n();
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
   const [guide, setGuide] = useState<MyGuide | null>(null);
@@ -123,16 +125,16 @@ function GuidePortal() {
   if (!guide) {
     return (
       <div className="min-h-screen container mx-auto px-4 py-20 max-w-2xl text-center">
-        <h1 className="font-display text-2xl font-semibold">No guide profile linked</h1>
+        <h1 className="font-display text-2xl font-semibold">{tg("portal.noProfileTitle")}</h1>
         <p className="mt-3 text-muted-foreground">
-          Your account is not linked to a guide profile yet. Ask an administrator to invite you to the portal.
+          {tg("portal.noProfileText")}
         </p>
         <div className="mt-6 flex justify-center gap-3">
-          <Link to="/" className="h-10 px-4 inline-flex items-center rounded-full bg-secondary text-sm font-medium">Home</Link>
+          <Link to="/" className="h-10 px-4 inline-flex items-center rounded-full bg-secondary text-sm font-medium">{tg("common.home")}</Link>
           <button
             onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/login" }); }}
             className="h-10 px-4 inline-flex items-center rounded-full bg-foreground text-background text-sm font-medium"
-          >Sign out</button>
+          >{tg("common.signOut")}</button>
         </div>
       </div>
     );
@@ -143,7 +145,7 @@ function GuidePortal() {
       <header className="border-b border-border bg-background">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="min-w-0">
-            <p className="text-xs uppercase tracking-wider text-muted-foreground">Guide portal</p>
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">{tg("portal.eyebrow")}</p>
             <p className="font-display text-lg font-semibold truncate">{guide.name}</p>
           </div>
           <div className="flex items-center gap-1">
@@ -151,13 +153,13 @@ function GuidePortal() {
               to="/"
               className="inline-flex items-center gap-2 h-9 px-3 rounded-full text-sm hover:bg-muted"
             >
-              <Home className="h-4 w-4" /> <span className="hidden sm:inline">Home</span>
+              <Home className="h-4 w-4" /> <span className="hidden sm:inline">{tg("common.home")}</span>
             </Link>
             <button
               onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/login" }); }}
               className="inline-flex items-center gap-2 h-9 px-3 rounded-full text-sm hover:bg-muted"
             >
-              <LogOut className="h-4 w-4" /> <span className="hidden sm:inline">Sign out</span>
+              <LogOut className="h-4 w-4" /> <span className="hidden sm:inline">{tg("common.signOut")}</span>
             </button>
           </div>
         </div>
@@ -166,34 +168,34 @@ function GuidePortal() {
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="flex gap-2 mb-6 flex-wrap">
           <TabBtn active={tab === "calendar"} onClick={() => setTab("calendar")}>
-            <CalendarDays className="h-4 w-4" /> Calendar
+            <CalendarDays className="h-4 w-4" /> {tg("tab.calendar")}
           </TabBtn>
           <TabBtn active={tab === "ai"} onClick={() => setTab("ai")}>
-            <Sparkles className="h-4 w-4" /> AI
+            <Sparkles className="h-4 w-4" /> {tg("tab.ai")}
           </TabBtn>
           <TabBtn active={tab === "availability"} onClick={() => setTab("availability")}>
-            <Calendar className="h-4 w-4" /> Availability
+            <Calendar className="h-4 w-4" /> {tg("tab.availability")}
           </TabBtn>
           <TabBtn active={tab === "tours"} onClick={() => setTab("tours")}>
-            <Compass className="h-4 w-4" /> My tours
+            <Compass className="h-4 w-4" /> {tg("tab.tours")}
           </TabBtn>
           <TabBtn active={tab === "bookings"} onClick={() => setTab("bookings")}>
-            Bookings ({bookings.length})
+            {tg("tab.bookings", { n: bookings.length })}
           </TabBtn>
           <TabBtn active={tab === "cities"} onClick={() => setTab("cities")}>
-            <MapPin className="h-4 w-4" /> Cities
+            <MapPin className="h-4 w-4" /> {tg("tab.cities")}
           </TabBtn>
           <TabBtn active={tab === "languages"} onClick={() => setTab("languages")}>
-            Languages
+            {tg("tab.languages")}
           </TabBtn>
           <TabBtn active={tab === "posts"} onClick={() => setTab("posts")}>
-            <ImageIcon className="h-4 w-4" /> Posts
+            <ImageIcon className="h-4 w-4" /> {tg("tab.posts")}
           </TabBtn>
           <TabBtn active={tab === "referral"} onClick={() => setTab("referral")}>
-            <Link2 className="h-4 w-4" /> Referral
+            <Link2 className="h-4 w-4" /> {tg("tab.referral")}
           </TabBtn>
           <TabBtn active={tab === "verification"} onClick={() => setTab("verification")}>
-            <ShieldCheck className="h-4 w-4" /> Verification
+            <ShieldCheck className="h-4 w-4" /> {tg("tab.verification")}
           </TabBtn>
         </div>
 
