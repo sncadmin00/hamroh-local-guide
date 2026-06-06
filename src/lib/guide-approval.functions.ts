@@ -3,8 +3,10 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const PHOTO_BUCKET_SRC = "guide-application-photos";
 const VIDEO_BUCKET_SRC = "guide-application-videos";
+// guide-photos is the only public bucket (workspace policy blocks turning others public),
+// so both portrait images AND the intro video are copied there.
 const PHOTO_BUCKET_DST = "guide-photos";
-const VIDEO_BUCKET_DST = "guide-intro-videos";
+const VIDEO_BUCKET_DST = "guide-photos";
 
 function pathFromPublicUrl(url: string, bucket: string): string | null {
   const marker = `/storage/v1/object/public/${bucket}/`;
@@ -68,7 +70,7 @@ export const finalizeApprovedGuide = createServerFn({ method: "POST" })
 
     const { data: app, error: appErr } = await supabaseAdmin
       .from("guide_applications")
-      .select("id, user_id, full_name, portrait_url, video_url, language_tests")
+      .select("id, user_id, full_name, portrait_url, video_url, photo_urls, language_tests")
       .eq("id", data.application_id)
       .maybeSingle();
     if (appErr) throw new Error(appErr.message);
@@ -133,6 +135,52 @@ export const finalizeApprovedGuide = createServerFn({ method: "POST" })
       })
       .eq("id", guide.id);
     if (upErr) throw new Error(upErr.message);
+
+    // Import application gallery photos as guide_posts so they appear on the public profile.
+    const gallery = (app.photo_urls as string[] | null) ?? [];
+    if (gallery.length > 0) {
+      const { count } = await supabaseAdmin
+        .from("guide_posts")
+        .select("id", { count: "exact", head: true })
+        .eq("guide_id", guide.id);
+      if (!count) {
+        const rows: Array<{
+          guide_id: string;
+          platform: string;
+          url: string;
+          thumbnail_url: string;
+          caption: string;
+          sort_order: number;
+          visible: boolean;
+        }> = [];
+        for (let i = 0; i < gallery.length; i++) {
+          try {
+            const publicUrl = await copyToPublic({
+              url: gallery[i],
+              srcBucket: PHOTO_BUCKET_SRC,
+              dstBucket: PHOTO_BUCKET_DST,
+              dstPrefix: `approved/${guide.id}/gallery`,
+            });
+            rows.push({
+              guide_id: guide.id,
+              platform: "other",
+              url: publicUrl,
+              thumbnail_url: publicUrl,
+              caption: "",
+              sort_order: i,
+              visible: true,
+            });
+          } catch (e) {
+            console.error("gallery copy failed", e);
+          }
+        }
+        if (rows.length > 0) {
+          await supabaseAdmin.from("guide_posts").insert(rows);
+        }
+      }
+    }
+
+
 
     return { ok: true, guide_id: guide.id, photo_url: photoUrl, intro_video_url: videoUrl };
   });
