@@ -2250,7 +2250,7 @@ function PlacesPanel({
           disabled={saving}
           className="mt-5 inline-flex items-center gap-2 h-11 px-6 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-60"
         >
-          <Plus className="h-4 w-4" /> {saving ? "Saving…" : "Add place"}
+          <Plus className="h-4 w-4" /> {saving ? ta("common.saving") : ta("places.addBtn")}
         </button>
       </form>
 
