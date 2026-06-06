@@ -245,7 +245,7 @@ function AdminPage() {
         .eq("user_id", data.user.id);
       const isAdmin = (roles ?? []).some((r) => r.role === "admin");
       if (!isAdmin) {
-        toast.error("Admin access required");
+        toast.error(ta("page.accessRequired"));
         navigate({ to: "/", replace: true });
         return;
       }
