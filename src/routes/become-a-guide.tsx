@@ -123,6 +123,7 @@ function BecomeAGuidePage() {
   const [saving, setSaving] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
   const [portrait, setPortrait] = useState<File | null>(null);
+  const [idDocument, setIdDocument] = useState<File | null>(null);
   const [photos, setPhotos] = useState<File[]>([]);
   const [video, setVideo] = useState<File | null>(null);
   const [form, setForm] = useState<FormState>(emptyForm);
