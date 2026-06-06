@@ -138,6 +138,11 @@ function Home() {
       sessionStorage.removeItem("pendingAiPrompt");
       setInput(pending);
     }
+    supabase.auth.getSession().then(({ data }) => {
+      const uid = data.session?.user.id;
+      if (!uid) return;
+      supabase.from("guides").select("id").eq("user_id", uid).maybeSingle().then(({ data: g }) => setIsGuide(!!g));
+    });
   }, []);
 
   const submit = async (text: string) => {
