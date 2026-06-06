@@ -494,6 +494,7 @@ function GuidesPanel({
   languages: Language[];
   reload: () => Promise<void>;
 }) {
+  const { ta } = useAdminI18n();
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [cityId, setCityId] = useState("");
@@ -510,7 +511,7 @@ function GuidesPanel({
   const add = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !slug || !cityId) {
-      toast.error("Name, slug and city are required");
+      toast.error(ta("guides.needFields"));
       return;
     }
     setSaving(true);
@@ -535,7 +536,7 @@ function GuidesPanel({
       toast.error(error.message);
       return;
     }
-    toast.success("Guide added");
+    toast.success(ta("guides.added"));
     setName("");
     setSlug("");
     setTagline("");
@@ -548,11 +549,11 @@ function GuidesPanel({
   };
 
   const remove = async (id: string) => {
-    if (!confirm("Delete this guide?")) return;
+    if (!confirm(ta("guides.confirmDelete"))) return;
     const { error } = await supabase.from("guides").delete().eq("id", id);
     if (error) toast.error(error.message);
     else {
-      toast.success("Deleted");
+      toast.success(ta("common.deleted"));
       await reload();
     }
   };
@@ -560,10 +561,11 @@ function GuidesPanel({
   if (cities.length === 0) {
     return (
       <div className="mt-6 rounded-3xl bg-card p-6 ring-1 ring-border/60 text-sm text-muted-foreground">
-        Add at least one city before creating guides.
+        {ta("guides.needCityFirst")}
       </div>
     );
   }
+
 
   return (
     <div className="mt-6 grid gap-6 lg:grid-cols-2">
