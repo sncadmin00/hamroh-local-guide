@@ -1792,7 +1792,7 @@ function ApplicationsPanel({
     if (url) {
       const { error } = await supabase.from("guide_applications").update({ portrait_url: url }).eq("id", appId);
       if (error) toast.error(error.message);
-      else { toast.success("Portrait uploaded"); await reload(); }
+      else { toast.success(ta("applications.portraitUploaded")); await reload(); }
     }
     setUploading((p) => ({ ...p, [appId + "-portrait"]: false }));
   };
