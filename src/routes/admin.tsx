@@ -2173,9 +2173,9 @@ function PlacesPanel({
   return (
     <div className="mt-6 grid gap-6 lg:grid-cols-2">
       <form onSubmit={add} className="rounded-3xl bg-card p-6 ring-1 ring-border/60 h-fit">
-        <h2 className="font-display text-lg font-semibold">Add a place</h2>
+        <h2 className="font-display text-lg font-semibold">{ta("places.add")}</h2>
         <p className="mt-1 text-xs text-muted-foreground">
-          Places appear in AI recommendations and on the public site. AI sees only published places.
+          {ta("places.subtitle")}
         </p>
         <div className="mt-4 space-y-3">
           <div className="grid grid-cols-2 gap-3">
