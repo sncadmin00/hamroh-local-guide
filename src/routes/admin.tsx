@@ -186,6 +186,7 @@ function sourceBadgeClass(s: string): string {
 }
 
 function AdminPage() {
+  const { ta } = useAdminI18n();
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
   const [tab, setTab] = useState<"bookings" | "applications" | "verifications" | "cities" | "guides" | "tours" | "spotlights" | "categories" | "languages" | "places" | "suggestions" | "articles" | "social" | "users">("bookings");
