@@ -1027,10 +1027,15 @@ function TourEditor({
                     : { lat: 41.3111, lng: 69.2797 };
                 })()}
                 meeting={meetingCoords}
-                end={endCoords}
+                end={endSameAsMeeting ? meetingCoords : endCoords}
+                endSameAsMeeting={endSameAsMeeting}
                 onChange={({ meeting, end }) => {
                   setMeetingCoords(meeting);
-                  setEndCoords(end);
+                  if (endSameAsMeeting) {
+                    setEndCoords(meeting);
+                  } else {
+                    setEndCoords(end);
+                  }
                 }}
                 labels={{
                   pickMeeting: tg("editor.mapPickMeeting"),
