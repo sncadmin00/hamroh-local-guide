@@ -6,6 +6,7 @@ import { enqueueTransactionalEmail } from "@/lib/email/enqueue.server";
 import { normalizeLocale } from "@/lib/email-templates/_i18n";
 import { bookingDetailsText, sendTelegramMessage } from "@/lib/telegram-notifications.server";
 import { mirrorBookingToGoogle } from "@/lib/google-calendar.server";
+import { signBookingPdfToken } from "@/lib/booking-pdf.server";
 
 const APP_BASE_URL = "https://hamrohim.com";
 
@@ -202,6 +203,9 @@ export const updateBookingStatus = createServerFn({ method: "POST" })
           .eq("id", prior.guide_id)
           .maybeSingle();
         if (prior.customer_email) {
+          const pdfUrl = data.status === "confirmed"
+            ? `${APP_BASE_URL}/api/public/bookings/${data.id}/pdf?token=${signBookingPdfToken(data.id)}`
+            : undefined;
           await enqueueTransactionalEmail({
             supabase: supabaseAdmin,
             templateName: "booking-status-update-client",
@@ -214,6 +218,7 @@ export const updateBookingStatus = createServerFn({ method: "POST" })
               startTime: prior.start_time,
               reason: data.reason,
               bookingUrl: `${APP_BASE_URL}/my-bookings`,
+              pdfUrl,
               status: data.status,
               locale: normalizeLocale(prior.locale),
             },
