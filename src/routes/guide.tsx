@@ -541,6 +541,8 @@ type Tour = {
   highlights: string[];
   included: string[];
   not_included: string[];
+  meeting_point?: string;
+  end_point?: string;
   published: boolean;
   sort_order: number;
   category_ids: string[];
@@ -722,6 +724,8 @@ function TourEditor({
     highlights: string[];
     included: string[];
     not_included: string[];
+    meeting_point: string;
+    end_point: string;
     published: boolean;
     sort_order: number;
     category_ids: string[];
@@ -761,6 +765,8 @@ function TourEditor({
   const [highlights, setHighlights] = useState(arrToText(initial?.highlights ?? []));
   const [included, setIncluded] = useState(arrToText(initial?.included ?? []));
   const [notIncluded, setNotIncluded] = useState(arrToText(initial?.not_included ?? []));
+  const [meetingPoint, setMeetingPoint] = useState(initial?.meeting_point ?? "");
+  const [endPoint, setEndPoint] = useState(initial?.end_point ?? "");
   const [published, setPublished] = useState(initial?.published ?? true);
   const [selectedCats, setSelectedCats] = useState<string[]>(initial?.category_ids ?? []);
   const [uploading, setUploading] = useState(false);
