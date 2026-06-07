@@ -541,6 +541,8 @@ type Tour = {
   highlights: string[];
   included: string[];
   not_included: string[];
+  meeting_point?: string;
+  end_point?: string;
   published: boolean;
   sort_order: number;
   category_ids: string[];
@@ -722,6 +724,8 @@ function TourEditor({
     highlights: string[];
     included: string[];
     not_included: string[];
+    meeting_point: string;
+    end_point: string;
     published: boolean;
     sort_order: number;
     category_ids: string[];
@@ -761,6 +765,8 @@ function TourEditor({
   const [highlights, setHighlights] = useState(arrToText(initial?.highlights ?? []));
   const [included, setIncluded] = useState(arrToText(initial?.included ?? []));
   const [notIncluded, setNotIncluded] = useState(arrToText(initial?.not_included ?? []));
+  const [meetingPoint, setMeetingPoint] = useState(initial?.meeting_point ?? "");
+  const [endPoint, setEndPoint] = useState(initial?.end_point ?? "");
   const [published, setPublished] = useState(initial?.published ?? true);
   const [selectedCats, setSelectedCats] = useState<string[]>(initial?.category_ids ?? []);
   const [uploading, setUploading] = useState(false);
@@ -947,6 +953,27 @@ function TourEditor({
             </label>
           </div>
 
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <label className="block text-sm">
+              <span className="text-xs text-muted-foreground">{tg("editor.meetingPoint")}</span>
+              <input
+                value={meetingPoint}
+                onChange={(e) => setMeetingPoint(e.target.value)}
+                placeholder={tg("editor.meetingPointPh")}
+                className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm"
+              />
+            </label>
+            <label className="block text-sm">
+              <span className="text-xs text-muted-foreground">{tg("editor.endPoint")}</span>
+              <input
+                value={endPoint}
+                onChange={(e) => setEndPoint(e.target.value)}
+                placeholder={tg("editor.endPointPh")}
+                className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm"
+              />
+            </label>
+          </div>
+
           <div>
             <p className="text-sm font-medium">{tg("editor.categories")}</p>
             <p className="text-xs text-muted-foreground mt-0.5">{tg("editor.categoriesText")}</p>
@@ -1010,6 +1037,8 @@ function TourEditor({
                 highlights: textToArr(highlights),
                 included: textToArr(included),
                 not_included: textToArr(notIncluded),
+                meeting_point: meetingPoint.trim(),
+                end_point: endPoint.trim(),
                 published,
                 sort_order: initial?.sort_order ?? 0,
                 category_ids: selectedCats,

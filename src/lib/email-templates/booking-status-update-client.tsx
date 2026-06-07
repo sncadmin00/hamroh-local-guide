@@ -17,6 +17,7 @@ interface Props {
   newStartTime?: string
   reason?: string
   bookingUrl?: string
+  pdfUrl?: string
   status: Status
   locale?: Locale | string
 }
@@ -48,6 +49,7 @@ const T = {
   reason: { ru: 'Причина', uz: 'Sabab', en: 'Reason' },
   ctaOpen: { ru: 'Открыть бронирование', uz: 'Bronni ochish', en: 'Open booking' },
   ctaBrowse: { ru: 'Найти другого гида', uz: 'Boshqa yo‘lboshchi topish', en: 'Find another guide' },
+  ctaPdf: { ru: 'Скачать PDF-подтверждение', uz: 'PDF tasdiqni yuklab olish', en: 'Download PDF confirmation' },
   thanks: { ru: 'Спасибо, что пользуетесь Hamroh.', uz: 'Hamroh’dan foydalanganingiz uchun rahmat.', en: 'Thanks for using Hamroh.' },
   subject: {
     confirmed: { ru: 'Бронирование подтверждено — Hamroh', uz: 'Bron tasdiqlandi — Hamroh', en: 'Booking confirmed — Hamroh' },
@@ -59,7 +61,7 @@ const T = {
 
 const Email = ({
   customerName, guideName, experience, date, startTime,
-  newDate, newStartTime, reason, bookingUrl, status, locale,
+  newDate, newStartTime, reason, bookingUrl, pdfUrl, status, locale,
 }: Props) => {
   const L = normalizeLocale(locale)
   return (
@@ -85,6 +87,13 @@ const Email = ({
             <Section style={{ textAlign: 'center' }}>
               <Button href={bookingUrl} style={styles.button}>
                 {pick(status === 'declined' || status === 'cancelled' ? T.ctaBrowse : T.ctaOpen, L)}
+              </Button>
+            </Section>
+          )}
+          {pdfUrl && status === 'confirmed' && (
+            <Section style={{ textAlign: 'center', marginTop: '12px' }}>
+              <Button href={pdfUrl} style={{ ...styles.button, background: '#ffffff', color: BRAND.text, border: `1px solid ${BRAND.border}` }}>
+                {pick(T.ctaPdf, L)}
               </Button>
             </Section>
           )}

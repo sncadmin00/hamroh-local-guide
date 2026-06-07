@@ -6,6 +6,7 @@ import { enqueueTransactionalEmail } from "@/lib/email/enqueue.server";
 import { normalizeLocale } from "@/lib/email-templates/_i18n";
 import { bookingDetailsText, sendTelegramMessage } from "@/lib/telegram-notifications.server";
 import { mirrorBookingToGoogle } from "@/lib/google-calendar.server";
+import { signBookingPdfToken } from "@/lib/booking-pdf.server";
 
 const APP_BASE_URL = "https://hamrohim.com";
 
@@ -202,6 +203,9 @@ export const updateBookingStatus = createServerFn({ method: "POST" })
           .eq("id", prior.guide_id)
           .maybeSingle();
         if (prior.customer_email) {
+          const pdfUrl = data.status === "confirmed"
+            ? `${APP_BASE_URL}/api/public/bookings/${data.id}/pdf?token=${signBookingPdfToken(data.id)}`
+            : undefined;
           await enqueueTransactionalEmail({
             supabase: supabaseAdmin,
             templateName: "booking-status-update-client",
@@ -214,6 +218,7 @@ export const updateBookingStatus = createServerFn({ method: "POST" })
               startTime: prior.start_time,
               reason: data.reason,
               bookingUrl: `${APP_BASE_URL}/my-bookings`,
+              pdfUrl,
               status: data.status,
               locale: normalizeLocale(prior.locale),
             },
@@ -355,7 +360,7 @@ export const listMyTours = createServerFn({ method: "GET" })
       supabase.from("cities").select("id, name").in("id", cityIds),
       supabase
         .from("tours")
-        .select("id, slug, title, short_description, cover_url, city_id, duration_hours, price_from, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, children_free_under, transport_included, languages, highlights, included, not_included, published, sort_order, tour_categories(category_id)")
+        .select("id, slug, title, short_description, cover_url, city_id, duration_hours, price_from, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, children_free_under, transport_included, languages, highlights, included, not_included, meeting_point, end_point, published, sort_order, tour_categories(category_id)")
         .eq("guide_id", guide.id)
         .order("sort_order", { ascending: true }),
     ]);
@@ -395,6 +400,8 @@ const upsertTourSchema = z.object({
   highlights: z.array(z.string().trim().min(1).max(300)).max(30).default([]),
   included: z.array(z.string().trim().min(1).max(300)).max(30).default([]),
   not_included: z.array(z.string().trim().min(1).max(300)).max(30).default([]),
+  meeting_point: z.string().trim().max(500).default(""),
+  end_point: z.string().trim().max(500).default(""),
   published: z.boolean().default(true),
   sort_order: z.number().int().min(0).max(1000).default(0),
   category_ids: z.array(z.string().uuid()).max(20).default([]),
@@ -453,6 +460,8 @@ export const upsertTour = createServerFn({ method: "POST" })
       highlights: data.highlights,
       included: data.included,
       not_included: data.not_included,
+      meeting_point: data.meeting_point,
+      end_point: data.end_point,
       published: data.published,
       sort_order: data.sort_order,
     };

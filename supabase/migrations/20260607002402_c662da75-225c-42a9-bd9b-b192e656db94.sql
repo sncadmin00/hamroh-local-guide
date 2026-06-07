@@ -1,0 +1,3 @@
+ALTER TABLE public.tours
+  ADD COLUMN IF NOT EXISTS meeting_point text NOT NULL DEFAULT '',
+  ADD COLUMN IF NOT EXISTS end_point text NOT NULL DEFAULT '';

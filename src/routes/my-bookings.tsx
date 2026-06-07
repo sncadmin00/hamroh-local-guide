@@ -5,7 +5,8 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { listMyBookings, cancelBookingAsClient, respondToProposal } from "@/lib/my-bookings.functions";
-import { Calendar, Users, ArrowLeft, MessageSquare, X, CalendarClock, Check } from "lucide-react";
+import { getBookingPdf } from "@/lib/booking-pdf.functions";
+import { Calendar, Users, ArrowLeft, MessageSquare, X, CalendarClock, Check, FileDown } from "lucide-react";
 import { ReviewForm } from "@/components/ReviewForm";
 
 
@@ -26,7 +27,32 @@ function MyBookingsPage() {
   const fetchBookings = useServerFn(listMyBookings);
   const cancelBooking = useServerFn(cancelBookingAsClient);
   const respondProposal = useServerFn(respondToProposal);
+  const fetchPdf = useServerFn(getBookingPdf);
+  const [pdfLoadingId, setPdfLoadingId] = useState<string | null>(null);
   const qc = useQueryClient();
+
+  const downloadPdf = async (id: string) => {
+    setPdfLoadingId(id);
+    try {
+      const res = await fetchPdf({ data: { id } });
+      const bin = atob(res.pdfBase64);
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      const blob = new Blob([bytes], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = res.filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setPdfLoadingId(null);
+    }
+  };
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -186,6 +212,15 @@ function MyBookingsPage() {
                         className="inline-flex items-center gap-1.5 text-xs font-medium text-destructive hover:underline disabled:opacity-50"
                       >
                         <X className="h-3.5 w-3.5" /> Cancel
+                      </button>
+                    )}
+                    {(b.status === "confirmed" || b.status === "completed") && (
+                      <button
+                        onClick={() => downloadPdf(b.id)}
+                        disabled={pdfLoadingId === b.id}
+                        className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline disabled:opacity-50"
+                      >
+                        <FileDown className="h-3.5 w-3.5" /> {pdfLoadingId === b.id ? "Generating…" : "Download PDF"}
                       </button>
                     )}
                   </div>
