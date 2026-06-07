@@ -471,6 +471,7 @@ export const upsertTour = createServerFn({ method: "POST" })
       meeting_lng: data.meeting_lng,
       end_lat: data.end_lat,
       end_lng: data.end_lng,
+      end_same_as_meeting: data.end_same_as_meeting,
       published: data.published,
       sort_order: data.sort_order,
     };
