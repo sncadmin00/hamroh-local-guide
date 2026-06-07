@@ -352,8 +352,17 @@ export type TourRow = {
   duration_hours: number;
   price_from: number;
   highlights: string[];
+  highlights_ru: string[];
+  highlights_uz: string[];
+  highlights_en: string[];
   included: string[];
+  included_ru: string[];
+  included_uz: string[];
+  included_en: string[];
   not_included: string[];
+  not_included_ru: string[];
+  not_included_uz: string[];
+  not_included_en: string[];
   published: boolean;
   sort_order: number;
   guide_id: string;
@@ -373,7 +382,7 @@ export type TourRow = {
 };
 
 const TOUR_SELECT =
-  "id, slug, title, short_description, description_md, title_ru, title_uz, title_en, short_description_ru, short_description_uz, short_description_en, description_md_ru, description_md_uz, description_md_en, cover_url, city_id, duration_hours, price_from, highlights, included, not_included, published, sort_order, guide_id, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, children_free_under, transport_included, languages, rating, reviews_count, cities(name, slug), guides(id, slug, name, photo_url, rating, reviews, languages), tour_categories(category_id, categories(slug, name, icon))";
+  "id, slug, title, short_description, description_md, title_ru, title_uz, title_en, short_description_ru, short_description_uz, short_description_en, description_md_ru, description_md_uz, description_md_en, cover_url, city_id, duration_hours, price_from, highlights, highlights_ru, highlights_uz, highlights_en, included, included_ru, included_uz, included_en, not_included, not_included_ru, not_included_uz, not_included_en, published, sort_order, guide_id, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, children_free_under, transport_included, languages, rating, reviews_count, cities(name, slug), guides(id, slug, name, photo_url, rating, reviews, languages), tour_categories(category_id, categories(slug, name, icon))";
 
 
 function normalizeTour(row: any): TourRow {
@@ -404,8 +413,17 @@ function normalizeTour(row: any): TourRow {
     languages: row.languages ?? [],
     transport_included: !!row.transport_included,
     highlights: row.highlights ?? [],
+    highlights_ru: row.highlights_ru ?? row.highlights ?? [],
+    highlights_uz: row.highlights_uz ?? row.highlights ?? [],
+    highlights_en: row.highlights_en ?? row.highlights ?? [],
     included: row.included ?? [],
+    included_ru: row.included_ru ?? row.included ?? [],
+    included_uz: row.included_uz ?? row.included ?? [],
+    included_en: row.included_en ?? row.included ?? [],
     not_included: row.not_included ?? [],
+    not_included_ru: row.not_included_ru ?? row.not_included ?? [],
+    not_included_uz: row.not_included_uz ?? row.not_included ?? [],
+    not_included_en: row.not_included_en ?? row.not_included ?? [],
     rating: Number(row.rating ?? 5),
     reviews_count: Number(row.reviews_count ?? 0),
   };
