@@ -1,0 +1,1 @@
+ALTER TABLE public.tours ADD COLUMN end_same_as_meeting boolean NOT NULL DEFAULT false;
