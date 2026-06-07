@@ -13,11 +13,15 @@ import { TelegramLoginButton } from "@/components/TelegramLoginButton";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Sign in — Hamroh" }] }),
+  validateSearch: (search) => ({
+    redirect: typeof search.redirect === "string" ? search.redirect : undefined,
+  }),
   component: LoginPage,
 });
 
 function LoginPage() {
   const navigate = useNavigate();
+  const { redirect } = Route.useSearch();
   const { lang } = useI18n();
   const subscribe = useServerFn(subscribeToNewsletter);
   const sendWelcome = useServerFn(sendWelcomeEmail);
@@ -30,13 +34,19 @@ function LoginPage() {
 
 
   useEffect(() => {
+    const safeRedirect = (value: string | undefined | null) => {
+      if (!value || !value.startsWith("/") || value.startsWith("//")) return null;
+      return value;
+    };
     const resolveAndGo = async (userId: string) => {
+      const pendingRedirect = safeRedirect(sessionStorage.getItem("authRedirect")) ?? safeRedirect(redirect);
+      if (pendingRedirect) sessionStorage.removeItem("authRedirect");
       const [{ data: guide }, { data: roles }] = await Promise.all([
         supabase.from("guides").select("id").eq("user_id", userId).maybeSingle(),
         supabase.from("user_roles").select("role").eq("user_id", userId),
       ]);
       const isAdmin = roles?.some((r) => r.role === "admin");
-      const dest = guide ? "/guide" : isAdmin ? "/admin" : "/ai";
+      const dest = pendingRedirect ?? (guide ? "/guide" : isAdmin ? "/admin" : "/ai");
       navigate({ to: dest, replace: true });
     };
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
@@ -46,7 +56,7 @@ function LoginPage() {
       if (data.user) resolveAndGo(data.user.id);
     });
     return () => sub.subscription.unsubscribe();
-  }, [navigate]);
+  }, [navigate, redirect]);
 
   const submitEmail = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,12 +100,14 @@ function LoginPage() {
 
   const google = async () => {
     setError(null);
+    if (redirect) sessionStorage.setItem("authRedirect", redirect);
     const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/login" });
     if (result.error) setError(result.error.message);
   };
 
   const apple = async () => {
     setError(null);
+    if (redirect) sessionStorage.setItem("authRedirect", redirect);
     const result = await lovable.auth.signInWithOAuth("apple", { redirect_uri: window.location.origin + "/login" });
     if (result.error) setError(result.error.message);
   };
