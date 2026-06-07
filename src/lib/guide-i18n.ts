@@ -127,6 +127,7 @@ const guideTranslations = {
   "editor.mapEndEmpty": { en: "End point not set", uz: "Tugash belgilanmagan", ru: "Точка окончания не задана" },
   "editor.mapClear": { en: "clear", uz: "tozalash", ru: "очистить" },
   "editor.mapHint": { en: "Tap the map to place the active pin.", uz: "Belgilangan nuqtani qo‘yish uchun xaritani bosing.", ru: "Нажмите на карту, чтобы поставить выбранный пин." },
+  "editor.endSameAsMeeting": { en: "End at the same place", uz: "Shu joyda tugaydi", ru: "Окончание там же" },
   "editor.categories": { en: "Categories", uz: "Toifalar", ru: "Категории" },
   "editor.categoriesText": { en: "Pick the categories that best describe this tour. Travellers filter by these.", uz: "Bu turni eng yaxshi tasvirlaydigan toifalarni tanlang. Sayohatchilar shu bo'yicha filterlaydi.", ru: "Выберите категории, которые лучше всего описывают тур. Путешественники фильтруют по ним." },
   "editor.noCategories": { en: "No categories available yet.", uz: "Hozircha toifalar yo'q.", ru: "Категорий пока нет." },
