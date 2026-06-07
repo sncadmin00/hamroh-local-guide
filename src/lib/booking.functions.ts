@@ -98,7 +98,7 @@ export const createBooking = createServerFn({ method: "POST" })
     const lang = data.language ?? null;
     const mult = !lang || lang === baseLanguage ? 0 : Number(langMults[lang] ?? 0);
     const subtotal = Math.round(basePrice * (1 + mult / 100));
-    const fee = Math.round(subtotal * 0.08);
+    const fee = Math.round(subtotal * 0.10);
     const total = subtotal + fee;
 
     const totalGuests = data.adults + data.children;
