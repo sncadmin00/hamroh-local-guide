@@ -446,6 +446,14 @@ export const upsertTour = createServerFn({ method: "POST" })
     // price_from = minimum offered base price
     const priceFrom = Math.min(...Object.values(groupPrices));
 
+    // Compute price_by_language from base price + multipliers
+    const basePrice = data.pricing_mode === "by_group" ? priceFrom : data.fixed_price;
+    const priceByLanguage: Record<string, number> = {};
+    for (const lng of data.languages) {
+      const mult = lng === data.base_language ? 0 : Number(cleanedMults[lng] ?? 0);
+      priceByLanguage[lng] = Math.round(basePrice * (1 + mult / 100) * 100) / 100;
+    }
+
     const payload = {
       title: data.title,
       short_description: data.short_description,
@@ -454,7 +462,7 @@ export const upsertTour = createServerFn({ method: "POST" })
       city_id: data.city_id,
       duration_hours: data.duration_hours,
       price_from: priceFrom,
-      price_by_language: {},
+      price_by_language: priceByLanguage,
       pricing_mode: data.pricing_mode,
       base_language: data.base_language,
       language_multipliers: cleanedMults,
@@ -475,6 +483,7 @@ export const upsertTour = createServerFn({ method: "POST" })
       published: data.published,
       sort_order: data.sort_order,
     };
+
 
 
     let tourId: string;
