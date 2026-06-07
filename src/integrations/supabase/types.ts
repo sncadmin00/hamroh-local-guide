@@ -1645,14 +1645,23 @@ export type Database = {
           group_prices: Json
           guide_id: string
           highlights: string[]
+          highlights_en: string[]
+          highlights_ru: string[]
+          highlights_uz: string[]
           id: string
           included: string[]
+          included_en: string[]
+          included_ru: string[]
+          included_uz: string[]
           language_multipliers: Json
           languages: string[]
           meeting_lat: number | null
           meeting_lng: number | null
           meeting_point: string
           not_included: string[]
+          not_included_en: string[]
+          not_included_ru: string[]
+          not_included_uz: string[]
           price_by_language: Json
           price_from: number
           pricing_mode: string
@@ -1690,14 +1699,23 @@ export type Database = {
           group_prices?: Json
           guide_id: string
           highlights?: string[]
+          highlights_en?: string[]
+          highlights_ru?: string[]
+          highlights_uz?: string[]
           id?: string
           included?: string[]
+          included_en?: string[]
+          included_ru?: string[]
+          included_uz?: string[]
           language_multipliers?: Json
           languages?: string[]
           meeting_lat?: number | null
           meeting_lng?: number | null
           meeting_point?: string
           not_included?: string[]
+          not_included_en?: string[]
+          not_included_ru?: string[]
+          not_included_uz?: string[]
           price_by_language?: Json
           price_from?: number
           pricing_mode?: string
@@ -1735,14 +1753,23 @@ export type Database = {
           group_prices?: Json
           guide_id?: string
           highlights?: string[]
+          highlights_en?: string[]
+          highlights_ru?: string[]
+          highlights_uz?: string[]
           id?: string
           included?: string[]
+          included_en?: string[]
+          included_ru?: string[]
+          included_uz?: string[]
           language_multipliers?: Json
           languages?: string[]
           meeting_lat?: number | null
           meeting_lng?: number | null
           meeting_point?: string
           not_included?: string[]
+          not_included_en?: string[]
+          not_included_ru?: string[]
+          not_included_uz?: string[]
           price_by_language?: Json
           price_from?: number
           pricing_mode?: string
