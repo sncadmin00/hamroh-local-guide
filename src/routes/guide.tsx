@@ -710,11 +710,12 @@ function arrToText(a: string[]) { return a.join("\n"); }
 function textToArr(s: string) { return s.split("\n").map((x) => x.trim()).filter(Boolean); }
 
 function TourEditor({
-  languages, cities, defaultCityId, initial, onClose, onSave,
+  languages, cities, defaultCityId, guideId, initial, onClose, onSave,
 }: {
   languages: string[];
   cities: Array<{ id: string; name: string; lat: number; lng: number }>;
   defaultCityId: string;
+  guideId: string;
   initial: Tour | null;
   onClose: () => void;
   onSave: (payload: {
