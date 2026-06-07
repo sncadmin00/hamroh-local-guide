@@ -790,6 +790,7 @@ function TourEditor({
       ? { lat: Number(initial.end_lat), lng: Number(initial.end_lng) }
       : null,
   );
+  const [endSameAsMeeting, setEndSameAsMeeting] = useState(initial?.end_same_as_meeting ?? false);
   const [published, setPublished] = useState(initial?.published ?? true);
   const [selectedCats, setSelectedCats] = useState<string[]>(initial?.category_ids ?? []);
   const [uploading, setUploading] = useState(false);
