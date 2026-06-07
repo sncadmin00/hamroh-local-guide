@@ -34,7 +34,7 @@ export const Route = createFileRoute('/api/public/bookings/$id/pdf')({
           locale: normalizePdfLocale(url.searchParams.get('locale') ?? full.booking.locale),
         });
 
-        return new Response(bytes, {
+        return new Response(new Blob([new Uint8Array(bytes)], { type: 'application/pdf' }), {
           status: 200,
           headers: {
             'Content-Type': 'application/pdf',
