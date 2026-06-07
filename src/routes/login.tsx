@@ -13,11 +13,15 @@ import { TelegramLoginButton } from "@/components/TelegramLoginButton";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Sign in — Hamroh" }] }),
+  validateSearch: (search) => ({
+    redirect: typeof search.redirect === "string" ? search.redirect : undefined,
+  }),
   component: LoginPage,
 });
 
 function LoginPage() {
   const navigate = useNavigate();
+  const { redirect } = Route.useSearch();
   const { lang } = useI18n();
   const subscribe = useServerFn(subscribeToNewsletter);
   const sendWelcome = useServerFn(sendWelcomeEmail);
@@ -28,25 +32,38 @@ function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-
   useEffect(() => {
+    const safeRedirect = (value: string | undefined | null) => {
+      if (!value || !value.startsWith("/") || value.startsWith("//")) return null;
+      return value;
+    };
     const resolveAndGo = async (userId: string) => {
+      const pendingRedirect =
+        safeRedirect(sessionStorage.getItem("authRedirect")) ?? safeRedirect(redirect);
+      if (pendingRedirect) sessionStorage.removeItem("authRedirect");
       const [{ data: guide }, { data: roles }] = await Promise.all([
         supabase.from("guides").select("id").eq("user_id", userId).maybeSingle(),
         supabase.from("user_roles").select("role").eq("user_id", userId),
       ]);
       const isAdmin = roles?.some((r) => r.role === "admin");
-      const dest = guide ? "/guide" : isAdmin ? "/admin" : "/ai";
-      navigate({ to: dest, replace: true });
+      if (pendingRedirect) {
+        navigate({ href: pendingRedirect, replace: true });
+        return;
+      }
+      navigate({ to: guide ? "/guide" : isAdmin ? "/admin" : "/ai", replace: true });
     };
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      if (session?.user) resolveAndGo(session.user.id);
+      if (session?.user) {
+        setTimeout(() => {
+          resolveAndGo(session.user.id);
+        }, 0);
+      }
     });
     supabase.auth.getUser().then(({ data }) => {
       if (data.user) resolveAndGo(data.user.id);
     });
     return () => sub.subscription.unsubscribe();
-  }, [navigate]);
+  }, [navigate, redirect]);
 
   const submitEmail = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,7 +88,9 @@ function LoginPage() {
         trackEvent("signup", { locale: lang });
         if (newsletterOptIn) {
           try {
-            await subscribe({ data: { email, locale: lang as "ru" | "uz" | "en", source: "signup" } });
+            await subscribe({
+              data: { email, locale: lang as "ru" | "uz" | "en", source: "signup" },
+            });
           } catch (e) {
             console.error("Newsletter opt-in failed", e);
           }
@@ -80,7 +99,6 @@ function LoginPage() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
       }
-
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -90,13 +108,19 @@ function LoginPage() {
 
   const google = async () => {
     setError(null);
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/login" });
+    if (redirect) sessionStorage.setItem("authRedirect", redirect);
+    const result = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin + "/login",
+    });
     if (result.error) setError(result.error.message);
   };
 
   const apple = async () => {
     setError(null);
-    const result = await lovable.auth.signInWithOAuth("apple", { redirect_uri: window.location.origin + "/login" });
+    if (redirect) sessionStorage.setItem("authRedirect", redirect);
+    const result = await lovable.auth.signInWithOAuth("apple", {
+      redirect_uri: window.location.origin + "/login",
+    });
     if (result.error) setError(result.error.message);
   };
 
@@ -110,7 +134,6 @@ function LoginPage() {
         <X className="h-5 w-5" />
       </Link>
       <div className="w-full max-w-md">
-
         <Link to="/" className="flex items-center justify-center mb-8">
           <img src={hamrohLogo} alt="Hamroh" className="h-14 w-auto object-contain" />
         </Link>

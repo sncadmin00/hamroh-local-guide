@@ -111,7 +111,7 @@ function GuidePortal() {
       const { data } = await supabase.auth.getUser();
       if (!mounted) return;
       if (!data.user) {
-        navigate({ to: "/login", replace: true });
+        navigate({ to: "/login", search: { redirect: "/guide" }, replace: true });
         return;
       }
       setChecking(false);
