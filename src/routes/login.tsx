@@ -43,16 +43,18 @@ function LoginPage() {
       const { data: userData } = await supabase.auth.getUser();
       if (userData.user) return userData.user;
       return await new Promise<{ id: string } | null>((resolve) => {
+        let unsubscribe = () => {};
         const timeout = window.setTimeout(() => {
-          sub.subscription.unsubscribe();
+          unsubscribe();
           resolve(null);
         }, 3000);
         const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
           if (!session?.user) return;
           window.clearTimeout(timeout);
-          sub.subscription.unsubscribe();
+          unsubscribe();
           resolve(session.user);
         });
+        unsubscribe = () => sub.subscription.unsubscribe();
       });
     };
     const resolveAndGo = async (userId: string) => {
