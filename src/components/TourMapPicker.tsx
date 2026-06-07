@@ -49,6 +49,7 @@ export default function TourMapPicker(props: {
   center: { lat: number; lng: number };
   meeting: LatLng;
   end: LatLng;
+  endSameAsMeeting?: boolean;
   onChange: (next: { meeting: LatLng; end: LatLng }) => void;
   labels: {
     pickMeeting: string;
