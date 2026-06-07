@@ -84,7 +84,9 @@ function LoginPage() {
         trackEvent("signup", { locale: lang });
         if (newsletterOptIn) {
           try {
-            await subscribe({ data: { email, locale: lang as "ru" | "uz" | "en", source: "signup" } });
+            await subscribe({
+              data: { email, locale: lang as "ru" | "uz" | "en", source: "signup" },
+            });
           } catch (e) {
             console.error("Newsletter opt-in failed", e);
           }
