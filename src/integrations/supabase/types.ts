@@ -1638,6 +1638,7 @@ export type Database = {
           description_md_ru: string
           description_md_uz: string
           duration_hours: number
+          end_point: string
           group_prices: Json
           guide_id: string
           highlights: string[]
@@ -1645,6 +1646,7 @@ export type Database = {
           included: string[]
           language_multipliers: Json
           languages: string[]
+          meeting_point: string
           not_included: string[]
           price_by_language: Json
           price_from: number
@@ -1676,6 +1678,7 @@ export type Database = {
           description_md_ru?: string
           description_md_uz?: string
           duration_hours?: number
+          end_point?: string
           group_prices?: Json
           guide_id: string
           highlights?: string[]
@@ -1683,6 +1686,7 @@ export type Database = {
           included?: string[]
           language_multipliers?: Json
           languages?: string[]
+          meeting_point?: string
           not_included?: string[]
           price_by_language?: Json
           price_from?: number
@@ -1714,6 +1718,7 @@ export type Database = {
           description_md_ru?: string
           description_md_uz?: string
           duration_hours?: number
+          end_point?: string
           group_prices?: Json
           guide_id?: string
           highlights?: string[]
@@ -1721,6 +1726,7 @@ export type Database = {
           included?: string[]
           language_multipliers?: Json
           languages?: string[]
+          meeting_point?: string
           not_included?: string[]
           price_by_language?: Json
           price_from?: number
