@@ -23,11 +23,21 @@ export interface TourTranslationInput {
   title: string;
   short_description: string;
   description_md?: string;
+  highlights?: string[];
+  included?: string[];
+  not_included?: string[];
 }
 
 export type TourTranslationOutput = Record<
   TourLang,
-  { title: string; short_description: string; description_md: string }
+  {
+    title: string;
+    short_description: string;
+    description_md: string;
+    highlights: string[];
+    included: string[];
+    not_included: string[];
+  }
 >;
 
 export async function translateTourFields(
@@ -54,6 +64,9 @@ export async function translateTourFields(
               title: z.string(),
               short_description: z.string(),
               description_md: z.string(),
+              highlights: z.array(z.string()),
+              included: z.array(z.string()),
+              not_included: z.array(z.string()),
             }),
           ),
         }),
@@ -73,8 +86,11 @@ SOURCE:
 title: ${JSON.stringify(input.title)}
 short_description: ${JSON.stringify(input.short_description)}
 description_md: ${JSON.stringify(input.description_md ?? "")}
+highlights: ${JSON.stringify(input.highlights ?? [])}
+included: ${JSON.stringify(input.included ?? [])}
+not_included: ${JSON.stringify(input.not_included ?? [])}
 
-Return one translations entry per target language (${targets.join(", ")}).`,
+Return one translations entry per target language (${targets.join(", ")}). Translate every array item and keep the same array lengths/order.`,
     });
 
     const out: Partial<TourTranslationOutput> = {};
@@ -84,6 +100,9 @@ Return one translations entry per target language (${targets.join(", ")}).`,
           title: t.title,
           short_description: t.short_description,
           description_md: t.description_md,
+          highlights: Array.isArray(t.highlights) ? t.highlights : [],
+          included: Array.isArray(t.included) ? t.included : [],
+          not_included: Array.isArray(t.not_included) ? t.not_included : [],
         };
       }
     }
