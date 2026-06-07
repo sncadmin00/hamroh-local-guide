@@ -33,6 +33,7 @@ export const T = {
   startTime: { ru: 'Время начала', en: 'Start time', uz: 'Boshlanish vaqti' } as Dict,
   meetingPoint: { ru: 'Место встречи', en: 'Meeting point', uz: 'Uchrashuv joyi' } as Dict,
   endPoint: { ru: 'Место окончания тура', en: 'End of tour', uz: 'Tur tugash joyi' } as Dict,
+  samePlace: { ru: '(окончание там же)', en: '(ends at the same place)', uz: '(shu joyda tugaydi)' } as Dict,
   notSpecified: { ru: 'не указано', en: 'not specified', uz: 'ko‘rsatilmagan' } as Dict,
   openOnMap: { ru: 'Открыть на карте', en: 'Open on map', uz: 'Xaritada ochish' } as Dict,
   guests: { ru: 'Гости', en: 'Guests', uz: 'Mehmonlar' } as Dict,
