@@ -32,22 +32,25 @@ function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-
   useEffect(() => {
     const safeRedirect = (value: string | undefined | null) => {
       if (!value || !value.startsWith("/") || value.startsWith("//")) return null;
       return value;
     };
     const resolveAndGo = async (userId: string) => {
-      const pendingRedirect = safeRedirect(sessionStorage.getItem("authRedirect")) ?? safeRedirect(redirect);
+      const pendingRedirect =
+        safeRedirect(sessionStorage.getItem("authRedirect")) ?? safeRedirect(redirect);
       if (pendingRedirect) sessionStorage.removeItem("authRedirect");
       const [{ data: guide }, { data: roles }] = await Promise.all([
         supabase.from("guides").select("id").eq("user_id", userId).maybeSingle(),
         supabase.from("user_roles").select("role").eq("user_id", userId),
       ]);
       const isAdmin = roles?.some((r) => r.role === "admin");
-      const dest = pendingRedirect ?? (guide ? "/guide" : isAdmin ? "/admin" : "/ai");
-      navigate({ to: dest, replace: true });
+      if (pendingRedirect) {
+        navigate({ href: pendingRedirect, replace: true });
+        return;
+      }
+      navigate({ to: guide ? "/guide" : isAdmin ? "/admin" : "/ai", replace: true });
     };
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
       if (session?.user) resolveAndGo(session.user.id);
@@ -90,7 +93,6 @@ function LoginPage() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
       }
-
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -101,14 +103,18 @@ function LoginPage() {
   const google = async () => {
     setError(null);
     if (redirect) sessionStorage.setItem("authRedirect", redirect);
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/login" });
+    const result = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin + "/login",
+    });
     if (result.error) setError(result.error.message);
   };
 
   const apple = async () => {
     setError(null);
     if (redirect) sessionStorage.setItem("authRedirect", redirect);
-    const result = await lovable.auth.signInWithOAuth("apple", { redirect_uri: window.location.origin + "/login" });
+    const result = await lovable.auth.signInWithOAuth("apple", {
+      redirect_uri: window.location.origin + "/login",
+    });
     if (result.error) setError(result.error.message);
   };
 
@@ -122,7 +128,6 @@ function LoginPage() {
         <X className="h-5 w-5" />
       </Link>
       <div className="w-full max-w-md">
-
         <Link to="/" className="flex items-center justify-center mb-8">
           <img src={hamrohLogo} alt="Hamroh" className="h-14 w-auto object-contain" />
         </Link>
