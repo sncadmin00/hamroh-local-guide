@@ -351,13 +351,13 @@ export const listMyTours = createServerFn({ method: "GET" })
     if (!guide) {
       return {
         guide: null,
-        cities: [] as Array<{ id: string; name: string }>,
+        cities: [] as Array<{ id: string; name: string; lat: number; lng: number }>,
         tours: [] as any[],
       };
     }
     const cityIds = [guide.city_id, ...((guide.extra_city_ids ?? []) as string[])];
     const [{ data: cityRows }, { data: tourRows, error }] = await Promise.all([
-      supabase.from("cities").select("id, name").in("id", cityIds),
+      supabase.from("cities").select("id, name, lat, lng").in("id", cityIds),
       supabase
         .from("tours")
         .select("id, slug, title, short_description, cover_url, city_id, duration_hours, price_from, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, children_free_under, transport_included, languages, highlights, included, not_included, meeting_point, end_point, meeting_lat, meeting_lng, end_lat, end_lng, published, sort_order, tour_categories(category_id)")
@@ -371,7 +371,7 @@ export const listMyTours = createServerFn({ method: "GET" })
     }));
     return {
       guide: { languages: (guide.languages ?? []) as string[], city_id: guide.city_id },
-      cities: (cityRows ?? []) as Array<{ id: string; name: string }>,
+      cities: (cityRows ?? []) as Array<{ id: string; name: string; lat: number; lng: number }>,
       tours,
     };
   });
