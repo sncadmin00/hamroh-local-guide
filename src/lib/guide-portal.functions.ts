@@ -360,7 +360,7 @@ export const listMyTours = createServerFn({ method: "GET" })
       supabase.from("cities").select("id, name, lat, lng").in("id", cityIds),
       supabase
         .from("tours")
-        .select("id, slug, title, short_description, cover_url, city_id, duration_hours, price_from, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, children_free_under, transport_included, languages, highlights, included, not_included, meeting_point, end_point, meeting_lat, meeting_lng, end_lat, end_lng, published, sort_order, tour_categories(category_id)")
+        .select("id, slug, title, short_description, cover_url, city_id, duration_hours, price_from, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, children_free_under, transport_included, languages, highlights, included, not_included, meeting_point, end_point, meeting_lat, meeting_lng, end_lat, end_lng, end_same_as_meeting, published, sort_order, tour_categories(category_id)")
         .eq("guide_id", guide.id)
         .order("sort_order", { ascending: true }),
     ]);
@@ -406,6 +406,7 @@ const upsertTourSchema = z.object({
   meeting_lng: z.number().min(-180).max(180).nullable().default(null),
   end_lat: z.number().min(-90).max(90).nullable().default(null),
   end_lng: z.number().min(-180).max(180).nullable().default(null),
+  end_same_as_meeting: z.boolean().default(false),
   published: z.boolean().default(true),
   sort_order: z.number().int().min(0).max(1000).default(0),
   category_ids: z.array(z.string().uuid()).max(20).default([]),
@@ -470,6 +471,7 @@ export const upsertTour = createServerFn({ method: "POST" })
       meeting_lng: data.meeting_lng,
       end_lat: data.end_lat,
       end_lng: data.end_lng,
+      end_same_as_meeting: data.end_same_as_meeting,
       published: data.published,
       sort_order: data.sort_order,
     };

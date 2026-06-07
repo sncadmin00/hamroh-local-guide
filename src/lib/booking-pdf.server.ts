@@ -408,7 +408,10 @@ export async function buildBookingPdf(
     const url = `https://www.google.com/maps?q=${Number(tour.meeting_lat)},${Number(tour.meeting_lng)}`;
     drawText(c, `${tt('openOnMap', locale)}: ${url}`, { size: 9, color: rgb(0.18, 0.39, 0.78), indent: 8 });
   }
-  drawLabelValue(c, tt('endPoint', locale), end);
+  const endLabel = tour?.end_same_as_meeting
+    ? `${end} ${tt('samePlace', locale)}`
+    : end;
+  drawLabelValue(c, tt('endPoint', locale), endLabel);
   if (tour?.end_lat != null && tour?.end_lng != null) {
     const url = `https://www.google.com/maps?q=${Number(tour.end_lat)},${Number(tour.end_lng)}`;
     drawText(c, `${tt('openOnMap', locale)}: ${url}`, { size: 9, color: rgb(0.18, 0.39, 0.78), indent: 8 });

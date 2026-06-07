@@ -49,6 +49,7 @@ export default function TourMapPicker(props: {
   center: { lat: number; lng: number };
   meeting: LatLng;
   end: LatLng;
+  endSameAsMeeting?: boolean;
   onChange: (next: { meeting: LatLng; end: LatLng }) => void;
   labels: {
     pickMeeting: string;
@@ -59,7 +60,7 @@ export default function TourMapPicker(props: {
     hint: string;
   };
 }) {
-  const { center, meeting, end, onChange, labels } = props;
+  const { center, meeting, end, endSameAsMeeting, onChange, labels } = props;
   const [mode, setMode] = useState<Mode>("meeting");
 
   const initialCenter = useMemo<[number, number]>(() => {
@@ -69,6 +70,10 @@ export default function TourMapPicker(props: {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleClick = (lat: number, lng: number) => {
+    if (endSameAsMeeting) {
+      onChange({ meeting: { lat, lng }, end: { lat, lng } });
+      return;
+    }
     if (mode === "meeting") {
       onChange({ meeting: { lat, lng }, end });
       setMode("end");
@@ -94,20 +99,22 @@ export default function TourMapPicker(props: {
           <span className="inline-block w-2 h-2 rounded-full bg-green-600 mr-1.5 align-middle" />
           {labels.pickMeeting}
         </button>
-        <button
-          type="button"
-          onClick={() => setMode("end")}
-          className={`h-8 px-3 rounded-full border ${mode === "end" ? "bg-foreground text-background border-foreground" : "bg-background border-input"}`}
-        >
-          <span className="inline-block w-2 h-2 rounded-full bg-red-600 mr-1.5 align-middle" />
-          {labels.pickEnd}
-        </button>
+        {!endSameAsMeeting && (
+          <button
+            type="button"
+            onClick={() => setMode("end")}
+            className={`h-8 px-3 rounded-full border ${mode === "end" ? "bg-foreground text-background border-foreground" : "bg-background border-input"}`}
+          >
+            <span className="inline-block w-2 h-2 rounded-full bg-red-600 mr-1.5 align-middle" />
+            {labels.pickEnd}
+          </button>
+        )}
         {meeting && (
           <button type="button" onClick={() => clear("meeting")} className="h-8 px-2 text-muted-foreground underline">
             A × {labels.clear}
           </button>
         )}
-        {end && (
+        {end && !endSameAsMeeting && (
           <button type="button" onClick={() => clear("end")} className="h-8 px-2 text-muted-foreground underline">
             B × {labels.clear}
           </button>

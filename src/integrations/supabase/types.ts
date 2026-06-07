@@ -1641,6 +1641,7 @@ export type Database = {
           end_lat: number | null
           end_lng: number | null
           end_point: string
+          end_same_as_meeting: boolean
           group_prices: Json
           guide_id: string
           highlights: string[]
@@ -1685,6 +1686,7 @@ export type Database = {
           end_lat?: number | null
           end_lng?: number | null
           end_point?: string
+          end_same_as_meeting?: boolean
           group_prices?: Json
           guide_id: string
           highlights?: string[]
@@ -1729,6 +1731,7 @@ export type Database = {
           end_lat?: number | null
           end_lng?: number | null
           end_point?: string
+          end_same_as_meeting?: boolean
           group_prices?: Json
           guide_id?: string
           highlights?: string[]

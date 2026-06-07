@@ -549,6 +549,7 @@ type Tour = {
   meeting_lng?: number | null;
   end_lat?: number | null;
   end_lng?: number | null;
+  end_same_as_meeting?: boolean;
   published: boolean;
   sort_order: number;
   category_ids: string[];
@@ -589,6 +590,7 @@ function ToursPanel() {
         highlights: t.highlights ?? [],
         included: t.included ?? [],
         not_included: t.not_included ?? [],
+        end_same_as_meeting: !!t.end_same_as_meeting,
         category_ids: t.category_ids ?? [],
       })));
     } catch (e) {
@@ -736,6 +738,7 @@ function TourEditor({
     meeting_lng: number | null;
     end_lat: number | null;
     end_lng: number | null;
+    end_same_as_meeting: boolean;
     published: boolean;
     sort_order: number;
     category_ids: string[];
@@ -787,6 +790,7 @@ function TourEditor({
       ? { lat: Number(initial.end_lat), lng: Number(initial.end_lng) }
       : null,
   );
+  const [endSameAsMeeting, setEndSameAsMeeting] = useState(initial?.end_same_as_meeting ?? false);
   const [published, setPublished] = useState(initial?.published ?? true);
   const [selectedCats, setSelectedCats] = useState<string[]>(initial?.category_ids ?? []);
   const [uploading, setUploading] = useState(false);
@@ -994,6 +998,23 @@ function TourEditor({
             </label>
           </div>
 
+          <label className="inline-flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={endSameAsMeeting}
+              onChange={(e) => {
+                const checked = e.target.checked;
+                setEndSameAsMeeting(checked);
+                if (checked) {
+                  setEndPoint(meetingPoint);
+                  setEndCoords(meetingCoords);
+                }
+              }}
+              className="h-4 w-4"
+            />
+            <span>{tg("editor.endSameAsMeeting")}</span>
+          </label>
+
           <div>
             <p className="text-sm font-medium">{tg("editor.mapTitle")}</p>
             <p className="text-xs text-muted-foreground mt-0.5 mb-2">{tg("editor.mapText")}</p>
@@ -1006,10 +1027,15 @@ function TourEditor({
                     : { lat: 41.3111, lng: 69.2797 };
                 })()}
                 meeting={meetingCoords}
-                end={endCoords}
+                end={endSameAsMeeting ? meetingCoords : endCoords}
+                endSameAsMeeting={endSameAsMeeting}
                 onChange={({ meeting, end }) => {
                   setMeetingCoords(meeting);
-                  setEndCoords(end);
+                  if (endSameAsMeeting) {
+                    setEndCoords(meeting);
+                  } else {
+                    setEndCoords(end);
+                  }
                 }}
                 labels={{
                   pickMeeting: tg("editor.mapPickMeeting"),
@@ -1088,11 +1114,12 @@ function TourEditor({
                 included: textToArr(included),
                 not_included: textToArr(notIncluded),
                 meeting_point: meetingPoint.trim(),
-                end_point: endPoint.trim(),
+                end_point: endSameAsMeeting ? meetingPoint.trim() : endPoint.trim(),
                 meeting_lat: meetingCoords?.lat ?? null,
                 meeting_lng: meetingCoords?.lng ?? null,
-                end_lat: endCoords?.lat ?? null,
-                end_lng: endCoords?.lng ?? null,
+                end_lat: endSameAsMeeting ? (meetingCoords?.lat ?? null) : (endCoords?.lat ?? null),
+                end_lng: endSameAsMeeting ? (meetingCoords?.lng ?? null) : (endCoords?.lng ?? null),
+                end_same_as_meeting: endSameAsMeeting,
                 published,
                 sort_order: initial?.sort_order ?? 0,
                 category_ids: selectedCats,
