@@ -99,20 +99,22 @@ export default function TourMapPicker(props: {
           <span className="inline-block w-2 h-2 rounded-full bg-green-600 mr-1.5 align-middle" />
           {labels.pickMeeting}
         </button>
-        <button
-          type="button"
-          onClick={() => setMode("end")}
-          className={`h-8 px-3 rounded-full border ${mode === "end" ? "bg-foreground text-background border-foreground" : "bg-background border-input"}`}
-        >
-          <span className="inline-block w-2 h-2 rounded-full bg-red-600 mr-1.5 align-middle" />
-          {labels.pickEnd}
-        </button>
+        {!endSameAsMeeting && (
+          <button
+            type="button"
+            onClick={() => setMode("end")}
+            className={`h-8 px-3 rounded-full border ${mode === "end" ? "bg-foreground text-background border-foreground" : "bg-background border-input"}`}
+          >
+            <span className="inline-block w-2 h-2 rounded-full bg-red-600 mr-1.5 align-middle" />
+            {labels.pickEnd}
+          </button>
+        )}
         {meeting && (
           <button type="button" onClick={() => clear("meeting")} className="h-8 px-2 text-muted-foreground underline">
             A × {labels.clear}
           </button>
         )}
-        {end && (
+        {end && !endSameAsMeeting && (
           <button type="button" onClick={() => clear("end")} className="h-8 px-2 text-muted-foreground underline">
             B × {labels.clear}
           </button>
