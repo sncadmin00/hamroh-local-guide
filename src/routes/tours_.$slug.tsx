@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { useTour, useTours, pickTourTitle, pickTourShortDescription, pickTourDescriptionMd } from "@/lib/content-queries";
+import { useTour, useTours, pickTourTitle, pickTourShortDescription, pickTourDescriptionMd, pickTourHighlights, pickTourIncluded, pickTourNotIncluded } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
 import { Clock, MapPin, Check, X, Car, Star } from "lucide-react";
 import { WishlistHeart } from "@/components/WishlistHeart";
@@ -58,6 +58,9 @@ function TourDetailPage() {
   const localizedTitle = pickTourTitle(tour, lang);
   const localizedShort = pickTourShortDescription(tour, lang);
   const localizedDesc = pickTourDescriptionMd(tour, lang);
+  const localizedHighlights = pickTourHighlights(tour, lang);
+  const localizedIncluded = pickTourIncluded(tour, lang);
+  const localizedNotIncluded = pickTourNotIncluded(tour, lang);
   const langPrices = tour.languages
     .map((lng) => ({ lng, price: tour.price_by_language[lng] ?? Number(tour.price_from) }))
     .filter((x) => x.price > 0);
@@ -136,11 +139,11 @@ function TourDetailPage() {
               </section>
             )}
 
-            {tour.highlights.length > 0 && (
+            {localizedHighlights.length > 0 && (
               <section className="mt-8">
                 <h2 className="font-semibold text-lg">{t("tours.highlights")}</h2>
                 <ul className="mt-2 grid gap-1.5 sm:grid-cols-2">
-                  {tour.highlights.map((h, i) => (
+                  {localizedHighlights.map((h, i) => (
                     <li key={i} className="flex items-start gap-2 text-sm">
                       <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
                       <span>{h}</span>
@@ -157,21 +160,21 @@ function TourDetailPage() {
             )}
 
             <div className="mt-8 grid gap-6 sm:grid-cols-2">
-              {tour.included.length > 0 && (
+              {localizedIncluded.length > 0 && (
                 <div>
                   <h3 className="font-semibold">{t("tours.included")}</h3>
                   <ul className="mt-2 space-y-1.5">
-                    {tour.included.map((it, i) => (
+                    {localizedIncluded.map((it, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm"><Check className="h-4 w-4 mt-0.5 text-green-600 shrink-0" />{it}</li>
                     ))}
                   </ul>
                 </div>
               )}
-              {tour.not_included.length > 0 && (
+              {localizedNotIncluded.length > 0 && (
                 <div>
                   <h3 className="font-semibold">{t("tours.notIncluded")}</h3>
                   <ul className="mt-2 space-y-1.5">
-                    {tour.not_included.map((it, i) => (
+                    {localizedNotIncluded.map((it, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm"><X className="h-4 w-4 mt-0.5 text-muted-foreground shrink-0" />{it}</li>
                     ))}
                   </ul>
