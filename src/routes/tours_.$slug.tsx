@@ -126,13 +126,13 @@ function TourDetailPage() {
 
             {langPrices.length > 0 && (
               <section className="mt-6">
-                <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Price per language</h2>
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">{t("tours.pricePerLanguage")}</h2>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {langPrices.map(({ lng, price }) => (
                     <span key={lng} className="inline-flex items-center gap-2 rounded-xl bg-card ring-1 ring-border/60 px-3 py-2 text-sm">
                       <span className="font-medium">{lng}</span>
                       <span className="font-display text-lg font-semibold tabular-nums">${Math.round(price)}</span>
-                      <span className="text-xs text-muted-foreground">/ person</span>
+                      <span className="text-xs text-muted-foreground">/ {t("tours.person")}</span>
                     </span>
                   ))}
                 </div>
@@ -201,7 +201,7 @@ function TourDetailPage() {
 
             {guide && (
               <div className="rounded-2xl bg-card p-5 ring-1 ring-border/60">
-                <h3 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">Your guide</h3>
+                <h3 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">{t("tours.yourGuide")}</h3>
                 <Link
                   to="/guides/$guideId"
                   params={{ guideId: guide.slug }}
