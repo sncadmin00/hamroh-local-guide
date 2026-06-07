@@ -402,6 +402,11 @@ function normalizeTour(row: any): TourRow {
     const n = Number(v);
     if (Number.isFinite(n) && n > 0) gp[k] = n;
   }
+  const listOrFallback = (value: unknown, fallback: unknown): string[] => {
+    if (Array.isArray(value) && value.length > 0) return value;
+    return Array.isArray(fallback) ? fallback : [];
+  };
+
   return {
     ...row,
     price_by_language: pbl,
@@ -412,18 +417,18 @@ function normalizeTour(row: any): TourRow {
     children_free_under: Number(row.children_free_under ?? 16),
     languages: row.languages ?? [],
     transport_included: !!row.transport_included,
-    highlights: row.highlights ?? [],
-    highlights_ru: row.highlights_ru ?? row.highlights ?? [],
-    highlights_uz: row.highlights_uz ?? row.highlights ?? [],
-    highlights_en: row.highlights_en ?? row.highlights ?? [],
-    included: row.included ?? [],
-    included_ru: row.included_ru ?? row.included ?? [],
-    included_uz: row.included_uz ?? row.included ?? [],
-    included_en: row.included_en ?? row.included ?? [],
-    not_included: row.not_included ?? [],
-    not_included_ru: row.not_included_ru ?? row.not_included ?? [],
-    not_included_uz: row.not_included_uz ?? row.not_included ?? [],
-    not_included_en: row.not_included_en ?? row.not_included ?? [],
+    highlights: listOrFallback(row.highlights, []),
+    highlights_ru: listOrFallback(row.highlights_ru, row.highlights),
+    highlights_uz: listOrFallback(row.highlights_uz, row.highlights),
+    highlights_en: listOrFallback(row.highlights_en, row.highlights),
+    included: listOrFallback(row.included, []),
+    included_ru: listOrFallback(row.included_ru, row.included),
+    included_uz: listOrFallback(row.included_uz, row.included),
+    included_en: listOrFallback(row.included_en, row.included),
+    not_included: listOrFallback(row.not_included, []),
+    not_included_ru: listOrFallback(row.not_included_ru, row.not_included),
+    not_included_uz: listOrFallback(row.not_included_uz, row.not_included),
+    not_included_en: listOrFallback(row.not_included_en, row.not_included),
     rating: Number(row.rating ?? 5),
     reviews_count: Number(row.reviews_count ?? 0),
   };
@@ -492,7 +497,7 @@ export function pickTourNotIncluded(tour: Partial<TourRow>, lang: "ru" | "uz" | 
 
 export function useTours(opts?: { citySlug?: string; categorySlug?: string }) {
   return useQuery({
-    queryKey: ["tours", opts?.citySlug ?? null, opts?.categorySlug ?? null],
+    queryKey: ["tours", "localized-lists-v2", opts?.citySlug ?? null, opts?.categorySlug ?? null],
     queryFn: async (): Promise<TourRow[]> => {
       const { data, error } = await (supabase as any)
         .from("tours")
@@ -510,7 +515,7 @@ export function useTours(opts?: { citySlug?: string; categorySlug?: string }) {
 
 export function useToursAdmin() {
   return useQuery({
-    queryKey: ["tours-admin"],
+    queryKey: ["tours-admin", "localized-lists-v2"],
     queryFn: async (): Promise<TourRow[]> => {
       const { data, error } = await (supabase as any)
         .from("tours")
@@ -524,7 +529,7 @@ export function useToursAdmin() {
 
 export function useTour(slug: string) {
   return useQuery({
-    queryKey: ["tour", slug],
+    queryKey: ["tour", slug, "localized-lists-v2"],
     enabled: !!slug,
     queryFn: async (): Promise<TourRow | null> => {
       const { data, error } = await (supabase as any)
@@ -541,7 +546,7 @@ export function useTour(slug: string) {
 
 export function useGuideTours(guideId: string | undefined) {
   return useQuery({
-    queryKey: ["tours-by-guide", guideId],
+    queryKey: ["tours-by-guide", guideId, "localized-lists-v2"],
     enabled: !!guideId,
     queryFn: async (): Promise<TourRow[]> => {
       const { data, error } = await (supabase as any)
