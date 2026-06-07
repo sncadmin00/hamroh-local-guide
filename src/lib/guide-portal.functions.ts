@@ -361,7 +361,7 @@ export const listMyTours = createServerFn({ method: "GET" })
       supabase.from("cities").select("id, name, lat, lng").in("id", cityIds),
       supabase
         .from("tours")
-        .select("id, slug, title, short_description, cover_url, city_id, duration_hours, price_from, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, children_free_under, transport_included, languages, highlights, included, not_included, meeting_point, end_point, meeting_lat, meeting_lng, end_lat, end_lng, end_same_as_meeting, published, sort_order, tour_categories(category_id)")
+        .select("id, slug, title, short_description, cover_url, city_id, duration_hours, price_from, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, children_free_under, transport_included, languages, highlights, highlights_ru, highlights_en, highlights_uz, included, included_ru, included_en, included_uz, not_included, not_included_ru, not_included_en, not_included_uz, meeting_point, end_point, meeting_lat, meeting_lng, end_lat, end_lng, end_same_as_meeting, published, sort_order, tour_categories(category_id)")
         .eq("guide_id", guide.id)
         .order("sort_order", { ascending: true }),
     ]);
@@ -462,6 +462,9 @@ export const upsertTour = createServerFn({ method: "POST" })
       title: data.title,
       short_description: data.short_description,
       description_md: "",
+      highlights: data.highlights,
+      included: data.included,
+      not_included: data.not_included,
     });
 
     // Fallback to source text for any missing translation (DB columns are NOT NULL)
@@ -471,6 +474,9 @@ export const upsertTour = createServerFn({ method: "POST" })
       localized[`title_${lng}`] = t?.title || data.title;
       localized[`short_description_${lng}`] = t?.short_description ?? data.short_description;
       localized[`description_md_${lng}`] = t?.description_md ?? "";
+      localized[`highlights_${lng}`] = t?.highlights?.length ? t.highlights : data.highlights;
+      localized[`included_${lng}`] = t?.included?.length ? t.included : data.included;
+      localized[`not_included_${lng}`] = t?.not_included?.length ? t.not_included : data.not_included;
     }
 
     const payload = {
