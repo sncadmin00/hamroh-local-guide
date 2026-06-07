@@ -60,7 +60,7 @@ export default function TourMapPicker(props: {
     hint: string;
   };
 }) {
-  const { center, meeting, end, onChange, labels } = props;
+  const { center, meeting, end, endSameAsMeeting, onChange, labels } = props;
   const [mode, setMode] = useState<Mode>("meeting");
 
   const initialCenter = useMemo<[number, number]>(() => {
@@ -70,6 +70,10 @@ export default function TourMapPicker(props: {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleClick = (lat: number, lng: number) => {
+    if (endSameAsMeeting) {
+      onChange({ meeting: { lat, lng }, end: { lat, lng } });
+      return;
+    }
     if (mode === "meeting") {
       onChange({ meeting: { lat, lng }, end });
       setMode("end");
