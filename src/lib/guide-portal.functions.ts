@@ -360,7 +360,7 @@ export const listMyTours = createServerFn({ method: "GET" })
       supabase.from("cities").select("id, name, lat, lng").in("id", cityIds),
       supabase
         .from("tours")
-        .select("id, slug, title, short_description, cover_url, city_id, duration_hours, price_from, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, children_free_under, transport_included, languages, highlights, included, not_included, meeting_point, end_point, meeting_lat, meeting_lng, end_lat, end_lng, published, sort_order, tour_categories(category_id)")
+        .select("id, slug, title, short_description, cover_url, city_id, duration_hours, price_from, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, children_free_under, transport_included, languages, highlights, included, not_included, meeting_point, end_point, meeting_lat, meeting_lng, end_lat, end_lng, end_same_as_meeting, published, sort_order, tour_categories(category_id)")
         .eq("guide_id", guide.id)
         .order("sort_order", { ascending: true }),
     ]);
