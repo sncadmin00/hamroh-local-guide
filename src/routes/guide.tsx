@@ -562,6 +562,7 @@ function ToursPanel() {
   const [languages, setLanguages] = useState<string[]>([]);
   const [cities, setCities] = useState<Array<{ id: string; name: string; lat: number; lng: number }>>([]);
   const [defaultCityId, setDefaultCityId] = useState<string>("");
+  const [guideId, setGuideId] = useState<string>("");
   const [items, setItems] = useState<Tour[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Tour | null>(null);
@@ -574,10 +575,11 @@ function ToursPanel() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetchList() as { guide: { languages: string[]; city_id: string } | null; cities: Array<{ id: string; name: string; lat: number; lng: number }>; tours: Tour[] };
+      const res = await fetchList() as { guide: { id: string; languages: string[]; city_id: string } | null; cities: Array<{ id: string; name: string; lat: number; lng: number }>; tours: Tour[] };
       setLanguages(res.guide?.languages ?? []);
       setCities(res.cities ?? []);
       setDefaultCityId(res.guide?.city_id ?? "");
+      setGuideId(res.guide?.id ?? "");
       setItems(res.tours.map((t) => ({
         ...t,
         price_by_language: (t.price_by_language ?? {}) as Record<string, number>,
