@@ -590,6 +590,7 @@ function ToursPanel() {
         highlights: t.highlights ?? [],
         included: t.included ?? [],
         not_included: t.not_included ?? [],
+        end_same_as_meeting: !!t.end_same_as_meeting,
         category_ids: t.category_ids ?? [],
       })));
     } catch (e) {
