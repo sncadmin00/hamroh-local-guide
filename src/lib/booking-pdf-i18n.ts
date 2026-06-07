@@ -34,6 +34,7 @@ export const T = {
   meetingPoint: { ru: 'Место встречи', en: 'Meeting point', uz: 'Uchrashuv joyi' } as Dict,
   endPoint: { ru: 'Место окончания тура', en: 'End of tour', uz: 'Tur tugash joyi' } as Dict,
   notSpecified: { ru: 'не указано', en: 'not specified', uz: 'ko‘rsatilmagan' } as Dict,
+  openOnMap: { ru: 'Открыть на карте', en: 'Open on map', uz: 'Xaritada ochish' } as Dict,
   guests: { ru: 'Гости', en: 'Guests', uz: 'Mehmonlar' } as Dict,
   adults: { ru: 'взр.', en: 'adults', uz: 'kattalar' } as Dict,
   children: { ru: 'дет.', en: 'children', uz: 'bolalar' } as Dict,

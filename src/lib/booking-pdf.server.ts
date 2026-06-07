@@ -404,7 +404,15 @@ export async function buildBookingPdf(
   const meeting = (tour?.meeting_point ?? '').trim() || tt('notSpecified', locale);
   const end = (tour?.end_point ?? '').trim() || tt('notSpecified', locale);
   drawLabelValue(c, tt('meetingPoint', locale), meeting);
+  if (tour?.meeting_lat != null && tour?.meeting_lng != null) {
+    const url = `https://www.google.com/maps?q=${Number(tour.meeting_lat)},${Number(tour.meeting_lng)}`;
+    drawText(c, `${tt('openOnMap', locale)}: ${url}`, { size: 9, color: rgb(0.18, 0.39, 0.78), indent: 8 });
+  }
   drawLabelValue(c, tt('endPoint', locale), end);
+  if (tour?.end_lat != null && tour?.end_lng != null) {
+    const url = `https://www.google.com/maps?q=${Number(tour.end_lat)},${Number(tour.end_lng)}`;
+    drawText(c, `${tt('openOnMap', locale)}: ${url}`, { size: 9, color: rgb(0.18, 0.39, 0.78), indent: 8 });
+  }
 
   const adults = Number(data.booking.adults ?? 1);
   const children = Number(data.booking.children ?? 0);
