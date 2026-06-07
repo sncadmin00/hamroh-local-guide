@@ -455,10 +455,38 @@ export const upsertTour = createServerFn({ method: "POST" })
       priceByLanguage[lng] = Math.round(basePrice * (1 + mult / 100) * 100) / 100;
     }
 
+    // Auto-translate title + short_description into the other two site languages
+    const sourceLang = mapBaseLanguage(data.base_language);
+    const translations = await translateTourFields({
+      sourceLang,
+      title: data.title,
+      short_description: data.short_description,
+      description_md: "",
+    });
+
+    const localized: Record<string, string | null> = {
+      title_ru: null, title_en: null, title_uz: null,
+      short_description_ru: null, short_description_en: null, short_description_uz: null,
+      description_md_ru: null, description_md_en: null, description_md_uz: null,
+    };
+    // Source language gets the original input
+    localized[`title_${sourceLang}`] = data.title;
+    localized[`short_description_${sourceLang}`] = data.short_description;
+    localized[`description_md_${sourceLang}`] = "";
+    // Other languages get translations (if available)
+    for (const lng of ["ru", "en", "uz"] as const) {
+      const t = translations[lng];
+      if (!t) continue;
+      localized[`title_${lng}`] = t.title;
+      localized[`short_description_${lng}`] = t.short_description;
+      localized[`description_md_${lng}`] = t.description_md;
+    }
+
     const payload = {
       title: data.title,
       short_description: data.short_description,
       description_md: "",
+      ...localized,
       cover_url: data.cover_url || null,
       city_id: data.city_id,
       duration_hours: data.duration_hours,
