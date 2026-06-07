@@ -37,12 +37,12 @@ function LoginPage() {
       if (!value || !value.startsWith("/") || value.startsWith("//")) return null;
       return value;
     };
-    const waitForOAuthUser = async () => {
+    const waitForOAuthUser = async (): Promise<{ id: string } | null> => {
       const { data: sessionData } = await supabase.auth.getSession();
       if (sessionData.session?.user) return sessionData.session.user;
       const { data: userData } = await supabase.auth.getUser();
       if (userData.user) return userData.user;
-      return await new Promise<typeof userData.user>((resolve) => {
+      return await new Promise<{ id: string } | null>((resolve) => {
         const timeout = window.setTimeout(() => {
           sub.subscription.unsubscribe();
           resolve(null);
