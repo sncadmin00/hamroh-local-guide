@@ -454,6 +454,14 @@ export function offeredCategories(tour: Pick<TourRow, "pricing_mode" | "group_pr
 }
 
 type LocalizableTour = Pick<TourRow, "title" | "title_ru" | "title_uz" | "title_en" | "short_description" | "short_description_ru" | "short_description_uz" | "short_description_en" | "description_md" | "description_md_ru" | "description_md_uz" | "description_md_en">;
+type LocalizableTourListKey = "highlights" | "included" | "not_included";
+
+function pickTourList(tour: Partial<TourRow>, key: LocalizableTourListKey, lang: "ru" | "uz" | "en"): string[] {
+  const localized = (tour as any)[`${key}_${lang}`];
+  if (Array.isArray(localized) && localized.length > 0) return localized;
+  const fallback = (tour as any)[key];
+  return Array.isArray(fallback) ? fallback : [];
+}
 
 export function pickTourTitle(tour: Partial<LocalizableTour>, lang: "ru" | "uz" | "en"): string {
   return (tour as any)[`title_${lang}`] || tour.title_en || tour.title_ru || tour.title_uz || tour.title || "";
@@ -465,6 +473,18 @@ export function pickTourShortDescription(tour: Partial<LocalizableTour>, lang: "
 
 export function pickTourDescriptionMd(tour: Partial<LocalizableTour>, lang: "ru" | "uz" | "en"): string {
   return (tour as any)[`description_md_${lang}`] || tour.description_md_en || tour.description_md_ru || tour.description_md_uz || tour.description_md || "";
+}
+
+export function pickTourHighlights(tour: Partial<TourRow>, lang: "ru" | "uz" | "en"): string[] {
+  return pickTourList(tour, "highlights", lang);
+}
+
+export function pickTourIncluded(tour: Partial<TourRow>, lang: "ru" | "uz" | "en"): string[] {
+  return pickTourList(tour, "included", lang);
+}
+
+export function pickTourNotIncluded(tour: Partial<TourRow>, lang: "ru" | "uz" | "en"): string[] {
+  return pickTourList(tour, "not_included", lang);
 }
 
 
