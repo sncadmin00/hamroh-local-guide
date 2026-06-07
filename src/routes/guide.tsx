@@ -998,6 +998,23 @@ function TourEditor({
             </label>
           </div>
 
+          <label className="inline-flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={endSameAsMeeting}
+              onChange={(e) => {
+                const checked = e.target.checked;
+                setEndSameAsMeeting(checked);
+                if (checked) {
+                  setEndPoint(meetingPoint);
+                  setEndCoords(meetingCoords);
+                }
+              }}
+              className="h-4 w-4"
+            />
+            <span>{tg("editor.endSameAsMeeting")}</span>
+          </label>
+
           <div>
             <p className="text-sm font-medium">{tg("editor.mapTitle")}</p>
             <p className="text-xs text-muted-foreground mt-0.5 mb-2">{tg("editor.mapText")}</p>
