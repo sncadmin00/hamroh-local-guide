@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useRef, lazy, Suspense } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -27,6 +27,8 @@ import { assessLanguageTest } from "@/lib/language-test.functions";
 import { useCities, useCategories } from "@/lib/content-queries";
 import { GuidePostsPanel } from "@/components/GuidePostsPanel";
 import { useGuideI18n } from "@/lib/guide-i18n";
+
+const TourMapPicker = lazy(() => import("@/components/TourMapPicker"));
 
 export const Route = createFileRoute("/guide")({
   head: () => ({ meta: [{ title: "Hamroh" }] }),
@@ -775,6 +777,16 @@ function TourEditor({
   const [notIncluded, setNotIncluded] = useState(arrToText(initial?.not_included ?? []));
   const [meetingPoint, setMeetingPoint] = useState(initial?.meeting_point ?? "");
   const [endPoint, setEndPoint] = useState(initial?.end_point ?? "");
+  const [meetingCoords, setMeetingCoords] = useState<{ lat: number; lng: number } | null>(
+    initial?.meeting_lat != null && initial?.meeting_lng != null
+      ? { lat: Number(initial.meeting_lat), lng: Number(initial.meeting_lng) }
+      : null,
+  );
+  const [endCoords, setEndCoords] = useState<{ lat: number; lng: number } | null>(
+    initial?.end_lat != null && initial?.end_lng != null
+      ? { lat: Number(initial.end_lat), lng: Number(initial.end_lng) }
+      : null,
+  );
   const [published, setPublished] = useState(initial?.published ?? true);
   const [selectedCats, setSelectedCats] = useState<string[]>(initial?.category_ids ?? []);
   const [uploading, setUploading] = useState(false);
