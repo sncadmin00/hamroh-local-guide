@@ -468,7 +468,7 @@ export const upsertTour = createServerFn({ method: "POST" })
     });
 
     // Fallback to source text for any missing translation (DB columns are NOT NULL)
-    const localized: Record<string, string> = {};
+    const localized: Record<string, string | string[]> = {};
     for (const lng of ["ru", "en", "uz"] as const) {
       const t = lng === sourceLang ? null : translations[lng];
       localized[`title_${lng}`] = t?.title || data.title;
