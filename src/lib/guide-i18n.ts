@@ -112,7 +112,7 @@ const guideTranslations = {
   "editor.tourLanguagesText": { en: "Pick a base language (= 100% price). For other languages set a % surcharge — system computes the final price automatically. Leave at 0 if the price is the same.", uz: "Asosiy tilni tanlang (= 100% narx). Boshqa tillar uchun % ustama belgilang — tizim yakuniy narxni avtomatik hisoblaydi. Narx bir xil bo'lsa 0 qoldiring.", ru: "Выберите базовый язык (= 100% цены). Для других языков укажите наценку в % — система посчитает итоговую цену автоматически. Оставьте 0, если цена та же." },
   "editor.noProfileLanguages": { en: "No languages on your profile yet.", uz: "Profilingizda hali tillar yo'q.", ru: "В профиле пока нет языков." },
   "editor.baseLanguage": { en: "Base language:", uz: "Asosiy til:", ru: "Базовый язык:" },
-  "editor.highlights": { en: "Highlights (one per line)", uz: "Asosiy joylar (har qatorda bittadan)", ru: "Главное (по одному в строке)" },
+  "editor.highlights": { en: "Tour description (one per line)", uz: "Tur tavsifi (har qatorda bittadan)", ru: "Описание тура (опишите по пунктам)" },
   "editor.included": { en: "Included", uz: "Kiritilgan", ru: "Включено" },
   "editor.notIncluded": { en: "Not included", uz: "Kiritilmagan", ru: "Не включено" },
   "editor.meetingPoint": { en: "Meeting point", uz: "Uchrashuv joyi", ru: "Место встречи" },
