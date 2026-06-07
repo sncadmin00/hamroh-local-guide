@@ -549,6 +549,7 @@ type Tour = {
   meeting_lng?: number | null;
   end_lat?: number | null;
   end_lng?: number | null;
+  end_same_as_meeting?: boolean;
   published: boolean;
   sort_order: number;
   category_ids: string[];
