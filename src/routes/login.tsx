@@ -53,7 +53,11 @@ function LoginPage() {
       navigate({ to: guide ? "/guide" : isAdmin ? "/admin" : "/ai", replace: true });
     };
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      if (session?.user) resolveAndGo(session.user.id);
+      if (session?.user) {
+        setTimeout(() => {
+          resolveAndGo(session.user.id);
+        }, 0);
+      }
     });
     supabase.auth.getUser().then(({ data }) => {
       if (data.user) resolveAndGo(data.user.id);
