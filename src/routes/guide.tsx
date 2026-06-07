@@ -805,10 +805,11 @@ function TourEditor({
   };
 
   const upload = async (file: File) => {
+    if (!guideId) { toast.error("Guide profile not loaded"); return; }
     setUploading(true);
-    const ext = file.name.split(".").pop() || "jpg";
-    const path = `tours/${crypto.randomUUID()}.${ext}`;
-    const { error } = await supabase.storage.from("guide-photos").upload(path, file, { upsert: true });
+    const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+    const path = `tours/${guideId}/${crypto.randomUUID()}.${ext}`;
+    const { error } = await supabase.storage.from("guide-photos").upload(path, file, { upsert: true, contentType: file.type || undefined });
     setUploading(false);
     if (error) { toast.error(error.message); return; }
     const { data } = supabase.storage.from("guide-photos").getPublicUrl(path);
