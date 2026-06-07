@@ -543,6 +543,10 @@ type Tour = {
   not_included: string[];
   meeting_point?: string;
   end_point?: string;
+  meeting_lat?: number | null;
+  meeting_lng?: number | null;
+  end_lat?: number | null;
+  end_lng?: number | null;
   published: boolean;
   sort_order: number;
   category_ids: string[];
@@ -553,7 +557,7 @@ const GROUP_KEYS = ["private", "small", "group", "large"] as const;
 function ToursPanel() {
   const { tg } = useGuideI18n();
   const [languages, setLanguages] = useState<string[]>([]);
-  const [cities, setCities] = useState<Array<{ id: string; name: string }>>([]);
+  const [cities, setCities] = useState<Array<{ id: string; name: string; lat: number; lng: number }>>([]);
   const [defaultCityId, setDefaultCityId] = useState<string>("");
   const [items, setItems] = useState<Tour[]>([]);
   const [loading, setLoading] = useState(true);
@@ -567,7 +571,7 @@ function ToursPanel() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetchList() as { guide: { languages: string[]; city_id: string } | null; cities: Array<{ id: string; name: string }>; tours: Tour[] };
+      const res = await fetchList() as { guide: { languages: string[]; city_id: string } | null; cities: Array<{ id: string; name: string; lat: number; lng: number }>; tours: Tour[] };
       setLanguages(res.guide?.languages ?? []);
       setCities(res.cities ?? []);
       setDefaultCityId(res.guide?.city_id ?? "");
@@ -702,7 +706,7 @@ function TourEditor({
   languages, cities, defaultCityId, initial, onClose, onSave,
 }: {
   languages: string[];
-  cities: Array<{ id: string; name: string }>;
+  cities: Array<{ id: string; name: string; lat: number; lng: number }>;
   defaultCityId: string;
   initial: Tour | null;
   onClose: () => void;
@@ -726,6 +730,10 @@ function TourEditor({
     not_included: string[];
     meeting_point: string;
     end_point: string;
+    meeting_lat: number | null;
+    meeting_lng: number | null;
+    end_lat: number | null;
+    end_lng: number | null;
     published: boolean;
     sort_order: number;
     category_ids: string[];
