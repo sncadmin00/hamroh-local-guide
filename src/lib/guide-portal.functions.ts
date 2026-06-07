@@ -464,22 +464,13 @@ export const upsertTour = createServerFn({ method: "POST" })
       description_md: "",
     });
 
-    const localized: Record<string, string | null> = {
-      title_ru: null, title_en: null, title_uz: null,
-      short_description_ru: null, short_description_en: null, short_description_uz: null,
-      description_md_ru: null, description_md_en: null, description_md_uz: null,
-    };
-    // Source language gets the original input
-    localized[`title_${sourceLang}`] = data.title;
-    localized[`short_description_${sourceLang}`] = data.short_description;
-    localized[`description_md_${sourceLang}`] = "";
-    // Other languages get translations (if available)
+    // Fallback to source text for any missing translation (DB columns are NOT NULL)
+    const localized: Record<string, string> = {};
     for (const lng of ["ru", "en", "uz"] as const) {
-      const t = translations[lng];
-      if (!t) continue;
-      localized[`title_${lng}`] = t.title;
-      localized[`short_description_${lng}`] = t.short_description;
-      localized[`description_md_${lng}`] = t.description_md;
+      const t = lng === sourceLang ? null : translations[lng];
+      localized[`title_${lng}`] = t?.title || data.title;
+      localized[`short_description_${lng}`] = t?.short_description ?? data.short_description;
+      localized[`description_md_${lng}`] = t?.description_md ?? "";
     }
 
     const payload = {
