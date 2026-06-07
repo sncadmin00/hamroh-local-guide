@@ -37,6 +37,26 @@ function LoginPage() {
       if (!value || !value.startsWith("/") || value.startsWith("//")) return null;
       return value;
     };
+    const waitForOAuthUser = async (): Promise<{ id: string } | null> => {
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (sessionData.session?.user) return sessionData.session.user;
+      const { data: userData } = await supabase.auth.getUser();
+      if (userData.user) return userData.user;
+      return await new Promise<{ id: string } | null>((resolve) => {
+        let unsubscribe = () => {};
+        const timeout = window.setTimeout(() => {
+          unsubscribe();
+          resolve(null);
+        }, 3000);
+        const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+          if (!session?.user) return;
+          window.clearTimeout(timeout);
+          unsubscribe();
+          resolve(session.user);
+        });
+        unsubscribe = () => sub.subscription.unsubscribe();
+      });
+    };
     const resolveAndGo = async (userId: string) => {
       const pendingRedirect =
         safeRedirect(sessionStorage.getItem("authRedirect")) ?? safeRedirect(redirect);
@@ -59,8 +79,8 @@ function LoginPage() {
         }, 0);
       }
     });
-    supabase.auth.getUser().then(({ data }) => {
-      if (data.user) resolveAndGo(data.user.id);
+    waitForOAuthUser().then((user) => {
+      if (user) resolveAndGo(user.id);
     });
     return () => sub.subscription.unsubscribe();
   }, [navigate, redirect]);

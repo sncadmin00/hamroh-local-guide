@@ -107,10 +107,30 @@ function GuidePortal() {
 
   useEffect(() => {
     let mounted = true;
-    (async () => {
+    const waitForUser = async (): Promise<{ id: string } | null> => {
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (sessionData.session?.user) return sessionData.session.user;
       const { data } = await supabase.auth.getUser();
+      if (data.user) return data.user;
+      return await new Promise<{ id: string } | null>((resolve) => {
+        let unsubscribe = () => {};
+        const timeout = window.setTimeout(() => {
+          unsubscribe();
+          resolve(null);
+        }, 3000);
+        const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+          if (!session?.user) return;
+          window.clearTimeout(timeout);
+          unsubscribe();
+          resolve(session.user);
+        });
+        unsubscribe = () => sub.subscription.unsubscribe();
+      });
+    };
+    (async () => {
+      const user = await waitForUser();
       if (!mounted) return;
-      if (!data.user) {
+      if (!user) {
         navigate({ to: "/login", search: { redirect: "/guide" }, replace: true });
         return;
       }
