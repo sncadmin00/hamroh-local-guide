@@ -370,7 +370,7 @@ export const listMyTours = createServerFn({ method: "GET" })
       category_ids: ((t.tour_categories ?? []) as Array<{ category_id: string }>).map((tc) => tc.category_id),
     }));
     return {
-      guide: { languages: (guide.languages ?? []) as string[], city_id: guide.city_id },
+      guide: { id: guide.id, languages: (guide.languages ?? []) as string[], city_id: guide.city_id },
       cities: (cityRows ?? []) as Array<{ id: string; name: string; lat: number; lng: number }>,
       tours,
     };
