@@ -1,0 +1,22 @@
+UPDATE tours SET title_ru=v.ru, title_uz=v.uz, title_en=COALESCE(NULLIF(tours.title_en,''), v.en) FROM (VALUES
+  ('sherzod-bukhara-evening-tea-house-music-739caf','Вечер в чайхане с живой музыкой','Choyxonada kechki choy va musiqa','Evening tea house & music'),
+  ('nigora-tashkent-hidden-coffee-dessert-crawl-ac808e','Скрытые кофейни и десерты Ташкента','Toshkentning yashirin kofe va shirinliklari','Hidden coffee & dessert crawl'),
+  ('nigora-tashkent-local-dinner-live-music-c5e9ee','Местный ужин и живая музыка','Mahalliy kechki ovqat va jonli musiqa','Local dinner & live music'),
+  ('nigora-tashkent-design-district-walk-c5b860','Прогулка по дизайн-кварталу','Dizayn mahallasi bo‘ylab sayr','Design district walk'),
+  ('tashkent-food','Гастротур по Ташкенту','Toshkent gastro sayohati','Tashkent Food Tour'),
+  ('malika-samarkand-artisan-workshop-day-4d8ab3','День в мастерских ремесленников','Hunarmandlar ustaxonasida bir kun','Artisan workshop day'),
+  ('malika-samarkand-shahi-zinda-sunset-photo-walk-b14e41','Шахи-Зинда: фотопрогулка на закате','Shohi Zinda: quyosh botishida fotosayr','Shahi-Zinda sunset photo walk'),
+  ('sherzod-bukhara-old-town-walking-tour-74a5c4','Пешая прогулка по старой Бухаре','Eski Buxoro bo‘ylab piyoda sayr','Old town walking tour'),
+  ('sherzod-bukhara-full-day-bukhara-deep-dive-990230','Бухара: погружение на целый день','Buxoroga to‘liq kunlik chuqur sayohat','Full-day Bukhara deep dive'),
+  ('tashkent-modern','Современный и советский Ташкент','Zamonaviy va sovet Toshkenti','Tashkent Modern & Soviet'),
+  ('samarkand-silk-road','Наследие Великого шёлкового пути','Buyuk Ipak yo‘li merosi','Silk Road Heritage'),
+  ('samarkand-food','Гастрономия Самарканда','Samarqand gastronomiyasi','Samarkand Gastronomy'),
+  ('samarkand-classic','Классический Самарканд','Klassik Samarqand','Samarkand Classic'),
+  ('bukhara-crafts','Ремёсла и культура Бухары','Buxoro hunarmandchiligi va madaniyati','Bukhara Crafts & Culture'),
+  ('bukhara-old-town','Прогулка по старому городу Бухары','Buxoro eski shahri bo‘ylab sayr','Bukhara Old Town Walk'),
+  ('aziz-tashkent-full-day-tashkent-classics-ec119a','Классика Ташкента за целый день','Toshkent klassikasi to‘liq kunda','Full-day Tashkent classics'),
+  ('tashkent-night','Огни ночного Ташкента','Tungi Toshkent chiroqlari','Tashkent Night Lights'),
+  ('aziz-tashkent-chorsu-bazaar-food-walk-9cd061','Гастропрогулка по базару Чорсу','Chorsu bozori bo‘ylab gastro sayr','Chorsu Bazaar food walk'),
+  ('aziz-tashkent-soviet-metro-architecture-tour-354061','Архитектура советского метро','Sovet metro arxitekturasi','Soviet metro architecture tour'),
+  ('malika-samarkand-registan-square-private-tour-491b1f','Площадь Регистан: частная экскурсия','Registon maydoni: shaxsiy ekskursiya','Registan Square private tour')
+) AS v(slug, ru, uz, en) WHERE tours.slug = v.slug;
