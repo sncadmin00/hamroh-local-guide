@@ -995,6 +995,36 @@ function TourEditor({
           </div>
 
           <div>
+            <p className="text-sm font-medium">{tg("editor.mapTitle")}</p>
+            <p className="text-xs text-muted-foreground mt-0.5 mb-2">{tg("editor.mapText")}</p>
+            <Suspense fallback={<div className="h-64 w-full rounded-xl bg-muted animate-pulse" />}>
+              <TourMapPicker
+                center={(() => {
+                  const c = cities.find((x) => x.id === cityId);
+                  return c && Number.isFinite(c.lat) && Number.isFinite(c.lng)
+                    ? { lat: c.lat, lng: c.lng }
+                    : { lat: 41.3111, lng: 69.2797 };
+                })()}
+                meeting={meetingCoords}
+                end={endCoords}
+                onChange={({ meeting, end }) => {
+                  setMeetingCoords(meeting);
+                  setEndCoords(end);
+                }}
+                labels={{
+                  pickMeeting: tg("editor.mapPickMeeting"),
+                  pickEnd: tg("editor.mapPickEnd"),
+                  meetingSet: tg("editor.mapMeetingEmpty"),
+                  endSet: tg("editor.mapEndEmpty"),
+                  clear: tg("editor.mapClear"),
+                  hint: tg("editor.mapHint"),
+                }}
+              />
+            </Suspense>
+          </div>
+
+
+          <div>
             <p className="text-sm font-medium">{tg("editor.categories")}</p>
             <p className="text-xs text-muted-foreground mt-0.5">{tg("editor.categoriesText")}</p>
             {categories.length === 0 ? (
