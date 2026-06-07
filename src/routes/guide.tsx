@@ -688,6 +688,7 @@ function ToursPanel() {
           languages={languages}
           cities={cities}
           defaultCityId={defaultCityId}
+          guideId={guideId}
           initial={editing}
           onClose={() => { setEditing(null); setCreating(false); }}
           onSave={async (payload) => {
