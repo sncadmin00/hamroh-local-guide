@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useRef, lazy, Suspense } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -27,6 +27,8 @@ import { assessLanguageTest } from "@/lib/language-test.functions";
 import { useCities, useCategories } from "@/lib/content-queries";
 import { GuidePostsPanel } from "@/components/GuidePostsPanel";
 import { useGuideI18n } from "@/lib/guide-i18n";
+
+const TourMapPicker = lazy(() => import("@/components/TourMapPicker"));
 
 export const Route = createFileRoute("/guide")({
   head: () => ({ meta: [{ title: "Hamroh" }] }),
@@ -543,6 +545,10 @@ type Tour = {
   not_included: string[];
   meeting_point?: string;
   end_point?: string;
+  meeting_lat?: number | null;
+  meeting_lng?: number | null;
+  end_lat?: number | null;
+  end_lng?: number | null;
   published: boolean;
   sort_order: number;
   category_ids: string[];
@@ -553,7 +559,7 @@ const GROUP_KEYS = ["private", "small", "group", "large"] as const;
 function ToursPanel() {
   const { tg } = useGuideI18n();
   const [languages, setLanguages] = useState<string[]>([]);
-  const [cities, setCities] = useState<Array<{ id: string; name: string }>>([]);
+  const [cities, setCities] = useState<Array<{ id: string; name: string; lat: number; lng: number }>>([]);
   const [defaultCityId, setDefaultCityId] = useState<string>("");
   const [items, setItems] = useState<Tour[]>([]);
   const [loading, setLoading] = useState(true);
@@ -567,7 +573,7 @@ function ToursPanel() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetchList() as { guide: { languages: string[]; city_id: string } | null; cities: Array<{ id: string; name: string }>; tours: Tour[] };
+      const res = await fetchList() as { guide: { languages: string[]; city_id: string } | null; cities: Array<{ id: string; name: string; lat: number; lng: number }>; tours: Tour[] };
       setLanguages(res.guide?.languages ?? []);
       setCities(res.cities ?? []);
       setDefaultCityId(res.guide?.city_id ?? "");
@@ -702,7 +708,7 @@ function TourEditor({
   languages, cities, defaultCityId, initial, onClose, onSave,
 }: {
   languages: string[];
-  cities: Array<{ id: string; name: string }>;
+  cities: Array<{ id: string; name: string; lat: number; lng: number }>;
   defaultCityId: string;
   initial: Tour | null;
   onClose: () => void;
@@ -726,6 +732,10 @@ function TourEditor({
     not_included: string[];
     meeting_point: string;
     end_point: string;
+    meeting_lat: number | null;
+    meeting_lng: number | null;
+    end_lat: number | null;
+    end_lng: number | null;
     published: boolean;
     sort_order: number;
     category_ids: string[];
@@ -767,6 +777,16 @@ function TourEditor({
   const [notIncluded, setNotIncluded] = useState(arrToText(initial?.not_included ?? []));
   const [meetingPoint, setMeetingPoint] = useState(initial?.meeting_point ?? "");
   const [endPoint, setEndPoint] = useState(initial?.end_point ?? "");
+  const [meetingCoords, setMeetingCoords] = useState<{ lat: number; lng: number } | null>(
+    initial?.meeting_lat != null && initial?.meeting_lng != null
+      ? { lat: Number(initial.meeting_lat), lng: Number(initial.meeting_lng) }
+      : null,
+  );
+  const [endCoords, setEndCoords] = useState<{ lat: number; lng: number } | null>(
+    initial?.end_lat != null && initial?.end_lng != null
+      ? { lat: Number(initial.end_lat), lng: Number(initial.end_lng) }
+      : null,
+  );
   const [published, setPublished] = useState(initial?.published ?? true);
   const [selectedCats, setSelectedCats] = useState<string[]>(initial?.category_ids ?? []);
   const [uploading, setUploading] = useState(false);
@@ -975,6 +995,36 @@ function TourEditor({
           </div>
 
           <div>
+            <p className="text-sm font-medium">{tg("editor.mapTitle")}</p>
+            <p className="text-xs text-muted-foreground mt-0.5 mb-2">{tg("editor.mapText")}</p>
+            <Suspense fallback={<div className="h-64 w-full rounded-xl bg-muted animate-pulse" />}>
+              <TourMapPicker
+                center={(() => {
+                  const c = cities.find((x) => x.id === cityId);
+                  return c && Number.isFinite(c.lat) && Number.isFinite(c.lng)
+                    ? { lat: c.lat, lng: c.lng }
+                    : { lat: 41.3111, lng: 69.2797 };
+                })()}
+                meeting={meetingCoords}
+                end={endCoords}
+                onChange={({ meeting, end }) => {
+                  setMeetingCoords(meeting);
+                  setEndCoords(end);
+                }}
+                labels={{
+                  pickMeeting: tg("editor.mapPickMeeting"),
+                  pickEnd: tg("editor.mapPickEnd"),
+                  meetingSet: tg("editor.mapMeetingEmpty"),
+                  endSet: tg("editor.mapEndEmpty"),
+                  clear: tg("editor.mapClear"),
+                  hint: tg("editor.mapHint"),
+                }}
+              />
+            </Suspense>
+          </div>
+
+
+          <div>
             <p className="text-sm font-medium">{tg("editor.categories")}</p>
             <p className="text-xs text-muted-foreground mt-0.5">{tg("editor.categoriesText")}</p>
             {categories.length === 0 ? (
@@ -1039,6 +1089,10 @@ function TourEditor({
                 not_included: textToArr(notIncluded),
                 meeting_point: meetingPoint.trim(),
                 end_point: endPoint.trim(),
+                meeting_lat: meetingCoords?.lat ?? null,
+                meeting_lng: meetingCoords?.lng ?? null,
+                end_lat: endCoords?.lat ?? null,
+                end_lng: endCoords?.lng ?? null,
                 published,
                 sort_order: initial?.sort_order ?? 0,
                 category_ids: selectedCats,
