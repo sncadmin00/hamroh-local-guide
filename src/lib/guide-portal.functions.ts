@@ -406,6 +406,7 @@ const upsertTourSchema = z.object({
   meeting_lng: z.number().min(-180).max(180).nullable().default(null),
   end_lat: z.number().min(-90).max(90).nullable().default(null),
   end_lng: z.number().min(-180).max(180).nullable().default(null),
+  end_same_as_meeting: z.boolean().default(false),
   published: z.boolean().default(true),
   sort_order: z.number().int().min(0).max(1000).default(0),
   category_ids: z.array(z.string().uuid()).max(20).default([]),
