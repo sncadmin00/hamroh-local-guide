@@ -7,6 +7,7 @@ import { normalizeLocale } from "@/lib/email-templates/_i18n";
 import { bookingDetailsText, sendTelegramMessage } from "@/lib/telegram-notifications.server";
 import { mirrorBookingToGoogle } from "@/lib/google-calendar.server";
 import { signBookingPdfToken } from "@/lib/booking-pdf.server";
+import { translateTourFields, mapBaseLanguage } from "@/lib/translate-tour.server";
 
 const APP_BASE_URL = "https://hamrohim.com";
 
