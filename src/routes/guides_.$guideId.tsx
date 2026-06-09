@@ -104,8 +104,10 @@ function GuidePage() {
     { icon: Users, label: `${guide.reviews}+`, sub: "happy travelers" },
     {
       icon: MessageCircle,
-      label: guide.avgResponseMinutes != null && guide.avgResponseMinutes <= 60 ? "Fast" : "Replies",
-      sub: "response",
+      label: guide.avgResponseMinutes != null
+        ? (guide.avgResponseMinutes <= 60 ? `${Math.round(guide.avgResponseMinutes)}m` : `${Math.round(guide.avgResponseMinutes / 60)}h`)
+        : "—",
+      sub: "avg reply",
     },
   ];
 
