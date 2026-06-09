@@ -23,7 +23,7 @@ function TelegramIcon({ className }: { className?: string }) {
   );
 }
 
-export function SiteHeader({ transparent = false }: { transparent?: boolean } = {}) {
+export function SiteHeader({ transparent = false, sticky = true }: { transparent?: boolean; sticky?: boolean } = {}) {
   const { t } = useI18n();
   const navigate = useNavigate();
   const [signedIn, setSignedIn] = useState(false);
