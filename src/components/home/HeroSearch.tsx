@@ -97,7 +97,7 @@ export function HeroSearch() {
         />
       </div>
 
-      <div className="relative z-10 max-w-6xl mx-auto px-6 pt-32 pb-0 md:pt-48 md:pb-0 w-full">
+      <div className="relative z-10 max-w-6xl mx-auto px-6 pt-32 pb-0 md:pt-48 md:pb-0 w-full translate-y-12 md:translate-y-16">
         <div className="max-w-2xl">
           {/* Search pill */}
           <form
