@@ -64,13 +64,13 @@ export function HeroSearch() {
   const todayISO = new Date().toISOString().slice(0, 10);
 
   return (
-    <section className="relative overflow-hidden min-h-[460px] md:min-h-[520px] flex flex-col justify-end">
+    <section className="relative overflow-hidden min-h-[500px] md:min-h-[560px] flex flex-col justify-end">
       {/* Background image */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0 overflow-hidden">
         <img
           src={heroImg}
           alt="Chashma-Ayub mausoleum, Bukhara"
-          className="h-full w-full object-cover [object-position:78%_center] md:object-center"
+          className="h-full w-full object-cover scale-[1.15] [object-position:78%_18%] md:scale-100 md:object-center"
           loading="eager"
         />
 
