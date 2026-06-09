@@ -43,16 +43,6 @@ export const translations: Dict = {
   "common.settings": { en: "Account settings", uz: "Hisob sozlamalari", ru: "Настройки аккаунта" },
   "common.admin": { en: "Admin", uz: "Admin", ru: "Админ" },
   "hero.title": { en: "Find your local guide", uz: "Mahalliy hamrohizni toping", ru: "Найдите своего местного гида" },
-  "hero.headline": {
-    en: "Find your\nlocal companion",
-    uz: "Mahalliy\nhamrohizni toping",
-    ru: "Найдите своего\nместного спутника",
-  },
-  "hero.headlineSub": {
-    en: "Real people. Real stories.\nUnforgettable experiences.",
-    uz: "Haqiqiy odamlar. Haqiqiy hikoyalar.\nUnutilmas tajribalar.",
-    ru: "Настоящие люди. Настоящие истории.\nНезабываемые впечатления.",
-  },
   "hero.h1": {
     en: "Explore Uzbekistan with locals",
     uz: "Har bir safar uchun ishonchli hamroh",
