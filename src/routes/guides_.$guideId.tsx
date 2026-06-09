@@ -99,15 +99,16 @@ function GuidePage() {
 
   const coverImage = guide.coverUrl || guide.photo;
   const stats = [
-    { icon: Award, label: `${guide.completedToursCount > 0 ? `${guide.completedToursCount}+` : "0"}`, sub: "tours completed" },
-    { icon: ShieldCheck, label: guide.identityVerified ? "Licensed" : "Pending", sub: "guide" },
-    { icon: BadgeCheck, label: guide.verified ? "Verified" : "Pending", sub: "platform" },
+    { icon: Award, label: `${guide.completedToursCount > 0 ? `${guide.completedToursCount}+` : "0"}`, sub: "tours completed", active: guide.completedToursCount > 0 },
+    { icon: ShieldCheck, label: guide.identityVerified ? "Licensed" : "Pending", sub: "guide", active: guide.identityVerified },
+    { icon: BadgeCheck, label: guide.verified ? "Verified" : "Pending", sub: "platform", active: guide.verified },
     {
       icon: MessageCircle,
       label: guide.avgResponseMinutes != null
         ? (guide.avgResponseMinutes <= 60 ? `${Math.round(guide.avgResponseMinutes)}m` : `${Math.round(guide.avgResponseMinutes / 60)}h`)
         : "—",
       sub: "avg reply",
+      active: guide.avgResponseMinutes != null,
     },
   ];
 
