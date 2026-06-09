@@ -42,21 +42,24 @@ export function SpotlightTourCarousel() {
                 <div className="flex items-center justify-end h-9 px-3 bg-white border-b border-border">
                   <WishlistHeart type="tour" id={tour.id} size="sm" variant="ghost" />
                 </div>
-                <div className="relative aspect-[16/10] w-full overflow-hidden bg-secondary">
-                  {tour.cover_url && (
-                    <img
-                      src={tour.cover_url}
-                      alt={title}
-                      className="h-full w-full object-cover"
-                      loading="lazy"
-                    />
-                  )}
+                <div className="relative">
+                  <div className="aspect-[16/10] w-full overflow-hidden bg-secondary">
+                    {tour.cover_url && (
+                      <img
+                        src={tour.cover_url}
+                        alt={title}
+                        className="h-full w-full object-cover"
+                        loading="lazy"
+                      />
+                    )}
+                  </div>
                   {cat?.name && (
-                    <span className="absolute left-3 bottom-3 inline-flex items-center h-6 px-2.5 rounded-md bg-white/95 text-[11px] font-semibold uppercase tracking-wide text-foreground shadow-sm">
+                    <span className="absolute left-4 -bottom-4 z-10 inline-flex items-center h-8 px-3 rounded-lg bg-white text-[11px] font-semibold uppercase tracking-wide text-foreground shadow-md ring-1 ring-border">
                       {cat.name}
                     </span>
                   )}
                 </div>
+
 
                 <div className="flex flex-1 flex-col p-5">
                   <h3 className="font-display text-lg font-semibold text-foreground leading-snug line-clamp-2">
