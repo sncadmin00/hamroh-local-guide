@@ -78,12 +78,12 @@ export function HeroSearch() {
           />
         </picture>
 
-        {/* Top white fade for header readability */}
+        {/* Top fade for header readability — light, doesn't wash the image */}
         <div
-          className="pointer-events-none absolute inset-x-0 top-0 h-40 md:h-48"
+          className="pointer-events-none absolute inset-x-0 top-0 h-20 md:h-24"
           style={{
             background:
-              "linear-gradient(180deg, var(--background) 0%, color-mix(in oklab, var(--background) 70%, transparent) 35%, color-mix(in oklab, var(--background) 30%, transparent) 70%, transparent 100%)",
+              "linear-gradient(180deg, var(--background) 0%, color-mix(in oklab, var(--background) 40%, transparent) 60%, transparent 100%)",
           }}
         />
 
