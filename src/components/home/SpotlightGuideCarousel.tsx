@@ -109,13 +109,21 @@ export function SpotlightGuideCarousel() {
                   {g.verified && <BadgeCheck className="h-4 w-4 shrink-0 text-primary" />}
                 </div>
                 <p className="mt-0.5 text-sm text-muted-foreground">{g.city}</p>
-                {g.reviews > 0 && (
-                  <div className="mt-1.5 inline-flex items-center gap-1 text-sm text-foreground">
-                    <Star className="h-3.5 w-3.5 fill-foreground text-foreground" />
-                    <span className="tabular-nums font-medium">{g.rating.toFixed(1)}</span>
-                    <span className="text-muted-foreground">· {g.reviews}</span>
-                  </div>
-                )}
+                <div className="mt-1.5 flex items-center justify-center gap-3 text-sm text-foreground">
+                  {g.reviews > 0 && (
+                    <div className="inline-flex items-center gap-1">
+                      <Star className="h-3.5 w-3.5 fill-foreground text-foreground" />
+                      <span className="tabular-nums font-medium">{g.rating.toFixed(1)}</span>
+                      <span className="text-muted-foreground">· {g.reviews}</span>
+                    </div>
+                  )}
+                  {g.completedToursCount > 0 && (
+                    <div className="inline-flex items-center gap-1 text-muted-foreground">
+                      <Compass className="h-3.5 w-3.5" />
+                      <span className="tabular-nums">{g.completedToursCount}</span>
+                    </div>
+                  )}
+                </div>
                 {g.languages?.length > 0 && (
                   <p className="mt-1.5 text-xs uppercase tracking-wide text-muted-foreground">
                     {g.languages.slice(0, 4).join(" · ")}
