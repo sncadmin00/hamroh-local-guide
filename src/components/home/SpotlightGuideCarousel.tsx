@@ -118,10 +118,9 @@ export function SpotlightGuideCarousel() {
                     </div>
                   )}
                   {g.completedToursCount > 0 && (
-                    <div className="inline-flex items-center gap-1 text-muted-foreground">
-                      <Compass className="h-3.5 w-3.5" />
-                      <span className="tabular-nums">{g.completedToursCount}</span>
-                    </div>
+                    <span className="text-muted-foreground">
+                      {g.completedToursCount} {t("home.spotlightGuide.tours")}
+                    </span>
                   )}
                 </div>
                 {g.languages?.length > 0 && (
