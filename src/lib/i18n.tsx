@@ -7,7 +7,7 @@ type Dict = Record<string, { en: string; uz: string; ru: string }>;
 
 export const translations: Dict = {
   "nav.findGuide": { en: "Guides", uz: "Hamrohlar", ru: "Гиды" },
-  "home.spotlightGuide.title": { en: "Meet a top-rated guide", uz: "Yetakchi hamroh bilan tanishing", ru: "Познакомьтесь с лучшим гидом" },
+  "home.spotlightGuide.title": { en: "Meet companions", uz: "Hamrohlar bilan tanishing", ru: "Познакомьтесь со спутниками" },
   "home.spotlightGuide.cta": { en: "View profile", uz: "Profilni ko'rish", ru: "Смотреть профиль" },
   "home.categories.title": { en: "Popular categories", uz: "Mashhur toifalar", ru: "Популярные категории" },
   "home.categories.viewAll": { en: "View all", uz: "Hammasi", ru: "Все" },
