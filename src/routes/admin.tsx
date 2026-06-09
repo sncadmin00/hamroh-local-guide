@@ -2028,6 +2028,41 @@ function ApplicationsPanel({
                     </div>
 
 
+                    {/* Guide certificate */}
+                    <div>
+                      <p className="text-xs font-medium text-muted-foreground mb-2">{ta("applications.certificate")}</p>
+                      {!a.has_certificate ? (
+                        <span className="text-xs text-muted-foreground">{ta("applications.noCertificate")}</span>
+                      ) : (
+                        <div className="flex flex-col gap-2">
+                          {a.certificate_url ? (
+                            <a
+                              href={a.certificate_url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="inline-flex w-fit items-center gap-1.5 h-9 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-secondary/60"
+                            >
+                              {ta("applications.openCertificate")}
+                            </a>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">{ta("applications.certificateMissing")}</span>
+                          )}
+                          <label className="inline-flex items-center gap-2 text-xs cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={a.certificate_confirmed}
+                              onChange={(e) => toggleCertificateConfirmed(a.id, e.target.checked)}
+                              className="h-4 w-4 rounded border-border/60"
+                            />
+                            <span>{ta("applications.confirmLicense")}</span>
+                          </label>
+                        </div>
+                      )}
+                    </div>
+
+
+
+
                     {/* Photos */}
                     <div>
                       <p className="text-xs font-medium text-muted-foreground mb-2">{ta("applications.tourPhotos")} ({photoCount}/5)</p>
