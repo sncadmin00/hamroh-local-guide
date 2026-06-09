@@ -115,20 +115,22 @@ export function PopularCategoriesCarousel() {
                   className="snap-start shrink-0 w-[180px] md:w-[220px] group/card"
                 >
                   <div className="relative rounded-2xl bg-card shadow-[0_6px_20px_-8px_rgba(0,0,0,0.18)] ring-1 ring-black/5 transition-shadow duration-300 group-hover/card:shadow-[0_12px_28px_-10px_rgba(0,0,0,0.25)]">
-                    <div className="relative aspect-[4/3] w-full overflow-hidden rounded-t-2xl bg-secondary">
-                      <img
-                        src={cover}
-                        alt={tCategory(c.slug, c.name)}
-                        loading="lazy"
-                        width={400}
-                        height={300}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover/card:scale-[1.05]"
-                      />
+                    <div className="relative aspect-[4/3] w-full">
+                      <div className="absolute inset-0 overflow-hidden rounded-t-2xl bg-secondary">
+                        <img
+                          src={cover}
+                          alt={tCategory(c.slug, c.name)}
+                          loading="lazy"
+                          width={400}
+                          height={300}
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover/card:scale-[1.05]"
+                        />
+                      </div>
+                      <div className="absolute bottom-0 left-6 translate-y-1/2 z-20 h-12 w-12 rounded-full bg-card border-2 border-card shadow-[0_4px_10px_-2px_rgba(0,0,0,0.2)] flex items-center justify-center">
+                        <CategoryIcon name={c.icon} className="h-6 w-6 text-foreground" />
+                      </div>
                     </div>
-                    <div className="absolute top-[calc(75%-1.5rem)] left-3 z-10 h-12 w-12 rounded-full bg-card ring-4 ring-card shadow-[0_2px_8px_-2px_rgba(0,0,0,0.25)] flex items-center justify-center">
-                      <CategoryIcon name={c.icon} className="h-6 w-6 text-foreground" />
-                    </div>
-                    <div className="px-4 pt-3 pb-4 rounded-b-2xl">
+                    <div className="px-4 pt-6 pb-4 rounded-b-2xl">
                       <h3 className="font-display text-[15px] md:text-base font-semibold text-foreground line-clamp-1">
                         {tCategory(c.slug, c.name)}
                       </h3>
