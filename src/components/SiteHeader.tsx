@@ -77,7 +77,7 @@ export function SiteHeader({ transparent = false }: { transparent?: boolean } = 
 
   return (
     <header className={`sticky top-0 z-40 ${transparent ? "bg-transparent" : "bg-background/85 backdrop-blur-md"}`}>
-      <div className="container mx-auto flex h-16 items-center justify-between gap-4 px-4">
+      <div className={`${transparent ? "max-w-6xl mx-auto" : "container mx-auto"} flex h-16 items-center justify-between gap-4 px-4`}>
         {/* Left: logo */}
         <Link to="/" className="flex items-center shrink-0 leading-none">
           <img src={hamrohLogo} alt="Hamroh" className="h-[3.25rem] w-auto object-contain" />
