@@ -97,7 +97,7 @@ export function HeroSearch() {
         />
       </div>
 
-      <div className="relative z-10 max-w-6xl mx-auto px-6 pt-24 pb-0 md:pt-32 md:pb-0 w-full translate-y-12 md:translate-y-16">
+      <div className="relative z-10 max-w-6xl mx-auto px-6 pt-8 pb-0 md:pt-12 md:pb-0 w-full translate-y-12 md:translate-y-16">
         <div className="max-w-2xl">
           <h1 className="font-display text-3xl md:text-5xl font-bold text-white whitespace-pre-line leading-tight [text-shadow:0_2px_12px_rgba(0,0,0,0.45)]">
             {t("hero.search.title")}
