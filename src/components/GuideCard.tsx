@@ -65,13 +65,6 @@ export function GuideCard({ guide }: { guide: Guide }) {
           {langs && (
             <p className="text-[12px] uppercase tracking-wide text-muted-foreground">{langs}</p>
           )}
-
-          {guide.pricePerDay > 0 && (
-            <p className="text-[13px] text-foreground">
-              from ${guide.pricePerDay}
-              <span className="text-muted-foreground">/day</span>
-            </p>
-          )}
         </div>
       </div>
     </Link>
