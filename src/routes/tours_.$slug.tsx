@@ -7,6 +7,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { useTour, useTours, pickTourTitle, pickTourShortDescription, pickTourDescriptionMd, pickTourHighlights, pickTourIncluded, pickTourNotIncluded, offeredCategories, GROUP_CATEGORY_MAX, type GroupCategory } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
 import { Clock, MapPin, Check, X, Car, Star, Users } from "lucide-react";
+import { CategoryIcon } from "@/components/CategoryIcon";
 import { WishlistHeart } from "@/components/WishlistHeart";
 import { ReviewForm } from "@/components/ReviewForm";
 import { listTourReviews } from "@/lib/reviews.functions";
@@ -109,6 +110,18 @@ function TourDetailPage() {
               <img src={tour.cover_url || PLACEHOLDER} alt={localizedTitle} className="h-full w-full object-cover" />
               <WishlistHeart type="tour" id={tour.id} size="lg" className="absolute right-4 top-4" />
             </div>
+            {(() => {
+              const primary = (tour.tour_categories ?? []).map((tc) => tc.categories).find(Boolean);
+              if (!primary) return null;
+              return (
+                <div className="relative -mt-5 ml-5 inline-flex items-center gap-2 rounded-full bg-card pl-2 pr-4 py-1.5 ring-1 ring-border/60 shadow-sm">
+                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                    <CategoryIcon name={primary.icon} className="h-4 w-4" />
+                  </span>
+                  <span className="text-sm font-medium">{primary.name}</span>
+                </div>
+              );
+            })()}
 
             <div className="mt-5 flex items-center flex-wrap gap-3 text-sm text-muted-foreground">
               {tour.cities?.name && (
