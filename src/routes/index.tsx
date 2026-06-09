@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { HeroSearch } from "@/components/home/HeroSearch";
-import { BrowseByInterest } from "@/components/home/BrowseByInterest";
+
 import { SpotlightGuideCarousel } from "@/components/home/SpotlightGuideCarousel";
 import { PopularCategoriesCarousel } from "@/components/home/PopularCategoriesCarousel";
 import { SpotlightTourCarousel } from "@/components/home/SpotlightTourCarousel";
@@ -77,7 +77,6 @@ function Home() {
 
       <main className="flex-1">
         <HeroSearch />
-        <BrowseByInterest />
         <PopularCategoriesCarousel />
         <SpotlightGuideCarousel />
         <SpotlightTourCarousel />
