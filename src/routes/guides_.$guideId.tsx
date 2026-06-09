@@ -137,7 +137,7 @@ function GuidePage() {
         <div className="mt-3 px-1 min-w-0">
           <div className="flex items-center gap-1.5">
             <h1 className="font-display text-2xl font-semibold truncate">{guide.name.split(" ")[0]}</h1>
-            {guide.verified && <BadgeCheck className="h-5 w-5 shrink-0 text-primary fill-primary/10" />}
+            {guide.verified && <BadgeCheck className="h-5 w-5 shrink-0 text-gold fill-gold/10" />}
           </div>
           <div className="mt-0.5 flex items-center gap-1 text-sm text-muted-foreground">
             <MapPin className="h-3.5 w-3.5" />
