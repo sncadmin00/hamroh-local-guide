@@ -64,29 +64,28 @@ export function HeroSearch() {
   const todayISO = new Date().toISOString().slice(0, 10);
 
   return (
-    <section className="relative overflow-hidden min-h-[420px] md:min-h-[520px] flex flex-col justify-end">
+    <section className="relative overflow-hidden min-h-[460px] md:min-h-[520px] flex flex-col justify-end">
       {/* Background image */}
       <div className="absolute inset-0 z-0">
         <img
           src={heroImg}
           alt="Chashma-Ayub mausoleum, Bukhara"
-          className="h-full w-full object-cover object-right md:object-center"
+          className="h-full w-full object-cover [object-position:78%_center] md:object-center"
           loading="eager"
         />
 
         {/* Subtle bottom fade into page */}
         <div
-          className="absolute inset-x-0 bottom-0 h-20 md:h-28"
+          className="absolute inset-x-0 bottom-0 h-16 md:h-24"
           style={{
             background:
               "linear-gradient(180deg, transparent 0%, var(--background) 100%)",
           }}
         />
-
-
       </div>
 
-      <div className="relative z-10 max-w-6xl mx-auto px-6 pt-32 pb-10 md:pt-48 md:pb-14 w-full">
+      <div className="relative z-10 max-w-6xl mx-auto px-6 pt-32 pb-4 md:pt-48 md:pb-8 w-full">
+
 
         <div className="max-w-2xl">
 
