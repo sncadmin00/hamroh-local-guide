@@ -80,7 +80,7 @@ function Home() {
         <PopularCategoriesCarousel />
         <SpotlightGuideCarousel />
         <SpotlightTourCarousel />
-        <BookingCtaBlock />
+        
         <FeaturedReviews />
 
         {/* Become a guide banner */}
