@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Star, BadgeCheck, MapPin, Globe2, Clock, ArrowLeft, Car, Award, ShieldCheck, Users, MessageCircle } from "lucide-react";
+import { Star, BadgeCheck, MapPin, Globe2, Clock, ArrowLeft, Car, Award, ShieldCheck, MessageCircle } from "lucide-react";
 
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
