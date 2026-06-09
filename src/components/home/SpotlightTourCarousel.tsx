@@ -77,8 +77,9 @@ export function SpotlightTourCarousel() {
                         />
                       )}
                       <span className="text-xs text-muted-foreground">
-                        {t("home.spotlightTour.by") ?? "by"} <span className="font-medium text-foreground">{tour.guides.name}</span>
+                        {t("home.spotlightTour.by")} <span className="font-medium text-foreground">{tour.guides.name}</span>
                       </span>
+
                     </div>
                   )}
 
