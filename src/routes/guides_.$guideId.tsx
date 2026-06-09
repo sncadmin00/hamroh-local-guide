@@ -294,27 +294,6 @@ function GuidePage() {
 
           {tab === "about" && (
             <div className="space-y-6">
-              <div>
-                <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Languages</h3>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {guide.languages.map((l) => {
-                    const level = guide.verifiedLanguages?.[l];
-                    return (
-                      <span key={l} className="inline-flex items-center gap-1 rounded-full bg-secondary px-3 py-1 text-sm">
-                        <Globe2 className="h-3.5 w-3.5" /> {l}
-                        {level && (
-                          <span
-                            title={`AI-verified · CEFR ${level}`}
-                            className="ml-1 inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-sm font-semibold text-primary"
-                          >
-                            <BadgeCheck className="h-3.5 w-3.5" /> {level}
-                          </span>
-                        )}
-                      </span>
-                    );
-                  })}
-                </div>
-              </div>
               {guide.specialties.length > 0 && (
                 <div>
                   <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Specialties</h3>
