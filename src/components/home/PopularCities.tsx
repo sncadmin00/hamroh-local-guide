@@ -63,7 +63,7 @@ export function PopularCities() {
             <Link
               to="/book"
               search={{ city: nearestCity.slug }}
-              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#62A1B1]/10 to-[#8BB5A9]/10 ring-1 ring-[#62A1B1]/30 px-4 py-2 text-sm font-medium text-foreground hover:ring-[#62A1B1]/60 transition"
+              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary/10 to-accent/10 ring-1 ring-primary/30 px-4 py-2 text-sm font-medium text-foreground hover:ring-primary/60 transition"
             >
               <Navigation className="h-3.5 w-3.5 text-[#5e8a7e]" />
               <span className="text-muted-foreground">{t("book.autoDetected")}:</span>
