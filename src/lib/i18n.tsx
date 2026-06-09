@@ -62,6 +62,27 @@ export const translations: Dict = {
   "hero.suggest.4": { en: "Half-day artisan workshop", uz: "Yarim kunlik hunarmandlar ustaxonasi", ru: "Мастер-класс на полдня" },
 
   "hero.bookGuide": { en: "Book a tour", uz: "Tur bron qilish", ru: "Забронировать тур" },
+  "hero.search.title": {
+    en: "Find your\nlocal companion\nin Uzbekistan",
+    uz: "O'zbekistonda\no'z mahalliy\nhamrohingizni toping",
+    ru: "Найдите своего\nместного спутника\nв Узбекистане",
+  },
+  "hero.search.subtitle": {
+    en: "Authentic people. Real stories. Unforgettable experiences.",
+    uz: "Haqiqiy odamlar. Jonli hikoyalar. Unutilmas tajribalar.",
+    ru: "Настоящие люди. Живые истории. Незабываемые впечатления.",
+  },
+  "hero.search.where": { en: "Where are you going?", uz: "Qayerga bormoqchisiz?", ru: "Куда вы едете?" },
+  "hero.search.when": { en: "Select date", uz: "Sanani tanlang", ru: "Выберите дату" },
+  "hero.search.guests": { en: "Guests", uz: "Mehmonlar", ru: "Гости" },
+  "hero.search.guest_one": { en: "guest", uz: "mehmon", ru: "гость" },
+  "hero.search.guest_other": { en: "guests", uz: "mehmon", ru: "гостей" },
+  "hero.search.button": { en: "Search", uz: "Qidirish", ru: "Найти" },
+  "hero.search.aiHint": {
+    en: "Powered by Hamroh AI — we'll match you with the perfect guide.",
+    uz: "Hamroh AI yordamida — sizga eng mos hamrohni topamiz.",
+    ru: "На базе Hamroh AI — подберём для вас идеального гида.",
+  },
   "hero.becomeGuide": { en: "Become a guide", uz: "Hamroh bo'lish", ru: "Стать гидом" },
   "hero.stats.guides": { en: "verified guides", uz: "tasdiqlangan hamroh", ru: "проверенных гидов" },
   "hero.stats.cities": { en: "cities", uz: "shahar", ru: "городов" },
