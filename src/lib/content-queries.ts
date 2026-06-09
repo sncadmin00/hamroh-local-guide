@@ -33,6 +33,7 @@ type GuideRow = {
   city_id: string;
   extra_city_ids: string[] | null;
   photo_url: string | null;
+  cover_url: string | null;
   intro_video_url: string | null;
   tagline: string;
   bio: string;
