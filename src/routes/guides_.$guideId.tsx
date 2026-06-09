@@ -97,7 +97,7 @@ function GuidePage() {
   const cityNames = cities.filter((c) => allCityIds.includes(c.id)).map((c) => c.name);
   if (cityNames.length === 0 && guide.city) cityNames.push(guide.city);
 
-  const coverImage = guide.photo;
+  const coverImage = guide.coverUrl || guide.photo;
   const stats = [
     { icon: Award, label: `${guide.completedToursCount > 0 ? `${guide.completedToursCount}+` : "New"}`, sub: "tours completed" },
     { icon: ShieldCheck, label: guide.identityVerified ? "Licensed" : "Pending", sub: "guide" },
