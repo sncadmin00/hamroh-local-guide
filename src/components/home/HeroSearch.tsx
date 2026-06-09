@@ -69,26 +69,20 @@ export function HeroSearch() {
       <div className="absolute inset-0 z-0">
         <img
           src={heroImg}
-          alt="Samarkand Registan at sunset"
-          className="h-full w-full object-cover"
+          alt="Chashma-Ayub mausoleum, Bukhara"
+          className="h-full w-full object-cover object-right md:object-center"
           loading="eager"
         />
-        {/* Left-to-right white gradient for text legibility on the left */}
+
+        {/* Subtle bottom fade into page */}
         <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(90deg, var(--background) 0%, color-mix(in oklab, var(--background) 90%, transparent) 25%, color-mix(in oklab, var(--background) 45%, transparent) 55%, transparent 85%)",
-          }}
-        />
-        {/* Bottom fade into page */}
-        <div
-          className="absolute inset-x-0 bottom-0 h-24 md:h-32"
+          className="absolute inset-x-0 bottom-0 h-20 md:h-28"
           style={{
             background:
               "linear-gradient(180deg, transparent 0%, var(--background) 100%)",
           }}
         />
+
 
       </div>
 
