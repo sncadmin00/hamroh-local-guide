@@ -65,6 +65,8 @@ function GuidePage() {
   const { data: guide, isLoading } = useGuide(guideId);
   const { data: tours = [] } = useGuideTours(guide?.dbId);
   const { data: cities = [] } = useCities();
+  const [tab, setTab] = useState<"tours" | "reviews" | "about">("tours");
+
 
   if (isLoading) {
     return (
