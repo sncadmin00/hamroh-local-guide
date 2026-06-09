@@ -19,9 +19,17 @@ export function SpotlightTourCarousel() {
   return (
     <section className="px-6 py-12 md:py-16">
       <div className="max-w-6xl mx-auto">
-        <h2 className="font-display text-2xl md:text-3xl font-semibold text-foreground mb-8 text-center">
-          {t("home.spotlightTour.title")}
-        </h2>
+        <div className="flex items-end justify-between mb-5 md:mb-6">
+          <h2 className="font-display text-2xl md:text-3xl font-semibold text-foreground">
+            {t("home.spotlightTour.title")}
+          </h2>
+          <Link
+            to="/tours"
+            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+          >
+            {t("topTours.viewAll")}
+          </Link>
+        </div>
 
         <HorizontalCarousel
           itemClassName="w-[300px] md:w-[340px]"
