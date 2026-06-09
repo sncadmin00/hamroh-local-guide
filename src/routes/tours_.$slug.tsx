@@ -7,6 +7,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { useTour, useTours, pickTourTitle, pickTourShortDescription, pickTourDescriptionMd, pickTourHighlights, pickTourIncluded, pickTourNotIncluded, offeredCategories, GROUP_CATEGORY_MAX, type GroupCategory } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
 import { Clock, MapPin, Check, X, Car, Star, Users } from "lucide-react";
+import { CategoryIcon } from "@/components/CategoryIcon";
 import { WishlistHeart } from "@/components/WishlistHeart";
 import { ReviewForm } from "@/components/ReviewForm";
 import { listTourReviews } from "@/lib/reviews.functions";
