@@ -104,7 +104,7 @@ export function SpotlightGuideCarousel() {
                 </div>
                 <div className="mt-4 flex items-center justify-center gap-1.5">
                   <h3 className="font-display text-lg font-semibold text-foreground line-clamp-1">
-                    {g.name}
+                    {g.name.split(" ")[0]}
                   </h3>
                   {g.verified && <BadgeCheck className="h-4 w-4 shrink-0 text-gold fill-gold/10" />}
                 </div>
