@@ -111,7 +111,7 @@ export function SpotlightBanner() {
                 )}
               </div>
               <div className="min-w-0 flex-1 text-left">
-                <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-[#5e8a7e]">
+                <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-gold">
                   <span aria-hidden className="relative flex h-1.5 w-1.5">
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-orange-400 opacity-75" />
                     <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-orange-500" />
