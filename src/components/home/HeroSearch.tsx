@@ -66,7 +66,7 @@ export function HeroSearch() {
   return (
     <section className="relative overflow-hidden min-h-[420px] md:min-h-[520px]">
       {/* Background image */}
-      <div className="absolute inset-0 -z-10">
+      <div className="absolute inset-0 z-0">
         <img
           src={heroImg}
           alt="Samarkand Registan at sunset"
@@ -90,7 +90,8 @@ export function HeroSearch() {
         />
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 pt-12 pb-20 md:pt-20 md:pb-28">
+      <div className="relative z-10 max-w-6xl mx-auto px-6 pt-12 pb-20 md:pt-20 md:pb-28">
+
         <div className="max-w-2xl">
 
 
