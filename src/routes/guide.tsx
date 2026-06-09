@@ -220,6 +220,9 @@ function GuidePortal() {
           <TabBtn active={tab === "verification"} onClick={() => setTab("verification")}>
             <ShieldCheck className="h-4 w-4" /> {tg("tab.verification")}
           </TabBtn>
+          <TabBtn active={tab === "profile"} onClick={() => setTab("profile")}>
+            <UserCircle2 className="h-4 w-4" /> Profile
+          </TabBtn>
         </div>
 
         {tab === "calendar" && <CalendarPanel />}
