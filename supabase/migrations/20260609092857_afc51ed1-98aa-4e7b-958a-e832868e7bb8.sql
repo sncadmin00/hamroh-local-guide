@@ -1,0 +1,1 @@
+ALTER TABLE public.guides ADD COLUMN IF NOT EXISTS cover_url TEXT;

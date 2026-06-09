@@ -995,6 +995,7 @@ export type Database = {
           bio: string
           city_id: string
           completed_tours_count: number
+          cover_url: string | null
           created_at: string
           extra_city_ids: string[]
           has_transport: boolean
@@ -1032,6 +1033,7 @@ export type Database = {
           bio?: string
           city_id: string
           completed_tours_count?: number
+          cover_url?: string | null
           created_at?: string
           extra_city_ids?: string[]
           has_transport?: boolean
@@ -1069,6 +1071,7 @@ export type Database = {
           bio?: string
           city_id?: string
           completed_tours_count?: number
+          cover_url?: string | null
           created_at?: string
           extra_city_ids?: string[]
           has_transport?: boolean
