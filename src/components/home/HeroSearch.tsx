@@ -73,14 +73,15 @@ export function HeroSearch() {
           className="h-full w-full object-cover"
           loading="eager"
         />
-        {/* Soft overlay for legibility */}
+        {/* Left-to-right white gradient for text legibility on the left */}
         <div
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(180deg, color-mix(in oklab, var(--background) 35%, transparent) 0%, color-mix(in oklab, var(--background) 15%, transparent) 40%, color-mix(in oklab, var(--background) 55%, transparent) 100%)",
+              "linear-gradient(90deg, var(--background) 0%, color-mix(in oklab, var(--background) 90%, transparent) 25%, color-mix(in oklab, var(--background) 45%, transparent) 55%, transparent 85%)",
           }}
         />
+        {/* Bottom fade into page */}
         <div
           className="absolute inset-x-0 bottom-0 h-24 md:h-32"
           style={{
@@ -88,6 +89,7 @@ export function HeroSearch() {
               "linear-gradient(180deg, transparent 0%, var(--background) 100%)",
           }}
         />
+
       </div>
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 pt-32 pb-10 md:pt-48 md:pb-14 w-full">
