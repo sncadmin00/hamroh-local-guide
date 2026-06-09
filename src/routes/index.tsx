@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { HeroSearch } from "@/components/home/HeroSearch";
+import { TrustBar } from "@/components/home/TrustBar";
 
 import { SpotlightGuideCarousel } from "@/components/home/SpotlightGuideCarousel";
 import { PopularCategoriesCarousel } from "@/components/home/PopularCategoriesCarousel";
@@ -77,6 +78,9 @@ function Home() {
 
       <main className="flex-1">
         <HeroSearch />
+        <div className="px-6 pt-4 pb-2">
+          <TrustBar />
+        </div>
         <PopularCategoriesCarousel />
         <SpotlightGuideCarousel />
         <SpotlightTourCarousel />
