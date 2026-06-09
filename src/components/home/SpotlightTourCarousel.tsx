@@ -18,7 +18,7 @@ export function SpotlightTourCarousel() {
 
   return (
     <section className="px-6 py-12 md:py-16">
-      <div className="max-w-6xl mx-auto bg-secondary/40 rounded-3xl p-6 md:p-10">
+      <div className="max-w-6xl mx-auto">
         <h2 className="font-display text-2xl md:text-3xl font-semibold text-foreground mb-8 text-center">
           {t("home.spotlightTour.title")}
         </h2>
