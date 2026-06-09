@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ChevronLeft, ChevronRight, Star, BadgeCheck } from "lucide-react";
+import { ChevronLeft, ChevronRight, Star, BadgeCheck, ShieldCheck } from "lucide-react";
 import { useGuides } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
 
