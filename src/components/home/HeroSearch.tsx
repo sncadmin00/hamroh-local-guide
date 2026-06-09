@@ -5,7 +5,7 @@ import { MapPin, Calendar, Users, Search } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { createThread } from "@/lib/ai-threads.functions";
 import { supabase } from "@/integrations/supabase/client";
-import heroImg from "@/assets/hero-samarkand.jpg";
+import heroImg from "@/assets/hero-samarkand.png.asset.json";
 
 export function HeroSearch() {
   const { t, lang } = useI18n();
@@ -68,7 +68,7 @@ export function HeroSearch() {
       {/* Background image */}
       <div className="absolute inset-0 z-0">
         <img
-          src={heroImg}
+          src={heroImg.url}
           alt="Samarkand Registan at sunset"
           className="h-full w-full object-cover"
           loading="eager"
