@@ -6,6 +6,7 @@ import { HeroSearch } from "@/components/home/HeroSearch";
 
 import { SpotlightGuideCarousel } from "@/components/home/SpotlightGuideCarousel";
 import { PopularCategoriesCarousel } from "@/components/home/PopularCategoriesCarousel";
+import { PopularCities } from "@/components/home/PopularCities";
 import { SpotlightTourCarousel } from "@/components/home/SpotlightTourCarousel";
 import { BookingCtaBlock } from "@/components/home/BookingCtaBlock";
 import { FeaturedReviews } from "@/components/home/FeaturedReviews";
@@ -78,6 +79,7 @@ function Home() {
       <main className="flex-1">
         <HeroSearch />
         <PopularCategoriesCarousel />
+        <PopularCities />
         <SpotlightGuideCarousel />
         <SpotlightTourCarousel />
         <BookingCtaBlock />
