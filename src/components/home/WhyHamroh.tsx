@@ -26,7 +26,7 @@ export function WhyHamroh() {
               key={it.title}
               className="rounded-2xl bg-card ring-1 ring-border p-5 md:p-6 hover:shadow-md transition-shadow"
             >
-              <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[#8BB5A9]/15 text-[#5e8a7e]">
+              <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-accent/10 text-accent">
                 <it.icon className="h-5 w-5" />
               </div>
               <h3 className="mt-4 font-display text-base md:text-lg font-semibold text-foreground">
