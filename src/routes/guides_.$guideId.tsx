@@ -272,7 +272,7 @@ function GuidePage() {
                         <h3 className="font-semibold text-sm leading-snug line-clamp-2">{t.title}</h3>
                         <div className="flex items-center justify-between gap-2">
                           <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-                            <Star className="h-3.5 w-3.5 fill-accent text-accent" />
+                            <Star className="h-3.5 w-3.5 fill-gold text-gold" />
                             <span className="font-medium text-foreground">{guide.rating}</span>
                             <span>({guide.reviews})</span>
                           </span>
