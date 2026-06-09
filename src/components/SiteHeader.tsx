@@ -79,8 +79,9 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur-md">
       <div className="container mx-auto flex h-16 items-center justify-between gap-4 px-4">
         {/* Left: logo */}
-        <Link to="/" className="flex items-center gap-2 shrink-0">
+        <Link to="/" className="flex flex-col items-start shrink-0 leading-none">
           <img src={hamrohLogo} alt="Hamroh" className="h-[3.25rem] w-auto object-contain" />
+          <span className="mt-0.5 text-[10px] font-medium tracking-wide text-muted-foreground">Find local companions</span>
         </Link>
 
 
