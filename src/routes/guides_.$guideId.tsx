@@ -166,7 +166,7 @@ function GuidePage() {
                   {level && (
                     <span
                       title={`AI-verified · CEFR ${level}`}
-                      className="ml-0.5 inline-flex items-center gap-0.5 rounded-full bg-primary/10 px-1.5 py-0.5 text-[11px] font-semibold text-primary"
+                      className="ml-0.5 inline-flex items-center gap-0.5 rounded-full bg-accent/10 px-1.5 py-0.5 text-[11px] font-semibold text-accent"
                     >
                       <BadgeCheck className="h-3 w-3" /> {level}
                     </span>
