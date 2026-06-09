@@ -93,6 +93,10 @@ function GuidePage() {
     );
   }
 
+  const allCityIds = [guide.cityId, ...guide.extraCityIds];
+  const cityNames = cities.filter((c) => allCityIds.includes(c.id)).map((c) => c.name);
+  if (cityNames.length === 0 && guide.city) cityNames.push(guide.city);
+
   const coverImage = tours.find((t) => t.cover_url)?.cover_url || guide.photo;
   const stats = [
     { icon: Award, label: `${guide.completedToursCount > 0 ? `${guide.completedToursCount}+` : "New"}`, sub: "tours completed" },
