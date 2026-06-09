@@ -6,6 +6,8 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { TrustBar } from "@/components/home/TrustBar";
 import { SpotlightBanner } from "@/components/home/SpotlightBanner";
+import { HeroSearch } from "@/components/home/HeroSearch";
+
 
 import { ExploreTabs } from "@/components/home/ExploreTabs";
 import { WhyHamroh } from "@/components/home/WhyHamroh";
