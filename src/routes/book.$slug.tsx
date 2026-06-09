@@ -340,7 +340,7 @@ function BookPage() {
                 <div className="mt-4 flex gap-3 border-t border-border/60 pt-4">
                   <img src={guide.photo_url ?? ""} alt={guide.name} width={56} height={56} loading="lazy" className="h-14 w-14 rounded-xl object-cover bg-secondary" />
                   <div>
-                    <div className="font-medium">{guide.name}</div>
+                    <div className="font-medium">{guide.name.split(" ")[0]}</div>
                     <p className="inline-flex items-center gap-1 text-sm"><Star className="h-3.5 w-3.5 fill-accent text-accent" />{Number(guide.rating).toFixed(1)} · {guide.reviews} reviews</p>
                   </div>
                 </div>
