@@ -6,6 +6,7 @@ import { useI18n } from "@/lib/i18n";
 import { createThread } from "@/lib/ai-threads.functions";
 import { supabase } from "@/integrations/supabase/client";
 import heroImg from "@/assets/hero-samarkand.jpg";
+import heroMobileAsset from "@/assets/hero-samarkand-mobile.png.asset.json";
 
 export function HeroSearch() {
   const { t, lang } = useI18n();
