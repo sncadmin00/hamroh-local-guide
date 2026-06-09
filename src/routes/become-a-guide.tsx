@@ -742,10 +742,12 @@ function BecomeAGuidePage() {
       let portrait_url: string | null = null;
       let video_url: string | null = null;
       let id_document_url: string | null = null;
+      let certificate_url: string | null = null;
       const photo_urls: string[] = [];
 
       if (portrait) portrait_url = await uploadTo("guide-application-photos", portrait);
       if (idDocument) id_document_url = await uploadTo("guide-application-photos", idDocument);
+      if (hasCertificate && certificate) certificate_url = await uploadTo("guide-application-photos", certificate);
       for (const p of photos) photo_urls.push(await uploadTo("guide-application-photos", p));
       if (video) video_url = await uploadTo("guide-application-videos", video);
 
@@ -771,6 +773,8 @@ function BecomeAGuidePage() {
           category_ids: selectedCategories,
           has_transport: hasTransport,
           transport_seats: hasTransport && transportSeats ? Number(transportSeats) : null,
+          has_certificate: hasCertificate === true,
+          certificate_url,
           language_tests: selectedLanguages.map((l) => ({
             language: l,
             ...(languageTests[l] ?? { level: "N/A", transcript: "", feedback: "", skipped: true }),
