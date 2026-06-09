@@ -705,11 +705,13 @@ export type Database = {
         Row: {
           about: string
           category_ids: string[]
+          certificate_url: string | null
           city: string
           created_at: string
           email: string
           experience_years: number
           full_name: string
+          has_certificate: boolean
           has_transport: boolean
           id: string
           id_document_url: string | null
@@ -729,11 +731,13 @@ export type Database = {
         Insert: {
           about?: string
           category_ids?: string[]
+          certificate_url?: string | null
           city: string
           created_at?: string
           email: string
           experience_years?: number
           full_name: string
+          has_certificate?: boolean
           has_transport?: boolean
           id?: string
           id_document_url?: string | null
@@ -753,11 +757,13 @@ export type Database = {
         Update: {
           about?: string
           category_ids?: string[]
+          certificate_url?: string | null
           city?: string
           created_at?: string
           email?: string
           experience_years?: number
           full_name?: string
+          has_certificate?: boolean
           has_transport?: boolean
           id?: string
           id_document_url?: string | null
@@ -1011,6 +1017,9 @@ export type Database = {
           intro_video_url: string | null
           intro_video_verified: boolean
           languages: string[]
+          license_url: string | null
+          licensed: boolean
+          licensed_at: string | null
           locale: string
           name: string
           photo_url: string | null
@@ -1049,6 +1058,9 @@ export type Database = {
           intro_video_url?: string | null
           intro_video_verified?: boolean
           languages?: string[]
+          license_url?: string | null
+          licensed?: boolean
+          licensed_at?: string | null
           locale?: string
           name: string
           photo_url?: string | null
@@ -1087,6 +1099,9 @@ export type Database = {
           intro_video_url?: string | null
           intro_video_verified?: boolean
           languages?: string[]
+          license_url?: string | null
+          licensed?: boolean
+          licensed_at?: string | null
           locale?: string
           name?: string
           photo_url?: string | null
