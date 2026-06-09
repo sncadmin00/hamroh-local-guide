@@ -124,7 +124,7 @@ export function PopularCategoriesCarousel() {
                         height={300}
                         className="h-full w-full object-cover transition-transform duration-500 group-hover/card:scale-[1.05]"
                       />
-                      <div className="absolute bottom-3 left-3 h-10 w-10 rounded-full bg-card/95 backdrop-blur flex items-center justify-center shadow-[0_4px_12px_-4px_rgba(0,0,0,0.35)]">
+                      <div className="absolute -bottom-5 left-3 h-10 w-10 rounded-full bg-card ring-4 ring-primary flex items-center justify-center">
                         <CategoryIcon name={c.icon} className="h-5 w-5 text-foreground" />
                       </div>
                     </div>
