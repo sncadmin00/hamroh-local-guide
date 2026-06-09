@@ -97,12 +97,18 @@ export function HeroSearch() {
         />
       </div>
 
-      <div className="relative z-10 max-w-6xl mx-auto px-6 pt-32 pb-0 md:pt-48 md:pb-0 w-full translate-y-12 md:translate-y-16">
+      <div className="relative z-10 max-w-6xl mx-auto px-6 pt-24 pb-0 md:pt-32 md:pb-0 w-full translate-y-12 md:translate-y-16">
         <div className="max-w-2xl">
+          <h1 className="font-display text-3xl md:text-5xl font-bold text-white whitespace-pre-line leading-tight [text-shadow:0_2px_12px_rgba(0,0,0,0.45)]">
+            {t("hero.search.title")}
+          </h1>
+          <p className="mt-3 md:mt-4 text-sm md:text-lg text-white/95 max-w-xl [text-shadow:0_1px_8px_rgba(0,0,0,0.45)]">
+            {t("hero.search.subtitle")}
+          </p>
           {/* Search pill */}
           <form
             onSubmit={onSubmit}
-            className="mt-8 md:mt-10 bg-card border border-border rounded-2xl md:rounded-full shadow-[var(--shadow-card)] p-2 flex flex-col md:flex-row items-stretch gap-2"
+            className="mt-6 md:mt-8 bg-card border border-border rounded-2xl md:rounded-full shadow-[var(--shadow-card)] p-2 flex flex-col md:flex-row items-stretch gap-2"
           >
             {/* Where */}
             <label className="group flex-1 flex items-center gap-3 px-4 py-3 rounded-xl md:rounded-full hover:bg-muted/60 transition-colors cursor-text">
