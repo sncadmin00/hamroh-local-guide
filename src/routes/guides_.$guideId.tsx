@@ -137,7 +137,7 @@ function GuidePage() {
         <div className="mt-3 px-1 min-w-0">
           <div className="flex items-center gap-1.5">
             <h1 className="font-display text-2xl font-semibold truncate">{guide.name.split(" ")[0]}</h1>
-            {guide.verified && <BadgeCheck className="h-5 w-5 shrink-0 text-primary fill-primary/10" />}
+            {guide.verified && <BadgeCheck className="h-5 w-5 shrink-0 text-gold fill-gold/10" />}
           </div>
           <div className="mt-0.5 flex items-center gap-1 text-sm text-muted-foreground">
             <MapPin className="h-3.5 w-3.5" />
@@ -148,7 +148,7 @@ function GuidePage() {
         {/* Rating row */}
         <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
           <span className="inline-flex items-center gap-1">
-            <Star className="h-4 w-4 fill-accent text-accent" />
+            <Star className="h-4 w-4 fill-gold text-gold" />
             <span className="font-semibold">{guide.rating}</span>
             <span className="text-muted-foreground">({guide.reviews} reviews)</span>
           </span>
@@ -212,13 +212,17 @@ function GuidePage() {
 
         {/* Stats grid */}
         <div className="mt-6 grid grid-cols-4 gap-3">
-          {stats.map(({ icon: Icon, label, sub, active }) => (
-            <div key={label + sub} className="flex flex-col items-center text-center">
-              <Icon className={`h-6 w-6 ${active ? "text-primary" : "text-foreground/80"}`} strokeWidth={1.5} />
-              <span className={`mt-2 text-xs font-semibold leading-tight ${active ? "text-primary" : ""}`}>{label}</span>
-              <span className="text-[11px] leading-tight text-muted-foreground">{sub}</span>
-            </div>
-          ))}
+          {stats.map(({ icon: Icon, label, sub, active }, idx) => {
+            const isVerified = idx === 2;
+            const accentColor = isVerified ? "text-gold" : "text-accent";
+            return (
+              <div key={label + sub} className="flex flex-col items-center text-center">
+                <Icon className={`h-6 w-6 ${active ? accentColor : "text-foreground/80"}`} strokeWidth={1.5} />
+                <span className={`mt-2 text-xs font-semibold leading-tight ${active ? accentColor : ""}`}>{label}</span>
+                <span className="text-[11px] leading-tight text-muted-foreground">{sub}</span>
+              </div>
+            );
+          })}
         </div>
 
         {/* Tabs */}
@@ -268,7 +272,7 @@ function GuidePage() {
                         <h3 className="font-semibold text-sm leading-snug line-clamp-2">{t.title}</h3>
                         <div className="flex items-center justify-between gap-2">
                           <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-                            <Star className="h-3.5 w-3.5 fill-accent text-accent" />
+                            <Star className="h-3.5 w-3.5 fill-gold text-gold" />
                             <span className="font-medium text-foreground">{guide.rating}</span>
                             <span>({guide.reviews})</span>
                           </span>
