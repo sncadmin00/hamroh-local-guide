@@ -1035,13 +1035,13 @@ function CategoriesPanel({ categories, reload }: { categories: Category[]; reloa
       <form onSubmit={add} className="rounded-3xl bg-card p-6 ring-1 ring-border/60 h-fit">
         <h2 className="font-display text-lg font-semibold">{ta("categories.add")}</h2>
         <div className="mt-4 space-y-3">
-          <Field label="Name" value={name} onChange={setName} placeholder="Gastro" />
-          <Field label="Slug" value={slug} onChange={setSlug} placeholder="gastro" />
+          <Field label="Name" value={name} onChange={setName} placeholder="City Tours" />
+          <Field label="Slug" value={slug} onChange={setSlug} placeholder="city-tours" />
           <Field
-            label="Icon (lucide name, e.g. utensils, mountain, camera)"
+            label="Icon (lucide name, e.g. landmark, utensils, mountain)"
             value={icon}
             onChange={setIcon}
-            placeholder="utensils"
+            placeholder="landmark"
           />
           <div>
             <label className="text-xs font-medium text-muted-foreground">Description</label>
