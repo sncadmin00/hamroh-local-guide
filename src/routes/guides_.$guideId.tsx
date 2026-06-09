@@ -100,8 +100,8 @@ function GuidePage() {
   const coverImage = guide.coverUrl || guide.photo;
   const stats = [
     { icon: Award, label: `${guide.completedToursCount > 0 ? `${guide.completedToursCount}+` : "0"}`, sub: "tours completed", active: guide.completedToursCount > 0 },
-    { icon: ShieldCheck, label: "Licensed guide", sub: "", active: guide.licensed },
-    { icon: BadgeCheck, label: "Verified guide", sub: "", active: guide.verified },
+    { icon: ShieldCheck, label: "Licensed", sub: "guide", active: guide.licensed },
+    { icon: BadgeCheck, label: "Verified", sub: "guide", active: guide.verified },
     {
       icon: MessageCircle,
       label: guide.avgResponseMinutes != null
@@ -213,7 +213,7 @@ function GuidePage() {
         {/* Stats grid */}
         <div className="mt-6 grid grid-cols-4 gap-3">
           {stats.map(({ icon: Icon, label, sub, active }) => (
-            <div key={sub} className="flex flex-col items-center text-center">
+            <div key={label + sub} className="flex flex-col items-center text-center">
               <Icon className={`h-6 w-6 ${active ? "text-primary" : "text-foreground/80"}`} strokeWidth={1.5} />
               <span className={`mt-2 text-xs font-semibold leading-tight ${active ? "text-primary" : ""}`}>{label}</span>
               <span className="text-[11px] leading-tight text-muted-foreground">{sub}</span>
