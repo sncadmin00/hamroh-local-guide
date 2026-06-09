@@ -7,7 +7,7 @@ type Dict = Record<string, { en: string; uz: string; ru: string }>;
 
 export const translations: Dict = {
   "nav.findGuide": { en: "Guides", uz: "Hamrohlar", ru: "Гиды" },
-  "home.spotlightGuide.title": { en: "Meet a top-rated guide", uz: "Yetakchi hamroh bilan tanishing", ru: "Познакомьтесь с лучшим гидом" },
+  "home.spotlightGuide.title": { en: "Meet companions", uz: "Hamrohlar bilan tanishing", ru: "Познакомьтесь со спутниками" },
   "home.spotlightGuide.cta": { en: "View profile", uz: "Profilni ko'rish", ru: "Смотреть профиль" },
   "home.categories.title": { en: "Popular categories", uz: "Mashhur toifalar", ru: "Популярные категории" },
   "home.categories.viewAll": { en: "View all", uz: "Hammasi", ru: "Все" },
@@ -136,7 +136,7 @@ export const translations: Dict = {
   "how.step3.title": { en: "Book & chat", uz: "Bron qiling", ru: "Бронируйте и общайтесь" },
   "how.step3.desc": { en: "Confirm your dates and message your guide directly.", uz: "Sanani tasdiqlang va hamroh bilan bog'laning.", ru: "Подтвердите даты и пишите гиду напрямую." },
 
-  "featured.title": { en: "Meet our top guides", uz: "Eng yaxshi hamrohlarimiz", ru: "Наши лучшие гиды" },
+  "featured.title": { en: "Meet companions", uz: "Hamrohlar bilan tanishing", ru: "Познакомьтесь со спутниками" },
   "featured.subtitle": { en: "Hand-picked locals with the best reviews", uz: "Eng yaxshi sharhli mahalliylar", ru: "Локалы с лучшими отзывами" },
   "featured.viewAll": { en: "View all guides", uz: "Hammasini ko'rish", ru: "Все гиды" },
   "topTours.title": { en: "Top tours", uz: "Top sayohatlar", ru: "Топ туры" },
