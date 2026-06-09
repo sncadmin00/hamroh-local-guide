@@ -138,7 +138,7 @@ function MyBookingsPage() {
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <p className="font-medium truncate">{b.experience}</p>
-                      <p className="text-sm text-muted-foreground truncate">with {guide?.name ?? "guide"}</p>
+                      <p className="text-sm text-muted-foreground truncate">with {guide?.name?.split(" ")[0] ?? "guide"}</p>
                     </div>
                     <span className={`text-xs px-2 py-1 rounded-full font-medium ${statusColor} shrink-0`}>{b.status}</span>
                   </div>
