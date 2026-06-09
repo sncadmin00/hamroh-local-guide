@@ -154,6 +154,37 @@ function GuidePage() {
           <span className="text-muted-foreground">{tours.length} tours</span>
         </div>
 
+        {/* Languages + transport */}
+        {(guide.languages.length > 0 || guide.hasTransport) && (
+          <div className="mt-3 flex flex-wrap items-center gap-1.5">
+            {guide.languages.map((l) => {
+              const level = guide.verifiedLanguages?.[l];
+              return (
+                <span key={l} className="inline-flex items-center gap-1 rounded-full bg-secondary px-2.5 py-1 text-xs">
+                  <Globe2 className="h-3.5 w-3.5" /> {l}
+                  {level && (
+                    <span
+                      title={`AI-verified · CEFR ${level}`}
+                      className="ml-0.5 inline-flex items-center gap-0.5 rounded-full bg-primary/10 px-1.5 py-0.5 text-[11px] font-semibold text-primary"
+                    >
+                      <BadgeCheck className="h-3 w-3" /> {level}
+                    </span>
+                  )}
+                </span>
+              );
+            })}
+            {guide.hasTransport && (
+              <span
+                title={guide.transportSeats ? `Transport · ${guide.transportSeats} seats` : "Transport available"}
+                className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary"
+              >
+                <Car className="h-3.5 w-3.5" />
+                {guide.transportSeats ? `Transport · ${guide.transportSeats} seats` : "Transport"}
+              </span>
+            )}
+          </div>
+        )}
+
 
         {/* Video introduction */}
         {guide.introVideoUrl && (
