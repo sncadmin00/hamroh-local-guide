@@ -111,7 +111,7 @@ export function SpotlightBanner() {
                 )}
               </div>
               <div className="min-w-0 flex-1 text-left">
-                <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-[#5e8a7e]">
+                <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-gold">
                   <span aria-hidden className="relative flex h-1.5 w-1.5">
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-orange-400 opacity-75" />
                     <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-orange-500" />
@@ -124,7 +124,7 @@ export function SpotlightBanner() {
                 <div className="mt-1.5 line-clamp-2 text-sm sm:text-base text-slate-500 leading-relaxed">
                   {desc}
                 </div>
-                <div className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-[#5e8a7e] group-hover:text-[#4a6f66] transition-colors">
+                <div className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-gold group-hover:opacity-80 transition-colors">
                   {t("spot.cta.view")}
                   <ArrowUpRight className="h-4 w-4" />
                 </div>
@@ -161,7 +161,7 @@ export function SpotlightBanner() {
                 type="button"
                 onClick={() => goTo(i)}
                 aria-label={`Go to slide ${i + 1}`}
-                className={`h-1.5 rounded-full transition-all ${i === index ? "w-5 bg-[#8BB5A9]" : "w-1.5 bg-slate-300 hover:bg-slate-400"}`}
+                className={`h-1.5 rounded-full transition-all ${i === index ? "w-5 bg-gold" : "w-1.5 bg-slate-300 hover:bg-slate-400"}`}
               />
             ))}
           </div>

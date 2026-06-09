@@ -12,7 +12,7 @@ export function TrustBar() {
     { Icon: Star, label: t("trust.rated") },
   ];
   return (
-    <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm font-medium text-slate-600">
+    <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm font-medium text-muted-foreground">
       {items.map(({ Icon, label }, i) => (
         <span key={i} className="inline-flex items-center gap-2">
           <Icon className="h-4.5 w-4.5 text-primary" style={{ width: 18, height: 18 }} />

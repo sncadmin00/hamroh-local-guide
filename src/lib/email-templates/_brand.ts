@@ -1,12 +1,13 @@
 // Hamroh brand styles for emails (white body required)
 export const BRAND = {
-  primary: '#1F9BB4', // turquoise
-  primaryDark: '#1A8499',
-  accent: '#D97A4F', // terracotta
-  text: '#1F2A44',
-  muted: '#6B7388',
-  border: '#E6E2D6',
-  cream: '#FAF7F0',
+  primary: '#082A78', // deep navy
+  primaryDark: '#061F5A',
+  accent: '#1F9BB4', // turquoise
+  gold: '#C99A3D', // premium marker
+  text: '#0F172A',
+  muted: '#64748B',
+  border: '#E5E9F0',
+  cream: '#F7F9FC',
   logoUrl: 'https://hamrohim.com/__l5e/assets-v1/febe74e2-791c-4653-aae8-460b9035810a/hamroh-logo.png',
 }
 
