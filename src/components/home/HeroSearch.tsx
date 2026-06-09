@@ -149,7 +149,7 @@ export function HeroSearch() {
                 value={guests}
                 onChange={(e) => setGuests(e.target.value ? Number(e.target.value) : "")}
                 placeholder={t("hero.search.guests")}
-                className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none min-w-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none min-w-[5rem] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               />
             </label>
 
