@@ -118,7 +118,7 @@ export function SpotlightGuideCarousel() {
                     </div>
                   )}
                   {g.completedToursCount > 0 && (
-                    <span className="text-muted-foreground">
+                    <span className="font-medium text-accent">
                       {g.completedToursCount} {t("home.spotlightGuide.tours")}
                     </span>
                   )}
