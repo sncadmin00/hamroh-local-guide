@@ -117,6 +117,12 @@ export function SpotlightGuideCarousel() {
                   {g.verified && <BadgeCheck className="h-4 w-4 shrink-0 text-gold fill-gold/10" />}
                 </div>
                 <p className="mt-0.5 text-sm text-muted-foreground text-center">{g.city}</p>
+                {g.licensed && (
+                  <div className="mt-1.5 inline-flex items-center justify-center gap-1 text-xs font-medium text-accent">
+                    <ShieldCheck className="h-3.5 w-3.5" />
+                    <span>{t("home.spotlightGuide.licensed")}</span>
+                  </div>
+                )}
                 <div className="mt-1.5 flex items-center justify-center gap-3 text-sm text-foreground">
                   {g.reviews > 0 && (
                     <div className="inline-flex items-center gap-1">
