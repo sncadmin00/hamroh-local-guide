@@ -23,7 +23,7 @@ function TelegramIcon({ className }: { className?: string }) {
   );
 }
 
-export function SiteHeader() {
+export function SiteHeader({ transparent = false }: { transparent?: boolean } = {}) {
   const { t } = useI18n();
   const navigate = useNavigate();
   const [signedIn, setSignedIn] = useState(false);
@@ -76,7 +76,7 @@ export function SiteHeader() {
   ] as const;
 
   return (
-    <header className="sticky top-0 z-40 bg-background/85 backdrop-blur-md">
+    <header className={`sticky top-0 z-40 ${transparent ? "bg-transparent" : "bg-background/85 backdrop-blur-md"}`}>
       <div className="container mx-auto flex h-16 items-center justify-between gap-4 px-4">
         {/* Left: logo */}
         <Link to="/" className="flex items-center shrink-0 leading-none">
