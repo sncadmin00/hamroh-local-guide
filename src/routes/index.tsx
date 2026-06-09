@@ -73,13 +73,14 @@ function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <SiteHeader transparent />
+    <div className="min-h-screen flex flex-col bg-white pt-1">
+      <SiteHeader transparent sticky={false} />
 
       <main className="flex-1">
         <div className="-mt-16">
           <HeroSearch />
         </div>
+
 
         <div className="px-6 pt-20 md:pt-24 pb-2">
           <TrustBar />
