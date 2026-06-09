@@ -160,7 +160,7 @@ function BookPage() {
           </div>
           <h1 className="mt-6 font-display text-4xl font-semibold">You're booked!</h1>
           <p className="mt-3 text-muted-foreground">
-            {guide?.name ?? "Your guide"} will meet you on{" "}
+            {guide?.name?.split(" ")[0] ?? "Your guide"} will meet you on{" "}
             <span className="font-medium text-foreground">{chosenSlot?.date ?? form.date}</span>. We've sent a confirmation to{" "}
             <span className="font-medium text-foreground">{form.email || "Telegram"}</span>.
           </p>
