@@ -87,7 +87,7 @@ export function SpotlightTourCarousel() {
                   <div className="mt-2 flex items-center gap-3 text-sm">
                     {Number(tour.rating ?? 0) > 0 && (
                       <span className="inline-flex items-center gap-1">
-                        <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                        <Star className="h-4 w-4 fill-accent text-accent" />
                         <span className="font-semibold tabular-nums text-foreground">
                           {Number(tour.rating).toFixed(1)}
                         </span>
