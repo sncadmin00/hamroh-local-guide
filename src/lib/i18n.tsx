@@ -14,7 +14,7 @@ export const translations: Dict = {
   "home.categories.guidesCount": { en: "guides", uz: "hamroh", ru: "гидов" },
   "home.spotlightGuide.tours": { en: "tours", uz: "sayohat", ru: "туров" },
   "home.spotlightGuide.licensed": { en: "Licensed guide", uz: "Litsenziyali hamroh", ru: "Лицензированный гид" },
-  "home.spotlightTour.title": { en: "Featured tour", uz: "Tanlangan sayohat", ru: "Тур недели" },
+  "home.spotlightTour.title": { en: "Tours", uz: "Sayohatlar", ru: "Туры" },
   "home.spotlightTour.cta": { en: "View tour", uz: "Sayohatni ko'rish", ru: "Подробнее" },
   "home.spotlightTour.by": { en: "by", uz: "—", ru: "от" },
   "home.bookingCta.title": { en: "Ready to book your trip?", uz: "Sayohatni bron qilishga tayyormisiz?", ru: "Готовы забронировать поездку?" },
