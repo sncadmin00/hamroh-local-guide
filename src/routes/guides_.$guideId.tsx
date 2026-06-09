@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Star, BadgeCheck, MapPin, Globe2, Clock, ArrowLeft, Car, Award, ShieldCheck, Users, MessageCircle } from "lucide-react";
+import { Star, BadgeCheck, MapPin, Globe2, Clock, ArrowLeft, Car, Award, ShieldCheck, MessageCircle } from "lucide-react";
 
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -101,7 +101,7 @@ function GuidePage() {
   const stats = [
     { icon: Award, label: `${guide.completedToursCount > 0 ? `${guide.completedToursCount}+` : "0"}`, sub: "tours completed" },
     { icon: ShieldCheck, label: guide.identityVerified ? "Licensed" : "Pending", sub: "guide" },
-    { icon: Users, label: `${guide.reviews}+`, sub: "happy travelers" },
+    { icon: BadgeCheck, label: guide.verified ? "Verified" : "Pending", sub: "platform" },
     {
       icon: MessageCircle,
       label: guide.avgResponseMinutes != null
