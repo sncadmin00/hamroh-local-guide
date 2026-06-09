@@ -61,10 +61,18 @@ export function SpotlightGuideCarousel() {
 
   return (
     <section className="px-6 py-12 md:py-16">
-      <div className="max-w-6xl mx-auto text-center">
-        <h2 className="font-display text-2xl md:text-3xl font-semibold text-foreground mb-8">
-          {t("home.spotlightGuide.title")}
-        </h2>
+      <div className="max-w-6xl mx-auto">
+        <div className="flex items-end justify-between mb-8">
+          <h2 className="font-display text-2xl md:text-3xl font-semibold text-foreground">
+            {t("home.spotlightGuide.title")}
+          </h2>
+          <Link
+            to="/guides"
+            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+          >
+            {t("featured.viewAll")}
+          </Link>
+        </div>
 
         <div
           className="group relative"
