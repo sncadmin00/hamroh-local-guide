@@ -9,7 +9,7 @@ export function SiteFooter() {
   const { t } = useI18n();
   return (
     <footer className="border-t border-border/60 bg-background">
-      <div className="container mx-auto px-4 py-10">
+      <div className="max-w-6xl mx-auto px-6 py-10">
         <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
           <div className="flex items-center gap-2">
             <img src={hamrohLogo} alt="Hamroh" className="h-12 w-auto object-contain" />
