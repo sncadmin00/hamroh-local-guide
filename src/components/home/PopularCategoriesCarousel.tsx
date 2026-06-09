@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { CategoryIcon } from "@/components/CategoryIcon";
 import { supabase } from "@/integrations/supabase/client";
 import { useCategories } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
@@ -111,25 +112,30 @@ export function PopularCategoriesCarousel() {
                   key={c.id}
                   to="/guides"
                   search={{ category: c.slug }}
-                  className="snap-start shrink-0 w-[160px] md:w-[200px] group/card"
+                  className="snap-start shrink-0 w-[180px] md:w-[220px] group/card"
                 >
-                  <div className="aspect-[4/5] w-full overflow-hidden rounded-2xl bg-secondary shadow-[0_6px_20px_-8px_rgba(0,0,0,0.18)]">
-                    <img
-                      src={cover}
-                      alt={tCategory(c.slug, c.name)}
-                      loading="lazy"
-                      width={400}
-                      height={500}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover/card:scale-[1.05]"
-                    />
-                  </div>
-                  <div className="mt-3 px-1">
-                    <h3 className="font-display text-[15px] md:text-base font-semibold text-foreground line-clamp-1">
-                      {tCategory(c.slug, c.name)}
-                    </h3>
-                    <p className="mt-0.5 text-xs md:text-sm text-muted-foreground">
-                      {count} {t("home.categories.guidesCount")}
-                    </p>
+                  <div className="overflow-hidden rounded-2xl bg-card shadow-[0_6px_20px_-8px_rgba(0,0,0,0.18)] ring-1 ring-black/5 transition-shadow duration-300 group-hover/card:shadow-[0_12px_28px_-10px_rgba(0,0,0,0.25)]">
+                    <div className="relative aspect-[4/3] w-full overflow-hidden bg-secondary">
+                      <img
+                        src={cover}
+                        alt={tCategory(c.slug, c.name)}
+                        loading="lazy"
+                        width={400}
+                        height={300}
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover/card:scale-[1.05]"
+                      />
+                      <div className="absolute -bottom-5 left-3 h-11 w-11 rounded-full bg-card ring-4 ring-card flex items-center justify-center shadow-[0_4px_12px_-4px_rgba(0,0,0,0.25)]">
+                        <CategoryIcon name={c.icon} className="h-5 w-5 text-foreground" />
+                      </div>
+                    </div>
+                    <div className="px-4 pt-7 pb-4">
+                      <h3 className="font-display text-[15px] md:text-base font-semibold text-foreground line-clamp-1">
+                        {tCategory(c.slug, c.name)}
+                      </h3>
+                      <p className="mt-0.5 text-xs md:text-sm text-muted-foreground">
+                        {count} {t("home.categories.guidesCount")}
+                      </p>
+                    </div>
                   </div>
                 </Link>
               );
