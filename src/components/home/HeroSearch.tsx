@@ -64,7 +64,7 @@ export function HeroSearch() {
   const todayISO = new Date().toISOString().slice(0, 10);
 
   return (
-    <section className="relative overflow-hidden">
+    <section className="relative overflow-hidden min-h-[420px] md:min-h-[520px]">
       {/* Background image */}
       <div className="absolute inset-0 -z-10">
         <img
@@ -73,16 +73,16 @@ export function HeroSearch() {
           className="h-full w-full object-cover"
           loading="eager"
         />
-        {/* Cream gradient overlay — fades image into background on the left for text legibility */}
+        {/* Soft overlay for legibility */}
         <div
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(90deg, var(--background) 0%, var(--background) 28%, color-mix(in oklab, var(--background) 70%, transparent) 50%, transparent 75%)",
+              "linear-gradient(180deg, color-mix(in oklab, var(--background) 35%, transparent) 0%, color-mix(in oklab, var(--background) 15%, transparent) 40%, color-mix(in oklab, var(--background) 55%, transparent) 100%)",
           }}
         />
         <div
-          className="absolute inset-x-0 bottom-0 h-32 md:h-40"
+          className="absolute inset-x-0 bottom-0 h-24 md:h-32"
           style={{
             background:
               "linear-gradient(180deg, transparent 0%, var(--background) 100%)",
@@ -92,6 +92,7 @@ export function HeroSearch() {
 
       <div className="max-w-6xl mx-auto px-6 pt-12 pb-20 md:pt-20 md:pb-28">
         <div className="max-w-2xl">
+
 
 
           {/* Search pill */}
