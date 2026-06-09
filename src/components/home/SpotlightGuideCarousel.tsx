@@ -112,7 +112,7 @@ export function SpotlightGuideCarousel() {
                 <div className="mt-1.5 flex items-center justify-center gap-3 text-sm text-foreground">
                   {g.reviews > 0 && (
                     <div className="inline-flex items-center gap-1">
-                      <Star className="h-3.5 w-3.5 fill-foreground text-foreground" />
+                      <Star className="h-3.5 w-3.5 fill-accent text-accent" />
                       <span className="tabular-nums font-medium">{g.rating.toFixed(1)}</span>
                       <span className="text-muted-foreground">· {g.reviews}</span>
                     </div>
