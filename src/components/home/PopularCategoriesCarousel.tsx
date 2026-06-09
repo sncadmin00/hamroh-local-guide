@@ -11,21 +11,15 @@ import coverCity from "@/assets/cat-city.jpg";
 import coverGastro from "@/assets/cat-gastro.jpg";
 import coverMountains from "@/assets/cat-mountains.jpg";
 import coverPeople from "@/assets/cat-people.jpg";
-import coverHistory from "@/assets/cat-history.jpg";
-import coverCrafts from "@/assets/cat-crafts.jpg";
 import coverCulture from "@/assets/cat-culture.jpg";
-import coverPhoto from "@/assets/cat-photo.jpg";
 import coverLocals from "@/assets/cat-locals.jpg";
 
 const COVER: Record<string, string> = {
-  city: coverCity,
-  gastro: coverGastro,
-  mountains: coverMountains,
-  people: coverPeople,
-  history: coverHistory,
-  crafts: coverCrafts,
-  culture: coverCulture,
-  photo: coverPhoto,
+  "city-tours": coverCity,
+  "food-culture": coverGastro,
+  "nature-adventure": coverMountains,
+  "local-life": coverPeople,
+  "history-heritage": coverCulture,
   "locals-favourite": coverLocals,
 };
 
