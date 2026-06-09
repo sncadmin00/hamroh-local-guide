@@ -44,7 +44,7 @@ export function GuideCard({ guide }: { guide: Guide }) {
         <div className="flex min-w-0 flex-col items-center gap-0.5">
           <div className="flex items-center justify-center gap-1.5">
             <h3 className="font-display text-[15px] font-semibold leading-tight text-foreground line-clamp-1">
-              {guide.name}
+              {guide.name.split(" ")[0]}
             </h3>
             {guide.verified && <BadgeCheck className="h-4 w-4 shrink-0 text-primary" />}
           </div>
