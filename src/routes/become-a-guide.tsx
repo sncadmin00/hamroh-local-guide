@@ -129,6 +129,8 @@ function BecomeAGuidePage() {
   const [form, setForm] = useState<FormState>(emptyForm);
   const [hasTransport, setHasTransport] = useState<boolean>(false);
   const [transportSeats, setTransportSeats] = useState<string>("");
+  const [hasCertificate, setHasCertificate] = useState<boolean | null>(null);
+  const [certificate, setCertificate] = useState<File | null>(null);
 
   // Load draft
   useEffect(() => {
@@ -142,6 +144,7 @@ function BecomeAGuidePage() {
         languageTests?: Record<string, LangTestResult>;
         hasTransport?: boolean;
         transportSeats?: string;
+        hasCertificate?: boolean | null;
       };
       if (parsed.form) setForm({ ...emptyForm, ...parsed.form });
       if (parsed.languages) setSelectedLanguages(parsed.languages);
@@ -149,6 +152,7 @@ function BecomeAGuidePage() {
       if (parsed.languageTests) setLanguageTests(parsed.languageTests);
       if (typeof parsed.hasTransport === "boolean") setHasTransport(parsed.hasTransport);
       if (typeof parsed.transportSeats === "string") setTransportSeats(parsed.transportSeats);
+      if (parsed.hasCertificate === true || parsed.hasCertificate === false) setHasCertificate(parsed.hasCertificate);
     } catch {
       // ignore
     }
@@ -160,12 +164,12 @@ function BecomeAGuidePage() {
     try {
       localStorage.setItem(
         DRAFT_KEY,
-        JSON.stringify({ form, languages: selectedLanguages, categories: selectedCategories, languageTests, hasTransport, transportSeats }),
+        JSON.stringify({ form, languages: selectedLanguages, categories: selectedCategories, languageTests, hasTransport, transportSeats, hasCertificate }),
       );
     } catch {
       // ignore
     }
-  }, [form, selectedLanguages, selectedCategories, languageTests, hasTransport, transportSeats]);
+  }, [form, selectedLanguages, selectedCategories, languageTests, hasTransport, transportSeats, hasCertificate]);
 
 
   useEffect(() => {
