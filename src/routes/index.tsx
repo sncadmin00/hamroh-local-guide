@@ -73,7 +73,7 @@ function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-white pt-1">
+    <div className="min-h-screen flex flex-col bg-background md:bg-white md:pt-6">
       <SiteHeader transparent sticky={false} />
 
       <main className="flex-1">
