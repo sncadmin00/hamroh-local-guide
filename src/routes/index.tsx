@@ -78,7 +78,7 @@ function Home() {
 
       <main className="flex-1">
         <HeroSearch />
-        <div className="px-6 pt-4 pb-2">
+        <div className="px-6 pt-20 md:pt-24 pb-2">
           <TrustBar />
         </div>
         <PopularCategoriesCarousel />
