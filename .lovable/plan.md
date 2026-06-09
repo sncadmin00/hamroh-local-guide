@@ -1,25 +1,25 @@
-Add a readable headline and subtitle inside the hero section, positioned above the search pill on the homepage (`/`).
+## Goal
 
-### Current state
-- `HeroSearch.tsx` renders the hero background image and the search form, but no visible headline text.
-- i18n keys `hero.search.title` and `hero.search.subtitle` already exist with translations in EN / RU / UZ.
+Make guide cards visually identical to category cards so they stand out from the cream page background as crisp white squares.
 
-### Proposed changes
+## Reference (category card styling)
 
-1. **Render the existing i18n headline in `HeroSearch.tsx`**
-   - Insert `hero.search.title` (multiline, uses `\n`) and `hero.search.subtitle` above the search form, inside the existing `relative z-10` container.
-   - Style:
-     - Title: white text, `font-display`, large bold size, text-shadow for readability over the photo.
-     - Subtitle: white text, slightly smaller, lighter weight, with subtle text-shadow.
-   - Ensure the title/subtitle container has enough top padding so it sits clearly below the sticky `SiteHeader` and above the search pill.
+`PopularCategoriesCarousel.tsx`:
+```
+rounded-2xl bg-card
+shadow-[0_6px_20px_-8px_rgba(0,0,0,0.18)]
+ring-1 ring-black/5
+hover: shadow-[0_12px_28px_-10px_rgba(0,0,0,0.25)]
+```
 
-2. **Preserve the overlap behavior**
-   - The search form already uses `translate-y-12 md:translate-y-16` to overlap the hero/content boundary.
-   - Keep that intact; simply place the text between the top of the container and the search form.
+## Change
 
-3. **Mobile & accessibility**
-   - Reduce font size on mobile (`text-3xl` → `md:text-5xl` pattern).
-   - Ensure `text-shadow` or `drop-shadow` contrast passes over both light and dark areas of the hero image.
+Update the card surface in `src/components/GuideCard.tsx`:
 
-### Files to change
-- `src/components/home/HeroSearch.tsx` — add title/subtitle markup and styling.
+- Replace `border border-border ... shadow-[var(--shadow-card)] ... hover:shadow-lg` with the exact category card classes above.
+- Keep the existing `aspect-square` shape and inner layout (circular avatar, name/city/rating, languages, tours, "From $X").
+- Keep the lift-on-hover transition (`-translate-y-0.5`) for parity with current motion.
+
+## Result
+
+Guide cards become solid white squares with the same soft shadow + faint ring used by category cards, popping off the cream background identically.

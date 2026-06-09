@@ -13,7 +13,7 @@ export function GuideCard({ guide }: { guide: Guide }) {
       params={{ guideId: guide.id }}
       className="group block aspect-square w-full"
     >
-      <div className="flex h-full w-full flex-col rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-card)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
+      <div className="flex h-full w-full flex-col rounded-2xl bg-card p-4 shadow-[0_6px_20px_-8px_rgba(0,0,0,0.18)] ring-1 ring-black/5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_28px_-10px_rgba(0,0,0,0.25)]">
         <div className="flex items-start gap-4">
           <div className="aspect-square w-[34%] max-w-[110px] shrink-0 overflow-hidden rounded-full bg-secondary">
             <img
