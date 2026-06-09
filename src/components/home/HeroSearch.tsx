@@ -88,8 +88,14 @@ export function HeroSearch() {
         />
       </div>
 
-      <div className="relative z-10 max-w-6xl mx-auto px-6 pt-32 pb-0 md:pt-48 md:pb-0 w-full">
+      <div className="relative z-10 max-w-6xl mx-auto px-6 pt-10 pb-0 md:pt-48 md:pb-0 w-full">
         <div className="max-w-2xl">
+          <h1 className="text-3xl md:text-5xl font-bold text-foreground leading-tight whitespace-pre-line">
+            {t("hero.headline")}
+          </h1>
+          <p className="mt-3 text-sm md:text-base text-muted-foreground whitespace-pre-line">
+            {t("hero.headlineSub")}
+          </p>
           {/* Search pill */}
           <form
             onSubmit={onSubmit}
