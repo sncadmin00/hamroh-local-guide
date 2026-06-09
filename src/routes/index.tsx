@@ -74,10 +74,13 @@ function Home() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <SiteHeader />
+      <SiteHeader transparent />
 
       <main className="flex-1">
-        <HeroSearch />
+        <div className="-mt-16">
+          <HeroSearch />
+        </div>
+
         <div className="px-6 pt-20 md:pt-24 pb-2">
           <TrustBar />
         </div>
