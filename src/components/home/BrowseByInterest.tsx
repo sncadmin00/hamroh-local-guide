@@ -17,7 +17,7 @@ export function BrowseByInterest({ headless = false }: { headless?: boolean }) {
           search={{ category: c.slug }}
           className="group shrink-0 inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-white border border-slate-200/70 hover:border-slate-300 hover:bg-slate-50 transition-colors"
         >
-          <span className="w-7 h-7 rounded-full bg-gradient-to-br from-primary/15 to-accent/15 flex items-center justify-center text-foreground">
+          <span className="w-7 h-7 rounded-full bg-accent/12 flex items-center justify-center text-accent">
             <CategoryIcon name={c.icon} className="h-4 w-4" strokeWidth={1.75} />
           </span>
           <span className="text-sm font-medium text-slate-800 whitespace-nowrap">
