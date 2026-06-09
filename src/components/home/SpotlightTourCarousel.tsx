@@ -66,6 +66,23 @@ export function SpotlightTourCarousel() {
                     {title}
                   </h3>
 
+                  {tour.guides?.name && (
+                    <div className="mt-2 flex items-center gap-2">
+                      {tour.guides.photo_url && (
+                        <img
+                          src={tour.guides.photo_url}
+                          alt={tour.guides.name}
+                          className="h-6 w-6 rounded-full object-cover ring-1 ring-border"
+                          loading="lazy"
+                        />
+                      )}
+                      <span className="text-xs text-muted-foreground">
+                        {t("home.spotlightTour.by") ?? "by"} <span className="font-medium text-foreground">{tour.guides.name}</span>
+                      </span>
+                    </div>
+                  )}
+
+
                   <div className="mt-2 flex items-center gap-3 text-sm">
                     {Number(tour.rating ?? 0) > 0 && (
                       <span className="inline-flex items-center gap-1">
