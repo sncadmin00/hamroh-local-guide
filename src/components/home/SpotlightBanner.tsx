@@ -124,7 +124,7 @@ export function SpotlightBanner() {
                 <div className="mt-1.5 line-clamp-2 text-sm sm:text-base text-slate-500 leading-relaxed">
                   {desc}
                 </div>
-                <div className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-[#5e8a7e] group-hover:text-[#4a6f66] transition-colors">
+                <div className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-gold group-hover:opacity-80 transition-colors">
                   {t("spot.cta.view")}
                   <ArrowUpRight className="h-4 w-4" />
                 </div>
