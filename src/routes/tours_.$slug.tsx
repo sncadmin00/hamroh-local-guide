@@ -61,9 +61,24 @@ function TourDetailPage() {
   const localizedHighlights = pickTourHighlights(tour, lang);
   const localizedIncluded = pickTourIncluded(tour, lang);
   const localizedNotIncluded = pickTourNotIncluded(tour, lang);
-  const langPrices = tour.languages
-    .map((lng) => ({ lng, price: tour.price_by_language[lng] ?? Number(tour.price_from) }))
-    .filter((x) => x.price > 0);
+  const groupCats = offeredCategories(tour);
+  const groupPriceItems: { key: string; label: string; max: number | null; price: number }[] =
+    tour.pricing_mode === "by_group"
+      ? groupCats.map((c) => ({
+          key: c,
+          label: t("tours.upTo").replace("{n}", String(GROUP_CATEGORY_MAX[c])),
+          max: GROUP_CATEGORY_MAX[c],
+          price: Number(tour.group_prices[c] ?? 0),
+        }))
+      : (() => {
+          const fixed = Number(tour.group_prices.fixed ?? tour.price_from ?? 0);
+          return fixed > 0
+            ? [{ key: "fixed", label: t("tours.wholeTour"), max: null, price: fixed }]
+            : [];
+        })();
+  const surcharges = Object.entries(tour.language_multipliers ?? {})
+    .map(([lng, p]) => ({ lng, p: Number(p) }))
+    .filter((x) => Number.isFinite(x.p) && x.p > 0);
 
   const currentCatSlugs = new Set(
     (tour.tour_categories ?? []).map((tc) => tc.categories?.slug).filter(Boolean) as string[]
