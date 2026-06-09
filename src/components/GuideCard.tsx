@@ -1,26 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { BadgeCheck, Star, MapPin } from "lucide-react";
+import { BadgeCheck, Star } from "lucide-react";
 import type { Guide } from "@/data/guides";
 
-const LANG_CODE: Record<string, string> = {
-  English: "EN",
-  Russian: "RU",
-  Uzbek: "UZ",
-  Tajik: "TJ",
-  French: "FR",
-  German: "DE",
-  Spanish: "ES",
-  Italian: "IT",
-  Chinese: "ZH",
-  Japanese: "JA",
-  Korean: "KO",
-  Arabic: "AR",
-  Turkish: "TR",
-};
 
-function langCode(name: string) {
-  return LANG_CODE[name] ?? name.slice(0, 2).toUpperCase();
-}
 
 export function GuideCard({ guide }: { guide: Guide }) {
   const langs = (guide.languages ?? []).slice(0, 3).join(", ");
