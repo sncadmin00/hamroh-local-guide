@@ -7,7 +7,7 @@ import { HeroSearch } from "@/components/home/HeroSearch";
 import { SpotlightGuideCarousel } from "@/components/home/SpotlightGuideCarousel";
 import { PopularCategoriesCarousel } from "@/components/home/PopularCategoriesCarousel";
 import { SpotlightTourCarousel } from "@/components/home/SpotlightTourCarousel";
-import { BookingCtaBlock } from "@/components/home/BookingCtaBlock";
+
 import { FeaturedReviews } from "@/components/home/FeaturedReviews";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -80,7 +80,7 @@ function Home() {
         <PopularCategoriesCarousel />
         <SpotlightGuideCarousel />
         <SpotlightTourCarousel />
-        <BookingCtaBlock />
+        
         <FeaturedReviews />
 
         {/* Become a guide banner */}
