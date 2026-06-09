@@ -65,16 +65,14 @@ export function HeroSearch() {
 
   return (
     <section className="relative overflow-hidden min-h-[460px] md:min-h-[520px] flex flex-col justify-end">
-      {/* Background image — decorative accent, shifted off the right edge */}
-      <div className="absolute inset-y-0 right-[-30%] left-auto w-[110%] md:w-[80%] md:right-[-25%] z-0 pointer-events-none">
+      {/* Background image */}
+      <div className="absolute inset-0 z-0">
         <img
           src={heroImg}
-          alt=""
-          aria-hidden="true"
-          className="h-full w-full object-cover object-left"
+          alt="Chashma-Ayub mausoleum, Bukhara"
+          className="h-full w-full object-cover [object-position:100%_0%] md:object-center"
           loading="eager"
         />
-
 
         {/* Subtle bottom fade into page */}
         <div
