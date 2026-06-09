@@ -148,7 +148,7 @@ function GuidePage() {
         {/* Rating row */}
         <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
           <span className="inline-flex items-center gap-1">
-            <Star className="h-4 w-4 fill-accent text-accent" />
+            <Star className="h-4 w-4 fill-gold text-gold" />
             <span className="font-semibold">{guide.rating}</span>
             <span className="text-muted-foreground">({guide.reviews} reviews)</span>
           </span>
