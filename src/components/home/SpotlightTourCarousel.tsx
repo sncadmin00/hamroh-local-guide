@@ -40,6 +40,10 @@ export function SpotlightTourCarousel() {
                 params={{ slug: tour.slug }}
                 className="flex flex-col h-full overflow-hidden rounded-2xl bg-card ring-1 ring-border shadow-sm hover:shadow-md transition-shadow"
               >
+                <div className="flex items-center justify-between h-9 px-3 bg-white border-b border-border">
+                  <img src={hamrohH.url} alt="Hamroh" className="h-5 w-auto" />
+                  <WishlistHeart type="tour" id={tour.id} size="sm" variant="ghost" />
+                </div>
                 <div className="relative aspect-[16/10] w-full overflow-hidden bg-secondary">
                   {tour.cover_url && (
                     <img
