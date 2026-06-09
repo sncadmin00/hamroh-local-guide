@@ -68,6 +68,7 @@ function mapGuide(row: GuideRow): Guide {
     cityId: row.city_id,
     extraCityIds: row.extra_city_ids ?? [],
     photo: row.photo_url || PLACEHOLDER_PHOTO,
+    coverUrl: row.cover_url || null,
     introVideoUrl: row.intro_video_url,
     tagline: row.tagline,
     bio: row.bio,
