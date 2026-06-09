@@ -106,7 +106,7 @@ export function SpotlightGuideCarousel() {
                   <h3 className="font-display text-lg font-semibold text-foreground line-clamp-1">
                     {g.name}
                   </h3>
-                  {g.verified && <BadgeCheck className="h-4 w-4 shrink-0 text-primary" />}
+                  {g.verified && <BadgeCheck className="h-4 w-4 shrink-0 text-gold fill-gold/10" />}
                 </div>
                 <p className="mt-0.5 text-sm text-muted-foreground">{g.city}</p>
                 <div className="mt-1.5 flex items-center justify-center gap-3 text-sm text-foreground">
