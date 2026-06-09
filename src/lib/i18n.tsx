@@ -7,6 +7,13 @@ type Dict = Record<string, { en: string; uz: string; ru: string }>;
 
 export const translations: Dict = {
   "nav.findGuide": { en: "Guides", uz: "Hamrohlar", ru: "Гиды" },
+  "home.spotlightGuide.title": { en: "Meet a top-rated guide", uz: "Yetakchi hamroh bilan tanishing", ru: "Познакомьтесь с лучшим гидом" },
+  "home.spotlightGuide.cta": { en: "View profile", uz: "Profilni ko'rish", ru: "Смотреть профиль" },
+  "home.spotlightTour.title": { en: "Featured tour", uz: "Tanlangan sayohat", ru: "Тур недели" },
+  "home.spotlightTour.cta": { en: "View tour", uz: "Sayohatni ko'rish", ru: "Подробнее" },
+  "home.bookingCta.title": { en: "Ready to book your trip?", uz: "Sayohatni bron qilishga tayyormisiz?", ru: "Готовы забронировать поездку?" },
+  "home.bookingCta.subtitle": { en: "Pick a date, choose a guide, and travel with confidence.", uz: "Sanani tanlang, hamrohni tanlang va xotirjam sayohat qiling.", ru: "Выберите дату, гида и отправляйтесь в путь с уверенностью." },
+  "home.bookingCta.button": { en: "Book now", uz: "Bron qilish", ru: "Забронировать" },
   "nav.cities": { en: "Cities", uz: "Shaharlar", ru: "Города" },
   "nav.tours": { en: "Tours", uz: "Sayohatlar", ru: "Туры" },
   "nav.explore": { en: "Explore", uz: "Kashf eting", ru: "Обзор" },
