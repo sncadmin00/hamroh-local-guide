@@ -454,6 +454,20 @@ export const translations: Dict = {
   "bg.tr.seats": { en: "Number of passenger seats", uz: "Yo'lovchilar uchun o'rinlar soni", ru: "Количество пассажирских мест" },
   "bg.tr.seatsPh": { en: "e.g. 4", uz: "masalan, 4", ru: "например, 4" },
   "bg.rv.transport": { en: "Transport", uz: "Transport", ru: "Транспорт" },
+  "bg.cert.title": { en: "Tour-guide certificate", uz: "Gid sertifikati", ru: "Сертификат гида" },
+  "bg.cert.sub": { en: "Do you hold an official tour-guide certificate or license? If yes, upload a clear photo or PDF — our team will review it before granting the Licensed badge.", uz: "Sizda rasmiy gid sertifikati yoki litsenziyasi bormi? Bo'lsa, aniq foto yoki PDF yuklang — jamoamiz Licensed nishonini berishdan oldin tekshiradi.", ru: "У вас есть официальный сертификат или лицензия гида? Если да, загрузите чёткое фото или PDF — наша команда проверит его перед присвоением знака «Licensed»." },
+  "bg.cert.yes": { en: "Yes, I have a certificate", uz: "Ha, sertifikatim bor", ru: "Да, у меня есть сертификат" },
+  "bg.cert.no": { en: "No, I don't have one yet", uz: "Yo'q, hali yo'q", ru: "Нет, пока нет" },
+  "bg.cert.upload": { en: "Upload certificate (image or PDF)", uz: "Sertifikatni yuklang (rasm yoki PDF)", ru: "Загрузить сертификат (фото или PDF)" },
+  "bg.cert.replace": { en: "Replace file", uz: "Faylni almashtirish", ru: "Заменить файл" },
+  "bg.cert.tooBig": { en: "Certificate file is too large (max 10 MB)", uz: "Sertifikat fayli juda katta (maks 10 MB)", ru: "Файл сертификата слишком большой (макс 10 МБ)" },
+  "bg.cert.required": { en: "Please upload your certificate or choose «No»", uz: "Sertifikatni yuklang yoki «Yo'q» ni tanlang", ru: "Загрузите сертификат или выберите «Нет»" },
+  "bg.rv.certificate": { en: "Certificate", uz: "Sertifikat", ru: "Сертификат" },
+  "admin.applications.certificate": { en: "Guide certificate", uz: "Gid sertifikati", ru: "Сертификат гида" },
+  "admin.applications.noCertificate": { en: "Applicant said no certificate", uz: "Murojaatchi sertifikatim yo'q dedi", ru: "Заявитель указал, что сертификата нет" },
+  "admin.applications.openCertificate": { en: "Open certificate file", uz: "Sertifikat faylini ochish", ru: "Открыть файл сертификата" },
+  "admin.applications.confirmLicense": { en: "Confirm — license is valid", uz: "Tasdiqlash — litsenziya haqiqiy", ru: "Подтвердить — лицензия действительна" },
+  "admin.applications.licenseConfirmed": { en: "License confirmed", uz: "Litsenziya tasdiqlandi", ru: "Лицензия подтверждена" },
 };
 
 

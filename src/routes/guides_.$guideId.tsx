@@ -100,7 +100,7 @@ function GuidePage() {
   const coverImage = guide.coverUrl || guide.photo;
   const stats = [
     { icon: Award, label: `${guide.completedToursCount > 0 ? `${guide.completedToursCount}+` : "0"}`, sub: "tours completed", active: guide.completedToursCount > 0 },
-    { icon: ShieldCheck, label: guide.identityVerified ? "Licensed" : "Pending", sub: "guide", active: guide.identityVerified },
+    { icon: ShieldCheck, label: guide.licensed ? "Licensed" : "Pending", sub: "guide", active: guide.licensed },
     { icon: BadgeCheck, label: guide.verified ? "Verified" : "Pending", sub: "platform", active: guide.verified },
     {
       icon: MessageCircle,
