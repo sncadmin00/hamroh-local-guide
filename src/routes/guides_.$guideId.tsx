@@ -107,7 +107,7 @@ function GuidePage() {
       <section className="container mx-auto px-4 py-8 md:py-12">
         <div className="grid gap-10 lg:grid-cols-[1.2fr_1fr]">
           <div>
-            <div className={`grid gap-4 ${guide.introVideoUrl ? "sm:grid-cols-2" : ""}`}>
+            <div className={`grid gap-3 ${guide.introVideoUrl ? "grid-cols-2" : "max-w-[16rem] sm:max-w-none"}`}>
               <div className="relative overflow-hidden rounded-2xl ring-1 ring-border/60">
                 <img
                   src={guide.photo}
