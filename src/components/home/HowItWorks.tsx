@@ -21,8 +21,8 @@ export function HowItWorks() {
           {steps.map(({ Icon, title, desc }, i) => (
             <div key={i} className="flex flex-col items-center text-center p-6">
               <div className="relative mb-4">
-                <div className="absolute inset-0 blur-xl opacity-30 bg-primary rounded-full" />
-                <div className="relative w-14 h-14 rounded-2xl bg-card ring-1 ring-border flex items-center justify-center text-primary">
+                <div className="absolute inset-0 blur-xl opacity-30 bg-accent rounded-full" />
+                <div className="relative w-14 h-14 rounded-2xl bg-card ring-1 ring-border flex items-center justify-center text-accent">
                   <Icon className="h-6 w-6" strokeWidth={1.75} />
                 </div>
               </div>

@@ -30,12 +30,12 @@ export function GuideCard({ guide }: { guide: Guide }) {
             </h3>
             <p className="inline-flex items-center gap-1 text-sm text-muted-foreground line-clamp-1">
               {guide.city}
-              {guide.verified && <BadgeCheck className="h-4 w-4 shrink-0 text-primary" />}
+              {guide.verified && <BadgeCheck className="h-4 w-4 shrink-0 text-gold" />}
             </p>
 
             {guide.reviews > 0 && (
               <div className="inline-flex items-center gap-1 text-sm text-foreground">
-                <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                <Star className="h-3.5 w-3.5 fill-gold text-gold" />
                 <span className="font-semibold tabular-nums">{guide.rating.toFixed(1)}</span>
                 <span className="text-muted-foreground">({guide.reviews} reviews)</span>
               </div>

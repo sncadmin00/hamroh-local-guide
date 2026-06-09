@@ -26,11 +26,13 @@ function BadgePill({
   icon: Icon,
   label,
   tooltip,
+  premium = false,
 }: {
   active: boolean;
   icon: React.ComponentType<{ className?: string }>;
   label: string;
   tooltip: string;
+  premium?: boolean;
 }) {
   return (
     <Tooltip>
@@ -38,7 +40,9 @@ function BadgePill({
         <span
           className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium ring-1 ${
             active
-              ? "bg-primary/10 text-primary ring-primary/20"
+              ? premium
+                ? "bg-gold/10 text-gold ring-gold/30"
+                : "bg-accent/10 text-accent ring-accent/25"
               : "bg-muted text-muted-foreground/60 ring-border/60 opacity-50"
           }`}
         >
@@ -69,6 +73,7 @@ export function GuideBadges({ data, compact = false }: { data: GuideBadgesData; 
             icon={ShieldCheck}
             label={t("badges.identity")}
             tooltip={data.identityVerified ? t("badges.identity.on") : t("badges.identity.off")}
+            premium
           />
           <BadgePill
             active={data.hasVerifiedLanguage}
@@ -106,7 +111,7 @@ export function GuideBadges({ data, compact = false }: { data: GuideBadgesData; 
           />
           <BadgePill
             active={reviewsActive}
-
+            premium={reviewsActive}
             icon={Star}
             label={
               data.avgRating != null && data.reviewsCount > 0
