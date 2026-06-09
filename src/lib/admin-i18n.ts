@@ -164,6 +164,12 @@ const adminTranslations = {
   "applications.idDocument": { en: "ID document", uz: "Shaxsni tasdiqlovchi hujjat", ru: "Документ (ID)" },
   "applications.noIdDocument": { en: "No ID document uploaded", uz: "Hujjat yuklanmagan", ru: "Документ не загружен" },
   "applications.openIdDocument": { en: "Open ID document", uz: "Hujjatni ochish", ru: "Открыть документ" },
+  "applications.certificate": { en: "Guide certificate", uz: "Gid sertifikati", ru: "Сертификат гида" },
+  "applications.noCertificate": { en: "Applicant said they have no certificate", uz: "Murojaatchi sertifikati yo'qligini bildirgan", ru: "Заявитель указал, что сертификата нет" },
+  "applications.certificateMissing": { en: "Certificate file not uploaded", uz: "Sertifikat fayli yuklanmagan", ru: "Файл сертификата не загружен" },
+  "applications.openCertificate": { en: "Open certificate file", uz: "Sertifikat faylini ochish", ru: "Открыть файл сертификата" },
+  "applications.confirmLicense": { en: "License confirmed (grants Licensed badge)", uz: "Litsenziya tasdiqlangan (Licensed nishonini beradi)", ru: "Лицензия подтверждена (даёт знак Licensed)" },
+  "applications.licenseConfirmed": { en: "License confirmation updated", uz: "Litsenziya tasdiqlash yangilandi", ru: "Подтверждение лицензии обновлено" },
 
   // Filters
   "filter.all": { en: "all", uz: "barchasi", ru: "все" },
