@@ -232,7 +232,7 @@ function GuidePage() {
                   tab === t ? "text-foreground" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                {t === "reviews" ? `Reviews (${guide.reviews})` : t === "tours" ? "Tours" : "About"}
+                {t === "reviews" ? `Reviews (${guide.reviews})` : t === "tours" ? "Tours" : "Posts"}
                 {tab === t && <span className="absolute inset-x-0 -bottom-px h-0.5 rounded-full bg-primary" />}
               </button>
             ))}
@@ -304,12 +304,7 @@ function GuidePage() {
                   </div>
                 </div>
               )}
-              <div>
-                <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Latest posts</h3>
-                <div className="mt-3">
-                  <GuidePostsFeed guideId={guide.dbId} guideName={guide.name} />
-                </div>
-              </div>
+              <GuidePostsFeed guideId={guide.dbId} guideName={guide.name} />
             </div>
           )}
         </div>
