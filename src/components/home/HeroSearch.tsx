@@ -84,13 +84,8 @@ export function HeroSearch() {
         />
       </div>
 
-      <div className="relative z-10 max-w-6xl mx-auto px-6 pt-32 pb-4 md:pt-48 md:pb-8 w-full">
-
-
+      <div className="relative z-10 max-w-6xl mx-auto px-6 pt-32 pb-0 md:pt-48 md:pb-0 w-full">
         <div className="max-w-2xl">
-
-
-
           {/* Search pill */}
           <form
             onSubmit={onSubmit}
@@ -148,10 +143,6 @@ export function HeroSearch() {
               {t("hero.search.button")}
             </button>
           </form>
-
-          <p className="mt-3 text-xs text-muted-foreground/80">
-            {t("hero.search.aiHint")}
-          </p>
         </div>
       </div>
     </section>
