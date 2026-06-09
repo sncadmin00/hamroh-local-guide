@@ -12,6 +12,7 @@ export const translations: Dict = {
   "home.categories.title": { en: "Popular categories", uz: "Mashhur toifalar", ru: "Популярные категории" },
   "home.categories.viewAll": { en: "View all", uz: "Hammasi", ru: "Все" },
   "home.categories.guidesCount": { en: "guides", uz: "hamroh", ru: "гидов" },
+  "home.spotlightGuide.tours": { en: "tours", uz: "sayohat", ru: "туров" },
   "home.spotlightTour.title": { en: "Featured tour", uz: "Tanlangan sayohat", ru: "Тур недели" },
   "home.spotlightTour.cta": { en: "View tour", uz: "Sayohatni ko'rish", ru: "Подробнее" },
   "home.bookingCta.title": { en: "Ready to book your trip?", uz: "Sayohatni bron qilishga tayyormisiz?", ru: "Готовы забронировать поездку?" },
