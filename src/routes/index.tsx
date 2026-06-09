@@ -77,7 +77,6 @@ function Home() {
 
       <main className="flex-1">
         <HeroSearch />
-        <BrowseByInterest />
         <PopularCategoriesCarousel />
         <SpotlightGuideCarousel />
         <SpotlightTourCarousel />
