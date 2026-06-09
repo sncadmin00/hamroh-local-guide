@@ -115,13 +115,13 @@ export function SpotlightTourCarousel() {
                         <div className="text-foreground">
                           <span className="font-display text-lg font-semibold">
                             ${Number(tour.price_from)}
-                          </span>{" "}
-                          <span className="text-muted-foreground">/ {t("tours.person")}</span>
+                          </span>
                         </div>
                       </div>
                     ) : (
                       <span />
                     )}
+
                     <span className="inline-flex items-center h-10 px-5 rounded-xl bg-foreground text-background text-sm font-semibold hover:opacity-90 transition-opacity">
                       {t("home.spotlightTour.cta")}
                     </span>
