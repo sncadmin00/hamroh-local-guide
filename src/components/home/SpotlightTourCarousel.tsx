@@ -4,6 +4,8 @@ import { Star, MapPin, Check } from "lucide-react";
 import { useTours, pickTourTitle, pickTourShortDescription, pickTourIncluded } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
 import { HorizontalCarousel } from "@/components/home/HorizontalCarousel";
+import { WishlistHeart } from "@/components/WishlistHeart";
+import hamrohH from "@/assets/hamroh-h.png.asset.json";
 
 export function SpotlightTourCarousel() {
   const { t, lang } = useI18n();
