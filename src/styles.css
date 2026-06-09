@@ -39,8 +39,8 @@
 
 :root {
   --radius: 0.875rem;
-  /* Clean white background */
-  --background: #FFFFFF;
+  /* Soft tinted page background; cards stay white to pop */
+  --background: #F7F9FC;
   --foreground: #0F172A;
 
   --card: #FFFFFF;
