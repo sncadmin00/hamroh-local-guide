@@ -1894,6 +1894,15 @@ function ApplicationsPanel({
     else { toast.success(ta("applications.videoRemoved")); await reload(); }
   };
 
+  const toggleCertificateConfirmed = async (appId: string, next: boolean) => {
+    const { error } = await supabase
+      .from("guide_applications")
+      .update({ certificate_confirmed: next })
+      .eq("id", appId);
+    if (error) toast.error(error.message);
+    else { toast.success(ta("applications.licenseConfirmed")); await reload(); }
+  };
+
   return (
     <div className="mt-6 rounded-3xl bg-card p-6 ring-1 ring-border/60">
       <div className="flex flex-wrap items-center justify-between gap-3">
