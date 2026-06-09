@@ -705,6 +705,7 @@ export type Database = {
         Row: {
           about: string
           category_ids: string[]
+          certificate_confirmed: boolean
           certificate_url: string | null
           city: string
           created_at: string
@@ -731,6 +732,7 @@ export type Database = {
         Insert: {
           about?: string
           category_ids?: string[]
+          certificate_confirmed?: boolean
           certificate_url?: string | null
           city: string
           created_at?: string
@@ -757,6 +759,7 @@ export type Database = {
         Update: {
           about?: string
           category_ids?: string[]
+          certificate_confirmed?: boolean
           certificate_url?: string | null
           city?: string
           created_at?: string
