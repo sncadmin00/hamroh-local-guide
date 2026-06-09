@@ -69,10 +69,11 @@ export function HeroSearch() {
       <div className="absolute inset-0 z-0">
         <img
           src={heroImg}
-          alt="Samarkand Registan at sunset"
-          className="h-full w-full object-cover"
+          alt="Chashma-Ayub mausoleum, Bukhara"
+          className="h-full w-full object-cover object-right md:object-center"
           loading="eager"
         />
+
         {/* Subtle bottom fade into page */}
         <div
           className="absolute inset-x-0 bottom-0 h-20 md:h-28"
