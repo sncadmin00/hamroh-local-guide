@@ -293,6 +293,8 @@ function GuidePortal() {
         )}
 
         {tab === "verification" && <VerificationPanel />}
+
+        {tab === "profile" && <ProfilePanel guideId={guide.id} />}
       </div>
     </div>
   );
