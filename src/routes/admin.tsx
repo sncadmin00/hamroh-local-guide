@@ -1724,7 +1724,11 @@ function ApplicationsPanel({
                 category_ids?: string[];
                 specialization?: string;
                 about?: string;
+                has_certificate?: boolean;
+                certificate_url?: string | null;
+                certificate_confirmed?: boolean;
               };
+              const isLicensed = !!(appExt.has_certificate && appExt.certificate_confirmed);
               const { data: created, error: gErr } = await supabase
                 .from("guides")
                 .insert({
@@ -1740,6 +1744,9 @@ function ApplicationsPanel({
                   verified_languages: passed,
                   has_transport: appExt.has_transport ?? false,
                   transport_seats: appExt.transport_seats ?? null,
+                  licensed: isLicensed,
+                  license_url: isLicensed ? appExt.certificate_url ?? null : null,
+                  licensed_at: isLicensed ? new Date().toISOString() : null,
                   verified: true,
                 })
                 .select("id")
@@ -1760,6 +1767,15 @@ function ApplicationsPanel({
             const merged = { ...((existing.verified_languages as Record<string, string>) ?? {}), ...passed };
             await supabase.from("guides").update({ verified_languages: merged }).eq("id", existing.id);
             toast.success(`Verified ${Object.keys(passed).length} language(s) on guide profile`);
+          }
+          // Always sync licensed status to existing guides on approval
+          if (existing?.id) {
+            const isLicensed = !!(a.has_certificate && a.certificate_confirmed);
+            await supabase.from("guides").update({
+              licensed: isLicensed,
+              license_url: isLicensed ? a.certificate_url ?? null : null,
+              licensed_at: isLicensed ? new Date().toISOString() : null,
+            }).eq("id", existing.id);
           }
         }
       } catch (e) {
