@@ -114,7 +114,6 @@ export function SpotlightGuideCarousel() {
                     <div className="inline-flex items-center gap-1">
                       <Star className="h-3.5 w-3.5 fill-accent text-accent" />
                       <span className="tabular-nums font-medium">{g.rating.toFixed(1)}</span>
-                      <span className="text-muted-foreground">· {g.reviews}</span>
                     </div>
                   )}
                   {g.completedToursCount > 0 && (
