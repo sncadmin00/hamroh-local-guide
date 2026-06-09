@@ -1,85 +1,80 @@
-## Что делаем
+## Tsel
+Privesti glavnuyu k maketu: minimum blokov, vse v stile Airbnb-borderless, foto gidov v krugleshkax.
 
-При подтверждении брони гидом (статус → `confirmed`) клиент получает email со ссылкой «Скачать PDF» + кнопка «Скачать PDF» в кабинете `/my-bookings`. PDF на языке брони (ru/en/uz), содержит все детали тура и брони.
+## Novaya struktura glavnoy (`src/routes/index.tsx`)
 
-## Изменения в БД
+```text
+SiteHeader
+HeroSearch                       (ostavlyaem kak est)
+─────────
+Kategorii (Interesy)             ← BrowseByInterest
+Spotlight Gid (1 za raz)         ← NEW: karusel top-rated, autoplay 6s + strelki
+Spotlight Tur (1 za raz)         ← NEW: karusel top-rated, autoplay 6s + strelki
+Booking CTA blok                 ← NEW: bolshaya kartochka -> /book
+FeaturedReviews                  (ostavlyaem)
+Banner "Stat gidom"              (perenosim vniz, uzhe est)
+SiteFooter
+```
 
-Добавить два поля в таблицу `tours`:
-- `meeting_point` — место встречи (текст)
-- `end_point` — место окончания тура (текст)
+## Chto udalyaem s glavnoy
+- `SpotlightBanner` (Whats New) — udalit blok i import
+- `ExploreTabs` — ubrat (tabs s tours/guides/cities/explore)
+- `WhyHamroh`, `HomeFaq` — ubrat (uproshchaem)
+- `TrustBar` — ubrat (uproshchaem)
+- Otdelnye sekcii `TopTours`, `FeaturedGuides`, `PopularCities` na glavnoy bolshe ne zovutsya
 
-Эти поля гид заполняет в редакторе тура (TourEditor) — два новых текстовых поля.
+(Komponenty ostayutsya v repo — mogut ispolzovatsya v drugix mestax; tolko ubiraem ix import/render iz `index.tsx`.)
 
-## PDF — что попадёт в файл
+## Novye komponenty
 
-Шапка:
-- Логотип Hamroh, статус «Подтверждено», номер брони
+### `src/components/home/SpotlightGuideCarousel.tsx`
+- Beret `useGuides()`, sortiruet po `rating desc`, beret top 5
+- Pokazyvaet po **odnomu** gidu s krupnym foto v **krugleshke** (`aspect-square rounded-full`)
+- Pod foto: imya, gorod, reyting, yazyki, knopka "Smotret profil" -> `/guides/$guideId`
+- Avtoproletka kazhdye 6 sekund, pauza na hover/focus, strelki sleva/sprava, dots vnizu
+- Logika autoplay = kak v `SpotlightBanner` (useEffect + setInterval + paused state)
 
-Блок «Тур»:
-- Название тура, город
-- Описание (короткое + полное)
-- Длительность
-- Категории (chips)
-- Языки
-- Highlights / Что включено / Что не включено
-- Транспорт включён (да/нет)
+### `src/components/home/SpotlightTourCarousel.tsx`
+- Beret `useTours()`, sortiruet po `rating desc` (ili `price_from`/recently), top 5
+- Pokazyvaet po odnomu turu: bolshoe foto (rounded-2xl, **ne krug**), nazvanie, gorod, dlitelnost, cena, knopka "Podrobnee" -> `/tours/$slug`
+- Avtoproletka 6s + strelki + dots, ta zhe mexanika
 
-Блок «Бронирование»:
-- Дата, время начала, длительность
-- Место встречи (`meeting_point`)
-- Место окончания (`end_point`)
-- Гости (взрослые/дети), язык тура, тип группы
-- Итоговая стоимость
-- Заметки клиента
+### `src/components/home/BookingCtaBlock.tsx`
+- Krupnaya kartochka po centru: zagolovok ("Gotovy zabronirovat tur?"), korotky tekst, knopka -> `/book`
+- Bez formy — tolko CTA so ssylkoy (po vyboru polzovatelya)
+- Stilistika sovpadaet s sushchestvuyushchim banner gida (gradient + rounded-3xl)
 
-Блок «Гид»:
-- Имя, фото, телефон/телеграм (если есть), рейтинг
+## Izmeneniya v sushchestvuyushchix kartochkax
 
-Футер: контакты Hamroh, ссылка на бронь.
+### `GuideCard` (`src/components/GuideCard.tsx`)
+- Foto: `aspect-square rounded-full` vmesto `aspect-[4/5] rounded-2xl`
+- Ubrat badges (Verified/Instant) i WishlistHeart s foto — chistyy krugleshok
+- Pod krugleshkom (po centru): imya, gorod, malenkaya stroka s reytingom
+- Ubrat Multi-city/Bilingual ikonki — maksimalno chisto
+- Verified badge mozhno ostavit malenkim znachkom ryadom s imenem (ili udalit polnostyu)
 
-## Технические детали
+Vlияет na vse mesta gde renderitsya `GuideCard` (`FeaturedGuides`, `/guides`, `ExploreTabs`). Eto ok — soglasno trebovaniyu "v kartochkax foto v krugleshok".
 
-**Генерация PDF**
-- Используем `pdf-lib` (чистый JS, работает в Cloudflare Workers, без нативных бинарей)
-- Подгружаем шрифт с поддержкой кириллицы/латиницы (например, Noto Sans, встроенный в проект как Uint8Array из assets)
+## i18n
+Dobavit klyuchi v `src/lib/i18n.tsx` dlya 3 yazykov (en/ru/uz):
+- `home.spotlightGuide.title`, `home.spotlightGuide.cta`
+- `home.spotlightTour.title`, `home.spotlightTour.cta`
+- `home.bookingCta.title`, `home.bookingCta.subtitle`, `home.bookingCta.button`
 
-**Server function**: `src/lib/booking-pdf.functions.ts`
-- `generateBookingPdf({ bookingId, token? })` — возвращает `{ pdfBase64, filename }`
-- Доступ:
-  - Авторизованный клиент брони → через `requireSupabaseAuth`
-  - По публичной ссылке из email → через одноразовый/привязанный к booking токен (HMAC от `booking_id` + `WEBHOOK_SECRET` или новое поле `bookings.pdf_token`)
+## Fayly
 
-**Публичный route**: `src/routes/api/public/bookings/$id/pdf.ts`
-- GET с query `?token=...`
-- Проверяет HMAC, читает бронь сервис-ролью, генерит PDF, возвращает `application/pdf` (скачивание)
+**Sozdat:**
+- `src/components/home/SpotlightGuideCarousel.tsx`
+- `src/components/home/SpotlightTourCarousel.tsx`
+- `src/components/home/BookingCtaBlock.tsx`
 
-**Триггер при подтверждении**
-- В `booking.functions.ts` / `guide-portal.functions.ts` (где статус меняется на `confirmed`) после успешного апдейта:
-  - Сгенерировать `pdf_token` (HMAC)
-  - Отправить шаблон `booking-confirmation-client` (уже есть) с новым полем `templateData.pdfUrl = https://hamroh-local-guide.lovable.app/api/public/bookings/{id}/pdf?token=...`
-  - В шаблоне добавить кнопку «Скачать PDF подтверждение»
+**Izmenit:**
+- `src/routes/index.tsx` — perepisat sostav glavnoy
+- `src/components/GuideCard.tsx` — krugleshok + chistka
+- `src/lib/i18n.tsx` — novye klyuchi
 
-**Кабинет клиента** (`/my-bookings`)
-- В карточке брони со статусом `confirmed` — кнопка «Скачать PDF», вызывает server fn `generateBookingPdf`, скачивает blob
+**Ne trogat:** `HeroSearch`, `FeaturedReviews`, banner "Stat gidom" (uzhe est v index.tsx), kabinety, admin, stranicy `/guides`, `/tours`, `/book` — soglasno predydushchemu reshenyu po ob'yomu.
 
-**i18n PDF**
-- Берём `bookings.locale` (ru/en/uz)
-- Все подписи в PDF локализованы через словарь в `src/lib/booking-pdf-i18n.ts`
-- Текстовые поля тура берём из `title_ru/uz/en`, `short_description_*`, `description_md_*` по locale, с фолбэком на базовый
-
-## Файлы (создать/изменить)
-
-- migration: добавить `meeting_point`, `end_point` в `tours`
-- `src/components/guide/TourEditor.tsx` — два новых input поля
-- `src/lib/booking-pdf-i18n.ts` — словарь подписей
-- `src/lib/booking-pdf.functions.ts` — server fn + helper `buildBookingPdf()`
-- `src/routes/api/public/bookings/$id/pdf.ts` — публичный download endpoint
-- `src/lib/email-templates/booking-confirmation-client.tsx` — добавить кнопку «Скачать PDF»
-- `src/lib/booking.functions.ts` / `guide-portal.functions.ts` — при `status=confirmed` передавать `pdfUrl` в `templateData`
-- `src/routes/my-bookings.tsx` — кнопка «Скачать PDF» для подтверждённых броней
-- `src/assets/fonts/NotoSans-Regular.ttf` (+ Bold) — для встраивания в PDF
-
-## Замечания
-
-- Email-вложения в текущей очереди не поддерживаются (payload без attachments); поэтому PDF доставляется ссылкой в письме + кнопкой в кабинете. Это покрывает выбранный вариант «оба».
-- Токен в публичной ссылке — HMAC от `booking_id`, секрет хранится в env, без БД-таблицы токенов. Ссылка живёт пока существует бронь.
+## Vne ob'yoma
+- Redizayn detalnyx stranic gida/tura i bookinga uzhe sdelan v predydushchix iteracyax — zdes ne trogaem.
+- Komponenty `ExploreTabs`/`WhyHamroh`/`HomeFaq`/`TrustBar`/`SpotlightBanner` ostayutsya v repo (na sluchay vozvrata), prosto ne ispolzuyutsya na glavnoy.
