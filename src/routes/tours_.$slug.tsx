@@ -4,9 +4,9 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { useTour, useTours, pickTourTitle, pickTourShortDescription, pickTourDescriptionMd, pickTourHighlights, pickTourIncluded, pickTourNotIncluded } from "@/lib/content-queries";
+import { useTour, useTours, pickTourTitle, pickTourShortDescription, pickTourDescriptionMd, pickTourHighlights, pickTourIncluded, pickTourNotIncluded, offeredCategories, GROUP_CATEGORY_MAX, type GroupCategory } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
-import { Clock, MapPin, Check, X, Car, Star } from "lucide-react";
+import { Clock, MapPin, Check, X, Car, Star, Users } from "lucide-react";
 import { WishlistHeart } from "@/components/WishlistHeart";
 import { ReviewForm } from "@/components/ReviewForm";
 import { listTourReviews } from "@/lib/reviews.functions";
@@ -61,9 +61,24 @@ function TourDetailPage() {
   const localizedHighlights = pickTourHighlights(tour, lang);
   const localizedIncluded = pickTourIncluded(tour, lang);
   const localizedNotIncluded = pickTourNotIncluded(tour, lang);
-  const langPrices = tour.languages
-    .map((lng) => ({ lng, price: tour.price_by_language[lng] ?? Number(tour.price_from) }))
-    .filter((x) => x.price > 0);
+  const groupCats = offeredCategories(tour);
+  const groupPriceItems: { key: string; label: string; max: number | null; price: number }[] =
+    tour.pricing_mode === "by_group"
+      ? groupCats.map((c) => ({
+          key: c,
+          label: t("tours.upTo").replace("{n}", String(GROUP_CATEGORY_MAX[c])),
+          max: GROUP_CATEGORY_MAX[c],
+          price: Number(tour.group_prices[c] ?? 0),
+        }))
+      : (() => {
+          const fixed = Number(tour.group_prices.fixed ?? tour.price_from ?? 0);
+          return fixed > 0
+            ? [{ key: "fixed", label: t("tours.wholeTour"), max: null, price: fixed }]
+            : [];
+        })();
+  const surcharges = Object.entries(tour.language_multipliers ?? {})
+    .map(([lng, p]) => ({ lng, p: Number(p) }))
+    .filter((x) => Number.isFinite(x.p) && x.p > 0);
 
   const currentCatSlugs = new Set(
     (tour.tour_categories ?? []).map((tc) => tc.categories?.slug).filter(Boolean) as string[]
@@ -124,18 +139,34 @@ function TourDetailPage() {
             {localizedShort && <p className="mt-2 text-lg text-muted-foreground">{localizedShort}</p>}
 
 
-            {langPrices.length > 0 && (
+            {groupPriceItems.length > 0 && (
               <section className="mt-6">
-                <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">{t("tours.pricePerLanguage")}</h2>
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                  {t("tours.priceForGroup")}
+                </h2>
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {langPrices.map(({ lng, price }) => (
-                    <span key={lng} className="inline-flex items-center gap-2 rounded-xl bg-card ring-1 ring-border/60 px-3 py-2 text-sm">
-                      <span className="font-medium">{lng}</span>
-                      <span className="font-display text-lg font-semibold tabular-nums">${Math.round(price)}</span>
-                      <span className="text-xs text-muted-foreground">/ {t("tours.person")}</span>
+                  {groupPriceItems.map((item) => (
+                    <span
+                      key={item.key}
+                      className="inline-flex items-center gap-2 rounded-xl bg-card ring-1 ring-border/60 px-3 py-2 text-sm"
+                    >
+                      <Users className="h-4 w-4 text-muted-foreground" />
+                      <span className="font-medium">{item.label}</span>
+                      <span className="font-display text-lg font-semibold tabular-nums">
+                        ${Math.round(item.price)}
+                      </span>
                     </span>
                   ))}
                 </div>
+                {surcharges.length > 0 && (
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    {surcharges
+                      .map((s) =>
+                        t("tours.languageSurcharge").replace("{p}", String(s.p)).replace("{lang}", s.lng),
+                      )
+                      .join(" · ")}
+                  </p>
+                )}
               </section>
             )}
 
