@@ -68,7 +68,7 @@ export function HeroSearch() {
       {/* Background image */}
       <div className="absolute inset-0 z-0">
         <img
-          src={heroImg}
+          src={heroImg.url}
           alt="Samarkand Registan at sunset"
           className="h-full w-full object-cover"
           loading="eager"
