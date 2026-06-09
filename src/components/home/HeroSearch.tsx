@@ -70,7 +70,7 @@ export function HeroSearch() {
         <img
           src={heroImg}
           alt="Chashma-Ayub mausoleum, Bukhara"
-          className="h-full w-full object-cover object-right md:object-center"
+          className="h-full w-full object-cover [object-position:100%_0%] md:object-center"
           loading="eager"
         />
 
