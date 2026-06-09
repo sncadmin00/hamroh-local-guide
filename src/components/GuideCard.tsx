@@ -1,9 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { BadgeCheck, Zap, MapPin, Globe2, Languages } from "lucide-react";
+import { BadgeCheck, Zap, Star, Globe2, Languages } from "lucide-react";
 import type { Guide } from "@/data/guides";
 import { WishlistHeart } from "@/components/WishlistHeart";
 import { useCities } from "@/lib/content-queries";
-import { GuideBadges } from "@/components/GuideBadges";
 
 export function GuideCard({ guide }: { guide: Guide }) {
   const { data: cities } = useCities();
@@ -12,80 +11,66 @@ export function GuideCard({ guide }: { guide: Guide }) {
     .filter(Boolean) as string[];
   const isMultiCity = extraNames.length > 0;
   const isBilingual = (guide.languages ?? []).length > 1;
-  const hasVerifiedLanguage = Object.keys(guide.verifiedLanguages ?? {}).length > 0;
+
   return (
     <Link
       to="/guides/$guideId"
       params={{ guideId: guide.id }}
-      className="group flex flex-col overflow-hidden rounded-2xl bg-card shadow-[var(--shadow-card)] ring-1 ring-border/60 transition-all hover:-translate-y-1 hover:shadow-[var(--shadow-elegant)]"
+      className="group block"
     >
-      <div className="relative aspect-[4/3] overflow-hidden">
+      <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-secondary">
         <img
           src={guide.photo}
           alt={guide.name}
           loading="lazy"
           width={800}
-          height={600}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          height={1000}
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
         />
-        <div className="absolute left-3 top-3 flex gap-2">
+        <div className="absolute left-3 top-3 flex gap-1.5">
           {guide.verified && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-background/95 px-2.5 py-1 text-xs font-medium backdrop-blur">
-              <BadgeCheck className="h-3.5 w-3.5 text-primary" /> Verified
+            <span className="inline-flex items-center gap-1 rounded-full bg-background/95 px-2 py-1 text-[11px] font-medium backdrop-blur">
+              <BadgeCheck className="h-3 w-3 text-primary" /> Verified
             </span>
           )}
           {guide.instantBook && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-accent px-2.5 py-1 text-xs font-medium text-accent-foreground">
-              <Zap className="h-3.5 w-3.5" /> Instant
+            <span className="inline-flex items-center gap-1 rounded-full bg-accent px-2 py-1 text-[11px] font-medium text-accent-foreground">
+              <Zap className="h-3 w-3" /> Instant
             </span>
           )}
         </div>
         <WishlistHeart type="guide" id={guide.dbId} className="absolute right-3 top-3" />
       </div>
 
-      <div className="flex flex-1 flex-col p-6">
-        <h3 className="font-display text-xl font-semibold">{guide.name}</h3>
-
-        <p className="mt-1 inline-flex items-center gap-1 text-sm text-muted-foreground">
-          <MapPin className="h-3.5 w-3.5" /> {guide.city}
+      <div className="pt-3 px-0.5">
+        <div className="flex items-start justify-between gap-2">
+          <h3 className="font-display text-[15px] font-semibold text-foreground leading-tight line-clamp-1">
+            {guide.name}
+          </h3>
+          {guide.reviews > 0 && (
+            <span className="inline-flex items-center gap-1 text-[13px] text-foreground shrink-0">
+              <Star className="h-3.5 w-3.5 fill-foreground text-foreground" />
+              <span className="tabular-nums font-medium">{guide.rating.toFixed(1)}</span>
+            </span>
+          )}
+        </div>
+        <p className="mt-0.5 text-[13px] text-muted-foreground line-clamp-1">
+          {guide.city}
+          {extraNames.length > 0 ? ` · +${extraNames.length}` : ""}
         </p>
-
-        <div className="mt-2 flex flex-wrap gap-1.5">
+        <div className="mt-1.5 flex flex-wrap gap-1">
           {isMultiCity && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+            <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
               <Globe2 className="h-3 w-3" /> Multi-city
             </span>
           )}
           {isBilingual && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
-              <Languages className="h-3 w-3" /> Bilingual
+            <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+              <Languages className="h-3 w-3" /> {(guide.languages ?? []).length} langs
             </span>
           )}
-        </div>
-
-
-        <div className="mt-4">
-
-          <GuideBadges
-            data={{
-              identityVerified: guide.identityVerified,
-              hasVerifiedLanguage,
-              introVideoVerified: guide.introVideoVerified,
-              reviewsCount: guide.reviews,
-              avgRating: guide.rating,
-              completedToursCount: guide.completedToursCount,
-              avgResponseMinutes: guide.avgResponseMinutes,
-              hasTransport: guide.hasTransport,
-              transportSeats: guide.transportSeats,
-            }}
-          />
-        </div>
-
-        <div className="mt-auto pt-4 flex items-center justify-end border-t border-border/60">
-          <span className="text-sm font-medium text-primary group-hover:underline">View tours →</span>
         </div>
       </div>
     </Link>
   );
 }
-
