@@ -162,7 +162,7 @@ function BookPage() {
             <PopoverTrigger asChild>
               <button className="group flex items-center justify-between gap-3 rounded-2xl bg-card ring-1 ring-border/60 p-4 text-left hover:ring-primary/40 hover:shadow-sm transition">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="h-10 w-10 shrink-0 rounded-xl bg-[#62A1B1]/10 text-[#62A1B1] inline-flex items-center justify-center">
+                  <div className="h-10 w-10 shrink-0 rounded-xl bg-primary/10 text-primary inline-flex items-center justify-center">
                     <Globe2 className="h-5 w-5" />
                   </div>
                   <div className="min-w-0">
