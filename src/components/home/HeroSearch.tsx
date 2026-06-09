@@ -64,7 +64,7 @@ export function HeroSearch() {
   const todayISO = new Date().toISOString().slice(0, 10);
 
   return (
-    <section className="relative overflow-hidden min-h-[420px] md:min-h-[520px]">
+    <section className="relative overflow-hidden min-h-[420px] md:min-h-[520px] flex flex-col justify-end">
       {/* Background image */}
       <div className="absolute inset-0 z-0">
         <img
