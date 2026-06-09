@@ -89,35 +89,35 @@ export function ExploreTabs() {
                       key={tour.id}
                       to="/tours/$slug"
                       params={{ slug: tour.slug }}
-                      className="group rounded-2xl border border-border bg-card overflow-hidden hover:shadow-md transition-shadow"
+                      className="group block"
                     >
-                      <div className="relative aspect-[4/3] bg-secondary overflow-hidden">
+                      <div className="relative aspect-[4/3] bg-secondary overflow-hidden rounded-2xl">
                         {tour.cover_url ? (
                           <img
                             src={tour.cover_url}
                             alt={title}
                             loading="lazy"
-                            className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform"
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                           />
                         ) : null}
                         <WishlistHeart type="tour" id={tour.id} className="absolute right-3 top-3" />
                       </div>
 
-                      <div className="p-4">
-                        <h3 className="font-display text-base font-semibold text-foreground line-clamp-2">
+                      <div className="pt-3 px-0.5">
+                        <h3 className="font-display text-[15px] font-semibold text-foreground line-clamp-1 leading-tight">
                           {title}
                         </h3>
                         {tour.cities?.name ? (
-                          <p className="mt-1 text-xs text-muted-foreground">{tour.cities.name}</p>
+                          <p className="mt-0.5 text-[13px] text-muted-foreground">{tour.cities.name}</p>
                         ) : null}
-                        <div className="mt-3 flex items-center justify-between text-sm">
+                        <div className="mt-1 flex items-center justify-between text-[13px]">
                           <span className="inline-flex items-center gap-1 text-muted-foreground">
-                            <Clock className="size-3.5" />
+                            <Clock className="size-3" />
                             {Number(tour.duration_hours)} {t("tours.hours")}
                           </span>
                           {Number(tour.price_from) > 0 ? (
-                            <span className="font-medium text-foreground">
-                              {t("tours.priceFrom")} ${Number(tour.price_from)}
+                            <span className="text-foreground">
+                              <span className="font-semibold">${Number(tour.price_from)}</span>
                             </span>
                           ) : null}
                         </div>
@@ -125,6 +125,7 @@ export function ExploreTabs() {
                     </Link>
                   );
                 })}
+
               </div>
             ) : (
               <EmptyState />
