@@ -1770,10 +1770,10 @@ function ApplicationsPanel({
           }
           // Always sync licensed status to existing guides on approval
           if (existing?.id) {
-            const isLicensed = !!(a.has_certificate && a.certificate_confirmed);
+            const isLicensed = !!(app.has_certificate && app.certificate_confirmed);
             await supabase.from("guides").update({
               licensed: isLicensed,
-              license_url: isLicensed ? a.certificate_url ?? null : null,
+              license_url: isLicensed ? app.certificate_url ?? null : null,
               licensed_at: isLicensed ? new Date().toISOString() : null,
             }).eq("id", existing.id);
           }
