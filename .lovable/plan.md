@@ -1,47 +1,25 @@
-## Add guide-certificate question + licensed badge
+Add a readable headline and subtitle inside the hero section, positioned above the search pill on the homepage (`/`).
 
-### 1. Database (migration)
+### Current state
+- `HeroSearch.tsx` renders the hero background image and the search form, but no visible headline text.
+- i18n keys `hero.search.title` and `hero.search.subtitle` already exist with translations in EN / RU / UZ.
 
-**`public.guide_applications`** — add:
-- `has_certificate boolean NOT NULL DEFAULT false`
-- `certificate_url text` (storage path; signed for admin view)
+### Proposed changes
 
-**`public.guides`** — add:
-- `licensed boolean NOT NULL DEFAULT false`
-- `license_url text` (copied from the application on approval)
-- `licensed_at timestamptz`
+1. **Render the existing i18n headline in `HeroSearch.tsx`**
+   - Insert `hero.search.title` (multiline, uses `\n`) and `hero.search.subtitle` above the search form, inside the existing `relative z-10` container.
+   - Style:
+     - Title: white text, `font-display`, large bold size, text-shadow for readability over the photo.
+     - Subtitle: white text, slightly smaller, lighter weight, with subtle text-shadow.
+   - Ensure the title/subtitle container has enough top padding so it sits clearly below the sticky `SiteHeader` and above the search pill.
 
-No data migration on existing rows (everyone starts `licensed=false`). The `identity_verified` column stays and keeps its current meaning (we verified ID), but it no longer drives the "Licensed" stat.
+2. **Preserve the overlap behavior**
+   - The search form already uses `translate-y-12 md:translate-y-16` to overlap the hero/content boundary.
+   - Keep that intact; simply place the text between the top of the container and the search form.
 
-### 2. Storage
+3. **Mobile & accessibility**
+   - Reduce font size on mobile (`text-3xl` → `md:text-5xl` pattern).
+   - Ensure `text-shadow` or `drop-shadow` contrast passes over both light and dark areas of the hero image.
 
-Reuse the existing private `guide-application-photos` bucket for certificate uploads (accept image + PDF). No new bucket needed.
-
-### 3. Application form (`src/routes/become-a-guide.tsx`)
-
-In the certifications/credentials step add:
-- Yes/No question: "Do you have an official tour-guide certificate or license?"
-- If Yes → file upload (image or PDF, ≤10 MB) → uploaded to `guide-application-photos`, path saved as `certificate_url`.
-- On submit, persist `has_certificate` + `certificate_url` alongside the existing fields.
-
-Translations: add strings for the question, helper text, "Upload certificate", "Replace", "Remove" in EN/RU/UZ keys used by the existing form.
-
-### 4. Admin review (`src/routes/admin.tsx`)
-
-In the application review card:
-- New row: "Guide certificate" → shows applicant's answer, link/preview of the uploaded file (signed URL), plus a "Confirm license" / "Reject" toggle.
-- Approval flow (`src/lib/guide-approval.functions.ts`): when the admin approves an application, if `has_certificate` is true AND admin confirmed it, copy `certificate_url` → `guides.license_url`, set `licensed = true`, `licensed_at = now()`. Otherwise leave `licensed = false`.
-- Existing guide admin editor: add a "Licensed" toggle so admins can flip the flag manually later (with optional license file replacement).
-
-### 5. Profile page (`src/routes/guides_.$guideId.tsx`)
-
-- Switch the "Licensed guide" stat from `guide.identityVerified` to `guide.licensed`.
-- Label stays "Licensed" when true, "—" / "Not licensed" when false (final wording: "Licensed" / "Pending").
-- Active-state coloring already handled.
-
-Update `src/data/guides.ts` + `src/lib/content-queries.ts` mapping: add `licensed: boolean`, `licenseUrl: string | null`, read from new columns.
-
-### 6. Out of scope (this turn)
-
-- Public display of the certificate file (kept admin-only).
-- Notifying applicants of certificate approval/rejection (can be a follow-up).
+### Files to change
+- `src/components/home/HeroSearch.tsx` — add title/subtitle markup and styling.
