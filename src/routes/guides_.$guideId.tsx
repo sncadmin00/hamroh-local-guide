@@ -154,11 +154,6 @@ function GuidePage() {
           <span className="text-muted-foreground">{tours.length} tours</span>
         </div>
 
-        {guide.languages.length > 0 && (
-          <p className="mt-1 text-sm text-muted-foreground">
-            Speaks: <span className="text-foreground">{guide.languages.join(", ")}</span>
-          </p>
-        )}
 
         {/* Video introduction */}
         {guide.introVideoUrl && (
@@ -279,9 +274,9 @@ function GuidePage() {
                         {level && (
                           <span
                             title={`AI-verified · CEFR ${level}`}
-                            className="ml-1 inline-flex items-center gap-0.5 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary"
+                            className="ml-1 inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-sm font-semibold text-primary"
                           >
-                            <BadgeCheck className="h-3 w-3" /> {level}
+                            <BadgeCheck className="h-3.5 w-3.5" /> {level}
                           </span>
                         )}
                       </span>
