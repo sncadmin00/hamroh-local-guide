@@ -82,7 +82,7 @@ export function SiteHeader() {
         <Link to="/" className="flex flex-col items-start shrink-0 leading-none">
           <img src={hamrohLogo} alt="Hamroh" className="h-[3.25rem] w-auto object-contain" />
           <span className="-mt-1 font-display text-[11px] font-medium tracking-[0.08em] text-primary/80">
-            find local companions
+            local companions
           </span>
         </Link>
 
