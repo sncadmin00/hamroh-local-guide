@@ -212,13 +212,17 @@ function GuidePage() {
 
         {/* Stats grid */}
         <div className="mt-6 grid grid-cols-4 gap-3">
-          {stats.map(({ icon: Icon, label, sub, active }) => (
-            <div key={label + sub} className="flex flex-col items-center text-center">
-              <Icon className={`h-6 w-6 ${active ? "text-primary" : "text-foreground/80"}`} strokeWidth={1.5} />
-              <span className={`mt-2 text-xs font-semibold leading-tight ${active ? "text-primary" : ""}`}>{label}</span>
-              <span className="text-[11px] leading-tight text-muted-foreground">{sub}</span>
-            </div>
-          ))}
+          {stats.map(({ icon: Icon, label, sub, active }, idx) => {
+            const isVerified = idx === 2;
+            const accentColor = isVerified ? "text-gold" : "text-accent";
+            return (
+              <div key={label + sub} className="flex flex-col items-center text-center">
+                <Icon className={`h-6 w-6 ${active ? accentColor : "text-foreground/80"}`} strokeWidth={1.5} />
+                <span className={`mt-2 text-xs font-semibold leading-tight ${active ? accentColor : ""}`}>{label}</span>
+                <span className="text-[11px] leading-tight text-muted-foreground">{sub}</span>
+              </div>
+            );
+          })}
         </div>
 
         {/* Tabs */}
