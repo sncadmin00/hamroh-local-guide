@@ -106,6 +106,9 @@ type GuideApplication = {
   video_url: string | null;
   photo_urls: string[] | null;
   id_document_url: string | null;
+  has_certificate: boolean;
+  certificate_url: string | null;
+  certificate_confirmed: boolean;
   language_tests: Array<{ language: string; level: string; transcript?: string; feedback?: string; skipped?: boolean }> | null;
   user_id: string | null;
 };
@@ -129,6 +132,7 @@ async function signApplicationMedia(apps: GuideApplication[]): Promise<GuideAppl
     portrait_url: await toSignedUrl(a.portrait_url),
     video_url: await toSignedUrl(a.video_url),
     id_document_url: await toSignedUrl(a.id_document_url),
+    certificate_url: await toSignedUrl(a.certificate_url),
     photo_urls: a.photo_urls ? await Promise.all(a.photo_urls.map((u) => toSignedUrl(u).then((s) => s ?? u))) : a.photo_urls,
   })));
 }
