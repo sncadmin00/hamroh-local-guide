@@ -212,10 +212,10 @@ function GuidePage() {
 
         {/* Stats grid */}
         <div className="mt-6 grid grid-cols-4 gap-3">
-          {stats.map(({ icon: Icon, label, sub }) => (
+          {stats.map(({ icon: Icon, label, sub, active }) => (
             <div key={sub} className="flex flex-col items-center text-center">
-              <Icon className="h-6 w-6 text-foreground/80" strokeWidth={1.5} />
-              <span className="mt-2 text-xs font-semibold leading-tight">{label}</span>
+              <Icon className={`h-6 w-6 ${active ? "text-primary" : "text-foreground/80"}`} strokeWidth={1.5} />
+              <span className={`mt-2 text-xs font-semibold leading-tight ${active ? "text-primary" : ""}`}>{label}</span>
               <span className="text-[11px] leading-tight text-muted-foreground">{sub}</span>
             </div>
           ))}
