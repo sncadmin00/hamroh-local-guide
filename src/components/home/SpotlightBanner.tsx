@@ -161,7 +161,7 @@ export function SpotlightBanner() {
                 type="button"
                 onClick={() => goTo(i)}
                 aria-label={`Go to slide ${i + 1}`}
-                className={`h-1.5 rounded-full transition-all ${i === index ? "w-5 bg-[#8BB5A9]" : "w-1.5 bg-slate-300 hover:bg-slate-400"}`}
+                className={`h-1.5 rounded-full transition-all ${i === index ? "w-5 bg-gold" : "w-1.5 bg-slate-300 hover:bg-slate-400"}`}
               />
             ))}
           </div>
