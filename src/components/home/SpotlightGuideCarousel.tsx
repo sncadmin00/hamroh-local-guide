@@ -88,6 +88,17 @@ export function SpotlightGuideCarousel() {
                 <span className="text-muted-foreground">· {g.reviews} reviews</span>
               </div>
             )}
+            {g.languages?.length > 0 && (
+              <p className="mt-2 text-xs uppercase tracking-wide text-muted-foreground">
+                {g.languages.slice(0, 4).join(" · ")}
+              </p>
+            )}
+            {g.pricePerDay > 0 && (
+              <p className="mt-1 text-sm text-foreground">
+                from ${g.pricePerDay}
+                <span className="text-muted-foreground">/day</span>
+              </p>
+            )}
             <div className="mt-5">
               <span className="inline-flex items-center h-10 px-6 rounded-full bg-foreground text-background text-sm font-semibold hover:opacity-90 transition-opacity">
                 {t("home.spotlightGuide.cta")}
