@@ -533,6 +533,54 @@ function BecomeAGuidePage() {
       ),
     },
     {
+      title: t("bg.cert.title"),
+      subtitle: t("bg.cert.sub"),
+      canNext: () => hasCertificate === false || (hasCertificate === true && !!certificate),
+      nextHint: t("bg.cert.required"),
+      render: () => (
+        <div className="space-y-4">
+          <div className="flex flex-wrap gap-2">
+            <button type="button" onClick={() => setHasCertificate(true)} className={chipCls(hasCertificate === true)}>
+              {t("bg.cert.yes")}
+            </button>
+            <button
+              type="button"
+              onClick={() => { setHasCertificate(false); setCertificate(null); }}
+              className={chipCls(hasCertificate === false)}
+            >
+              {t("bg.cert.no")}
+            </button>
+          </div>
+          {hasCertificate === true && (
+            <div className="space-y-2">
+              <label className="inline-flex items-center gap-2 h-10 px-4 rounded-full ring-1 ring-border/60 hover:bg-secondary/60 cursor-pointer text-sm">
+                <Upload className="h-4 w-4" />
+                <span>{certificate ? t("bg.cert.replace") : t("bg.cert.upload")}</span>
+                <input
+                  type="file"
+                  accept="image/*,application/pdf"
+                  className="hidden"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0] ?? null;
+                    if (f && f.size > 10 * 1024 * 1024) {
+                      toast.error(t("bg.cert.tooBig"));
+                      e.target.value = "";
+                      return;
+                    }
+                    setCertificate(f);
+                    e.target.value = "";
+                  }}
+                />
+              </label>
+              {certificate && (
+                <p className="text-xs text-muted-foreground">{certificate.name}</p>
+              )}
+            </div>
+          )}
+        </div>
+      ),
+    },
+    {
       title: t("bg.s5.title"),
       subtitle: t("bg.s5.sub"),
       canNext: () => form.about.trim().length >= 20,
