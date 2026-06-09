@@ -140,7 +140,7 @@ export function HeroSearch() {
             <div className="hidden md:block w-px bg-border my-2" />
 
             {/* Guests */}
-            <label className="group flex items-center gap-3 px-4 py-3 rounded-xl md:rounded-full hover:bg-muted/60 transition-colors cursor-text md:w-56">
+            <label className="group flex-1 md:flex-none md:w-40 flex items-center gap-3 px-4 py-3 rounded-xl md:rounded-full hover:bg-muted/60 transition-colors cursor-text">
               <Users className="h-4 w-4 text-muted-foreground shrink-0" />
               <input
                 type="number"
@@ -149,7 +149,7 @@ export function HeroSearch() {
                 value={guests}
                 onChange={(e) => setGuests(e.target.value ? Number(e.target.value) : "")}
                 placeholder={t("hero.search.guests")}
-                className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none min-w-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none min-w-[5rem] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               />
             </label>
 
