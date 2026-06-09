@@ -70,7 +70,7 @@ export const finalizeApprovedGuide = createServerFn({ method: "POST" })
 
     const { data: app, error: appErr } = await supabaseAdmin
       .from("guide_applications")
-      .select("id, user_id, full_name, portrait_url, video_url, photo_urls, language_tests")
+      .select("id, user_id, full_name, portrait_url, video_url, photo_urls, language_tests, has_certificate, certificate_url, certificate_confirmed")
       .eq("id", data.application_id)
       .maybeSingle();
     if (appErr) throw new Error(appErr.message);
@@ -123,6 +123,7 @@ export const finalizeApprovedGuide = createServerFn({ method: "POST" })
       ...passed,
     };
 
+    const isLicensed = !!(app.has_certificate && app.certificate_confirmed);
     const { error: upErr } = await supabaseAdmin
       .from("guides")
       .update({
@@ -132,6 +133,9 @@ export const finalizeApprovedGuide = createServerFn({ method: "POST" })
         intro_video_verified: !!videoUrl,
         verified_languages: mergedLangs,
         verified: true,
+        licensed: isLicensed,
+        license_url: isLicensed ? app.certificate_url ?? null : null,
+        licensed_at: isLicensed ? new Date().toISOString() : null,
       })
       .eq("id", guide.id);
     if (upErr) throw new Error(upErr.message);
