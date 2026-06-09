@@ -68,12 +68,15 @@ export function HeroSearch() {
     <section className="relative overflow-hidden min-h-[460px] md:min-h-[520px] flex flex-col justify-end">
       {/* Background image */}
       <div className="absolute inset-0 z-0">
-        <img
-          src={heroImg}
-          alt="Chashma-Ayub mausoleum, Bukhara"
-          className="h-full w-full object-cover [object-position:100%_0%] md:object-center"
-          loading="eager"
-        />
+        <picture>
+          <source media="(min-width: 768px)" srcSet={heroImg} />
+          <img
+            src={heroMobileAsset.url}
+            alt="Chashma-Ayub mausoleum, Bukhara"
+            className="h-full w-full object-cover object-center"
+            loading="eager"
+          />
+        </picture>
 
         {/* Subtle bottom fade into page */}
         <div
