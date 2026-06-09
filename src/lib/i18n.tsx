@@ -170,13 +170,11 @@ export const translations: Dict = {
 
 
   "cat.locals-favourite": { en: "Local's favourite", uz: "Mahalliylar tanlovi", ru: "Выбор местных" },
-  "cat.people": { en: "People", uz: "Insonlar", ru: "Люди" },
-  "cat.gastro": { en: "Gastro", uz: "Gastronomiya", ru: "Гастрономия" },
-  "cat.mountains": { en: "Mountains & Nature", uz: "Tog'lar va tabiat", ru: "Горы и природа" },
-  "cat.city": { en: "City & History", uz: "Shahar va tarix", ru: "Город и история" },
-  "cat.crafts": { en: "Crafts & Bazaars", uz: "Hunarmandchilik va bozorlar", ru: "Ремёсла и базары" },
-  "cat.culture": { en: "Culture & Art", uz: "Madaniyat va san'at", ru: "Культура и искусство" },
-  "cat.photo": { en: "Photo Tours", uz: "Foto sayohatlar", ru: "Фототуры" },
+  "cat.city-tours": { en: "City Tours", uz: "Shahar sayohatlari", ru: "Городские туры" },
+  "cat.food-culture": { en: "Food & Culture", uz: "Taom va madaniyat", ru: "Еда и культура" },
+  "cat.nature-adventure": { en: "Nature & Adventure", uz: "Tabiat va sarguzasht", ru: "Природа и приключения" },
+  "cat.local-life": { en: "Local Life", uz: "Mahalliy hayot", ru: "Местная жизнь" },
+  "cat.history-heritage": { en: "History & Heritage", uz: "Tarix va meros", ru: "История и наследие" },
 
   "footer.about": { en: "About", uz: "Biz haqimizda", ru: "О нас" },
   "footer.contact": { en: "Contact", uz: "Aloqa", ru: "Контакты" },
