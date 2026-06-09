@@ -177,7 +177,7 @@ function GuidePage() {
             {guide.hasTransport && (
               <span
                 title={guide.transportSeats ? `Transport · ${guide.transportSeats} seats` : "Transport available"}
-                className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary"
+                className="inline-flex items-center gap-1 rounded-full bg-accent/10 px-2.5 py-1 text-xs font-medium text-accent"
               >
                 <Car className="h-3.5 w-3.5" />
                 {guide.transportSeats ? `Transport · ${guide.transportSeats} seats` : "Transport"}
