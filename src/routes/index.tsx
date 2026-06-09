@@ -1,7 +1,5 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useRef, useState } from "react";
-import { ArrowUp, Mic } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { TrustBar } from "@/components/home/TrustBar";
@@ -17,8 +15,8 @@ import { FeaturedReviews } from "@/components/home/FeaturedReviews";
 
 import { supabase } from "@/integrations/supabase/client";
 
-import { createThread } from "@/lib/ai-threads.functions";
 import { useI18n } from "@/lib/i18n";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -89,57 +87,10 @@ export const Route = createFileRoute("/")({
 
 
 function Home() {
-  const navigate = useNavigate();
-  const create = useServerFn(createThread);
   const { t } = useI18n();
   const [isGuide, setIsGuide] = useState(false);
 
-
-  const [input, setInput] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [listening, setListening] = useState(false);
-  const taRef = useRef<HTMLTextAreaElement>(null);
-  const recognitionRef = useRef<any>(null);
-
-  const toggleMic = () => {
-    const SR: any =
-      (typeof window !== "undefined" &&
-        ((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition)) ||
-      null;
-    if (!SR) {
-      alert("Voice input is not supported in this browser.");
-      return;
-    }
-    if (listening) {
-      recognitionRef.current?.stop();
-      return;
-    }
-    const rec = new SR();
-    rec.lang = navigator.language || "en-US";
-    rec.interimResults = true;
-    rec.continuous = false;
-    let base = input ? input + " " : "";
-    rec.onresult = (e: any) => {
-      let transcript = "";
-      for (let i = e.resultIndex; i < e.results.length; i++) {
-        transcript += e.results[i][0].transcript;
-      }
-      setInput(base + transcript);
-    };
-    rec.onend = () => setListening(false);
-    rec.onerror = () => setListening(false);
-    recognitionRef.current = rec;
-    setListening(true);
-    rec.start();
-  };
-
   useEffect(() => {
-    taRef.current?.focus();
-    const pending = sessionStorage.getItem("pendingAiPrompt");
-    if (pending) {
-      sessionStorage.removeItem("pendingAiPrompt");
-      setInput(pending);
-    }
     supabase.auth.getSession().then(({ data }) => {
       const uid = data.session?.user.id;
       if (!uid) return;
@@ -147,26 +98,6 @@ function Home() {
     });
   }, []);
 
-  const submit = async (text: string) => {
-    const t = text.trim();
-    if (!t || submitting) return;
-    setSubmitting(true);
-    try {
-      const { data } = await supabase.auth.getSession();
-      if (!data.session) {
-        sessionStorage.setItem("pendingAiPrompt", t);
-        navigate({ to: "/login" });
-        return;
-      }
-      const thread = await create();
-      if (thread?.id) {
-        sessionStorage.setItem(`initialPrompt:${thread.id}`, t);
-        navigate({ to: "/ai/$threadId", params: { threadId: thread.id } });
-      }
-    } finally {
-      setSubmitting(false);
-    }
-  };
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
