@@ -24,6 +24,8 @@ export interface Guide {
   verified: boolean;
   instantBook: boolean;
   identityVerified: boolean;
+  licensed: boolean;
+  licenseUrl: string | null;
   introVideoVerified: boolean;
   completedToursCount: number;
   avgResponseMinutes: number | null;

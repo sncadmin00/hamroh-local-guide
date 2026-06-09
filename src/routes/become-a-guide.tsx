@@ -129,6 +129,8 @@ function BecomeAGuidePage() {
   const [form, setForm] = useState<FormState>(emptyForm);
   const [hasTransport, setHasTransport] = useState<boolean>(false);
   const [transportSeats, setTransportSeats] = useState<string>("");
+  const [hasCertificate, setHasCertificate] = useState<boolean | null>(null);
+  const [certificate, setCertificate] = useState<File | null>(null);
 
   // Load draft
   useEffect(() => {
@@ -142,6 +144,7 @@ function BecomeAGuidePage() {
         languageTests?: Record<string, LangTestResult>;
         hasTransport?: boolean;
         transportSeats?: string;
+        hasCertificate?: boolean | null;
       };
       if (parsed.form) setForm({ ...emptyForm, ...parsed.form });
       if (parsed.languages) setSelectedLanguages(parsed.languages);
@@ -149,6 +152,7 @@ function BecomeAGuidePage() {
       if (parsed.languageTests) setLanguageTests(parsed.languageTests);
       if (typeof parsed.hasTransport === "boolean") setHasTransport(parsed.hasTransport);
       if (typeof parsed.transportSeats === "string") setTransportSeats(parsed.transportSeats);
+      if (parsed.hasCertificate === true || parsed.hasCertificate === false) setHasCertificate(parsed.hasCertificate);
     } catch {
       // ignore
     }
@@ -160,12 +164,12 @@ function BecomeAGuidePage() {
     try {
       localStorage.setItem(
         DRAFT_KEY,
-        JSON.stringify({ form, languages: selectedLanguages, categories: selectedCategories, languageTests, hasTransport, transportSeats }),
+        JSON.stringify({ form, languages: selectedLanguages, categories: selectedCategories, languageTests, hasTransport, transportSeats, hasCertificate }),
       );
     } catch {
       // ignore
     }
-  }, [form, selectedLanguages, selectedCategories, languageTests, hasTransport, transportSeats]);
+  }, [form, selectedLanguages, selectedCategories, languageTests, hasTransport, transportSeats, hasCertificate]);
 
 
   useEffect(() => {
@@ -529,6 +533,54 @@ function BecomeAGuidePage() {
       ),
     },
     {
+      title: t("bg.cert.title"),
+      subtitle: t("bg.cert.sub"),
+      canNext: () => hasCertificate === false || (hasCertificate === true && !!certificate),
+      nextHint: t("bg.cert.required"),
+      render: () => (
+        <div className="space-y-4">
+          <div className="flex flex-wrap gap-2">
+            <button type="button" onClick={() => setHasCertificate(true)} className={chipCls(hasCertificate === true)}>
+              {t("bg.cert.yes")}
+            </button>
+            <button
+              type="button"
+              onClick={() => { setHasCertificate(false); setCertificate(null); }}
+              className={chipCls(hasCertificate === false)}
+            >
+              {t("bg.cert.no")}
+            </button>
+          </div>
+          {hasCertificate === true && (
+            <div className="space-y-2">
+              <label className="inline-flex items-center gap-2 h-10 px-4 rounded-full ring-1 ring-border/60 hover:bg-secondary/60 cursor-pointer text-sm">
+                <Upload className="h-4 w-4" />
+                <span>{certificate ? t("bg.cert.replace") : t("bg.cert.upload")}</span>
+                <input
+                  type="file"
+                  accept="image/*,application/pdf"
+                  className="hidden"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0] ?? null;
+                    if (f && f.size > 10 * 1024 * 1024) {
+                      toast.error(t("bg.cert.tooBig"));
+                      e.target.value = "";
+                      return;
+                    }
+                    setCertificate(f);
+                    e.target.value = "";
+                  }}
+                />
+              </label>
+              {certificate && (
+                <p className="text-xs text-muted-foreground">{certificate.name}</p>
+              )}
+            </div>
+          )}
+        </div>
+      ),
+    },
+    {
       title: t("bg.s5.title"),
       subtitle: t("bg.s5.sub"),
       canNext: () => form.about.trim().length >= 20,
@@ -690,10 +742,12 @@ function BecomeAGuidePage() {
       let portrait_url: string | null = null;
       let video_url: string | null = null;
       let id_document_url: string | null = null;
+      let certificate_url: string | null = null;
       const photo_urls: string[] = [];
 
       if (portrait) portrait_url = await uploadTo("guide-application-photos", portrait);
       if (idDocument) id_document_url = await uploadTo("guide-application-photos", idDocument);
+      if (hasCertificate && certificate) certificate_url = await uploadTo("guide-application-photos", certificate);
       for (const p of photos) photo_urls.push(await uploadTo("guide-application-photos", p));
       if (video) video_url = await uploadTo("guide-application-videos", video);
 
@@ -719,6 +773,8 @@ function BecomeAGuidePage() {
           category_ids: selectedCategories,
           has_transport: hasTransport,
           transport_seats: hasTransport && transportSeats ? Number(transportSeats) : null,
+          has_certificate: hasCertificate === true,
+          certificate_url,
           language_tests: selectedLanguages.map((l) => ({
             language: l,
             ...(languageTests[l] ?? { level: "N/A", transcript: "", feedback: "", skipped: true }),

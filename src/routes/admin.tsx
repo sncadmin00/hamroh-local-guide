@@ -106,6 +106,9 @@ type GuideApplication = {
   video_url: string | null;
   photo_urls: string[] | null;
   id_document_url: string | null;
+  has_certificate: boolean;
+  certificate_url: string | null;
+  certificate_confirmed: boolean;
   language_tests: Array<{ language: string; level: string; transcript?: string; feedback?: string; skipped?: boolean }> | null;
   user_id: string | null;
 };
@@ -129,6 +132,7 @@ async function signApplicationMedia(apps: GuideApplication[]): Promise<GuideAppl
     portrait_url: await toSignedUrl(a.portrait_url),
     video_url: await toSignedUrl(a.video_url),
     id_document_url: await toSignedUrl(a.id_document_url),
+    certificate_url: await toSignedUrl(a.certificate_url),
     photo_urls: a.photo_urls ? await Promise.all(a.photo_urls.map((u) => toSignedUrl(u).then((s) => s ?? u))) : a.photo_urls,
   })));
 }
@@ -1720,7 +1724,11 @@ function ApplicationsPanel({
                 category_ids?: string[];
                 specialization?: string;
                 about?: string;
+                has_certificate?: boolean;
+                certificate_url?: string | null;
+                certificate_confirmed?: boolean;
               };
+              const isLicensed = !!(appExt.has_certificate && appExt.certificate_confirmed);
               const { data: created, error: gErr } = await supabase
                 .from("guides")
                 .insert({
@@ -1736,6 +1744,9 @@ function ApplicationsPanel({
                   verified_languages: passed,
                   has_transport: appExt.has_transport ?? false,
                   transport_seats: appExt.transport_seats ?? null,
+                  licensed: isLicensed,
+                  license_url: isLicensed ? appExt.certificate_url ?? null : null,
+                  licensed_at: isLicensed ? new Date().toISOString() : null,
                   verified: true,
                 })
                 .select("id")
@@ -1756,6 +1767,15 @@ function ApplicationsPanel({
             const merged = { ...((existing.verified_languages as Record<string, string>) ?? {}), ...passed };
             await supabase.from("guides").update({ verified_languages: merged }).eq("id", existing.id);
             toast.success(`Verified ${Object.keys(passed).length} language(s) on guide profile`);
+          }
+          // Always sync licensed status to existing guides on approval
+          if (existing?.id) {
+            const isLicensed = !!(app.has_certificate && app.certificate_confirmed);
+            await supabase.from("guides").update({
+              licensed: isLicensed,
+              license_url: isLicensed ? app.certificate_url ?? null : null,
+              licensed_at: isLicensed ? new Date().toISOString() : null,
+            }).eq("id", existing.id);
           }
         }
       } catch (e) {
@@ -1872,6 +1892,15 @@ function ApplicationsPanel({
     const { error } = await supabase.from("guide_applications").update({ video_url: null }).eq("id", appId);
     if (error) toast.error(error.message);
     else { toast.success(ta("applications.videoRemoved")); await reload(); }
+  };
+
+  const toggleCertificateConfirmed = async (appId: string, next: boolean) => {
+    const { error } = await supabase
+      .from("guide_applications")
+      .update({ certificate_confirmed: next })
+      .eq("id", appId);
+    if (error) toast.error(error.message);
+    else { toast.success(ta("applications.licenseConfirmed")); await reload(); }
   };
 
   return (
@@ -1997,6 +2026,41 @@ function ApplicationsPanel({
                         <span className="text-xs text-muted-foreground">{ta("applications.noIdDocument")}</span>
                       )}
                     </div>
+
+
+                    {/* Guide certificate */}
+                    <div>
+                      <p className="text-xs font-medium text-muted-foreground mb-2">{ta("applications.certificate")}</p>
+                      {!a.has_certificate ? (
+                        <span className="text-xs text-muted-foreground">{ta("applications.noCertificate")}</span>
+                      ) : (
+                        <div className="flex flex-col gap-2">
+                          {a.certificate_url ? (
+                            <a
+                              href={a.certificate_url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="inline-flex w-fit items-center gap-1.5 h-9 px-3 rounded-full text-xs font-medium ring-1 ring-border/60 hover:bg-secondary/60"
+                            >
+                              {ta("applications.openCertificate")}
+                            </a>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">{ta("applications.certificateMissing")}</span>
+                          )}
+                          <label className="inline-flex items-center gap-2 text-xs cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={a.certificate_confirmed}
+                              onChange={(e) => toggleCertificateConfirmed(a.id, e.target.checked)}
+                              className="h-4 w-4 rounded border-border/60"
+                            />
+                            <span>{ta("applications.confirmLicense")}</span>
+                          </label>
+                        </div>
+                      )}
+                    </div>
+
+
 
 
                     {/* Photos */}
