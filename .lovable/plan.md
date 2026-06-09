@@ -1,25 +1,11 @@
-## Goal
+## Hero image edges
 
-Make guide cards visually identical to category cards so they stand out from the cream page background as crisp white squares.
+Update `src/components/home/HeroSearch.tsx` so the hero photo has crisp edges on three sides and only fades on the left:
 
-## Reference (category card styling)
+- Remove the top fade overlay (`linear-gradient(180deg, var(--background)…)`) so the sky meets the header with a clean edge.
+- Remove the bottom fade overlay so the bottom of the photo is a sharp line against the cream background.
+- Keep the right edge untouched (no overlay there today — stays sharp).
+- Add a new left-side fade overlay: a horizontal gradient from `var(--background)` at 0% to `transparent` around 25–35%, full height, `pointer-events-none`, sitting above the image. This blends the left edge of the photo into the app's cream background.
+- Header text/search currently sit over the image; with the top fade gone, keep header readability via the existing text-shadow on the H1/subtitle (already in place). No header restyle needed.
 
-`PopularCategoriesCarousel.tsx`:
-```
-rounded-2xl bg-card
-shadow-[0_6px_20px_-8px_rgba(0,0,0,0.18)]
-ring-1 ring-black/5
-hover: shadow-[0_12px_28px_-10px_rgba(0,0,0,0.25)]
-```
-
-## Change
-
-Update the card surface in `src/components/GuideCard.tsx`:
-
-- Replace `border border-border ... shadow-[var(--shadow-card)] ... hover:shadow-lg` with the exact category card classes above.
-- Keep the existing `aspect-square` shape and inner layout (circular avatar, name/city/rating, languages, tours, "From $X").
-- Keep the lift-on-hover transition (`-translate-y-0.5`) for parity with current motion.
-
-## Result
-
-Guide cards become solid white squares with the same soft shadow + faint ring used by category cards, popping off the cream background identically.
+No other components or tokens change.
