@@ -139,18 +139,34 @@ function TourDetailPage() {
             {localizedShort && <p className="mt-2 text-lg text-muted-foreground">{localizedShort}</p>}
 
 
-            {langPrices.length > 0 && (
+            {groupPriceItems.length > 0 && (
               <section className="mt-6">
-                <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">{t("tours.pricePerLanguage")}</h2>
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                  {t("tours.priceForGroup")}
+                </h2>
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {langPrices.map(({ lng, price }) => (
-                    <span key={lng} className="inline-flex items-center gap-2 rounded-xl bg-card ring-1 ring-border/60 px-3 py-2 text-sm">
-                      <span className="font-medium">{lng}</span>
-                      <span className="font-display text-lg font-semibold tabular-nums">${Math.round(price)}</span>
-                      <span className="text-xs text-muted-foreground">/ {t("tours.person")}</span>
+                  {groupPriceItems.map((item) => (
+                    <span
+                      key={item.key}
+                      className="inline-flex items-center gap-2 rounded-xl bg-card ring-1 ring-border/60 px-3 py-2 text-sm"
+                    >
+                      <Users className="h-4 w-4 text-muted-foreground" />
+                      <span className="font-medium">{item.label}</span>
+                      <span className="font-display text-lg font-semibold tabular-nums">
+                        ${Math.round(item.price)}
+                      </span>
                     </span>
                   ))}
                 </div>
+                {surcharges.length > 0 && (
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    {surcharges
+                      .map((s) =>
+                        t("tours.languageSurcharge").replace("{p}", String(s.p)).replace("{lang}", s.lng),
+                      )
+                      .join(" · ")}
+                  </p>
+                )}
               </section>
             )}
 
