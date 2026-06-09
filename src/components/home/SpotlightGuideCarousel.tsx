@@ -92,7 +92,7 @@ export function SpotlightGuideCarousel() {
                 key={g.id}
                 to="/guides/$guideId"
                 params={{ guideId: g.id }}
-                className="block group/card"
+                className="block group/card rounded-2xl bg-card ring-1 ring-border shadow-sm hover:shadow-md transition-shadow p-6"
               >
                 <div className="mx-auto aspect-square w-full max-w-[200px] overflow-hidden rounded-full bg-secondary ring-4 ring-white shadow-[0_10px_40px_-10px_rgba(0,0,0,0.2)] transition-transform duration-500 group-hover/card:scale-[1.03]">
                   <img
@@ -108,7 +108,7 @@ export function SpotlightGuideCarousel() {
                   </h3>
                   {g.verified && <BadgeCheck className="h-4 w-4 shrink-0 text-gold fill-gold/10" />}
                 </div>
-                <p className="mt-0.5 text-sm text-muted-foreground">{g.city}</p>
+                <p className="mt-0.5 text-sm text-muted-foreground text-center">{g.city}</p>
                 <div className="mt-1.5 flex items-center justify-center gap-3 text-sm text-foreground">
                   {g.reviews > 0 && (
                     <div className="inline-flex items-center gap-1">
@@ -123,7 +123,7 @@ export function SpotlightGuideCarousel() {
                   )}
                 </div>
                 {g.languages?.length > 0 && (
-                  <p className="mt-1.5 text-xs uppercase tracking-wide text-muted-foreground">
+                  <p className="mt-1.5 text-xs uppercase tracking-wide text-muted-foreground text-center">
                     {g.languages.slice(0, 4).join(" · ")}
                   </p>
                 )}
