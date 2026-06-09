@@ -1,70 +1,63 @@
 import { Link } from "@tanstack/react-router";
-import { BadgeCheck, Star, MapPin } from "lucide-react";
+import { BadgeCheck, Star } from "lucide-react";
 import type { Guide } from "@/data/guides";
 
-const LANG_CODE: Record<string, string> = {
-  English: "EN",
-  Russian: "RU",
-  Uzbek: "UZ",
-  Tajik: "TJ",
-  French: "FR",
-  German: "DE",
-  Spanish: "ES",
-  Italian: "IT",
-  Chinese: "ZH",
-  Japanese: "JA",
-  Korean: "KO",
-  Arabic: "AR",
-  Turkish: "TR",
-};
 
-function langCode(name: string) {
-  return LANG_CODE[name] ?? name.slice(0, 2).toUpperCase();
-}
 
 export function GuideCard({ guide }: { guide: Guide }) {
-  const langs = (guide.languages ?? []).slice(0, 3).map(langCode).join(" · ");
+  const langs = (guide.languages ?? []).slice(0, 3).join(", ");
 
   return (
     <Link
       to="/guides/$guideId"
       params={{ guideId: guide.id }}
-      className="group block aspect-square w-full text-center"
+      className="group block aspect-square w-full"
     >
-      <div className="flex h-full w-full flex-col items-center justify-start gap-3 p-2">
-        <div className="aspect-square w-[62%] max-w-[160px] overflow-hidden rounded-full bg-secondary">
-          <img
-            src={guide.photo}
-            alt={guide.name}
-            loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-          />
-        </div>
-
-        <div className="flex min-w-0 flex-col items-center gap-0.5">
-          <div className="flex items-center justify-center gap-1.5">
-            <h3 className="font-display text-[15px] font-semibold leading-tight text-foreground line-clamp-1">
-              {guide.name.split(" ")[0]}
-            </h3>
-            {guide.verified && <BadgeCheck className="h-4 w-4 shrink-0 text-primary" />}
+      <div className="flex h-full w-full flex-col rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-card)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
+        <div className="flex items-start gap-4">
+          <div className="aspect-square w-[34%] max-w-[110px] shrink-0 overflow-hidden rounded-full bg-secondary">
+            <img
+              src={guide.photo}
+              alt={guide.name}
+              loading="lazy"
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+            />
           </div>
 
-          <p className="inline-flex items-center gap-1 text-[13px] text-muted-foreground line-clamp-1">
-            <MapPin className="h-3.5 w-3.5" />
-            {guide.city}
-          </p>
+          <div className="flex min-w-0 flex-1 flex-col gap-1 pt-1">
+            <h3 className="font-display text-lg font-semibold leading-tight text-foreground line-clamp-1">
+              {guide.name.split(" ")[0]}
+            </h3>
+            <p className="inline-flex items-center gap-1 text-sm text-muted-foreground line-clamp-1">
+              {guide.city}
+              {guide.verified && <BadgeCheck className="h-4 w-4 shrink-0 text-primary" />}
+            </p>
 
-          {guide.reviews > 0 && (
-            <div className="inline-flex items-center gap-1 text-[13px] text-foreground">
-              <Star className="h-3.5 w-3.5 fill-foreground text-foreground" />
-              <span className="font-medium tabular-nums">{guide.rating.toFixed(1)}</span>
-              <span className="text-muted-foreground">({guide.reviews})</span>
-            </div>
-          )}
+            {guide.reviews > 0 && (
+              <div className="inline-flex items-center gap-1 text-sm text-foreground">
+                <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                <span className="font-semibold tabular-nums">{guide.rating.toFixed(1)}</span>
+                <span className="text-muted-foreground">({guide.reviews} reviews)</span>
+              </div>
+            )}
+          </div>
+        </div>
 
+        <div className="mt-3 flex flex-col gap-1 text-sm text-muted-foreground">
           {langs && (
-            <p className="text-[12px] uppercase tracking-wide text-muted-foreground">{langs}</p>
+            <p className="line-clamp-1">
+              Speaks: <span className="text-foreground">{langs}</span>
+            </p>
           )}
+          {guide.completedToursCount > 0 && (
+            <p className="line-clamp-1">{guide.completedToursCount} tours</p>
+          )}
+        </div>
+
+        <div className="mt-auto flex items-end justify-end pt-3">
+          <p className="text-sm text-muted-foreground">
+            From <span className="text-xl font-bold text-foreground">${guide.pricePerDay}</span>
+          </p>
         </div>
       </div>
     </Link>
