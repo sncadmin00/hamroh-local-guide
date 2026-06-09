@@ -95,7 +95,7 @@ function mapGuide(row: GuideRow): Guide {
 }
 
 const GUIDE_SELECT =
-  "id, slug, name, city_id, extra_city_ids, photo_url, intro_video_url, tagline, bio, languages, verified_languages, specialties, price_per_day, rating, reviews, verified, instant_book, sort_order, identity_verified, intro_video_verified, completed_tours_count, avg_response_minutes, has_transport, transport_seats, cities(name), guide_categories(categories(slug, name, icon))";
+  "id, slug, name, city_id, extra_city_ids, photo_url, cover_url, intro_video_url, tagline, bio, languages, verified_languages, specialties, price_per_day, rating, reviews, verified, instant_book, sort_order, identity_verified, intro_video_verified, completed_tours_count, avg_response_minutes, has_transport, transport_seats, cities(name), guide_categories(categories(slug, name, icon))";
 
 async function fetchGuides(): Promise<Guide[]> {
   const { data, error } = await supabase
