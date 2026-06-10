@@ -109,6 +109,13 @@ export const translations: Dict = {
   "search.filters.instant": { en: "Instant book", uz: "Tezkor bron", ru: "Мгновенное бронирование" },
   "search.filters.allCategories": { en: "All categories", uz: "Barcha toifalar", ru: "Все категории" },
   "search.filters.allLanguages": { en: "All languages", uz: "Barcha tillar", ru: "Все языки" },
+  "search.mode.ai": { en: "AI answer", uz: "AI javobi", ru: "Ответ AI" },
+  "search.mode.manual": { en: "Manual search", uz: "Qoʻlda qidiruv", ru: "Ручной поиск" },
+  "search.mode.hint": {
+    en: "Prefer filters? Switch to manual search with cities, dates and categories.",
+    uz: "Filtrlar yoqadimi? Shaharlar, sanalar va toifalar boʻyicha qoʻlda qidiruvga oʻting.",
+    ru: "Хотите фильтры? Переключитесь на ручной поиск по городам, датам и категориям.",
+  },
 
   "hero.search.aiHint": {
     en: "Powered by Hamroh AI — we'll match you with the perfect guide.",
