@@ -50,11 +50,8 @@ async function buildSystemPrompt(
     }>)
     .map((p) => {
       const cityName = Array.isArray(p.cities) ? p.cities[0]?.name ?? "" : p.cities?.name ?? "";
-      const linkedGuides = (p.place_guides ?? [])
-        .flatMap((pg) => (Array.isArray(pg.guides) ? pg.guides : pg.guides ? [pg.guides] : []))
-        .map((g) => `${g.name} (${g.slug})`)
-        .join(", ");
-      return `- slug: ${p.slug} | ${p.name} [${p.category}] | City: ${cityName}${p.tags.length ? ` | Tags: ${p.tags.join(", ")}` : ""} | ${p.short_description}${linkedGuides ? ` | Guides who take travelers here: ${linkedGuides}` : ""}`;
+      const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${p.name} ${cityName}`.trim())}`;
+      return `- ${p.name} [${p.category}] | City: ${cityName}${p.tags.length ? ` | Tags: ${p.tags.join(", ")}` : ""} | ${p.short_description} | MapsURL: ${mapsUrl}`;
     })
     .join("\n");
 
