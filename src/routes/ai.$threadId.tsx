@@ -287,7 +287,7 @@ function MessageBubble({ message }: { message: UIMessage }) {
                   <span className="inline-flex items-center gap-0.5 rounded-full bg-secondary px-2 py-0.5"><MapPin className="h-3 w-3" />{g.city}</span>
                   {g.verified && <span className="inline-flex items-center gap-0.5 rounded-full bg-primary/10 text-primary px-2 py-0.5"><BadgeCheck className="h-3 w-3" />Verified</span>}
                   {g.instantBook && <span className="inline-flex items-center gap-0.5 rounded-full bg-accent/15 text-accent px-2 py-0.5"><Zap className="h-3 w-3" />Instant</span>}
-                  <span className="ml-auto font-semibold text-foreground">${g.pricePerDay}/day</span>
+                  
                 </div>
               </div>
             </Link>

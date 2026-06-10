@@ -54,11 +54,8 @@ export function GuideCard({ guide }: { guide: Guide }) {
           )}
         </div>
 
-        <div className="mt-auto flex items-end justify-end pt-3">
-          <p className="text-sm text-muted-foreground">
-            From <span className="text-xl font-bold text-foreground">${guide.pricePerDay}</span>
-          </p>
-        </div>
+        <div className="mt-auto flex items-end justify-end pt-3" />
+
       </div>
     </Link>
   );
