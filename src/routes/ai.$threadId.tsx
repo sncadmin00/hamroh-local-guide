@@ -6,7 +6,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getThreadMessages } from "@/lib/ai-threads.functions";
-import { useGuides } from "@/lib/content-queries";
+import { useGuides, useCities } from "@/lib/content-queries";
+import { parseSearchQuery } from "@/lib/parse-query";
 import { useI18n } from "@/lib/i18n";
 import type { Guide } from "@/data/guides";
 import { Sparkles, ArrowUp, Star, BadgeCheck, Zap, MapPin } from "lucide-react";
@@ -110,12 +111,22 @@ function ChatWindow({ threadId, initial, token }: { threadId: string; initial: {
   const { t } = useI18n();
   const navigate = useNavigate();
 
+  const { data: cities = [] } = useCities();
+
   const goManual = () => {
-    const firstUser = messages.find((m) => m.role === "user");
-    const text = firstUser
-      ? firstUser.parts.map((p) => (p.type === "text" ? (p as { type: "text"; text: string }).text : "")).join("").trim()
-      : "";
-    navigate({ to: "/search", search: text ? { q: text } : {} });
+    const userTexts = messages
+      .filter((m) => m.role === "user")
+      .map((m) =>
+        m.parts.map((p) => (p.type === "text" ? (p as { type: "text"; text: string }).text : "")).join(""),
+      );
+    const combined = userTexts.join(" ").trim();
+    const parsed = parseSearchQuery(combined, cities.map((c) => c.name));
+    const search: Record<string, string> = {};
+    if (combined) search.q = combined;
+    if (parsed.city) search.city = parsed.city;
+    if (parsed.from) search.from = parsed.from;
+    if (parsed.to) search.to = parsed.to;
+    navigate({ to: "/search", search });
   };
 
   return (
