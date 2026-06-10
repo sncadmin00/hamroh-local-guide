@@ -263,6 +263,8 @@ function renderMarkdown(text: string) {
 
 function MessageBubble({ message }: { message: UIMessage }) {
   const { data: guides = [] } = useGuides();
+  const { data: tours = [] } = useTours();
+  const { data: places = [] } = usePlaces();
   const text = message.parts
     .map((p) => (p.type === "text" ? (p as { type: "text"; text: string }).text : ""))
     .join("");
@@ -277,15 +279,17 @@ function MessageBubble({ message }: { message: UIMessage }) {
     );
   }
 
-  const { clean, ids } = extractGuides(text);
-  const recommended: Guide[] = ids.map((id) => guides.find((g) => g.id === id)).filter((g): g is Guide => !!g);
+  const { clean, guideIds, tourSlugs, placeSlugs } = extractRecs(text);
+  const recGuides: Guide[] = guideIds.map((id) => guides.find((g) => g.id === id)).filter((g): g is Guide => !!g);
+  const recTours = tourSlugs.map((s) => tours.find((t) => t.slug === s)).filter((t): t is NonNullable<typeof t> => !!t);
+  const recPlaces = placeSlugs.map((s) => places.find((p) => p.slug === s)).filter((p): p is NonNullable<typeof p> => !!p);
 
   return (
     <div className="space-y-3">
       <div className="text-[15px] text-foreground space-y-2">{renderMarkdown(clean)}</div>
-      {recommended.length > 0 && (
+      {recGuides.length > 0 && (
         <div className="grid gap-3 sm:grid-cols-2 pt-2">
-          {recommended.map((g) => (
+          {recGuides.map((g) => (
             <Link
               key={g.id}
               to="/guides/$guideId"
@@ -305,13 +309,23 @@ function MessageBubble({ message }: { message: UIMessage }) {
                   <span className="inline-flex items-center gap-0.5 rounded-full bg-secondary px-2 py-0.5"><MapPin className="h-3 w-3" />{g.city}</span>
                   {g.verified && <span className="inline-flex items-center gap-0.5 rounded-full bg-primary/10 text-primary px-2 py-0.5"><BadgeCheck className="h-3 w-3" />Verified</span>}
                   {g.instantBook && <span className="inline-flex items-center gap-0.5 rounded-full bg-accent/15 text-accent px-2 py-0.5"><Zap className="h-3 w-3" />Instant</span>}
-                  
                 </div>
               </div>
             </Link>
           ))}
         </div>
       )}
+      {recTours.length > 0 && (
+        <div className="grid gap-3 grid-cols-2 pt-2">
+          {recTours.map((t) => <TourCard key={t.id} tour={t} />)}
+        </div>
+      )}
+      {recPlaces.length > 0 && (
+        <div className="grid gap-3 grid-cols-2 pt-2">
+          {recPlaces.map((p) => <PlaceCard key={p.id} place={p} />)}
+        </div>
+      )}
     </div>
   );
 }
+
