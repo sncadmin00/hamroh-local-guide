@@ -1,38 +1,48 @@
-# Bolshoy AI-poisk v hero + stranica /search s filtrami
+# Поиск → AI по умолчанию, с переключателем на ручной режим
 
-## Idea
+## Проблема
+Сейчас при вводе запроса в герое мы ведём на `/search?q=...` — там показан текст запроса и кнопка «Ask AI», которую надо нажать ещё раз. Клиент думает, что «ничего не происходит». При этом если он нажмёт «Ask AI», то фактически весь введённый текст уходит как промпт повторно — ощущение «ввожу заново».
 
-Geroynaya stranica = odno bolshoe pole "Where are you going?" (AI). Pri otpravke perehodim ne v chat, a na novuyu stranicu **/search** s polnymi filtrami: daty, gorod, kategorii, yazyk, instant-book. AI-zapros polzovatelya peredayem kak `?q=...` i pokazyvayem nad rezultatami chip "Your request" + knopku "Ask AI about this trip" (otkroet AI-thread s tem zhe promptom).
+## Решение
+По умолчанию запрос из герой-поиска отправляется сразу в AI-чат и стримится ответ. Над ответом AI добавим компактный переключатель: «Ответ AI / Ручной поиск (города, категории, даты)», чтобы клиент мог одним кликом перейти к фильтрам с тем же запросом.
 
-## Izmeneniya
+## Изменения
 
-### 1. `src/components/home/HeroSearch.tsx` (uprostit)
-- Udalit polya `from` / `to`, ostavit tolko bolshoe pole `describe` s ikonkoy `Sparkles` i knopku Search.
-- Pole rastyanut na vsyu shirinu pill-a, placeholder: `t("hero.search.describe")` (uzhe yest, mozhno utochnit na "Where are you going? Tell us about your trip…").
-- `onSubmit`: ubrat sozdanie AI-threada i `pendingAiPrompt`. Vmesto etogo `navigate({ to: "/search", search: { q: describe.trim() } })`. Pustoy zapros — prosto perehod na /search bez `q`.
+1. **`src/components/home/HeroSearch.tsx`**
+   - Submit больше не идёт на `/search`. Вместо этого:
+     - Если пользователь не залогинен — сохраняем prompt в `sessionStorage("pendingAiPrompt")` и редиректим на `/login` (после логина существующий flow подхватит).
+     - Если залогинен — вызываем `createThread()` server-fn, кладём prompt в `sessionStorage("initialPrompt:<id>")` и переходим на `/ai/$threadId`. `ai.$threadId.tsx` уже умеет автоматически отправлять initial prompt.
+   - Состояние «отправляется» — дизейблим кнопку, маленький спиннер.
 
-### 2. `src/routes/search.tsx` (novyy fayl)
-- `createFileRoute("/search")` s `validateSearch` (zod + `fallback`):
-  - `q?: string` — AI-fraza polzovatelya
-  - `city?: string`, `category?: string`, `lang?: string`, `from?: string` (ISO), `to?: string` (ISO), `guests?: number`, `instant?: boolean`
-- `head()`: title "Search guides — Hamroh", description.
-- Layout: `SiteHeader` / `SiteFooter` + dve zony:
-  - **Top bar**: esli `q` zapolnen — chip `Sparkles "{q}"` i knopka "Ask AI about this trip" (sozdaet thread cherez `createThread`, kladet prompt v sessionStorage, navigate na `/ai/$threadId`; nezalogirennyy → `/login` s `pendingAiPrompt`, kak ranshe rabotal hero).
-  - **Filtry**: `CityPicker`, kategorii (chips, kak v `/guides`), yazyk select, daty (dva native `<input type="date">` s `min={todayISO}` i `min={from||todayISO}`), `guests` number, checkbox "Instant book". Vse menyayut `search`-params cherez `navigate({ search: (prev) => ({ ...prev, ... }) })`.
-  - **Rezultaty**: pereiispolzuyem `useGuides()` iz `@/lib/content-queries` i `GuideCard`. Filtruem po city/category/lang/instant na kliente (kak `/guides`). Daty i guests poka **ne** filtruyut bazu (net polya availability), prosto perekladyvayutsya v AI-prompt pri klike "Ask AI" — ostavlyaem kommentariy TODO.
+2. **`src/routes/ai.$threadId.tsx`** — переключатель сверху чата
+   - Над списком сообщений (внутри scroll-контейнера или sticky под header'ом) добавить переключатель из двух чипов: **«AI ответ»** (активный) и **«Ручной поиск»**.
+   - Клик по «Ручной поиск» собирает текст первого user-сообщения треда и ведёт на `/search?q=<text>`. Если сообщений ещё нет — просто `/search`.
+   - Подпись маленькая: «Не нравится ответ? Попробуйте ручной поиск с фильтрами.»
 
-### 3. `src/lib/i18n.tsx` (klyuchi)
-Dobavit i perevesti (en/ru/uz):
-- `search.title` ("Find your guide" / "Найдите своего гида" / "Hamrohingizni toping")
-- `search.yourRequest` ("Your request")
-- `search.askAi` ("Ask AI about this trip")
-- `search.noResults`, `search.filters.dates`, `search.filters.guests`, `search.filters.language`, `search.filters.instant`
-- Obnovit `hero.search.describe` placeholder: "Where are you going? Describe your trip…" (+ ru/uz).
+3. **`src/routes/search.tsx`** — симметричный переключатель
+   - Сверху страницы (рядом с заголовком) такой же двухкнопочный переключатель: **«AI ответ»** / **«Ручной поиск»** (активен ручной).
+   - Клик по «AI ответ» = текущая логика `askAi()` (создать тред с тем же `q` + фильтрами).
+   - Существующую плашку «your request + Ask AI» убираем, т.к. её заменяет верхний переключатель.
 
-### 4. `src/components/SiteHeader.tsx` (esli nuzhno)
-Proverit — yest li link na /search v menu. **Ne dobavlyaem** novyy punkt, polzovatel popadayet tuda iz hero ili cherez glubokuyu ssylku.
+4. **`src/lib/i18n.tsx`** — добавить ключи для EN/RU/UZ:
+   - `search.mode.ai` — «AI ответ» / «AI answer» / «AI javobi»
+   - `search.mode.manual` — «Ручной поиск» / «Manual search» / «Qoʻlda qidiruv»
+   - `search.mode.hint` — короткая подсказка под переключателем
 
-## Vne ramok
-- Ne menyayem `/guides` (ostayetsya kak yest), `/explore`, AI-flow `/ai/$threadId`.
-- Ne dobavlyaem realnuyu fil'traciyu po datam — net polya v `guides`/`tours` dlya availability. Daty rabotayut tolko kak kontekst dlya AI.
-- Ne dobavlyaem map-view, sortirovku po rating itd. — eto sleduyushchiy iteracionnyy shag.
+## Поток (UX)
+```
+[Hero] ввод запроса + Enter
+   │
+   ▼
+/ai/<newThreadId>  ── автоматически отправляется prompt, стримится ответ
+   │  сверху: [● AI ответ] [ Ручной поиск ]
+   │
+   └── клик «Ручной поиск» ──► /search?q=<тот же текст>
+                                     сверху: [ AI ответ ] [● Ручной поиск]
+                                     клик «AI ответ» ──► новый тред с q+фильтрами
+```
+
+## Технические детали
+- Никаких изменений в backend / server-fn / БД — `createThread`, `/api/chat` и initialPrompt механика уже существуют.
+- Не залогинённый поток: `pendingAiPrompt` уже обрабатывается на `/login` flow (по аналогии с текущим `askAi`).
+- Переключатель — стилистически чипы как у фильтров категорий (`rounded-full ring-1`), чтобы не вводить новый паттерн.
