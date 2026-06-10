@@ -6,7 +6,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getThreadMessages } from "@/lib/ai-threads.functions";
-import { useGuides, useCities } from "@/lib/content-queries";
+import { useGuides, useCities, useTours, usePlaces } from "@/lib/content-queries";
+import { TourCard } from "@/components/TourCard";
+import { PlaceCard } from "@/components/PlaceCard";
+
 import { parseSearchQuery } from "@/lib/parse-query";
 import { useI18n } from "@/lib/i18n";
 import type { Guide } from "@/data/guides";
