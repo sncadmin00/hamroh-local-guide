@@ -96,9 +96,7 @@ function AiLayout() {
       <aside className="hidden md:flex w-72 flex-col border-r border-border/60 bg-background">
         <div className="p-4 border-b border-border/60">
           <Link to="/" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <Compass className="h-4 w-4" />
-            </div>
+            <img src={hamrohLogo} alt="Hamroh" width={32} height={32} className="h-8 w-8 rounded-lg" />
             <span className="font-display text-lg font-semibold">Hamroh AI</span>
           </Link>
         </div>
