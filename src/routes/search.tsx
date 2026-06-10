@@ -58,7 +58,7 @@ function SearchPage() {
   const { data: guides = [], isLoading } = useGuides();
   const { data: categories = [] } = useCategories();
   const { data: tours = [] } = useTours();
-  const { data: places = [] } = usePlaces();
+  
   
   const { data: cities = [] } = useCities();
 
