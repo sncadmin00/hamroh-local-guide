@@ -9,7 +9,8 @@ import { getThreadMessages } from "@/lib/ai-threads.functions";
 import { useGuides } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
 import type { Guide } from "@/data/guides";
-import { Sparkles, ArrowUp, Star, BadgeCheck, Zap, MapPin, SlidersHorizontal } from "lucide-react";
+import { Sparkles, ArrowUp, Star, BadgeCheck, Zap, MapPin } from "lucide-react";
+import { ModeSwitcher } from "@/components/SearchModeSwitcher";
 
 export const Route = createFileRoute("/ai/$threadId")({
   component: ThreadPage,
