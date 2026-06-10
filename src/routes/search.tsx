@@ -8,7 +8,7 @@ import { GuideCard } from "@/components/GuideCard";
 import { CityPicker } from "@/components/CityPicker";
 import { CategoryIcon } from "@/components/CategoryIcon";
 import { ModeSwitcher } from "@/components/SearchModeSwitcher";
-import { useGuides, useCategories, useTours, usePlaces, useCities } from "@/lib/content-queries";
+import { useGuides, useCategories, useTours, useCities } from "@/lib/content-queries";
 import { TourCard } from "@/components/TourCard";
 import { PlaceCard } from "@/components/PlaceCard";
 
