@@ -70,7 +70,7 @@ function SearchPage() {
 
   const update = (next: Partial<SearchParams>) => {
     navigate({
-      search: (prev) => {
+      search: (prev: SearchParams) => {
         const merged: Record<string, unknown> = { ...prev, ...next };
         for (const k of Object.keys(merged)) {
           const v = merged[k];
