@@ -313,17 +313,6 @@ function SearchPage() {
           );
         })()}
 
-        {/* Places — shown as additional recommendations alongside guides/tours, no dedicated section header */}
-        {(() => {
-          const filteredPlaces = places.filter((p) => city === "All" || p.cityName === city);
-          if (filteredPlaces.length === 0) return null;
-          return (
-            <div className="mt-8 grid gap-3 grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-              {filteredPlaces.map((p) => <PlaceCard key={p.id} place={p} />)}
-            </div>
-          );
-        })()}
-
       </section>
 
       <SiteFooter />
