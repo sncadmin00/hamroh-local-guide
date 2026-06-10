@@ -8,7 +8,10 @@ import { GuideCard } from "@/components/GuideCard";
 import { CityPicker } from "@/components/CityPicker";
 import { CategoryIcon } from "@/components/CategoryIcon";
 import { ModeSwitcher } from "@/components/SearchModeSwitcher";
-import { useGuides, useCategories } from "@/lib/content-queries";
+import { useGuides, useCategories, useTours, usePlaces, useCities } from "@/lib/content-queries";
+import { TourCard } from "@/components/TourCard";
+import { PlaceCard } from "@/components/PlaceCard";
+
 import { useI18n } from "@/lib/i18n";
 import { createThread } from "@/lib/ai-threads.functions";
 import { supabase } from "@/integrations/supabase/client";
@@ -54,8 +57,12 @@ function SearchPage() {
 
   const { data: guides = [], isLoading } = useGuides();
   const { data: categories = [] } = useCategories();
+  const { data: tours = [] } = useTours();
+  const { data: places = [] } = usePlaces();
+  const { data: cities = [] } = useCities();
 
   const [askingAi, setAskingAi] = useState(false);
+
 
   const city = params.city ?? "All";
   const category = params.category ?? "All";
@@ -273,16 +280,52 @@ function SearchPage() {
           </div>
         )}
 
-        {/* Results */}
+        {/* Guides */}
+        <h2 className="mt-10 mb-4 font-display text-xl font-semibold">{t("nav.guides")}</h2>
         {isLoading ? (
-          <div className="mt-16 text-center text-muted-foreground">Loading…</div>
+          <div className="text-center text-muted-foreground py-8">Loading…</div>
         ) : filtered.length === 0 ? (
-          <div className="mt-16 text-center text-muted-foreground">{t("search.noResults")}</div>
+          <div className="text-center text-muted-foreground py-8">{t("search.noResults")}</div>
         ) : (
-          <div className="mt-10 grid gap-8 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
             {filtered.map((g) => <GuideCard key={g.id} guide={g} />)}
           </div>
         )}
+
+        {/* Tours */}
+        {(() => {
+          const citySlug = city === "All" ? null : cities.find((c) => c.name === city)?.slug ?? null;
+          const filteredTours = tours.filter((tr) => {
+            if (citySlug && tr.cities?.slug !== citySlug) return false;
+            if (category !== "All" && !tr.tour_categories?.some((tc) => tc.categories?.slug === category)) return false;
+            if (lang !== "All" && !(tr.languages ?? []).includes(lang)) return false;
+            return true;
+          });
+          if (filteredTours.length === 0) return null;
+          return (
+            <>
+              <h2 className="mt-12 mb-4 font-display text-xl font-semibold">{t("nav.tours")}</h2>
+              <div className="grid gap-3 grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+                {filteredTours.map((tr) => <TourCard key={tr.id} tour={tr} />)}
+              </div>
+            </>
+          );
+        })()}
+
+        {/* Places */}
+        {(() => {
+          const filteredPlaces = places.filter((p) => city === "All" || p.cityName === city);
+          if (filteredPlaces.length === 0) return null;
+          return (
+            <>
+              <h2 className="mt-12 mb-4 font-display text-xl font-semibold">{t("search.places") || "Places"}</h2>
+              <div className="grid gap-3 grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+                {filteredPlaces.map((p) => <PlaceCard key={p.id} place={p} />)}
+              </div>
+            </>
+          );
+        })()}
+
       </section>
 
       <SiteFooter />

@@ -568,3 +568,43 @@ export function useGuideTours(guideId: string | undefined) {
 }
 
 export const SPOTLIGHT_KINDS: SpotlightKind[] = ["new_guide", "new_route", "news", "new_tour"];
+
+export type Place = {
+  id: string;
+  slug: string;
+  name: string;
+  category: string;
+  shortDescription: string;
+  cityId: string;
+  cityName: string;
+  citySlug: string;
+  photoUrl: string | null;
+  tags: string[];
+};
+
+export function usePlaces() {
+  return useQuery({
+    queryKey: ["places", "public"],
+    queryFn: async (): Promise<Place[]> => {
+      const { data, error } = await supabase
+        .from("places")
+        .select("id, slug, name, category, short_description, city_id, photo_url, tags, cities(name, slug)")
+        .eq("published", true)
+        .order("sort_order", { ascending: true });
+      if (error) throw error;
+      return (data ?? []).map((p: any) => ({
+        id: p.id,
+        slug: p.slug,
+        name: p.name,
+        category: p.category,
+        shortDescription: p.short_description ?? "",
+        cityId: p.city_id,
+        cityName: p.cities?.name ?? "",
+        citySlug: p.cities?.slug ?? "",
+        photoUrl: p.photo_url ?? null,
+        tags: p.tags ?? [],
+      }));
+    },
+  });
+}
+
