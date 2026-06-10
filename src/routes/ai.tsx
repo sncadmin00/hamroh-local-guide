@@ -4,8 +4,7 @@ import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { listThreads, createThread, deleteThread } from "@/lib/ai-threads.functions";
-import { Plus, Trash2, MessageSquare, LogOut, ArrowLeft, Calendar } from "lucide-react";
-import hamrohLogo from "@/assets/hamroh-logo.png";
+import { Compass, Plus, Trash2, MessageSquare, LogOut, ArrowLeft, Calendar } from "lucide-react";
 
 export const Route = createFileRoute("/ai")({
   head: () => ({ meta: [{ title: "Hamroh AI — Find your guide" }] }),
@@ -96,7 +95,9 @@ function AiLayout() {
       <aside className="hidden md:flex w-72 flex-col border-r border-border/60 bg-background">
         <div className="p-4 border-b border-border/60">
           <Link to="/" className="flex items-center gap-2">
-            <img src={hamrohLogo} alt="Hamroh" width={32} height={32} className="h-8 w-8 rounded-lg" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+              <Compass className="h-4 w-4" />
+            </div>
             <span className="font-display text-lg font-semibold">Hamroh AI</span>
           </Link>
         </div>
@@ -158,7 +159,9 @@ function AiLayout() {
             <ArrowLeft className="h-4 w-4" /> Home
           </Link>
           <Link to="/" className="flex items-center gap-1.5">
-            <img src={hamrohLogo} alt="Hamroh" width={24} height={24} className="h-6 w-6 rounded-md" />
+            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
+              <Compass className="h-3.5 w-3.5" />
+            </div>
             <span className="font-display text-sm font-semibold">Hamroh AI</span>
           </Link>
           <button
