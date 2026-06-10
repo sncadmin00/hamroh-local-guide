@@ -15,15 +15,10 @@ async function buildSystemPrompt(
   articleContext: Array<{ title: string; slug: string; content: string }> = [],
 ) {
 
-  const [guidesRes, placesRes, toursRes] = await Promise.all([
+  const [guidesRes, toursRes] = await Promise.all([
     client
       .from("guides")
       .select("slug, name, tagline, languages, specialties, price_per_day, rating, reviews, instant_book, cities(name)")
-      .order("sort_order", { ascending: true }),
-    client
-      .from("places")
-      .select("slug, name, category, short_description, tags, cities(name), place_guides(guides(slug, name))")
-      .eq("published", true)
       .order("sort_order", { ascending: true }),
     client
       .from("tours")
@@ -40,21 +35,6 @@ async function buildSystemPrompt(
     .map((g) => {
       const cityName = Array.isArray(g.cities) ? g.cities[0]?.name ?? "" : g.cities?.name ?? "";
       return `- id: ${g.slug} | ${g.name} | City: ${cityName} | Languages: ${g.languages.join(", ")} | Specialties: ${g.specialties.join(", ")} | $${g.price_per_day}/day | Rating ${g.rating} (${g.reviews}) | ${g.instant_book ? "Instant book" : "Request to book"} | ${g.tagline}`;
-    })
-    .join("\n");
-
-  const placesCatalog = ((placesRes.data ?? []) as unknown as Array<{
-      slug: string; name: string; category: string; short_description: string; tags: string[];
-      cities: { name: string } | { name: string }[] | null;
-      place_guides: Array<{ guides: { slug: string; name: string } | { slug: string; name: string }[] | null }> | null;
-    }>)
-    .map((p) => {
-      const cityName = Array.isArray(p.cities) ? p.cities[0]?.name ?? "" : p.cities?.name ?? "";
-      const linkedGuides = (p.place_guides ?? [])
-        .flatMap((pg) => (Array.isArray(pg.guides) ? pg.guides : pg.guides ? [pg.guides] : []))
-        .map((g) => `${g.name} (${g.slug})`)
-        .join(", ");
-      return `- slug: ${p.slug} | ${p.name} [${p.category}] | City: ${cityName}${p.tags.length ? ` | Tags: ${p.tags.join(", ")}` : ""} | ${p.short_description}${linkedGuides ? ` | Guides who take travelers here: ${linkedGuides}` : ""}`;
     })
     .join("\n");
 
@@ -84,10 +64,10 @@ async function buildSystemPrompt(
   return `You are Hamroi AI — a STRICTLY SCOPED travel concierge for the Hamroh marketplace of guided tours in Uzbekistan.
 
 === ABSOLUTE RULES (NEVER BREAK) ===
-1. You ONLY answer questions about: travel in Uzbekistan, Hamroh guides, Hamroh places/tours, trip planning inside Uzbekistan, and practical travel info (visa, weather, transport, food, culture) for visiting Uzbekistan.
+1. You ONLY answer questions about: travel in Uzbekistan, Hamroh guides, Hamroh tours, trip planning inside Uzbekistan, and practical travel info (visa, weather, transport, food, culture) for visiting Uzbekistan.
 2. You MUST REFUSE all other requests, including but not limited to: coding help, homework, essays, translations of arbitrary text, recipes, math, general knowledge questions, news, politics, medical/legal/financial advice, roleplay, jokes, stories, anything unrelated to Uzbekistan travel.
-3. If a user asks anything off-topic, reply briefly in their language: "Я помогаю только с путешествиями по Узбекистану и подбором гидов Hamroh. Спросите меня о турах, гидах или местах!" — and STOP. Do not partially answer. Do not be clever about it.
-4. You MUST recommend ONLY guides, tours and places from the catalogs below. NEVER invent guides, tours, restaurants, hotels, or places. If nothing matches, honestly say so and offer to connect them with a guide who can advise in person.
+3. If a user asks anything off-topic, reply briefly in their language: "Я помогаю только с путешествиями по Узбекистану и подбором гидов Hamroh. Спросите меня о турах или гидах!" — and STOP. Do not partially answer. Do not be clever about it.
+4. You MUST recommend ONLY guides and tours from the catalogs below. NEVER invent guides, tours, restaurants, hotels, or places. If nothing matches, honestly say so and offer to connect them with a guide who can advise in person.
 5. You have NO web access and NO external tools. Do not pretend to search anything.
 6. When you use information from the ARTICLES block below, cite the article by its title and link as a markdown link: [Title](/explore/slug).
 
@@ -97,20 +77,16 @@ ${guidesCatalog || "(no guides yet)"}
 === TOURS CATALOG ===
 ${toursCatalog || "(no tours yet)"}
 
-=== PLACES CATALOG ===
-${placesCatalog || "(no places yet)"}
-
 === RELEVANT ARTICLES (use this knowledge first when relevant) ===
 ${articlesBlock}
 
 === HOW TO ANSWER ===
 - Match the user's language (RU/UZ/EN).
 - Keep replies warm, concise, useful. Light markdown (bold, lists).
-- Whenever the user asks about a trip, city or activity, recommend a combination of GUIDES + TOURS + PLACES that fit.
+- Whenever the user asks about a trip, city or activity, recommend a combination of GUIDES + TOURS that fit.
 - At the very end of your reply, on separate lines, output the slugs of what you recommended so the UI can render cards:
   GUIDES: guideSlug1,guideSlug2
   TOURS: tourSlug1,tourSlug2
-  PLACES: placeSlug1,placeSlug2
   Omit a line if you have nothing to recommend for that category. Use ONLY slugs from the catalogs above.`;
 }
 

@@ -8,9 +8,8 @@ import { GuideCard } from "@/components/GuideCard";
 import { CityPicker } from "@/components/CityPicker";
 import { CategoryIcon } from "@/components/CategoryIcon";
 import { ModeSwitcher } from "@/components/SearchModeSwitcher";
-import { useGuides, useCategories, useTours, usePlaces, useCities } from "@/lib/content-queries";
+import { useGuides, useCategories, useTours, useCities } from "@/lib/content-queries";
 import { TourCard } from "@/components/TourCard";
-import { PlaceCard } from "@/components/PlaceCard";
 
 import { useI18n } from "@/lib/i18n";
 import { createThread } from "@/lib/ai-threads.functions";
@@ -58,7 +57,7 @@ function SearchPage() {
   const { data: guides = [], isLoading } = useGuides();
   const { data: categories = [] } = useCategories();
   const { data: tours = [] } = useTours();
-  const { data: places = [] } = usePlaces();
+  
   const { data: cities = [] } = useCities();
 
   const [askingAi, setAskingAi] = useState(false);
@@ -307,20 +306,6 @@ function SearchPage() {
               <h2 className="mt-12 mb-4 font-display text-xl font-semibold">{t("nav.tours")}</h2>
               <div className="grid gap-3 grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
                 {filteredTours.map((tr) => <TourCard key={tr.id} tour={tr} />)}
-              </div>
-            </>
-          );
-        })()}
-
-        {/* Places */}
-        {(() => {
-          const filteredPlaces = places.filter((p) => city === "All" || p.cityName === city);
-          if (filteredPlaces.length === 0) return null;
-          return (
-            <>
-              <h2 className="mt-12 mb-4 font-display text-xl font-semibold">{t("search.places") || "Places"}</h2>
-              <div className="grid gap-3 grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-                {filteredPlaces.map((p) => <PlaceCard key={p.id} place={p} />)}
               </div>
             </>
           );

@@ -6,9 +6,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getThreadMessages } from "@/lib/ai-threads.functions";
-import { useGuides, useCities, useTours, usePlaces } from "@/lib/content-queries";
+import { useGuides, useCities, useTours } from "@/lib/content-queries";
 import { TourCard } from "@/components/TourCard";
-import { PlaceCard } from "@/components/PlaceCard";
 
 import { parseSearchQuery } from "@/lib/parse-query";
 import { useI18n } from "@/lib/i18n";
@@ -229,16 +228,15 @@ const GUIDES_LINE = /^GUIDES:\s*([a-z0-9-,\s]+)$/im;
 const TOURS_LINE = /^TOURS:\s*([a-z0-9-,\s]+)$/im;
 const PLACES_LINE = /^PLACES:\s*([a-z0-9-,\s]+)$/im;
 
-function extractRecs(text: string): { clean: string; guideIds: string[]; tourSlugs: string[]; placeSlugs: string[] } {
+function extractRecs(text: string): { clean: string; guideIds: string[]; tourSlugs: string[] } {
   const pick = (re: RegExp) => {
     const m = text.match(re);
     return m ? m[1].split(",").map((s) => s.trim()).filter(Boolean) : [];
   };
   const guideIds = pick(GUIDES_LINE);
   const tourSlugs = pick(TOURS_LINE);
-  const placeSlugs = pick(PLACES_LINE);
   const clean = text.replace(GUIDES_LINE, "").replace(TOURS_LINE, "").replace(PLACES_LINE, "").trim();
-  return { clean, guideIds, tourSlugs, placeSlugs };
+  return { clean, guideIds, tourSlugs };
 }
 
 
@@ -267,7 +265,6 @@ function renderMarkdown(text: string) {
 function MessageBubble({ message }: { message: UIMessage }) {
   const { data: guides = [] } = useGuides();
   const { data: tours = [] } = useTours();
-  const { data: places = [] } = usePlaces();
   const text = message.parts
     .map((p) => (p.type === "text" ? (p as { type: "text"; text: string }).text : ""))
     .join("");
@@ -282,10 +279,9 @@ function MessageBubble({ message }: { message: UIMessage }) {
     );
   }
 
-  const { clean, guideIds, tourSlugs, placeSlugs } = extractRecs(text);
+  const { clean, guideIds, tourSlugs } = extractRecs(text);
   const recGuides: Guide[] = guideIds.map((id) => guides.find((g) => g.id === id)).filter((g): g is Guide => !!g);
   const recTours = tourSlugs.map((s) => tours.find((t) => t.slug === s)).filter((t): t is NonNullable<typeof t> => !!t);
-  const recPlaces = placeSlugs.map((s) => places.find((p) => p.slug === s)).filter((p): p is NonNullable<typeof p> => !!p);
 
   return (
     <div className="space-y-3">
@@ -321,11 +317,6 @@ function MessageBubble({ message }: { message: UIMessage }) {
       {recTours.length > 0 && (
         <div className="grid gap-3 grid-cols-2 pt-2">
           {recTours.map((t) => <TourCard key={t.id} tour={t} />)}
-        </div>
-      )}
-      {recPlaces.length > 0 && (
-        <div className="grid gap-3 grid-cols-2 pt-2">
-          {recPlaces.map((p) => <PlaceCard key={p.id} place={p} />)}
         </div>
       )}
     </div>
