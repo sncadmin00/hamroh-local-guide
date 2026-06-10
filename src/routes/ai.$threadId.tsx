@@ -111,12 +111,22 @@ function ChatWindow({ threadId, initial, token }: { threadId: string; initial: {
   const { t } = useI18n();
   const navigate = useNavigate();
 
+  const { data: cities = [] } = useCities();
+
   const goManual = () => {
-    const firstUser = messages.find((m) => m.role === "user");
-    const text = firstUser
-      ? firstUser.parts.map((p) => (p.type === "text" ? (p as { type: "text"; text: string }).text : "")).join("").trim()
-      : "";
-    navigate({ to: "/search", search: text ? { q: text } : {} });
+    const userTexts = messages
+      .filter((m) => m.role === "user")
+      .map((m) =>
+        m.parts.map((p) => (p.type === "text" ? (p as { type: "text"; text: string }).text : "")).join(""),
+      );
+    const combined = userTexts.join(" ").trim();
+    const parsed = parseSearchQuery(combined, cities.map((c) => c.name));
+    const search: Record<string, string> = {};
+    if (combined) search.q = combined;
+    if (parsed.city) search.city = parsed.city;
+    if (parsed.from) search.from = parsed.from;
+    if (parsed.to) search.to = parsed.to;
+    navigate({ to: "/search", search });
   };
 
   return (
