@@ -92,9 +92,9 @@ export const translations: Dict = {
   "hero.search.guest_other": { en: "guests", uz: "mehmon", ru: "гостей" },
   "hero.search.button": { en: "Search", uz: "Qidirish", ru: "Найти" },
   "hero.search.describe": {
-    en: "Where are you going? Describe your trip…",
-    uz: "Qayerga bormoqchisiz? Sayohatingizni tasvirlang…",
-    ru: "Куда вы едете? Опишите поездку…",
+    en: "Describe your trip…",
+    uz: "Sayohatingizni tasvirlang…",
+    ru: "Опишите поездку…",
   },
   "hero.search.from": { en: "From", uz: "Dan", ru: "С" },
   "hero.search.to": { en: "To", uz: "Gacha", ru: "По" },
