@@ -1,4 +1,4 @@
-import { createFileRoute, useParams, Link } from "@tanstack/react-router";
+import { createFileRoute, useParams, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
@@ -7,8 +7,9 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getThreadMessages } from "@/lib/ai-threads.functions";
 import { useGuides } from "@/lib/content-queries";
+import { useI18n } from "@/lib/i18n";
 import type { Guide } from "@/data/guides";
-import { Sparkles, ArrowUp, Star, BadgeCheck, Zap, MapPin } from "lucide-react";
+import { Sparkles, ArrowUp, Star, BadgeCheck, Zap, MapPin, SlidersHorizontal } from "lucide-react";
 
 export const Route = createFileRoute("/ai/$threadId")({
   component: ThreadPage,
