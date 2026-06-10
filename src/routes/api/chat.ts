@@ -15,10 +15,15 @@ async function buildSystemPrompt(
   articleContext: Array<{ title: string; slug: string; content: string }> = [],
 ) {
 
-  const [guidesRes, toursRes] = await Promise.all([
+  const [guidesRes, placesRes, toursRes] = await Promise.all([
     client
       .from("guides")
       .select("slug, name, tagline, languages, specialties, price_per_day, rating, reviews, instant_book, cities(name)")
+      .order("sort_order", { ascending: true }),
+    client
+      .from("places")
+      .select("slug, name, category, short_description, tags, cities(name), place_guides(guides(slug, name))")
+      .eq("published", true)
       .order("sort_order", { ascending: true }),
     client
       .from("tours")
@@ -35,6 +40,21 @@ async function buildSystemPrompt(
     .map((g) => {
       const cityName = Array.isArray(g.cities) ? g.cities[0]?.name ?? "" : g.cities?.name ?? "";
       return `- id: ${g.slug} | ${g.name} | City: ${cityName} | Languages: ${g.languages.join(", ")} | Specialties: ${g.specialties.join(", ")} | $${g.price_per_day}/day | Rating ${g.rating} (${g.reviews}) | ${g.instant_book ? "Instant book" : "Request to book"} | ${g.tagline}`;
+    })
+    .join("\n");
+
+  const placesCatalog = ((placesRes.data ?? []) as unknown as Array<{
+      slug: string; name: string; category: string; short_description: string; tags: string[];
+      cities: { name: string } | { name: string }[] | null;
+      place_guides: Array<{ guides: { slug: string; name: string } | { slug: string; name: string }[] | null }> | null;
+    }>)
+    .map((p) => {
+      const cityName = Array.isArray(p.cities) ? p.cities[0]?.name ?? "" : p.cities?.name ?? "";
+      const linkedGuides = (p.place_guides ?? [])
+        .flatMap((pg) => (Array.isArray(pg.guides) ? pg.guides : pg.guides ? [pg.guides] : []))
+        .map((g) => `${g.name} (${g.slug})`)
+        .join(", ");
+      return `- slug: ${p.slug} | ${p.name} [${p.category}] | City: ${cityName}${p.tags.length ? ` | Tags: ${p.tags.join(", ")}` : ""} | ${p.short_description}${linkedGuides ? ` | Guides who take travelers here: ${linkedGuides}` : ""}`;
     })
     .join("\n");
 
@@ -77,16 +97,20 @@ ${guidesCatalog || "(no guides yet)"}
 === TOURS CATALOG ===
 ${toursCatalog || "(no tours yet)"}
 
+=== PLACES CATALOG (recommend alongside guides/tours; do not present as a separate section) ===
+${placesCatalog || "(no places yet)"}
+
 === RELEVANT ARTICLES (use this knowledge first when relevant) ===
 ${articlesBlock}
 
 === HOW TO ANSWER ===
 - Match the user's language (RU/UZ/EN).
 - Keep replies warm, concise, useful. Light markdown (bold, lists).
-- Whenever the user asks about a trip, city or activity, recommend a combination of GUIDES + TOURS that fit.
+- Whenever the user asks about a trip, city or activity, recommend a combination of GUIDES + TOURS, and add PLACES to visit/eat when relevant.
 - At the very end of your reply, on separate lines, output the slugs of what you recommended so the UI can render cards:
   GUIDES: guideSlug1,guideSlug2
   TOURS: tourSlug1,tourSlug2
+  PLACES: placeSlug1,placeSlug2
   Omit a line if you have nothing to recommend for that category. Use ONLY slugs from the catalogs above.`;
 }
 
