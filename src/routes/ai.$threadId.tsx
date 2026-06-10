@@ -242,23 +242,49 @@ function extractRecs(text: string): { clean: string; guideIds: string[]; tourSlu
 }
 
 
+function renderInline(text: string, keyPrefix: string) {
+  // Tokenize markdown links [label](url) and **bold** in one pass.
+  const tokens: Array<{ type: "text" | "bold" | "link"; text: string; href?: string }> = [];
+  const re = /\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)|\*\*([^*]+)\*\*/g;
+  let last = 0;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(text)) !== null) {
+    if (m.index > last) tokens.push({ type: "text", text: text.slice(last, m.index) });
+    if (m[1] && m[2]) tokens.push({ type: "link", text: m[1], href: m[2] });
+    else if (m[3]) tokens.push({ type: "bold", text: m[3] });
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) tokens.push({ type: "text", text: text.slice(last) });
+  return tokens.map((tok, j) => {
+    if (tok.type === "bold") return <strong key={`${keyPrefix}-${j}`}>{tok.text}</strong>;
+    if (tok.type === "link") {
+      const external = tok.href!.startsWith("http");
+      return (
+        <a
+          key={`${keyPrefix}-${j}`}
+          href={tok.href}
+          target={external ? "_blank" : undefined}
+          rel={external ? "noopener noreferrer" : undefined}
+          className="text-primary underline underline-offset-2 hover:text-primary/80"
+        >
+          {tok.text}
+        </a>
+      );
+    }
+    return <span key={`${keyPrefix}-${j}`}>{tok.text}</span>;
+  });
+}
+
 function renderMarkdown(text: string) {
-  // light formatting: bold, line breaks, bullets
   const lines = text.split("\n");
   return lines.map((line, i) => {
-    const bolded = line.split(/(\*\*[^*]+\*\*)/g).map((seg, j) =>
-      seg.startsWith("**") && seg.endsWith("**") ? <strong key={j}>{seg.slice(2, -2)}</strong> : <span key={j}>{seg}</span>,
-    );
+    const inline = renderInline(line.replace(/^\s*[-*]\s+/, ""), `i${i}`);
     if (/^\s*[-*]\s+/.test(line)) {
-      return (
-        <li key={i} className="ml-5 list-disc">
-          {bolded}
-        </li>
-      );
+      return <li key={i} className="ml-5 list-disc">{inline}</li>;
     }
     return (
       <p key={i} className={line.trim() === "" ? "h-2" : "leading-relaxed"}>
-        {bolded}
+        {renderInline(line, `i${i}`)}
       </p>
     );
   });
