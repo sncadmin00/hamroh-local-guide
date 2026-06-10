@@ -158,9 +158,7 @@ function AiLayout() {
             <ArrowLeft className="h-4 w-4" /> Home
           </Link>
           <Link to="/" className="flex items-center gap-1.5">
-            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
-              <Compass className="h-3.5 w-3.5" />
-            </div>
+            <img src={hamrohLogo} alt="Hamroh" width={24} height={24} className="h-6 w-6 rounded-md" />
             <span className="font-display text-sm font-semibold">Hamroh AI</span>
           </Link>
           <button
