@@ -311,20 +311,6 @@ function SearchPage() {
           );
         })()}
 
-        {/* Places */}
-        {(() => {
-          const filteredPlaces = places.filter((p) => city === "All" || p.cityName === city);
-          if (filteredPlaces.length === 0) return null;
-          return (
-            <>
-              <h2 className="mt-12 mb-4 font-display text-xl font-semibold">{t("search.places") || "Places"}</h2>
-              <div className="grid gap-3 grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-                {filteredPlaces.map((p) => <PlaceCard key={p.id} place={p} />)}
-              </div>
-            </>
-          );
-        })()}
-
       </section>
 
       <SiteFooter />
