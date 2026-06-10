@@ -8,7 +8,7 @@ import { GuideCard } from "@/components/GuideCard";
 import { CityPicker } from "@/components/CityPicker";
 import { CategoryIcon } from "@/components/CategoryIcon";
 import { ModeSwitcher } from "@/components/SearchModeSwitcher";
-import { useGuides, useCategories, useTours, usePlaces, useCities } from "@/lib/content-queries";
+import { useGuides, useCategories, useTours, useCities } from "@/lib/content-queries";
 import { TourCard } from "@/components/TourCard";
 import { PlaceCard } from "@/components/PlaceCard";
 
@@ -58,7 +58,7 @@ function SearchPage() {
   const { data: guides = [], isLoading } = useGuides();
   const { data: categories = [] } = useCategories();
   const { data: tours = [] } = useTours();
-  const { data: places = [] } = usePlaces();
+  
   
   const { data: cities = [] } = useCities();
 
@@ -310,17 +310,6 @@ function SearchPage() {
                 {filteredTours.map((tr) => <TourCard key={tr.id} tour={tr} />)}
               </div>
             </>
-          );
-        })()}
-
-        {/* Places — shown as additional recommendations alongside guides/tours, no dedicated section header */}
-        {(() => {
-          const filteredPlaces = places.filter((p) => city === "All" || p.cityName === city);
-          if (filteredPlaces.length === 0) return null;
-          return (
-            <div className="mt-8 grid gap-3 grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-              {filteredPlaces.map((p) => <PlaceCard key={p.id} place={p} />)}
-            </div>
           );
         })()}
 
