@@ -1,20 +1,41 @@
 import { useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { Sparkles, Search } from "lucide-react";
+import { Sparkles, Search, Loader2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { createThread } from "@/lib/ai-threads.functions";
+import { supabase } from "@/integrations/supabase/client";
 import heroImg from "@/assets/hero-samarkand.jpg";
 import heroMobileAsset from "@/assets/hero-samarkand-mobile.png.asset.json";
 
 export function HeroSearch() {
   const { t } = useI18n();
   const navigate = useNavigate();
+  const create = useServerFn(createThread);
 
   const [describe, setDescribe] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const q = describe.trim();
-    navigate({ to: "/search", search: q ? { q } : {} });
+    if (!q || submitting) return;
+    setSubmitting(true);
+    try {
+      const { data } = await supabase.auth.getSession();
+      if (!data.session) {
+        sessionStorage.setItem("pendingAiPrompt", q);
+        navigate({ to: "/login" });
+        return;
+      }
+      const thread = await create();
+      if (thread?.id) {
+        sessionStorage.setItem(`initialPrompt:${thread.id}`, q);
+        navigate({ to: "/ai/$threadId", params: { threadId: thread.id } });
+      }
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -63,14 +84,16 @@ export function HeroSearch() {
                 placeholder={t("hero.search.describe")}
                 className="flex-1 bg-transparent text-base text-foreground placeholder:text-muted-foreground outline-none min-w-0"
                 autoComplete="off"
+                disabled={submitting}
               />
             </label>
 
             <button
               type="submit"
-              className="inline-flex items-center justify-center gap-2 rounded-xl md:rounded-full bg-primary text-primary-foreground px-6 py-3 text-sm font-semibold hover:opacity-90 active:scale-[0.98] transition-all"
+              disabled={submitting || !describe.trim()}
+              className="inline-flex items-center justify-center gap-2 rounded-xl md:rounded-full bg-primary text-primary-foreground px-6 py-3 text-sm font-semibold hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-60"
             >
-              <Search className="h-4 w-4" />
+              {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
               {t("hero.search.button")}
             </button>
           </form>
