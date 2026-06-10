@@ -265,7 +265,6 @@ function renderMarkdown(text: string) {
 function MessageBubble({ message }: { message: UIMessage }) {
   const { data: guides = [] } = useGuides();
   const { data: tours = [] } = useTours();
-  const { data: places = [] } = usePlaces();
   const text = message.parts
     .map((p) => (p.type === "text" ? (p as { type: "text"; text: string }).text : ""))
     .join("");
@@ -280,10 +279,9 @@ function MessageBubble({ message }: { message: UIMessage }) {
     );
   }
 
-  const { clean, guideIds, tourSlugs, placeSlugs } = extractRecs(text);
+  const { clean, guideIds, tourSlugs } = extractRecs(text);
   const recGuides: Guide[] = guideIds.map((id) => guides.find((g) => g.id === id)).filter((g): g is Guide => !!g);
   const recTours = tourSlugs.map((s) => tours.find((t) => t.slug === s)).filter((t): t is NonNullable<typeof t> => !!t);
-  const recPlaces = placeSlugs.map((s) => places.find((p) => p.slug === s)).filter((p): p is NonNullable<typeof p> => !!p);
 
   return (
     <div className="space-y-3">
@@ -319,11 +317,6 @@ function MessageBubble({ message }: { message: UIMessage }) {
       {recTours.length > 0 && (
         <div className="grid gap-3 grid-cols-2 pt-2">
           {recTours.map((t) => <TourCard key={t.id} tour={t} />)}
-        </div>
-      )}
-      {recPlaces.length > 0 && (
-        <div className="grid gap-3 grid-cols-2 pt-2">
-          {recPlaces.map((p) => <PlaceCard key={p.id} place={p} />)}
         </div>
       )}
     </div>
