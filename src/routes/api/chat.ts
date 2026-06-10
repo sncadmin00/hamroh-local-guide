@@ -15,14 +15,19 @@ async function buildSystemPrompt(
   articleContext: Array<{ title: string; slug: string; content: string }> = [],
 ) {
 
-  const [guidesRes, placesRes] = await Promise.all([
+  const [guidesRes, placesRes, toursRes] = await Promise.all([
     client
       .from("guides")
       .select("slug, name, tagline, languages, specialties, price_per_day, rating, reviews, instant_book, cities(name)")
       .order("sort_order", { ascending: true }),
     client
       .from("places")
-      .select("name, category, short_description, tags, cities(name), place_guides(guides(slug, name))")
+      .select("slug, name, category, short_description, tags, cities(name), place_guides(guides(slug, name))")
+      .eq("published", true)
+      .order("sort_order", { ascending: true }),
+    client
+      .from("tours")
+      .select("slug, title, short_description, duration_hours, price_from, languages, cities(name), guides(slug, name), tour_categories(categories(slug, name))")
       .eq("published", true)
       .order("sort_order", { ascending: true }),
   ]);
@@ -39,7 +44,7 @@ async function buildSystemPrompt(
     .join("\n");
 
   const placesCatalog = ((placesRes.data ?? []) as unknown as Array<{
-      name: string; category: string; short_description: string; tags: string[];
+      slug: string; name: string; category: string; short_description: string; tags: string[];
       cities: { name: string } | { name: string }[] | null;
       place_guides: Array<{ guides: { slug: string; name: string } | { slug: string; name: string }[] | null }> | null;
     }>)
@@ -49,7 +54,21 @@ async function buildSystemPrompt(
         .flatMap((pg) => (Array.isArray(pg.guides) ? pg.guides : pg.guides ? [pg.guides] : []))
         .map((g) => `${g.name} (${g.slug})`)
         .join(", ");
-      return `- ${p.name} [${p.category}] | City: ${cityName}${p.tags.length ? ` | Tags: ${p.tags.join(", ")}` : ""} | ${p.short_description}${linkedGuides ? ` | Guides who take travelers here: ${linkedGuides}` : ""}`;
+      return `- slug: ${p.slug} | ${p.name} [${p.category}] | City: ${cityName}${p.tags.length ? ` | Tags: ${p.tags.join(", ")}` : ""} | ${p.short_description}${linkedGuides ? ` | Guides who take travelers here: ${linkedGuides}` : ""}`;
+    })
+    .join("\n");
+
+  const toursCatalog = ((toursRes.data ?? []) as unknown as Array<{
+      slug: string; title: string; short_description: string; duration_hours: number; price_from: number;
+      languages: string[]; cities: { name: string } | { name: string }[] | null;
+      guides: { slug: string; name: string } | { slug: string; name: string }[] | null;
+      tour_categories: Array<{ categories: { slug: string; name: string } | null }> | null;
+    }>)
+    .map((t) => {
+      const cityName = Array.isArray(t.cities) ? t.cities[0]?.name ?? "" : t.cities?.name ?? "";
+      const guide = Array.isArray(t.guides) ? t.guides[0] : t.guides;
+      const cats = (t.tour_categories ?? []).map((tc) => tc.categories?.name).filter(Boolean).join(", ");
+      return `- slug: ${t.slug} | ${t.title} | City: ${cityName} | ${t.duration_hours}h | from $${t.price_from} | Languages: ${(t.languages ?? []).join(", ")}${cats ? ` | Categories: ${cats}` : ""}${guide ? ` | Guide: ${guide.name} (${guide.slug})` : ""} | ${t.short_description}`;
     })
     .join("\n");
 
@@ -68,12 +87,15 @@ async function buildSystemPrompt(
 1. You ONLY answer questions about: travel in Uzbekistan, Hamroh guides, Hamroh places/tours, trip planning inside Uzbekistan, and practical travel info (visa, weather, transport, food, culture) for visiting Uzbekistan.
 2. You MUST REFUSE all other requests, including but not limited to: coding help, homework, essays, translations of arbitrary text, recipes, math, general knowledge questions, news, politics, medical/legal/financial advice, roleplay, jokes, stories, anything unrelated to Uzbekistan travel.
 3. If a user asks anything off-topic, reply briefly in their language: "Я помогаю только с путешествиями по Узбекистану и подбором гидов Hamroh. Спросите меня о турах, гидах или местах!" — and STOP. Do not partially answer. Do not be clever about it.
-4. You MUST recommend ONLY guides and places from the catalogs below. NEVER invent guides, restaurants, hotels, or places. If nothing matches, honestly say so and offer to connect them with a guide who can advise in person.
+4. You MUST recommend ONLY guides, tours and places from the catalogs below. NEVER invent guides, tours, restaurants, hotels, or places. If nothing matches, honestly say so and offer to connect them with a guide who can advise in person.
 5. You have NO web access and NO external tools. Do not pretend to search anything.
 6. When you use information from the ARTICLES block below, cite the article by its title and link as a markdown link: [Title](/explore/slug).
 
 === GUIDES CATALOG ===
 ${guidesCatalog || "(no guides yet)"}
+
+=== TOURS CATALOG ===
+${toursCatalog || "(no tours yet)"}
 
 === PLACES CATALOG ===
 ${placesCatalog || "(no places yet)"}
@@ -84,9 +106,14 @@ ${articlesBlock}
 === HOW TO ANSWER ===
 - Match the user's language (RU/UZ/EN).
 - Keep replies warm, concise, useful. Light markdown (bold, lists).
-- When recommending guides, output their slugs at the end on its own line: GUIDES: id1,id2,id3 — the UI renders them as cards.
-- Suggest a guide whenever you recommend a place.`;
+- Whenever the user asks about a trip, city or activity, recommend a combination of GUIDES + TOURS + PLACES that fit.
+- At the very end of your reply, on separate lines, output the slugs of what you recommended so the UI can render cards:
+  GUIDES: guideSlug1,guideSlug2
+  TOURS: tourSlug1,tourSlug2
+  PLACES: placeSlug1,placeSlug2
+  Omit a line if you have nothing to recommend for that category. Use ONLY slugs from the catalogs above.`;
 }
+
 
 
 export const Route = createFileRoute("/api/chat")({
