@@ -1,72 +1,20 @@
 import { useNavigate } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { Sparkles, Calendar, Search } from "lucide-react";
+import { Sparkles, Search } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
-import { createThread } from "@/lib/ai-threads.functions";
-import { supabase } from "@/integrations/supabase/client";
 import heroImg from "@/assets/hero-samarkand.jpg";
 import heroMobileAsset from "@/assets/hero-samarkand-mobile.png.asset.json";
 
 export function HeroSearch() {
-  const { t, lang } = useI18n();
+  const { t } = useI18n();
   const navigate = useNavigate();
-  const create = useServerFn(createThread);
 
   const [describe, setDescribe] = useState("");
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
-  const [submitting, setSubmitting] = useState(false);
 
-  const todayISO = new Date().toISOString().slice(0, 10);
-
-  const buildPrompt = () => {
-    const base = describe.trim();
-    const range = (() => {
-      if (!from && !to) return "";
-      if (from && to) {
-        if (lang === "ru") return `с ${from} по ${to}`;
-        if (lang === "uz") return `${from} dan ${to} gacha`;
-        return `from ${from} to ${to}`;
-      }
-      const single = from || to;
-      if (lang === "ru") return `на ${single}`;
-      if (lang === "uz") return `${single} sanasida`;
-      return `on ${single}`;
-    })();
-
-    if (base && range) return `${base} (${range}).`;
-    if (base) return base.endsWith(".") ? base : `${base}.`;
-    if (range) {
-      if (lang === "ru") return `Ищу местного гида ${range}.`;
-      if (lang === "uz") return `Mahalliy hamroh kerak ${range}.`;
-      return `Looking for a local guide ${range}.`;
-    }
-    if (lang === "ru") return "Ищу местного гида.";
-    if (lang === "uz") return "Mahalliy hamroh kerak.";
-    return "Looking for a local guide.";
-  };
-
-  const onSubmit = async (e: React.FormEvent) => {
+  const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (submitting) return;
-    const prompt = buildPrompt();
-    setSubmitting(true);
-    try {
-      const { data } = await supabase.auth.getSession();
-      if (!data.session) {
-        sessionStorage.setItem("pendingAiPrompt", prompt);
-        navigate({ to: "/login" });
-        return;
-      }
-      const thread = await create();
-      if (thread?.id) {
-        sessionStorage.setItem(`initialPrompt:${thread.id}`, prompt);
-        navigate({ to: "/ai/$threadId", params: { threadId: thread.id } });
-      }
-    } finally {
-      setSubmitting(false);
-    }
+    const q = describe.trim();
+    navigate({ to: "/search", search: q ? { q } : {} });
   };
 
   return (
@@ -106,65 +54,21 @@ export function HeroSearch() {
             onSubmit={onSubmit}
             className="mt-6 md:mt-8 bg-card border border-border rounded-2xl md:rounded-full shadow-[var(--shadow-card)] p-2 flex flex-col md:flex-row items-stretch gap-2 md:translate-y-1/2 md:relative md:z-20"
           >
-            {/* Describe (AI) */}
-            <label className="group flex-1 flex items-center gap-3 px-4 py-3 rounded-xl md:rounded-full hover:bg-muted/60 transition-colors cursor-text min-w-0">
-              <Sparkles className="h-4 w-4 text-accent shrink-0" />
+            <label className="group flex-1 flex items-center gap-3 px-4 py-3 md:py-4 rounded-xl md:rounded-full hover:bg-muted/60 transition-colors cursor-text min-w-0">
+              <Sparkles className="h-5 w-5 text-accent shrink-0" />
               <input
                 type="text"
                 value={describe}
                 onChange={(e) => setDescribe(e.target.value)}
                 placeholder={t("hero.search.describe")}
-                className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none min-w-0"
+                className="flex-1 bg-transparent text-base text-foreground placeholder:text-muted-foreground outline-none min-w-0"
+                autoComplete="off"
               />
             </label>
 
-            <div className="hidden md:block w-px bg-border my-2" />
-
-            {/* Dates: side-by-side on mobile, inline on desktop */}
-            <div className="flex flex-row gap-2 md:contents">
-              {/* From */}
-              <label className="group flex-1 md:flex-none md:w-40 flex items-center gap-2 px-3 md:px-4 py-3 rounded-xl md:rounded-full hover:bg-muted/60 transition-colors cursor-text min-w-0">
-                <Calendar className="h-4 w-4 text-muted-foreground shrink-0" />
-                <span className="text-xs font-medium text-muted-foreground md:hidden">
-                  {t("hero.search.from")}
-                </span>
-                <input
-                  type="date"
-                  value={from}
-                  min={todayISO}
-                  onChange={(e) => {
-                    setFrom(e.target.value);
-                    if (to && e.target.value && to < e.target.value) setTo(e.target.value);
-                  }}
-                  aria-label={t("hero.search.from")}
-                  className="flex-1 bg-transparent text-xs md:text-sm text-foreground placeholder:text-muted-foreground outline-none min-w-0"
-                />
-              </label>
-
-              <div className="hidden md:block w-px bg-border my-2" />
-
-              {/* To */}
-              <label className="group flex-1 md:flex-none md:w-40 flex items-center gap-2 px-3 md:px-4 py-3 rounded-xl md:rounded-full hover:bg-muted/60 transition-colors cursor-text min-w-0">
-                <Calendar className="h-4 w-4 text-muted-foreground shrink-0" />
-                <span className="text-xs font-medium text-muted-foreground md:hidden">
-                  {t("hero.search.to")}
-                </span>
-                <input
-                  type="date"
-                  value={to}
-                  min={from || todayISO}
-                  onChange={(e) => setTo(e.target.value)}
-                  aria-label={t("hero.search.to")}
-                  className="flex-1 bg-transparent text-xs md:text-sm text-foreground placeholder:text-muted-foreground outline-none min-w-0"
-                />
-              </label>
-            </div>
-
-
             <button
               type="submit"
-              disabled={submitting}
-              className="inline-flex items-center justify-center gap-2 rounded-xl md:rounded-full bg-primary text-primary-foreground px-6 py-3 text-sm font-semibold hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50"
+              className="inline-flex items-center justify-center gap-2 rounded-xl md:rounded-full bg-primary text-primary-foreground px-6 py-3 text-sm font-semibold hover:opacity-90 active:scale-[0.98] transition-all"
             >
               <Search className="h-4 w-4" />
               {t("hero.search.button")}
