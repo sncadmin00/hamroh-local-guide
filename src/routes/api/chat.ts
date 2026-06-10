@@ -97,16 +97,20 @@ ${guidesCatalog || "(no guides yet)"}
 === TOURS CATALOG ===
 ${toursCatalog || "(no tours yet)"}
 
+=== PLACES CATALOG (recommend alongside guides/tours; do not present as a separate section) ===
+${placesCatalog || "(no places yet)"}
+
 === RELEVANT ARTICLES (use this knowledge first when relevant) ===
 ${articlesBlock}
 
 === HOW TO ANSWER ===
 - Match the user's language (RU/UZ/EN).
 - Keep replies warm, concise, useful. Light markdown (bold, lists).
-- Whenever the user asks about a trip, city or activity, recommend a combination of GUIDES + TOURS that fit.
+- Whenever the user asks about a trip, city or activity, recommend a combination of GUIDES + TOURS, and add PLACES to visit/eat when relevant.
 - At the very end of your reply, on separate lines, output the slugs of what you recommended so the UI can render cards:
   GUIDES: guideSlug1,guideSlug2
   TOURS: tourSlug1,tourSlug2
+  PLACES: placeSlug1,placeSlug2
   Omit a line if you have nothing to recommend for that category. Use ONLY slugs from the catalogs above.`;
 }
 
