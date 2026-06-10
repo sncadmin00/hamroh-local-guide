@@ -92,12 +92,23 @@ export const translations: Dict = {
   "hero.search.guest_other": { en: "guests", uz: "mehmon", ru: "гостей" },
   "hero.search.button": { en: "Search", uz: "Qidirish", ru: "Найти" },
   "hero.search.describe": {
-    en: "Describe your trip — city, interests, who's coming…",
-    uz: "Sayohatingizni tasvirlang — shahar, qiziqishlar, kim boradi…",
-    ru: "Опишите поездку — город, интересы, кто едет…",
+    en: "Where are you going? Describe your trip…",
+    uz: "Qayerga bormoqchisiz? Sayohatingizni tasvirlang…",
+    ru: "Куда вы едете? Опишите поездку…",
   },
   "hero.search.from": { en: "From", uz: "Dan", ru: "С" },
   "hero.search.to": { en: "To", uz: "Gacha", ru: "По" },
+
+  "search.title": { en: "Find your guide", uz: "Hamrohingizni toping", ru: "Найдите своего гида" },
+  "search.yourRequest": { en: "Your request", uz: "Sizning so'rovingiz", ru: "Ваш запрос" },
+  "search.askAi": { en: "Ask AI about this trip", uz: "AI'dan so'rang", ru: "Спросить AI об этой поездке" },
+  "search.noResults": { en: "No guides match your filters yet — try widening your search.", uz: "Filtrlaringizga mos hamroh topilmadi — qidiruvni kengaytiring.", ru: "По вашим фильтрам гидов пока нет — попробуйте расширить поиск." },
+  "search.filters.dates": { en: "Dates", uz: "Sanalar", ru: "Даты" },
+  "search.filters.guests": { en: "Guests", uz: "Mehmonlar", ru: "Гости" },
+  "search.filters.language": { en: "Language", uz: "Til", ru: "Язык" },
+  "search.filters.instant": { en: "Instant book", uz: "Tezkor bron", ru: "Мгновенное бронирование" },
+  "search.filters.allCategories": { en: "All categories", uz: "Barcha toifalar", ru: "Все категории" },
+  "search.filters.allLanguages": { en: "All languages", uz: "Barcha tillar", ru: "Все языки" },
 
   "hero.search.aiHint": {
     en: "Powered by Hamroh AI — we'll match you with the perfect guide.",
