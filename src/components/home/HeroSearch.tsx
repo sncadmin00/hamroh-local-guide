@@ -1,7 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { MapPin, Calendar, Users, Search } from "lucide-react";
+import { Sparkles, Calendar, Search } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { createThread } from "@/lib/ai-threads.functions";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,31 +13,38 @@ export function HeroSearch() {
   const navigate = useNavigate();
   const create = useServerFn(createThread);
 
-  const [where, setWhere] = useState("");
-  const [when, setWhen] = useState("");
-  const [guests, setGuests] = useState<number | "">("");
+  const [describe, setDescribe] = useState("");
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
+  const todayISO = new Date().toISOString().slice(0, 10);
+
   const buildPrompt = () => {
-    const parts: string[] = [];
-    const langName = lang === "ru" ? "русскоговорящего" : lang === "uz" ? "o'zbek tilida" : "English-speaking";
-    if (lang === "ru") {
-      parts.push(`Ищу ${langName} местного гида`);
-      if (where) parts.push(`в городе ${where}`);
-      if (when) parts.push(`на ${when}`);
-      if (guests) parts.push(`для ${guests} ${guests === 1 ? "гостя" : "гостей"}`);
-    } else if (lang === "uz") {
-      parts.push(`Mahalliy ${langName} hamroh kerak`);
-      if (where) parts.push(`${where} shahrida`);
-      if (when) parts.push(`${when} sanasida`);
-      if (guests) parts.push(`${guests} mehmon uchun`);
-    } else {
-      parts.push(`Looking for a ${langName} local guide`);
-      if (where) parts.push(`in ${where}`);
-      if (when) parts.push(`on ${when}`);
-      if (guests) parts.push(`for ${guests} ${guests === 1 ? "guest" : "guests"}`);
+    const base = describe.trim();
+    const range = (() => {
+      if (!from && !to) return "";
+      if (from && to) {
+        if (lang === "ru") return `с ${from} по ${to}`;
+        if (lang === "uz") return `${from} dan ${to} gacha`;
+        return `from ${from} to ${to}`;
+      }
+      const single = from || to;
+      if (lang === "ru") return `на ${single}`;
+      if (lang === "uz") return `${single} sanasida`;
+      return `on ${single}`;
+    })();
+
+    if (base && range) return `${base} (${range}).`;
+    if (base) return base.endsWith(".") ? base : `${base}.`;
+    if (range) {
+      if (lang === "ru") return `Ищу местного гида ${range}.`;
+      if (lang === "uz") return `Mahalliy hamroh kerak ${range}.`;
+      return `Looking for a local guide ${range}.`;
     }
-    return parts.join(" ") + ".";
+    if (lang === "ru") return "Ищу местного гида.";
+    if (lang === "uz") return "Mahalliy hamroh kerak.";
+    return "Looking for a local guide.";
   };
 
   const onSubmit = async (e: React.FormEvent) => {
@@ -62,8 +69,6 @@ export function HeroSearch() {
     }
   };
 
-  const todayISO = new Date().toISOString().slice(0, 10);
-
   return (
     <section className="relative min-h-[460px] md:min-h-[520px] flex flex-col justify-end md:max-w-[calc(72rem-2rem)] md:mx-auto">
       {/* Background image */}
@@ -76,7 +81,6 @@ export function HeroSearch() {
             className="h-full w-full object-cover object-center md:object-top"
             loading="eager"
           />
-
         </picture>
 
         {/* Left fade into background */}
@@ -87,7 +91,6 @@ export function HeroSearch() {
               "linear-gradient(90deg, var(--background) 0%, color-mix(in oklab, var(--background) 60%, transparent) 40%, transparent 100%)",
           }}
         />
-
       </div>
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 pt-8 pb-0 md:pt-12 md:pb-0 w-full translate-y-12 md:translate-y-0">
@@ -103,46 +106,48 @@ export function HeroSearch() {
             onSubmit={onSubmit}
             className="mt-6 md:mt-8 bg-card border border-border rounded-2xl md:rounded-full shadow-[var(--shadow-card)] p-2 flex flex-col md:flex-row items-stretch gap-2 md:translate-y-1/2 md:relative md:z-20"
           >
-            {/* Where */}
-            <label className="group flex-1 flex items-center gap-3 px-4 py-3 rounded-xl md:rounded-full hover:bg-muted/60 transition-colors cursor-text">
-              <MapPin className="h-4 w-4 text-muted-foreground shrink-0" />
+            {/* Describe (AI) */}
+            <label className="group flex-1 flex items-center gap-3 px-4 py-3 rounded-xl md:rounded-full hover:bg-muted/60 transition-colors cursor-text min-w-0">
+              <Sparkles className="h-4 w-4 text-accent shrink-0" />
               <input
                 type="text"
-                value={where}
-                onChange={(e) => setWhere(e.target.value)}
-                placeholder={t("hero.search.where")}
+                value={describe}
+                onChange={(e) => setDescribe(e.target.value)}
+                placeholder={t("hero.search.describe")}
                 className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none min-w-0"
               />
             </label>
 
             <div className="hidden md:block w-px bg-border my-2" />
 
-            {/* When */}
-            <label className="group flex-1 flex items-center gap-3 px-4 py-3 rounded-xl md:rounded-full hover:bg-muted/60 transition-colors cursor-text">
+            {/* From */}
+            <label className="group flex md:w-36 items-center gap-2 px-4 py-3 rounded-xl md:rounded-full hover:bg-muted/60 transition-colors cursor-text">
               <Calendar className="h-4 w-4 text-muted-foreground shrink-0" />
               <input
                 type="date"
-                value={when}
+                value={from}
                 min={todayISO}
-                onChange={(e) => setWhen(e.target.value)}
-                placeholder={t("hero.search.when")}
+                onChange={(e) => {
+                  setFrom(e.target.value);
+                  if (to && e.target.value && to < e.target.value) setTo(e.target.value);
+                }}
+                aria-label={t("hero.search.from")}
                 className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none min-w-0"
               />
             </label>
 
             <div className="hidden md:block w-px bg-border my-2" />
 
-            {/* Guests */}
-            <label className="group flex-1 md:flex-none md:w-40 flex items-center gap-3 px-4 py-3 rounded-xl md:rounded-full hover:bg-muted/60 transition-colors cursor-text">
-              <Users className="h-4 w-4 text-muted-foreground shrink-0" />
+            {/* To */}
+            <label className="group flex md:w-36 items-center gap-2 px-4 py-3 rounded-xl md:rounded-full hover:bg-muted/60 transition-colors cursor-text">
+              <Calendar className="h-4 w-4 text-muted-foreground shrink-0" />
               <input
-                type="number"
-                min={1}
-                max={20}
-                value={guests}
-                onChange={(e) => setGuests(e.target.value ? Number(e.target.value) : "")}
-                placeholder={t("hero.search.guests")}
-                className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none min-w-[5rem] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                type="date"
+                value={to}
+                min={from || todayISO}
+                onChange={(e) => setTo(e.target.value)}
+                aria-label={t("hero.search.to")}
+                className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none min-w-0"
               />
             </label>
 

@@ -91,6 +91,14 @@ export const translations: Dict = {
   "hero.search.guest_one": { en: "guest", uz: "mehmon", ru: "гость" },
   "hero.search.guest_other": { en: "guests", uz: "mehmon", ru: "гостей" },
   "hero.search.button": { en: "Search", uz: "Qidirish", ru: "Найти" },
+  "hero.search.describe": {
+    en: "Describe your trip — city, interests, who's coming…",
+    uz: "Sayohatingizni tasvirlang — shahar, qiziqishlar, kim boradi…",
+    ru: "Опишите поездку — город, интересы, кто едет…",
+  },
+  "hero.search.from": { en: "From", uz: "Dan", ru: "С" },
+  "hero.search.to": { en: "To", uz: "Gacha", ru: "По" },
+
   "hero.search.aiHint": {
     en: "Powered by Hamroh AI — we'll match you with the perfect guide.",
     uz: "Hamroh AI yordamida — sizga eng mos hamrohni topamiz.",
