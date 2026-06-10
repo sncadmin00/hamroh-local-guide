@@ -85,15 +85,9 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
 
 
 
-        {/* Right: wishlist, language, user pill */}
+        {/* Right: language, user pill */}
         <div className="flex items-center gap-1.5 shrink-0">
-          <Link
-            to="/wishlist"
-            aria-label={t("nav.wishlist")}
-            className="hidden md:inline-flex h-9 w-9 items-center justify-center rounded-full text-foreground/70 hover:text-foreground hover:bg-secondary/70 transition-colors"
-          >
-            <Heart className="h-[18px] w-[18px]" />
-          </Link>
+
 
           <LanguageSwitcher />
 
