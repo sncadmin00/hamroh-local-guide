@@ -1,12 +1,13 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { Sparkles, Calendar, Users } from "lucide-react";
+import { Calendar, Users } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { GuideCard } from "@/components/GuideCard";
 import { CityPicker } from "@/components/CityPicker";
 import { CategoryIcon } from "@/components/CategoryIcon";
+import { ModeSwitcher } from "@/components/SearchModeSwitcher";
 import { useGuides, useCategories } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
 import { createThread } from "@/lib/ai-threads.functions";
@@ -136,27 +137,22 @@ function SearchPage() {
             {isLoading ? "Loading…" : `${filtered.length} verified locals.`}
           </p>
 
-          {q && (
-            <div className="mt-5 flex flex-col gap-3 rounded-2xl bg-card p-4 ring-1 ring-border/60 md:flex-row md:items-center md:justify-between">
-              <div className="flex items-start gap-2 min-w-0">
-                <Sparkles className="h-4 w-4 text-accent mt-1 shrink-0" />
-                <div className="min-w-0">
-                  <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                    {t("search.yourRequest")}
-                  </div>
-                  <div className="mt-0.5 text-sm text-foreground break-words">{q}</div>
-                </div>
+          <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <ModeSwitcher
+              active="manual"
+              onAi={askAi}
+              onManual={() => {}}
+              aiLabel={t("search.mode.ai")}
+              manualLabel={t("search.mode.manual")}
+            />
+            {q && (
+              <div className="text-sm text-muted-foreground break-words sm:text-right sm:max-w-md">
+                <span className="font-medium text-foreground">{t("search.yourRequest")}:</span> {q}
               </div>
-              <button
-                type="button"
-                onClick={askAi}
-                disabled={askingAi}
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90 active:scale-[0.98] transition disabled:opacity-50 shrink-0"
-              >
-                <Sparkles className="h-4 w-4" />
-                {t("search.askAi")}
-              </button>
-            </div>
+            )}
+          </div>
+          {askingAi && (
+            <p className="mt-2 text-xs text-muted-foreground">…</p>
           )}
         </div>
       </section>

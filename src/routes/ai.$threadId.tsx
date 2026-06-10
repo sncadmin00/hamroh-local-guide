@@ -1,4 +1,4 @@
-import { createFileRoute, useParams, Link } from "@tanstack/react-router";
+import { createFileRoute, useParams, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
@@ -7,8 +7,10 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getThreadMessages } from "@/lib/ai-threads.functions";
 import { useGuides } from "@/lib/content-queries";
+import { useI18n } from "@/lib/i18n";
 import type { Guide } from "@/data/guides";
 import { Sparkles, ArrowUp, Star, BadgeCheck, Zap, MapPin } from "lucide-react";
+import { ModeSwitcher } from "@/components/SearchModeSwitcher";
 
 export const Route = createFileRoute("/ai/$threadId")({
   component: ThreadPage,
@@ -105,10 +107,34 @@ function ChatWindow({ threadId, initial, token }: { threadId: string; initial: {
   const isLoading = status === "submitted" || status === "streaming";
   const isEmpty = messages.length === 0;
 
+  const { t } = useI18n();
+  const navigate = useNavigate();
+
+  const goManual = () => {
+    const firstUser = messages.find((m) => m.role === "user");
+    const text = firstUser
+      ? firstUser.parts.map((p) => (p.type === "text" ? (p as { type: "text"; text: string }).text : "")).join("").trim()
+      : "";
+    navigate({ to: "/search", search: text ? { q: text } : {} });
+  };
+
   return (
     <div className="flex-1 flex flex-col min-h-0">
+      <div className="sticky top-0 z-10 border-b border-border/60 bg-background/85 backdrop-blur">
+        <div className="max-w-3xl mx-auto px-4 py-2.5 flex items-center justify-between gap-3">
+          <ModeSwitcher
+            active="ai"
+            onAi={() => {}}
+            onManual={goManual}
+            aiLabel={t("search.mode.ai")}
+            manualLabel={t("search.mode.manual")}
+          />
+          <p className="hidden md:block text-xs text-muted-foreground truncate">{t("search.mode.hint")}</p>
+        </div>
+      </div>
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-3xl mx-auto px-4 py-8 md:py-12">
+
           {isEmpty ? (
             <div className="text-center py-12">
               <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent text-primary-foreground mb-6 shadow-[var(--shadow-elegant)]">
