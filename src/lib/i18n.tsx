@@ -22,6 +22,9 @@ export const translations: Dict = {
   "home.bookingCta.button": { en: "Book now", uz: "Bron qilish", ru: "Забронировать" },
   "nav.cities": { en: "Cities", uz: "Shaharlar", ru: "Города" },
   "nav.tours": { en: "Tours", uz: "Sayohatlar", ru: "Туры" },
+  "nav.guides": { en: "Guides", uz: "Hamrohlar", ru: "Гиды" },
+  "search.places": { en: "Places", uz: "Joylar", ru: "Места" },
+
   "nav.explore": { en: "Explore", uz: "Kashf eting", ru: "Обзор" },
   "nav.howItWorks": { en: "How it works", uz: "Qanday ishlaydi", ru: "Как это работает" },
   "nav.becomeGuide": { en: "Become a guide", uz: "Hamroh bo'ling", ru: "Стать гидом" },
