@@ -120,36 +120,46 @@ export function HeroSearch() {
 
             <div className="hidden md:block w-px bg-border my-2" />
 
-            {/* From */}
-            <label className="group flex md:w-36 items-center gap-2 px-4 py-3 rounded-xl md:rounded-full hover:bg-muted/60 transition-colors cursor-text">
-              <Calendar className="h-4 w-4 text-muted-foreground shrink-0" />
-              <input
-                type="date"
-                value={from}
-                min={todayISO}
-                onChange={(e) => {
-                  setFrom(e.target.value);
-                  if (to && e.target.value && to < e.target.value) setTo(e.target.value);
-                }}
-                aria-label={t("hero.search.from")}
-                className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none min-w-0"
-              />
-            </label>
+            {/* Dates: side-by-side on mobile, inline on desktop */}
+            <div className="flex flex-row gap-2 md:contents">
+              {/* From */}
+              <label className="group flex-1 md:flex-none md:w-40 flex items-center gap-2 px-3 md:px-4 py-3 rounded-xl md:rounded-full hover:bg-muted/60 transition-colors cursor-text min-w-0">
+                <Calendar className="h-4 w-4 text-muted-foreground shrink-0" />
+                <span className="text-xs font-medium text-muted-foreground md:hidden">
+                  {t("hero.search.from")}
+                </span>
+                <input
+                  type="date"
+                  value={from}
+                  min={todayISO}
+                  onChange={(e) => {
+                    setFrom(e.target.value);
+                    if (to && e.target.value && to < e.target.value) setTo(e.target.value);
+                  }}
+                  aria-label={t("hero.search.from")}
+                  className="flex-1 bg-transparent text-xs md:text-sm text-foreground placeholder:text-muted-foreground outline-none min-w-0"
+                />
+              </label>
 
-            <div className="hidden md:block w-px bg-border my-2" />
+              <div className="hidden md:block w-px bg-border my-2" />
 
-            {/* To */}
-            <label className="group flex md:w-36 items-center gap-2 px-4 py-3 rounded-xl md:rounded-full hover:bg-muted/60 transition-colors cursor-text">
-              <Calendar className="h-4 w-4 text-muted-foreground shrink-0" />
-              <input
-                type="date"
-                value={to}
-                min={from || todayISO}
-                onChange={(e) => setTo(e.target.value)}
-                aria-label={t("hero.search.to")}
-                className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none min-w-0"
-              />
-            </label>
+              {/* To */}
+              <label className="group flex-1 md:flex-none md:w-40 flex items-center gap-2 px-3 md:px-4 py-3 rounded-xl md:rounded-full hover:bg-muted/60 transition-colors cursor-text min-w-0">
+                <Calendar className="h-4 w-4 text-muted-foreground shrink-0" />
+                <span className="text-xs font-medium text-muted-foreground md:hidden">
+                  {t("hero.search.to")}
+                </span>
+                <input
+                  type="date"
+                  value={to}
+                  min={from || todayISO}
+                  onChange={(e) => setTo(e.target.value)}
+                  aria-label={t("hero.search.to")}
+                  className="flex-1 bg-transparent text-xs md:text-sm text-foreground placeholder:text-muted-foreground outline-none min-w-0"
+                />
+              </label>
+            </div>
+
 
             <button
               type="submit"
