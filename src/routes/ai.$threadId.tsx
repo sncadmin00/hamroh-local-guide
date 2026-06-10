@@ -228,16 +228,16 @@ const GUIDES_LINE = /^GUIDES:\s*([a-z0-9-,\s]+)$/im;
 const TOURS_LINE = /^TOURS:\s*([a-z0-9-,\s]+)$/im;
 const PLACES_LINE = /^PLACES:\s*([a-z0-9-,\s]+)$/im;
 
-function extractRecs(text: string): { clean: string; guideIds: string[]; tourSlugs: string[]; placeSlugs: string[] } {
+function extractRecs(text: string): { clean: string; guideIds: string[]; tourSlugs: string[] } {
   const pick = (re: RegExp) => {
     const m = text.match(re);
     return m ? m[1].split(",").map((s) => s.trim()).filter(Boolean) : [];
   };
   const guideIds = pick(GUIDES_LINE);
   const tourSlugs = pick(TOURS_LINE);
-  const placeSlugs = pick(PLACES_LINE);
+  // strip PLACES line if any leftover (places are now linked inline as Google Maps URLs)
   const clean = text.replace(GUIDES_LINE, "").replace(TOURS_LINE, "").replace(PLACES_LINE, "").trim();
-  return { clean, guideIds, tourSlugs, placeSlugs };
+  return { clean, guideIds, tourSlugs };
 }
 
 
