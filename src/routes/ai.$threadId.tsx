@@ -223,14 +223,21 @@ function ChatWindow({ threadId, initial, token }: { threadId: string; initial: {
 }
 
 const GUIDES_LINE = /^GUIDES:\s*([a-z0-9-,\s]+)$/im;
+const TOURS_LINE = /^TOURS:\s*([a-z0-9-,\s]+)$/im;
+const PLACES_LINE = /^PLACES:\s*([a-z0-9-,\s]+)$/im;
 
-function extractGuides(text: string): { clean: string; ids: string[] } {
-  const m = text.match(GUIDES_LINE);
-  if (!m) return { clean: text, ids: [] };
-  const ids = m[1].split(",").map((s) => s.trim()).filter(Boolean);
-  const clean = text.replace(GUIDES_LINE, "").trim();
-  return { clean, ids };
+function extractRecs(text: string): { clean: string; guideIds: string[]; tourSlugs: string[]; placeSlugs: string[] } {
+  const pick = (re: RegExp) => {
+    const m = text.match(re);
+    return m ? m[1].split(",").map((s) => s.trim()).filter(Boolean) : [];
+  };
+  const guideIds = pick(GUIDES_LINE);
+  const tourSlugs = pick(TOURS_LINE);
+  const placeSlugs = pick(PLACES_LINE);
+  const clean = text.replace(GUIDES_LINE, "").replace(TOURS_LINE, "").replace(PLACES_LINE, "").trim();
+  return { clean, guideIds, tourSlugs, placeSlugs };
 }
+
 
 function renderMarkdown(text: string) {
   // light formatting: bold, line breaks, bullets
