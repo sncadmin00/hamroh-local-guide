@@ -132,10 +132,6 @@ function SearchPage() {
 
       <section className="border-b border-border/60 bg-secondary/30">
         <div className="container mx-auto px-4 py-10 md:py-12">
-          <h1 className="font-display text-3xl font-semibold md:text-4xl">{t("search.title")}</h1>
-          <p className="mt-2 max-w-xl text-muted-foreground">
-            {isLoading ? "Loading…" : `${filtered.length} verified locals.`}
-          </p>
 
           <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <ModeSwitcher
