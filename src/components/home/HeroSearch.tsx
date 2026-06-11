@@ -5,8 +5,8 @@ import { Sparkles, Search, Loader2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { createThread } from "@/lib/ai-threads.functions";
 import { supabase } from "@/integrations/supabase/client";
-import heroImg from "@/assets/hero-samarkand.jpg";
-import heroMobileAsset from "@/assets/hero-samarkand-mobile.png.asset.json";
+import heroDesktopAsset from "@/assets/hero-bukhara-people.jpg.asset.json";
+import heroMobileAsset from "@/assets/hero-bukhara-people-mobile.jpg.asset.json";
 
 export function HeroSearch() {
   const { t } = useI18n();
@@ -43,7 +43,7 @@ export function HeroSearch() {
       {/* Background image */}
       <div className="absolute inset-0 z-0 overflow-hidden lg:rounded-2xl">
         <picture>
-          <source media="(min-width: 768px)" srcSet={heroImg} />
+          <source media="(min-width: 768px)" srcSet={heroDesktopAsset.url} />
           <img
             src={heroMobileAsset.url}
             alt="Chashma-Ayub mausoleum, Bukhara"
