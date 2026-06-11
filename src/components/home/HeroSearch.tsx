@@ -84,26 +84,37 @@ export function HeroSearch() {
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 pt-8 pb-0 md:pt-12 md:pb-0 w-full translate-y-12 md:translate-y-0">
         <div className="max-w-2xl">
-          <h1 className="font-display text-2xl md:text-4xl font-bold text-white leading-tight [text-shadow:0_2px_12px_rgba(0,0,0,0.45)]">
-            {t("hero.search.title")}
-          </h1>
           {/* Search pill */}
           <form
             onSubmit={onSubmit}
-            className="mt-6 md:mt-8 bg-card border border-border rounded-2xl md:rounded-full shadow-[var(--shadow-card)] p-2 flex flex-col md:flex-row items-stretch gap-2 md:translate-y-1/2 md:relative md:z-20"
+            className="bg-card border border-border rounded-2xl md:rounded-full shadow-[var(--shadow-card)] p-2 flex flex-col md:flex-row items-stretch gap-2 md:translate-y-1/2 md:relative md:z-20"
           >
-            <label className="group flex-1 flex items-center gap-3 px-4 py-3 md:py-4 rounded-xl md:rounded-full hover:bg-muted/60 transition-colors cursor-text min-w-0">
+            <label className="group flex-1 flex items-center gap-3 px-4 py-3 md:py-4 rounded-xl md:rounded-full hover:bg-muted/60 transition-colors cursor-text min-w-0 relative">
               <Sparkles className="h-5 w-5 text-accent shrink-0" />
-              <input
-                type="text"
-                value={describe}
-                onChange={(e) => setDescribe(e.target.value)}
-                placeholder={t("hero.search.describe")}
-                className="flex-1 bg-transparent text-base text-foreground placeholder:text-muted-foreground outline-none min-w-0"
-                autoComplete="off"
-                disabled={submitting}
-              />
+              <div className="relative flex-1 min-w-0">
+                <input
+                  type="text"
+                  value={describe}
+                  onChange={(e) => setDescribe(e.target.value)}
+                  placeholder=""
+                  className="w-full bg-transparent text-base text-foreground outline-none min-w-0"
+                  autoComplete="off"
+                  disabled={submitting}
+                />
+                {!describe && (
+                  <span
+                    key={phraseIdx}
+                    aria-hidden="true"
+                    className={`pointer-events-none absolute inset-0 flex items-center text-base text-muted-foreground truncate transition-all duration-300 ${
+                      animating ? "opacity-0 -translate-y-1" : "opacity-100 translate-y-0 animate-fade-in"
+                    }`}
+                  >
+                    {phrases[phraseIdx]}
+                  </span>
+                )}
+              </div>
             </label>
+
 
             <button
               type="submit"
