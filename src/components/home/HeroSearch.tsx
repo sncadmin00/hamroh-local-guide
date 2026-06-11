@@ -46,8 +46,8 @@ export function HeroSearch() {
           <source media="(min-width: 768px)" srcSet={heroDesktopAsset.url} />
           <img
             src={heroMobileAsset.url}
-            alt="Chashma-Ayub mausoleum, Bukhara"
-            className="h-full w-full object-cover [object-position:85%_bottom] md:object-top"
+            alt="Local Uzbek companion exploring Samarkand with a traveler at golden hour"
+            className="h-full w-full object-cover object-center"
             loading="eager"
           />
         </picture>
