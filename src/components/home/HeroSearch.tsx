@@ -97,7 +97,7 @@ export function HeroSearch() {
                   value={describe}
                   onChange={(e) => setDescribe(e.target.value)}
                   placeholder=""
-                  className="w-full bg-transparent text-base text-foreground outline-none min-w-0"
+                  className="w-full bg-transparent text-lg text-foreground outline-none min-w-0"
                   autoComplete="off"
                   disabled={submitting}
                 />
