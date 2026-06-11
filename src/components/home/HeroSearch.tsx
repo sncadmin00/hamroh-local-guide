@@ -105,7 +105,7 @@ export function HeroSearch() {
                   <span
                     key={phraseIdx}
                     aria-hidden="true"
-                    className={`pointer-events-none absolute inset-0 flex items-center text-sm sm:text-base text-muted-foreground truncate transition-all duration-300 ${
+                    className={`pointer-events-none absolute inset-0 flex items-center text-base sm:text-lg text-muted-foreground truncate transition-all duration-300 ${
                       animating ? "opacity-0 -translate-y-1" : "opacity-100 translate-y-0 animate-fade-in"
                     }`}
                   >
