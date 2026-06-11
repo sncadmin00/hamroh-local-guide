@@ -79,9 +79,9 @@ export const translations: Dict = {
 
   "hero.bookGuide": { en: "Book a tour", uz: "Tur bron qilish", ru: "Забронировать тур" },
   "hero.search.title": {
-    en: "Find local \ncompanions\n",
-    uz: "Mahalliy\nhamrohlar\ntoping",
-    ru: "Найдите местных\nспутников",
+    en: "Find your local companion",
+    uz: "Mahalliy hamrohingizni toping",
+    ru: "Найдите местного спутника",
   },
   "hero.search.subtitle": {
     en: "Authentic people. Real stories. Unforgettable experiences.",
