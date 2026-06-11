@@ -5,8 +5,8 @@ import { Sparkles, Search, Loader2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { createThread } from "@/lib/ai-threads.functions";
 import { supabase } from "@/integrations/supabase/client";
-import heroDesktopAsset from "@/assets/hero-companion-samarkand.jpg.asset.json";
-import heroMobileAsset from "@/assets/hero-companion-samarkand-mobile.jpg.asset.json";
+import heroDesktopAsset from "@/assets/hero-companion-samarkand-v2.jpg.asset.json";
+import heroMobileAsset from "@/assets/hero-companion-samarkand-v2-mobile.jpg.asset.json";
 
 export function HeroSearch() {
   const { t } = useI18n();
