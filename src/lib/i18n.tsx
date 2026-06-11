@@ -99,6 +99,21 @@ export const translations: Dict = {
     uz: "Sayohatingizni tasvirlang…",
     ru: "Опишите поездку…",
   },
+  "hero.search.placeholder1": {
+    en: "Find your local companion",
+    uz: "Mahalliy hamrohingizni toping",
+    ru: "Найдите местного спутника",
+  },
+  "hero.search.placeholder2": {
+    en: "Travel with trusted locals",
+    uz: "Ishonchli mahalliylar bilan sayohat qiling",
+    ru: "Путешествуйте с проверенными местными",
+  },
+  "hero.search.placeholder3": {
+    en: "Describe your trip…",
+    uz: "Sayohatingizni tasvirlang…",
+    ru: "Опишите поездку…",
+  },
   "hero.search.from": { en: "From", uz: "Dan", ru: "С" },
   "hero.search.to": { en: "To", uz: "Gacha", ru: "По" },
 
