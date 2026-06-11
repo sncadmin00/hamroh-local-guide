@@ -5,8 +5,8 @@ import { Sparkles, Search, Loader2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { createThread } from "@/lib/ai-threads.functions";
 import { supabase } from "@/integrations/supabase/client";
-import heroDesktopAsset from "@/assets/hero-bukhara-companion-v2.jpg.asset.json";
-import heroMobileAsset from "@/assets/hero-bukhara-companion-v2-mobile.jpg.asset.json";
+import heroDesktopAsset from "@/assets/hero-companion-samarkand.jpg.asset.json";
+import heroMobileAsset from "@/assets/hero-companion-samarkand-mobile.jpg.asset.json";
 
 export function HeroSearch() {
   const { t } = useI18n();
@@ -46,8 +46,8 @@ export function HeroSearch() {
           <source media="(min-width: 768px)" srcSet={heroDesktopAsset.url} />
           <img
             src={heroMobileAsset.url}
-            alt="Chashma-Ayub mausoleum, Bukhara"
-            className="h-full w-full object-cover [object-position:85%_bottom] md:object-top"
+            alt="Local Uzbek companion exploring Samarkand with a traveler at golden hour"
+            className="h-full w-full object-cover object-center"
             loading="eager"
           />
         </picture>
