@@ -71,7 +71,6 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
   const menuLinks = [
     { to: "/tours", label: t("nav.tours") },
     { to: "/guides", label: t("nav.findGuide") },
-    { to: "/book", label: t("book.cta") },
     ...(!isGuide ? [{ to: "/become-a-guide", label: t("nav.becomeGuide") }] : []),
     { to: "/faq", label: t("nav.faq") },
   ] as const;
