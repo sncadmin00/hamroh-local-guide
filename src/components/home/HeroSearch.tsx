@@ -43,7 +43,7 @@ export function HeroSearch() {
       {/* Background image */}
       <div className="absolute inset-0 z-0 overflow-hidden lg:rounded-2xl">
         <picture>
-          <source media="(min-width: 768px)" srcSet={heroImg} />
+          <source media="(min-width: 768px)" srcSet={heroDesktopAsset.url} />
           <img
             src={heroMobileAsset.url}
             alt="Chashma-Ayub mausoleum, Bukhara"
