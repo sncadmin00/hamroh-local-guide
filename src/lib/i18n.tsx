@@ -101,13 +101,13 @@ export const translations: Dict = {
   },
   "hero.search.placeholder1": {
     en: "Find your local companion",
-    uz: "Mahalliy hamrohingizni toping",
-    ru: "Найдите местного спутника",
+    uz: "Mahalliy hamroh toping",
+    ru: "Найдите местного гида",
   },
   "hero.search.placeholder2": {
     en: "Travel with trusted locals",
-    uz: "Ishonchli mahalliylar bilan sayohat qiling",
-    ru: "Путешествуйте с проверенными местными",
+    uz: "Ishonchli hamroh bilan",
+    ru: "С проверенным местным",
   },
   "hero.search.placeholder3": {
     en: "Describe your trip…",
