@@ -15,6 +15,26 @@ export function HeroSearch() {
 
   const [describe, setDescribe] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [phraseIdx, setPhraseIdx] = useState(0);
+  const [animating, setAnimating] = useState(false);
+
+  const phrases = [
+    t("hero.search.placeholder1"),
+    t("hero.search.placeholder2"),
+    t("hero.search.placeholder3"),
+  ];
+
+  useEffect(() => {
+    if (describe) return;
+    const id = setInterval(() => {
+      setAnimating(true);
+      setTimeout(() => {
+        setPhraseIdx((i) => (i + 1) % phrases.length);
+        setAnimating(false);
+      }, 250);
+    }, 3000);
+    return () => clearInterval(id);
+  }, [describe, phrases.length]);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
