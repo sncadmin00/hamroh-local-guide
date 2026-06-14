@@ -818,6 +818,7 @@ function BecomeAGuidePage() {
           transport_seats: hasTransport && transportSeats ? Number(transportSeats) : null,
           has_certificate: hasCertificate === true,
           certificate_url,
+          tax_id: taxId.trim() || null,
           language_tests: selectedLanguages.map((l) => ({
             language: l,
             ...(languageTests[l] ?? { level: "N/A", transcript: "", feedback: "", skipped: true }),
