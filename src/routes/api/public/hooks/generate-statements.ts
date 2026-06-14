@@ -8,7 +8,7 @@
  * Optional body params (all optional):
  *   { year?: number, month?: number, notify?: boolean }
  *
- * Auth: service role key in `Authorization: Bearer …` or `apikey` header.
+ * Auth: Supabase publishable/anon key in `Authorization: Bearer …` or `apikey` header.
  */
 
 import { createClient } from "@supabase/supabase-js";
@@ -27,7 +27,9 @@ export const Route = createFileRoute("/api/public/hooks/generate-statements")({
           request.headers.get("apikey") ??
           "";
         const token = auth.startsWith("Bearer ") ? auth.slice(7).trim() : auth.trim();
-        if (!token || token !== process.env.SUPABASE_SERVICE_ROLE_KEY) {
+        const expected =
+          process.env.SUPABASE_PUBLISHABLE_KEY ?? import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+        if (!token || !expected || token !== expected) {
           return Response.json({ error: "Forbidden" }, { status: 403 });
         }
 
