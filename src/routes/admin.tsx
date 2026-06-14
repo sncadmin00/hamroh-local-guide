@@ -15,7 +15,6 @@ import { SpotlightsPanel } from "@/components/admin/SpotlightsPanel";
 import { ToursPanel } from "@/components/admin/ToursPanel";
 import { VerificationsPanel } from "@/components/admin/VerificationsPanel";
 import { GuideInvitationsPanel } from "@/components/admin/GuideInvitationsPanel";
-import { EarningsAdminPanel } from "@/components/admin/EarningsAdminPanel";
 import { StatementsAdminPanel } from "@/components/admin/StatementsAdminPanel";
 
 import { useAdminI18n } from "@/lib/admin-i18n";
@@ -223,7 +222,7 @@ function AdminPage() {
   const { ta } = useAdminI18n();
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
-  const [tab, setTab] = useState<"bookings" | "applications" | "verifications" | "cities" | "guides" | "tours" | "spotlights" | "categories" | "languages" | "places" | "suggestions" | "articles" | "social" | "users" | "invitations" | "earnings" | "statements">("bookings");
+  const [tab, setTab] = useState<"bookings" | "applications" | "verifications" | "cities" | "guides" | "tours" | "spotlights" | "categories" | "languages" | "places" | "suggestions" | "articles" | "social" | "users" | "invitations" | "statements">("bookings");
   const [cities, setCities] = useState<City[]>([]);
   const [guides, setGuides] = useState<Guide[]>([]);
   const [articles, setArticles] = useState<Article[]>([]);
@@ -398,12 +397,6 @@ function AdminPage() {
             Приглашения
           </button>
           <button
-            onClick={() => setTab("earnings")}
-            className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "earnings" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
-          >
-            Earnings
-          </button>
-          <button
             onClick={() => setTab("statements")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "statements" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
@@ -426,7 +419,6 @@ function AdminPage() {
         {tab === "users" && <UsersPanel />}
         {tab === "verifications" && <VerificationsPanel />}
         {tab === "invitations" && <GuideInvitationsPanel />}
-        {tab === "earnings" && <EarningsAdminPanel />}
         {tab === "statements" && <StatementsAdminPanel />}
 
       </div>

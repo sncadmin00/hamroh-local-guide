@@ -6,6 +6,8 @@ import {
   adminGenerateStatements,
   adminListStatements,
   adminSettleStatement,
+  adminGetCommissionRate,
+  adminSetCommissionRate,
 } from "@/lib/earnings.functions";
 
 function money(n: number) {
@@ -39,6 +41,30 @@ export function StatementsAdminPanel() {
   const listFn = useServerFn(adminListStatements);
   const genFn = useServerFn(adminGenerateStatements);
   const settleFn = useServerFn(adminSettleStatement);
+  const getRateFn = useServerFn(adminGetCommissionRate);
+  const setRateFn = useServerFn(adminSetCommissionRate);
+
+  const [ratePct, setRatePct] = useState("15");
+
+  useEffect(() => {
+    getRateFn()
+      .then((r: any) => setRatePct(String((r.rate * 100).toFixed(2))))
+      .catch(() => {});
+  }, [getRateFn]);
+
+  async function saveRate() {
+    const n = Number(ratePct) / 100;
+    if (!Number.isFinite(n) || n < 0 || n >= 0.9) {
+      toast.error("Invalid rate");
+      return;
+    }
+    try {
+      await setRateFn({ data: { rate: n } });
+      toast.success("Commission rate updated");
+    } catch (e: any) {
+      toast.error(e.message);
+    }
+  }
 
   const today = new Date();
   // default to previous month
@@ -112,6 +138,26 @@ export function StatementsAdminPanel() {
 
   return (
     <div className="space-y-5">
+      <div className="bg-background border border-border rounded-xl p-4 flex items-end gap-3 flex-wrap">
+        <div>
+          <div className="text-xs text-muted-foreground">Hamroh commission rate (cash bookings)</div>
+          <div className="flex items-center gap-2 mt-1">
+            <input
+              type="number"
+              min={0}
+              max={90}
+              step={0.1}
+              value={ratePct}
+              onChange={(e) => setRatePct(e.target.value)}
+              className="h-9 w-24 px-2 rounded-md border border-border bg-background"
+            />
+            <span>%</span>
+            <button onClick={saveRate} className="h-9 px-4 rounded-full bg-primary text-primary-foreground text-sm font-medium">Save</button>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">Applies to new bookings only. Cash → guide owes us. Online → we owe guide payout.</p>
+        </div>
+      </div>
+
       <div className="bg-background border border-border rounded-xl p-4 flex flex-wrap items-end gap-3">
         <div>
           <div className="text-xs text-muted-foreground mb-1">Period</div>
