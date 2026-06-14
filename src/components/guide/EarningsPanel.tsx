@@ -23,6 +23,7 @@ export function EarningsPanel() {
   const fetchSummary = useServerFn(getMyEarningsSummary);
   const fetchTx = useServerFn(listMyTransactions);
   const fetchPayouts = useServerFn(listMyPayouts);
+  const fetchStatements = useServerFn(listMyStatements);
   const fetchReportUrls = useServerFn(getMyReportUrls);
 
   const [sub, setSub] = useState<SubTab>("overview");
@@ -32,6 +33,7 @@ export function EarningsPanel() {
   const [summary, setSummary] = useState<any>(null);
   const [tx, setTx] = useState<any>(null);
   const [payouts, setPayouts] = useState<any[]>([]);
+  const [statements, setStatements] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>("");
 
