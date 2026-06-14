@@ -21,7 +21,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { notifyAdminsOfGuideApplication } from "@/lib/newsletter.functions";
 import { generateGuideBio } from "@/lib/guide-application.functions";
 import { assessLanguageTest } from "@/lib/language-test.functions";
+import { markInvitationRegistered } from "@/lib/guide-invitations.functions";
 import { useI18n } from "@/lib/i18n";
+
 
 type LangTestResult = {
   level: "A1" | "A2" | "B1" | "B2" | "C1" | "C2" | "N/A";
