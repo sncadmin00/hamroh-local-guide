@@ -376,7 +376,7 @@ export const adminUpdatePayoutStatus = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const patch: Record<string, any> = { status: data.status };
     if (data.status === "paid") patch.paid_at = new Date().toISOString();
-    const { error } = await supabaseAdmin.from("payouts").update(patch).eq("id", data.payoutId);
+    const { error } = await (supabaseAdmin.from("payouts") as any).update(patch).eq("id", data.payoutId);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
