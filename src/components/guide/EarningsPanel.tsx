@@ -367,3 +367,97 @@ function PayoutStatusPill({ status }: { status: string }) {
     "bg-muted text-muted-foreground";
   return <span className={`inline-block px-2 py-0.5 rounded-full text-xs ${color}`}>{status}</span>;
 }
+
+function StatementCard({ s, tg, lang }: { s: any; tg: (k: any) => string; lang: string }) {
+  const monthName = new Date(s.period_year, s.period_month - 1, 1).toLocaleDateString(
+    lang === "ru" ? "ru-RU" : lang === "uz" ? "uz-UZ" : "en-US",
+    { month: "long", year: "numeric" },
+  );
+  const direction = s.direction as "payout" | "invoice" | "zero";
+  const net = Number(s.net_amount);
+  const dirColor =
+    direction === "payout" ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+    : direction === "invoice" ? "bg-amber-50 text-amber-700 border-amber-200"
+    : "bg-muted text-muted-foreground border-border";
+  const statusColor =
+    s.status === "settled" ? "bg-emerald-100 text-emerald-700"
+    : s.status === "rolled_over" ? "bg-blue-100 text-blue-700"
+    : s.status === "cancelled" ? "bg-red-100 text-red-700"
+    : "bg-amber-100 text-amber-700";
+
+  return (
+    <div className="bg-background border border-border rounded-2xl overflow-hidden">
+      {/* Header */}
+      <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b border-border/60">
+        <div>
+          <div className="font-display text-lg font-semibold capitalize">{monthName}</div>
+          <div className="text-xs text-muted-foreground font-mono mt-0.5">{s.statement_number}</div>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border ${dirColor}`}>
+            {tg(`earn.st.direction.${direction}` as any)}
+          </span>
+          <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${statusColor}`}>
+            {tg(`earn.st.status.${s.status}` as any)}
+          </span>
+        </div>
+      </div>
+
+      {/* Two columns: online (we owe) | cash (you owe) */}
+      <div className="grid sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-border/60">
+        <div className="p-5 space-y-2">
+          <div className="text-xs uppercase tracking-wider text-muted-foreground">{tg("earn.st.online")}</div>
+          <div className="flex justify-between text-sm">
+            <span className="text-muted-foreground">{tg("earn.st.revenue")}</span>
+            <span className="tabular-nums">${Number(s.online_revenue).toLocaleString()}</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-muted-foreground">{s.online_bookings_count} {tg("earn.st.count")}</span>
+            <span />
+          </div>
+          <div className="flex justify-between text-sm font-medium border-t border-border/60 pt-2">
+            <span className="text-foreground">{tg("earn.st.payout")}</span>
+            <span className="tabular-nums text-emerald-700">+${Number(s.online_payout_to_guide).toLocaleString()}</span>
+          </div>
+        </div>
+        <div className="p-5 space-y-2">
+          <div className="text-xs uppercase tracking-wider text-muted-foreground">{tg("earn.st.cash")}</div>
+          <div className="flex justify-between text-sm">
+            <span className="text-muted-foreground">{tg("earn.st.revenue")}</span>
+            <span className="tabular-nums">${Number(s.cash_revenue).toLocaleString()}</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-muted-foreground">{s.cash_bookings_count} {tg("earn.st.count")}</span>
+            <span />
+          </div>
+          <div className="flex justify-between text-sm font-medium border-t border-border/60 pt-2">
+            <span className="text-foreground">{tg("earn.st.commission")}</span>
+            <span className="tabular-nums text-amber-700">−${Number(s.cash_commission_to_us).toLocaleString()}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Net Settlement */}
+      <div className="bg-primary/5 px-5 py-4 border-t border-border/60">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="text-xs uppercase tracking-wider text-muted-foreground">{tg("earn.st.net")}</div>
+            <div className="text-sm text-muted-foreground mt-0.5">
+              {direction === "payout" ? tg("earn.st.weOwe") : direction === "invoice" ? tg("earn.st.youOwe") : ""}
+            </div>
+          </div>
+          <div className={`font-display text-2xl font-semibold tabular-nums ${direction === "payout" ? "text-emerald-700" : direction === "invoice" ? "text-amber-700" : "text-muted-foreground"}`}>
+            ${Math.abs(net).toLocaleString()}
+          </div>
+        </div>
+        {(s.due_date || s.settled_at) && (
+          <div className="mt-3 text-xs text-muted-foreground flex flex-wrap gap-x-4 gap-y-1">
+            {s.due_date && s.status === "pending" && <span>{tg("earn.st.due")}: {s.due_date}</span>}
+            {s.settled_at && <span>{tg("earn.st.settled")}: {String(s.settled_at).slice(0, 10)}</span>}
+            {s.payment_reference && <span className="font-mono">{s.payment_reference}</span>}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
