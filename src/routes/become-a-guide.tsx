@@ -606,6 +606,20 @@ function BecomeAGuidePage() {
               )}
             </div>
           )}
+
+          <div className="pt-2 border-t border-border/60">
+            <label className="block text-sm font-medium mb-1">{t("bg.tax.label")}</label>
+            <p className="text-xs text-muted-foreground mb-2">{t("bg.tax.hint")}</p>
+            <input
+              type="text"
+              inputMode="numeric"
+              maxLength={14}
+              className={inputCls}
+              value={taxId}
+              onChange={(e) => setTaxId(e.target.value.replace(/[^0-9]/g, ""))}
+              placeholder={t("bg.tax.ph")}
+            />
+          </div>
         </div>
       ),
     },
