@@ -35,6 +35,7 @@ function BookPage() {
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "online">("cash");
   const [offerVersion, setOfferVersion] = useState<string | null>(null);
   const [offerAccepted, setOfferAccepted] = useState(false);
+  const [serviceFeeRate, setServiceFeeRate] = useState(0.05);
   const [form, setForm] = useState({
     date: "",
     adults: 2,
@@ -50,12 +51,19 @@ function BookPage() {
   const createBookingFn = useServerFn(createBooking);
   const fetchTelegram = useServerFn(getMyTelegramAccount);
   const fetchOffer = useServerFn(getCurrentOffer);
+  const fetchServiceFeeRate = useServerFn(getPublicServiceFeeRate);
 
   useEffect(() => {
     fetchOffer()
       .then((o: any) => setOfferVersion(o.version))
       .catch(() => {});
   }, [fetchOffer]);
+
+  useEffect(() => {
+    fetchServiceFeeRate()
+      .then((r: any) => setServiceFeeRate(r.rate))
+      .catch(() => {});
+  }, [fetchServiceFeeRate]);
 
   useEffect(() => {
     if (!tour) return;
