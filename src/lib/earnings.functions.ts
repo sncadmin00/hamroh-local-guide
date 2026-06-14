@@ -342,18 +342,18 @@ export const adminCreatePayout = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     if (!(await isAdmin(supabase, userId))) throw new Error("Forbidden");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: row, error } = await supabaseAdmin
-      .from("payouts")
-      .insert({
-        guide_id: data.guideId,
-        amount: data.amount,
-        method: data.method,
-        status: data.status,
-        reference: data.reference ?? null,
-        notes: data.notes ?? null,
-        paid_at: data.status === "paid" ? (data.paid_at ?? new Date().toISOString()) : null,
-        created_by: userId,
-      })
+    const insertRow: any = {
+      guide_id: data.guideId,
+      amount: data.amount,
+      method: data.method,
+      status: data.status,
+      reference: data.reference ?? null,
+      notes: data.notes ?? null,
+      paid_at: data.status === "paid" ? (data.paid_at ?? new Date().toISOString()) : null,
+      created_by: userId,
+    };
+    const { data: row, error } = await (supabaseAdmin.from("payouts") as any)
+      .insert(insertRow)
       .select("*")
       .single();
     if (error) throw new Error(error.message);
