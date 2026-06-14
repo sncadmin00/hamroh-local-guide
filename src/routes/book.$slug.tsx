@@ -32,6 +32,8 @@ function BookPage() {
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [telegramContact, setTelegramContact] = useState<{ telegram_user_id: number; telegram_chat_id: number | null; telegram_username: string | null } | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "online">("cash");
+  const [offerVersion, setOfferVersion] = useState<string | null>(null);
+  const [offerAccepted, setOfferAccepted] = useState(false);
   const [form, setForm] = useState({
     date: "",
     adults: 2,
