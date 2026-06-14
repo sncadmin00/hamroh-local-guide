@@ -111,6 +111,7 @@ type GuideApplication = {
   has_certificate: boolean;
   certificate_url: string | null;
   certificate_confirmed: boolean;
+  tax_id: string | null;
   language_tests: Array<{ language: string; level: string; transcript?: string; feedback?: string; skipped?: boolean }> | null;
   user_id: string | null;
 };
