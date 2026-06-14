@@ -172,12 +172,12 @@ function BecomeAGuidePage() {
     try {
       localStorage.setItem(
         DRAFT_KEY,
-        JSON.stringify({ form, languages: selectedLanguages, categories: selectedCategories, languageTests, hasTransport, transportSeats, hasCertificate }),
+        JSON.stringify({ form, languages: selectedLanguages, categories: selectedCategories, languageTests, hasTransport, transportSeats, hasCertificate, taxId }),
       );
     } catch {
       // ignore
     }
-  }, [form, selectedLanguages, selectedCategories, languageTests, hasTransport, transportSeats, hasCertificate]);
+  }, [form, selectedLanguages, selectedCategories, languageTests, hasTransport, transportSeats, hasCertificate, taxId]);
 
 
   useEffect(() => {
