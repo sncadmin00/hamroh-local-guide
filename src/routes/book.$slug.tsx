@@ -372,7 +372,22 @@ function BookPage() {
               )}
             </div>
 
-            <button type="submit" disabled={submitting || adultsExceedAll || total === 0} className="inline-flex h-12 w-full items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.01] disabled:opacity-60">
+            <label className="flex items-start gap-3 rounded-2xl border border-input bg-card/50 p-4 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={offerAccepted}
+                onChange={(e) => setOfferAccepted(e.target.checked)}
+                className="mt-1 h-4 w-4 rounded border-border accent-primary"
+                required
+              />
+              <span className="text-sm text-foreground/90">
+                {lang === "ru" && <>Я принимаю условия <Link to="/offer" target="_blank" className="underline underline-offset-2">публичной оферты</Link> Hamroh{offerVersion ? ` (версия ${offerVersion})` : ""}.</>}
+                {lang === "uz" && <>Hamroh <Link to="/offer" target="_blank" className="underline underline-offset-2">ommaviy ofertasi</Link>{offerVersion ? ` (versiya ${offerVersion})` : ""} shartlarini qabul qilaman.</>}
+                {lang === "en" && <>I accept the terms of the Hamroh <Link to="/offer" target="_blank" className="underline underline-offset-2">public offer</Link>{offerVersion ? ` (version ${offerVersion})` : ""}.</>}
+              </span>
+            </label>
+
+            <button type="submit" disabled={submitting || adultsExceedAll || total === 0 || !offerAccepted || !offerVersion} className="inline-flex h-12 w-full items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.01] disabled:opacity-60">
               {submitting ? "Sending…" : isInstantMode ? `Confirm & book — $${total + fee}` : `Request booking — $${total + fee}`}
             </button>
             <p className="text-center text-xs text-muted-foreground">{isInstantMode ? "Your slot is locked in instantly." : "Your guide will review and confirm this request."}</p>
