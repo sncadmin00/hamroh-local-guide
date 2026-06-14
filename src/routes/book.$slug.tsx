@@ -30,6 +30,7 @@ function BookPage() {
   const [slots, setSlots] = useState<Array<{ id: string; date: string; start_time: string; duration_minutes: number }>>([]);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [telegramContact, setTelegramContact] = useState<{ telegram_user_id: number; telegram_chat_id: number | null; telegram_username: string | null } | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<"cash" | "online">("cash");
   const [form, setForm] = useState({
     date: "",
     adults: 2,
@@ -104,7 +105,7 @@ function BookPage() {
 
   const computedPrice = computeTourPrice(tour, { category: selectedCategory, language: currentLanguage || null });
   const total = computedPrice ?? 0;
-  const fee = Math.round(total * 0.10);
+  const fee = Math.round(total * 0.05);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -138,6 +139,7 @@ function BookPage() {
           notes: form.notes,
           source: getBookingSource(),
           locale: lang,
+          payment_method: paymentMethod,
         },
       });
       setConfirmed(true);
@@ -321,6 +323,39 @@ function BookPage() {
               <textarea value={form.notes} onChange={handleFieldChange} name="notes" rows={4} className="mt-2 w-full rounded-xl border border-input bg-background p-4 text-sm outline-none focus:ring-2 focus:ring-ring" placeholder="Anything specific you'd love to see or do…" />
             </div>
 
+            <div>
+              <label className="text-sm font-medium">Payment method</label>
+              <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod("cash")}
+                  className={`rounded-2xl border p-4 text-left transition ${paymentMethod === "cash" ? "border-primary bg-primary/5 ring-2 ring-primary" : "border-input bg-background hover:bg-muted"}`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium text-sm">Cash to guide</span>
+                    {paymentMethod === "cash" && <Check className="h-4 w-4 text-primary" />}
+                  </div>
+                  <p className="mt-1 text-xs text-muted-foreground">Pay the guide directly on tour day. Only the small service fee is charged online.</p>
+                </button>
+                <button
+                  type="button"
+                  disabled
+                  className="rounded-2xl border border-input bg-muted/40 p-4 text-left opacity-60 cursor-not-allowed"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium text-sm">Pay online (card)</span>
+                    <span className="text-[10px] uppercase tracking-wide rounded-full bg-muted px-2 py-0.5 text-muted-foreground">Soon</span>
+                  </div>
+                  <p className="mt-1 text-xs text-muted-foreground">Click, Payme & Visa/Mastercard — coming with Phase 2.</p>
+                </button>
+              </div>
+              {paymentMethod === "cash" && (
+                <p className="mt-2 text-xs text-muted-foreground">
+                  Service fee (${fee}) will be settled with your booking. Payment provider integration coming soon — for now your request is sent to the guide and the fee is recorded as pending.
+                </p>
+              )}
+            </div>
+
             <button type="submit" disabled={submitting || adultsExceedAll || total === 0} className="inline-flex h-12 w-full items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.01] disabled:opacity-60">
               {submitting ? "Sending…" : isInstantMode ? `Confirm & book — $${total + fee}` : `Request booking — $${total + fee}`}
             </button>
@@ -363,8 +398,19 @@ function BookPage() {
                   <span className="tabular-nums">${total}</span>
                 </div>
                 <div className="flex justify-between"><span className="text-muted-foreground">{form.adults} {form.adults === 1 ? "adult" : "adults"}{form.children > 0 ? `, ${form.children} ${form.children === 1 ? "child" : "children"}` : ""}</span><span className="tabular-nums" /></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Service fee</span><span className="tabular-nums">${fee}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Service fee (5%)</span><span className="tabular-nums">${fee}</span></div>
                 <div className="flex justify-between border-t border-border/60 pt-3 text-base font-semibold"><span>Total</span><span className="tabular-nums">${total + fee}</span></div>
+                <div className="mt-2 rounded-xl bg-secondary/60 p-3 text-xs text-muted-foreground">
+                  {paymentMethod === "cash" ? (
+                    <>
+                      <span className="font-medium text-foreground">Cash to guide:</span> ${total} paid to {guide?.name?.split(" ")[0] ?? "your guide"} on tour day. <span className="font-medium text-foreground">${fee}</span> service fee handled via Hamroh.
+                    </>
+                  ) : (
+                    <>
+                      <span className="font-medium text-foreground">Pay online:</span> all ${total + fee} charged to your card now.
+                    </>
+                  )}
+                </div>
               </div>
               <div className="mt-5 border-t border-border/60 pt-4">
                 <PaymentMethods variant="checkout" />
