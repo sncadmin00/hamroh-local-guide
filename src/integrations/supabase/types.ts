@@ -112,6 +112,24 @@ export type Database = {
         }
         Relationships: []
       }
+      app_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
       article_chunks: {
         Row: {
           article_id: string
@@ -1102,6 +1120,8 @@ export type Database = {
           sort_order: number
           specialties: string[]
           tagline: string
+          tax_id: string | null
+          tax_status: string
           transport_seats: number | null
           updated_at: string
           user_id: string | null
@@ -1143,6 +1163,8 @@ export type Database = {
           sort_order?: number
           specialties?: string[]
           tagline?: string
+          tax_id?: string | null
+          tax_status?: string
           transport_seats?: number | null
           updated_at?: string
           user_id?: string | null
@@ -1184,6 +1206,8 @@ export type Database = {
           sort_order?: number
           specialties?: string[]
           tagline?: string
+          tax_id?: string | null
+          tax_status?: string
           transport_seats?: number | null
           updated_at?: string
           user_id?: string | null
@@ -1268,6 +1292,110 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      payout_items: {
+        Row: {
+          booking_id: string
+          commission_amount: number
+          created_at: string
+          gross_amount: number
+          id: string
+          net_amount: number
+          payout_id: string
+        }
+        Insert: {
+          booking_id: string
+          commission_amount?: number
+          created_at?: string
+          gross_amount?: number
+          id?: string
+          net_amount?: number
+          payout_id: string
+        }
+        Update: {
+          booking_id?: string
+          commission_amount?: number
+          created_at?: string
+          gross_amount?: number
+          id?: string
+          net_amount?: number
+          payout_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payout_items_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: true
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payout_items_payout_id_fkey"
+            columns: ["payout_id"]
+            isOneToOne: false
+            referencedRelation: "payouts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payouts: {
+        Row: {
+          amount: number
+          created_at: string
+          created_by: string | null
+          currency: string
+          guide_id: string
+          id: string
+          method: string
+          notes: string | null
+          paid_at: string | null
+          payout_number: string
+          reference: string | null
+          scheduled_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          guide_id: string
+          id?: string
+          method?: string
+          notes?: string | null
+          paid_at?: string | null
+          payout_number: string
+          reference?: string | null
+          scheduled_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          guide_id?: string
+          id?: string
+          method?: string
+          notes?: string | null
+          paid_at?: string | null
+          payout_number?: string
+          reference?: string | null
+          scheduled_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payouts_guide_id_fkey"
+            columns: ["guide_id"]
+            isOneToOne: false
+            referencedRelation: "guides"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       place_guides: {
         Row: {

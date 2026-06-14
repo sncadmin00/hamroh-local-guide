@@ -45,6 +45,7 @@ import { Route as ApiGuideAiRouteImport } from './routes/api/guide-ai'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AiThreadIdRouteImport } from './routes/ai.$threadId'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
+import { Route as ApiEarningsReportRouteImport } from './routes/api/earnings/report'
 import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
@@ -239,6 +240,11 @@ const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
   path: '/lovable/email/suppression',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiEarningsReportRoute = ApiEarningsReportRouteImport.update({
+  id: '/api/earnings/report',
+  path: '/api/earnings/report',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LovableEmailTransactionalSendRoute =
   LovableEmailTransactionalSendRouteImport.update({
     id: '/lovable/email/transactional/send',
@@ -351,6 +357,7 @@ export interface FileRoutesByFullPath {
   '/tours/$slug': typeof ToursSlugRoute
   '/book/': typeof BookIndexRoute
   '/messages/': typeof MessagesIndexRoute
+  '/api/earnings/report': typeof ApiEarningsReportRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
   '/api/public/hooks/booking-reviews': typeof ApiPublicHooksBookingReviewsRoute
@@ -401,6 +408,7 @@ export interface FileRoutesByTo {
   '/tours/$slug': typeof ToursSlugRoute
   '/book': typeof BookIndexRoute
   '/messages': typeof MessagesIndexRoute
+  '/api/earnings/report': typeof ApiEarningsReportRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
   '/api/public/hooks/booking-reviews': typeof ApiPublicHooksBookingReviewsRoute
@@ -453,6 +461,7 @@ export interface FileRoutesById {
   '/tours_/$slug': typeof ToursSlugRoute
   '/book/': typeof BookIndexRoute
   '/messages/': typeof MessagesIndexRoute
+  '/api/earnings/report': typeof ApiEarningsReportRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
   '/api/public/hooks/booking-reviews': typeof ApiPublicHooksBookingReviewsRoute
@@ -506,6 +515,7 @@ export interface FileRouteTypes {
     | '/tours/$slug'
     | '/book/'
     | '/messages/'
+    | '/api/earnings/report'
     | '/lovable/email/suppression'
     | '/api/public/hooks/booking-reminders'
     | '/api/public/hooks/booking-reviews'
@@ -556,6 +566,7 @@ export interface FileRouteTypes {
     | '/tours/$slug'
     | '/book'
     | '/messages'
+    | '/api/earnings/report'
     | '/lovable/email/suppression'
     | '/api/public/hooks/booking-reminders'
     | '/api/public/hooks/booking-reviews'
@@ -607,6 +618,7 @@ export interface FileRouteTypes {
     | '/tours_/$slug'
     | '/book/'
     | '/messages/'
+    | '/api/earnings/report'
     | '/lovable/email/suppression'
     | '/api/public/hooks/booking-reminders'
     | '/api/public/hooks/booking-reviews'
@@ -655,6 +667,7 @@ export interface RootRouteChildren {
   InviteTokenRoute: typeof InviteTokenRoute
   ToursSlugRoute: typeof ToursSlugRoute
   BookIndexRoute: typeof BookIndexRoute
+  ApiEarningsReportRoute: typeof ApiEarningsReportRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   ApiPublicHooksBookingRemindersRoute: typeof ApiPublicHooksBookingRemindersRoute
   ApiPublicHooksBookingReviewsRoute: typeof ApiPublicHooksBookingReviewsRoute
@@ -925,6 +938,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailSuppressionRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/earnings/report': {
+      id: '/api/earnings/report'
+      path: '/api/earnings/report'
+      fullPath: '/api/earnings/report'
+      preLoaderRoute: typeof ApiEarningsReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lovable/email/transactional/send': {
       id: '/lovable/email/transactional/send'
       path: '/lovable/email/transactional/send'
@@ -1086,6 +1106,7 @@ const rootRouteChildren: RootRouteChildren = {
   InviteTokenRoute: InviteTokenRoute,
   ToursSlugRoute: ToursSlugRoute,
   BookIndexRoute: BookIndexRoute,
+  ApiEarningsReportRoute: ApiEarningsReportRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   ApiPublicHooksBookingRemindersRoute: ApiPublicHooksBookingRemindersRoute,
   ApiPublicHooksBookingReviewsRoute: ApiPublicHooksBookingReviewsRoute,

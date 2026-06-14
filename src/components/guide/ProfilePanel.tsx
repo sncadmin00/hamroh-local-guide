@@ -1,23 +1,31 @@
 import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Check, X, Image as ImageIcon } from "lucide-react";
+import { updateMyTaxInfo } from "@/lib/earnings.functions";
+import { useGuideI18n } from "@/lib/guide-i18n";
 
 type MediaItem = { url: string; label: string; source: "photo" | "tour" | "post" };
 
 export function ProfilePanel({ guideId }: { guideId: string }) {
+  const { tg } = useGuideI18n();
+  const updateTaxFn = useServerFn(updateMyTaxInfo);
   const [currentCover, setCurrentCover] = useState<string | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [media, setMedia] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [taxStatus, setTaxStatus] = useState<"none" | "self_employed" | "ip">("none");
+  const [taxId, setTaxId] = useState("");
+  const [taxSaving, setTaxSaving] = useState(false);
 
   useEffect(() => {
     let alive = true;
     (async () => {
       setLoading(true);
       const [g, t, p] = await Promise.all([
-        supabase.from("guides").select("photo_url, cover_url").eq("id", guideId).maybeSingle(),
+        supabase.from("guides").select("photo_url, cover_url, tax_status, tax_id").eq("id", guideId).maybeSingle(),
         supabase.from("tours").select("title, cover_url").eq("guide_id", guideId).not("cover_url", "is", null),
         supabase.from("guide_posts").select("caption, thumbnail_url").eq("guide_id", guideId).not("thumbnail_url", "is", null),
       ]);
@@ -36,10 +44,24 @@ export function ProfilePanel({ guideId }: { guideId: string }) {
       setMedia(unique);
       setPhotoUrl(g.data?.photo_url ?? null);
       setCurrentCover(g.data?.cover_url ?? null);
+      setTaxStatus(((g.data as any)?.tax_status ?? "none") as any);
+      setTaxId(((g.data as any)?.tax_id ?? "") as string);
       setLoading(false);
     })();
     return () => { alive = false; };
   }, [guideId]);
+
+  const saveTax = async () => {
+    setTaxSaving(true);
+    try {
+      await updateTaxFn({ data: { tax_status: taxStatus, tax_id: taxId.trim() || null } });
+      toast.success(tg("common.saved"));
+    } catch (e: any) {
+      toast.error(e.message);
+    } finally {
+      setTaxSaving(false);
+    }
+  };
 
   const save = async (url: string | null) => {
     setSaving(true);
@@ -120,6 +142,40 @@ export function ProfilePanel({ guideId }: { guideId: string }) {
             })}
           </div>
         )}
+      </div>
+
+      <div className="space-y-3 pt-6 border-t border-border">
+        <h2 className="font-display text-xl font-semibold">{tg("profile.tax.title")}</h2>
+        <div className="grid sm:grid-cols-2 gap-3">
+          <label className="text-sm flex flex-col gap-1">
+            <span className="text-muted-foreground">{tg("profile.tax.status")}</span>
+            <select
+              value={taxStatus}
+              onChange={(e) => setTaxStatus(e.target.value as any)}
+              className="h-10 px-3 rounded-md border border-border bg-background"
+            >
+              <option value="none">{tg("profile.tax.none")}</option>
+              <option value="self_employed">{tg("profile.tax.self")}</option>
+              <option value="ip">{tg("profile.tax.ip")}</option>
+            </select>
+          </label>
+          <label className="text-sm flex flex-col gap-1">
+            <span className="text-muted-foreground">{tg("profile.tax.id")}</span>
+            <input
+              value={taxId}
+              onChange={(e) => setTaxId(e.target.value.replace(/\D/g, "").slice(0, 14))}
+              placeholder={tg("profile.tax.idPh")}
+              className="h-10 px-3 rounded-md border border-border bg-background"
+            />
+          </label>
+        </div>
+        <button
+          onClick={saveTax}
+          disabled={taxSaving}
+          className="h-10 px-5 rounded-full bg-primary text-primary-foreground text-sm font-medium disabled:opacity-50"
+        >
+          {taxSaving ? tg("common.loading") : tg("common.save")}
+        </button>
       </div>
     </section>
   );

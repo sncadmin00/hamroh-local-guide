@@ -3,11 +3,12 @@ import { useEffect, useState, useCallback, useRef, lazy, Suspense } from "react"
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Calendar, CalendarClock, CalendarDays, Plus, Trash2, Check, X, LogOut, Loader2, Copy, Link2, Image as ImageIcon, Compass, Pencil, MapPin, Sparkles, ShieldCheck, Home, UserCircle2 } from "lucide-react";
+import { Calendar, CalendarClock, CalendarDays, Plus, Trash2, Check, X, LogOut, Loader2, Copy, Link2, Image as ImageIcon, Compass, Pencil, MapPin, Sparkles, ShieldCheck, Home, UserCircle2, Wallet } from "lucide-react";
 import { CalendarPanel } from "@/components/guide/CalendarPanel";
 import { GuideAIPanel } from "@/components/guide/GuideAIPanel";
 import { VerificationPanel } from "@/components/guide/VerificationPanel";
 import { ProfilePanel } from "@/components/guide/ProfilePanel";
+import { EarningsPanel } from "@/components/guide/EarningsPanel";
 
 import {
   getMyGuide,
@@ -89,7 +90,7 @@ function GuidePortal() {
   const [guide, setGuide] = useState<MyGuide | null>(null);
   const [slots, setSlots] = useState<Slot[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [tab, setTab] = useState<"calendar" | "ai" | "availability" | "bookings" | "tours" | "cities" | "languages" | "posts" | "referral" | "verification" | "profile">("calendar");
+  const [tab, setTab] = useState<"calendar" | "ai" | "availability" | "bookings" | "tours" | "cities" | "languages" | "posts" | "referral" | "verification" | "profile" | "earnings">("calendar");
 
   const fetchGuide = useServerFn(getMyGuide);
   const fetchSlots = useServerFn(listMySlots);
@@ -220,6 +221,9 @@ function GuidePortal() {
           <TabBtn active={tab === "verification"} onClick={() => setTab("verification")}>
             <ShieldCheck className="h-4 w-4" /> {tg("tab.verification")}
           </TabBtn>
+          <TabBtn active={tab === "earnings"} onClick={() => setTab("earnings")}>
+            <Wallet className="h-4 w-4" /> {tg("tab.earnings")}
+          </TabBtn>
           <TabBtn active={tab === "profile"} onClick={() => setTab("profile")}>
             <UserCircle2 className="h-4 w-4" /> Profile
           </TabBtn>
@@ -294,6 +298,7 @@ function GuidePortal() {
 
         {tab === "verification" && <VerificationPanel />}
 
+        {tab === "earnings" && <EarningsPanel />}
         {tab === "profile" && <ProfilePanel guideId={guide.id} />}
       </div>
     </div>
