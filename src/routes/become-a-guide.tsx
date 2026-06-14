@@ -21,7 +21,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { notifyAdminsOfGuideApplication } from "@/lib/newsletter.functions";
 import { generateGuideBio } from "@/lib/guide-application.functions";
 import { assessLanguageTest } from "@/lib/language-test.functions";
+import { markInvitationRegistered } from "@/lib/guide-invitations.functions";
 import { useI18n } from "@/lib/i18n";
+
 
 type LangTestResult = {
   level: "A1" | "A2" | "B1" | "B2" | "C1" | "C2" | "N/A";
@@ -106,7 +108,10 @@ function BecomeAGuidePage() {
   const notifyAdmins = useServerFn(notifyAdminsOfGuideApplication);
   const generateBio = useServerFn(generateGuideBio);
   const assessLang = useServerFn(assessLanguageTest);
+  const markInviteRegistered = useServerFn(markInvitationRegistered);
+  const [inviteToken, setInviteToken] = useState<string | null>(null);
   const { t, tCategory, tLanguage } = useI18n();
+
   const [otherLanguage, setOtherLanguage] = useState("");
   const [languageTests, setLanguageTests] = useState<Record<string, LangTestResult>>({});
 
@@ -205,6 +210,27 @@ function BecomeAGuidePage() {
     });
     return () => sub.subscription.unsubscribe();
   }, []);
+
+  // Prefill from invitation link (/invite/:token redirects here with query params)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const sp = new URLSearchParams(window.location.search);
+    const invite = sp.get("invite");
+    const email = sp.get("email");
+    const name = sp.get("name");
+    const city = sp.get("city");
+    if (invite) setInviteToken(invite);
+    if (email || name || city) {
+      setForm((f) => ({
+        ...f,
+        email: f.email || email || "",
+        full_name: f.full_name || name || "",
+        city: f.city || city || "",
+      }));
+    }
+  }, []);
+
+
 
 
   const update = <K extends keyof FormState>(k: K, v: FormState[K]) =>
@@ -787,6 +813,12 @@ function BecomeAGuidePage() {
       notifyAdmins({ data: { application_id: applicationId } }).catch((err: unknown) =>
         console.error("Admin notify failed", err),
       );
+
+      if (inviteToken) {
+        markInviteRegistered({ data: { token: inviteToken, application_id: applicationId } })
+          .catch((err: unknown) => console.error("Invite registration failed", err));
+      }
+
 
       try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
 

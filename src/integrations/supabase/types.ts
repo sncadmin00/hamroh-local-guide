@@ -948,6 +948,71 @@ export type Database = {
           },
         ]
       }
+      guide_invitations: {
+        Row: {
+          application_id: string | null
+          city: string | null
+          created_at: string
+          email: string
+          id: string
+          name: string | null
+          notes: string | null
+          opened_at: string | null
+          registered_at: string | null
+          sent_at: string | null
+          sent_by: string | null
+          source: string
+          source_url: string | null
+          status: string
+          token: string
+          updated_at: string
+        }
+        Insert: {
+          application_id?: string | null
+          city?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          name?: string | null
+          notes?: string | null
+          opened_at?: string | null
+          registered_at?: string | null
+          sent_at?: string | null
+          sent_by?: string | null
+          source?: string
+          source_url?: string | null
+          status?: string
+          token: string
+          updated_at?: string
+        }
+        Update: {
+          application_id?: string | null
+          city?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string | null
+          notes?: string | null
+          opened_at?: string | null
+          registered_at?: string | null
+          sent_at?: string | null
+          sent_by?: string | null
+          source?: string
+          source_url?: string | null
+          status?: string
+          token?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guide_invitations_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "guide_applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       guide_posts: {
         Row: {
           caption: string

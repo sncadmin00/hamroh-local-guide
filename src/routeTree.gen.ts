@@ -36,6 +36,7 @@ import { Route as MessagesIndexRouteImport } from './routes/messages.index'
 import { Route as BookIndexRouteImport } from './routes/book.index'
 import { Route as ToursSlugRouteImport } from './routes/tours_.$slug'
 import { Route as MessagesBookingIdRouteImport } from './routes/messages.$bookingId'
+import { Route as InviteTokenRouteImport } from './routes/invite.$token'
 import { Route as GuidesGuideIdRouteImport } from './routes/guides_.$guideId'
 import { Route as ExploreSlugRouteImport } from './routes/explore.$slug'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
@@ -193,6 +194,11 @@ const MessagesBookingIdRoute = MessagesBookingIdRouteImport.update({
   path: '/$bookingId',
   getParentRoute: () => MessagesRoute,
 } as any)
+const InviteTokenRoute = InviteTokenRouteImport.update({
+  id: '/invite/$token',
+  path: '/invite/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GuidesGuideIdRoute = GuidesGuideIdRouteImport.update({
   id: '/guides_/$guideId',
   path: '/guides/$guideId',
@@ -340,6 +346,7 @@ export interface FileRoutesByFullPath {
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/explore/$slug': typeof ExploreSlugRoute
   '/guides/$guideId': typeof GuidesGuideIdRoute
+  '/invite/$token': typeof InviteTokenRoute
   '/messages/$bookingId': typeof MessagesBookingIdRoute
   '/tours/$slug': typeof ToursSlugRoute
   '/book/': typeof BookIndexRoute
@@ -389,6 +396,7 @@ export interface FileRoutesByTo {
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/explore/$slug': typeof ExploreSlugRoute
   '/guides/$guideId': typeof GuidesGuideIdRoute
+  '/invite/$token': typeof InviteTokenRoute
   '/messages/$bookingId': typeof MessagesBookingIdRoute
   '/tours/$slug': typeof ToursSlugRoute
   '/book': typeof BookIndexRoute
@@ -440,6 +448,7 @@ export interface FileRoutesById {
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/explore/$slug': typeof ExploreSlugRoute
   '/guides_/$guideId': typeof GuidesGuideIdRoute
+  '/invite/$token': typeof InviteTokenRoute
   '/messages/$bookingId': typeof MessagesBookingIdRoute
   '/tours_/$slug': typeof ToursSlugRoute
   '/book/': typeof BookIndexRoute
@@ -492,6 +501,7 @@ export interface FileRouteTypes {
     | '/email/unsubscribe'
     | '/explore/$slug'
     | '/guides/$guideId'
+    | '/invite/$token'
     | '/messages/$bookingId'
     | '/tours/$slug'
     | '/book/'
@@ -541,6 +551,7 @@ export interface FileRouteTypes {
     | '/email/unsubscribe'
     | '/explore/$slug'
     | '/guides/$guideId'
+    | '/invite/$token'
     | '/messages/$bookingId'
     | '/tours/$slug'
     | '/book'
@@ -591,6 +602,7 @@ export interface FileRouteTypes {
     | '/email/unsubscribe'
     | '/explore/$slug'
     | '/guides_/$guideId'
+    | '/invite/$token'
     | '/messages/$bookingId'
     | '/tours_/$slug'
     | '/book/'
@@ -640,6 +652,7 @@ export interface RootRouteChildren {
   BookSlugRoute: typeof BookSlugRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   GuidesGuideIdRoute: typeof GuidesGuideIdRoute
+  InviteTokenRoute: typeof InviteTokenRoute
   ToursSlugRoute: typeof ToursSlugRoute
   BookIndexRoute: typeof BookIndexRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
@@ -848,6 +861,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/messages/$bookingId'
       preLoaderRoute: typeof MessagesBookingIdRouteImport
       parentRoute: typeof MessagesRoute
+    }
+    '/invite/$token': {
+      id: '/invite/$token'
+      path: '/invite/$token'
+      fullPath: '/invite/$token'
+      preLoaderRoute: typeof InviteTokenRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/guides_/$guideId': {
       id: '/guides_/$guideId'
@@ -1063,6 +1083,7 @@ const rootRouteChildren: RootRouteChildren = {
   BookSlugRoute: BookSlugRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   GuidesGuideIdRoute: GuidesGuideIdRoute,
+  InviteTokenRoute: InviteTokenRoute,
   ToursSlugRoute: ToursSlugRoute,
   BookIndexRoute: BookIndexRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
@@ -1084,13 +1105,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

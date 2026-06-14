@@ -14,6 +14,8 @@ import { reindexArticle, reindexAllArticles } from "@/lib/articles-rag.functions
 import { SpotlightsPanel } from "@/components/admin/SpotlightsPanel";
 import { ToursPanel } from "@/components/admin/ToursPanel";
 import { VerificationsPanel } from "@/components/admin/VerificationsPanel";
+import { GuideInvitationsPanel } from "@/components/admin/GuideInvitationsPanel";
+
 import { useAdminI18n } from "@/lib/admin-i18n";
 import hamrohLogo from "@/assets/hamroh-logo.png";
 
@@ -218,7 +220,7 @@ function AdminPage() {
   const { ta } = useAdminI18n();
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
-  const [tab, setTab] = useState<"bookings" | "applications" | "verifications" | "cities" | "guides" | "tours" | "spotlights" | "categories" | "languages" | "places" | "suggestions" | "articles" | "social" | "users">("bookings");
+  const [tab, setTab] = useState<"bookings" | "applications" | "verifications" | "cities" | "guides" | "tours" | "spotlights" | "categories" | "languages" | "places" | "suggestions" | "articles" | "social" | "users" | "invitations">("bookings");
   const [cities, setCities] = useState<City[]>([]);
   const [guides, setGuides] = useState<Guide[]>([]);
   const [articles, setArticles] = useState<Article[]>([]);
@@ -386,6 +388,12 @@ function AdminPage() {
           >
             {ta("tab.verifications")}
           </button>
+          <button
+            onClick={() => setTab("invitations")}
+            className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "invitations" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+          >
+            Приглашения
+          </button>
         </div>
 
         {tab === "bookings" && <BookingsPanel bookings={bookings} reload={loadData} />}
@@ -402,6 +410,8 @@ function AdminPage() {
         {tab === "social" && <SocialPanel embeds={embeds} cities={cities} reload={loadData} />}
         {tab === "users" && <UsersPanel />}
         {tab === "verifications" && <VerificationsPanel />}
+        {tab === "invitations" && <GuideInvitationsPanel />}
+
       </div>
     </div>
   );
