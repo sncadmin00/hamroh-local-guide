@@ -3,12 +3,15 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { Search, Loader2, Send, Plus, Trash2, RefreshCw, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useI18n, type Lang } from "@/lib/i18n";
 import {
   searchExistingGuides,
   createGuideInvitations,
   listGuideInvitations,
   resendGuideInvitation,
 } from "@/lib/guide-invitations.functions";
+
+type InviteLocale = "ru" | "uz" | "en";
 
 type Invitation = {
   id: string;
@@ -37,11 +40,17 @@ type Draft = {
   city: string;
   source: "manual" | "web";
   source_url: string;
+  locale: InviteLocale;
 };
 
-const emptyDraft: Draft = { email: "", name: "", city: "", source: "manual", source_url: "" };
+const toInviteLocale = (l: Lang): InviteLocale => (l === "uz" || l === "en" ? l : "ru");
+const makeEmptyDraft = (locale: InviteLocale): Draft => ({
+  email: "", name: "", city: "", source: "manual", source_url: "", locale,
+});
 
 export function GuideInvitationsPanel() {
+  const { lang } = useI18n();
+  const defaultLocale = toInviteLocale(lang);
   const search = useServerFn(searchExistingGuides);
   const create = useServerFn(createGuideInvitations);
   const list = useServerFn(listGuideInvitations);
@@ -56,7 +65,7 @@ export function GuideInvitationsPanel() {
   const [results, setResults] = useState<SearchResult[]>([]);
 
   // Drafts (items queued to send)
-  const [drafts, setDrafts] = useState<Draft[]>([{ ...emptyDraft }]);
+  const [drafts, setDrafts] = useState<Draft[]>([makeEmptyDraft(defaultLocale)]);
   const [sending, setSending] = useState(false);
 
   const reload = useCallback(async () => {
