@@ -70,6 +70,18 @@ export const createBooking = createServerFn({ method: "POST" })
     const clientLocale = normalizeLocale(data.locale);
     const authedUserId = await getOptionalUserId();
 
+    // Verify accepted offer version is the current one
+    const { data: currentOffer, error: offerErr } = await supabaseAdmin
+      .from("legal_offers")
+      .select("version")
+      .eq("is_current", true)
+      .maybeSingle();
+    if (offerErr) throw new Error(offerErr.message);
+    if (!currentOffer || (currentOffer as any).version !== data.offer_version) {
+      throw new Error("The public offer has been updated. Please reload and accept the current version.");
+    }
+    const offerAcceptedAtIso = new Date().toISOString();
+
     // Load tour authoritatively — never trust client-side price.
     const { data: tour, error: tourErr } = await supabaseAdmin
       .from("tours")
