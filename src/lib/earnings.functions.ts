@@ -522,7 +522,7 @@ export const adminSettleStatement = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     const { supabase, userId } = context;
     if (!(await isAdmin(supabase, userId))) throw new Error("Forbidden");
-    const patch: Record<string, unknown> = { status: data.status };
+    const patch: any = { status: data.status };
     if (data.status === "settled") patch.settled_at = new Date().toISOString();
     else patch.settled_at = null;
     if (data.payment_method !== undefined) patch.payment_method = data.payment_method || null;
