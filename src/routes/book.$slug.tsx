@@ -128,6 +128,10 @@ function BookPage() {
       toast.error("Add an email or link Telegram for booking updates");
       return;
     }
+    if (!offerVersion || !offerAccepted) {
+      toast.error("Please accept the public offer to continue");
+      return;
+    }
     setSubmitting(true);
     try {
       await createBookingFn({
