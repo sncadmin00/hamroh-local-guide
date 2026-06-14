@@ -3,12 +3,15 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { Search, Loader2, Send, Plus, Trash2, RefreshCw, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useI18n, type Lang } from "@/lib/i18n";
 import {
   searchExistingGuides,
   createGuideInvitations,
   listGuideInvitations,
   resendGuideInvitation,
 } from "@/lib/guide-invitations.functions";
+
+type InviteLocale = "ru" | "uz" | "en";
 
 type Invitation = {
   id: string;
@@ -37,11 +40,17 @@ type Draft = {
   city: string;
   source: "manual" | "web";
   source_url: string;
+  locale: InviteLocale;
 };
 
-const emptyDraft: Draft = { email: "", name: "", city: "", source: "manual", source_url: "" };
+const toInviteLocale = (l: Lang): InviteLocale => (l === "uz" || l === "en" ? l : "ru");
+const makeEmptyDraft = (locale: InviteLocale): Draft => ({
+  email: "", name: "", city: "", source: "manual", source_url: "", locale,
+});
 
 export function GuideInvitationsPanel() {
+  const { lang } = useI18n();
+  const defaultLocale = toInviteLocale(lang);
   const search = useServerFn(searchExistingGuides);
   const create = useServerFn(createGuideInvitations);
   const list = useServerFn(listGuideInvitations);
@@ -56,7 +65,7 @@ export function GuideInvitationsPanel() {
   const [results, setResults] = useState<SearchResult[]>([]);
 
   // Drafts (items queued to send)
-  const [drafts, setDrafts] = useState<Draft[]>([{ ...emptyDraft }]);
+  const [drafts, setDrafts] = useState<Draft[]>([makeEmptyDraft(defaultLocale)]);
   const [sending, setSending] = useState(false);
 
   const reload = useCallback(async () => {
@@ -91,7 +100,7 @@ export function GuideInvitationsPanel() {
   const addFromSearch = (email: string, title: string, url: string) => {
     setDrafts((d) => [
       ...d.filter((x) => x.email.trim()),
-      { email, name: title.slice(0, 100), city: "", source: "web", source_url: url },
+      { email, name: title.slice(0, 100), city: "", source: "web", source_url: url, locale: defaultLocale },
     ]);
     toast.success(`Добавлено: ${email}`);
   };
@@ -100,7 +109,7 @@ export function GuideInvitationsPanel() {
     setDrafts((d) => d.map((x, idx) => (idx === i ? { ...x, ...patch } : x)));
   };
   const removeDraft = (i: number) => setDrafts((d) => d.filter((_, idx) => idx !== i));
-  const addDraft = () => setDrafts((d) => [...d, { ...emptyDraft }]);
+  const addDraft = () => setDrafts((d) => [...d, makeEmptyDraft(defaultLocale)]);
 
   const sendAll = async () => {
     const items = drafts.filter((d) => d.email.trim() && /.+@.+\..+/.test(d.email));
@@ -113,7 +122,7 @@ export function GuideInvitationsPanel() {
       const res = await create({ data: { items } });
       toast.success(`Отправлено: ${res.sent}, пропущено (уже приглашены): ${res.skipped}`);
       if (res.errors.length) console.warn("Invite errors:", res.errors);
-      setDrafts([{ ...emptyDraft }]);
+      setDrafts([makeEmptyDraft(defaultLocale)]);
       await reload();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Не удалось отправить");
@@ -122,9 +131,9 @@ export function GuideInvitationsPanel() {
     }
   };
 
-  const doResend = async (id: string) => {
+  const doResend = async (id: string, locale: InviteLocale = defaultLocale) => {
     try {
-      const res = await resend({ data: { id } });
+      const res = await resend({ data: { id, locale } });
       if (res.ok) toast.success("Письмо отправлено повторно");
       else toast.error("Не удалось отправить (возможно, email в списке отписавшихся)");
       await reload();
@@ -196,7 +205,7 @@ export function GuideInvitationsPanel() {
         </h2>
         <div className="space-y-2">
           {drafts.map((d, i) => (
-            <div key={i} className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_1fr_auto] gap-2">
+            <div key={i} className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_1fr_90px_auto] gap-2">
               <input
                 type="email"
                 placeholder="email@example.com"
@@ -216,6 +225,16 @@ export function GuideInvitationsPanel() {
                 onChange={(e) => updateDraft(i, { city: e.target.value })}
                 className="h-9 rounded-md border border-border px-2 text-sm"
               />
+              <select
+                value={d.locale}
+                onChange={(e) => updateDraft(i, { locale: e.target.value as InviteLocale })}
+                className="h-9 rounded-md border border-border px-2 text-sm bg-background"
+                title="Язык письма"
+              >
+                <option value="ru">RU</option>
+                <option value="uz">UZ</option>
+                <option value="en">EN</option>
+              </select>
               <button
                 onClick={() => removeDraft(i)}
                 className="h-9 w-9 inline-flex items-center justify-center rounded-md text-muted-foreground hover:text-destructive"
