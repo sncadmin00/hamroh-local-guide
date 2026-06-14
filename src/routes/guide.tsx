@@ -3,11 +3,12 @@ import { useEffect, useState, useCallback, useRef, lazy, Suspense } from "react"
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Calendar, CalendarClock, CalendarDays, Plus, Trash2, Check, X, LogOut, Loader2, Copy, Link2, Image as ImageIcon, Compass, Pencil, MapPin, Sparkles, ShieldCheck, Home, UserCircle2 } from "lucide-react";
+import { Calendar, CalendarClock, CalendarDays, Plus, Trash2, Check, X, LogOut, Loader2, Copy, Link2, Image as ImageIcon, Compass, Pencil, MapPin, Sparkles, ShieldCheck, Home, UserCircle2, Wallet } from "lucide-react";
 import { CalendarPanel } from "@/components/guide/CalendarPanel";
 import { GuideAIPanel } from "@/components/guide/GuideAIPanel";
 import { VerificationPanel } from "@/components/guide/VerificationPanel";
 import { ProfilePanel } from "@/components/guide/ProfilePanel";
+import { EarningsPanel } from "@/components/guide/EarningsPanel";
 
 import {
   getMyGuide,
