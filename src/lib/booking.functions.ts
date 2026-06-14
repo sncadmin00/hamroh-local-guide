@@ -51,6 +51,8 @@ const bookingSchema = z.object({
   source: z.string().max(64).optional(),
   locale: z.enum(["ru", "uz", "en"]).optional(),
   payment_method: z.enum(["cash", "online"]).default("cash"),
+  offer_version: z.string().min(1).max(40),
+  offer_accepted: z.literal(true),
 }).refine((data) => data.customer_email || data.customer_telegram_chat_id, {
   message: "Email or Telegram contact is required",
 });
