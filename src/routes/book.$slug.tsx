@@ -11,6 +11,7 @@ import { useTour, computeTourPrice, offeredCategories, GROUP_CATEGORY_MAX, GROUP
 import { getBookingSource } from "@/hooks/useTrackSource";
 import { getGuideSlots, createBooking } from "@/lib/booking.functions";
 import { getCurrentOffer } from "@/lib/legal-offer.functions";
+import { getPublicServiceFeeRate } from "@/lib/earnings.functions";
 import { useI18n } from "@/lib/i18n";
 import { trackEvent } from "@/lib/analytics";
 import { getMyTelegramAccount } from "@/lib/telegram.functions";
@@ -34,6 +35,7 @@ function BookPage() {
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "online">("cash");
   const [offerVersion, setOfferVersion] = useState<string | null>(null);
   const [offerAccepted, setOfferAccepted] = useState(false);
+  const [serviceFeeRate, setServiceFeeRate] = useState(0.05);
   const [form, setForm] = useState({
     date: "",
     adults: 2,
@@ -49,12 +51,19 @@ function BookPage() {
   const createBookingFn = useServerFn(createBooking);
   const fetchTelegram = useServerFn(getMyTelegramAccount);
   const fetchOffer = useServerFn(getCurrentOffer);
+  const fetchServiceFeeRate = useServerFn(getPublicServiceFeeRate);
 
   useEffect(() => {
     fetchOffer()
       .then((o: any) => setOfferVersion(o.version))
       .catch(() => {});
   }, [fetchOffer]);
+
+  useEffect(() => {
+    fetchServiceFeeRate()
+      .then((r: any) => setServiceFeeRate(r.rate))
+      .catch(() => {});
+  }, [fetchServiceFeeRate]);
 
   useEffect(() => {
     if (!tour) return;
@@ -115,7 +124,7 @@ function BookPage() {
 
   const computedPrice = computeTourPrice(tour, { category: selectedCategory, language: currentLanguage || null });
   const total = computedPrice ?? 0;
-  const fee = Math.round(total * 0.05);
+  const fee = Math.round(total * serviceFeeRate);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -429,7 +438,7 @@ function BookPage() {
                   <span className="tabular-nums">${total}</span>
                 </div>
                 <div className="flex justify-between"><span className="text-muted-foreground">{form.adults} {form.adults === 1 ? "adult" : "adults"}{form.children > 0 ? `, ${form.children} ${form.children === 1 ? "child" : "children"}` : ""}</span><span className="tabular-nums" /></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Service fee (5%)</span><span className="tabular-nums">${fee}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Service fee ({(serviceFeeRate * 100).toFixed(0)}%)</span><span className="tabular-nums">${fee}</span></div>
                 <div className="flex justify-between border-t border-border/60 pt-3 text-base font-semibold"><span>Total</span><span className="tabular-nums">${total + fee}</span></div>
                 <div className="mt-2 rounded-xl bg-secondary/60 p-3 text-xs text-muted-foreground">
                   {paymentMethod === "cash" ? (

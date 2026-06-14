@@ -1,0 +1,1 @@
+INSERT INTO public.app_settings (key, value, updated_at) VALUES ('hamroh_service_fee_rate', to_jsonb(0.05), now()) ON CONFLICT (key) DO NOTHING;
