@@ -5,6 +5,8 @@ import { signReportToken } from "@/lib/earnings-report.server";
 
 /** Default commission rate when app_settings has no value. */
 const DEFAULT_COMMISSION = 0.15;
+/** Default service-fee rate when app_settings has no value. */
+const DEFAULT_SERVICE_FEE = 0.05;
 
 async function getCommissionRate(supabase: any): Promise<number> {
   const { data } = await supabase
@@ -15,6 +17,18 @@ async function getCommissionRate(supabase: any): Promise<number> {
   const raw = (data as any)?.value;
   const num = typeof raw === "number" ? raw : Number(raw);
   if (!Number.isFinite(num) || num < 0 || num >= 1) return DEFAULT_COMMISSION;
+  return num;
+}
+
+async function getServiceFeeRate(supabase: any): Promise<number> {
+  const { data } = await supabase
+    .from("app_settings")
+    .select("value")
+    .eq("key", "hamroh_service_fee_rate")
+    .maybeSingle();
+  const raw = (data as any)?.value;
+  const num = typeof raw === "number" ? raw : Number(raw);
+  if (!Number.isFinite(num) || num < 0 || num >= 1) return DEFAULT_SERVICE_FEE;
   return num;
 }
 
