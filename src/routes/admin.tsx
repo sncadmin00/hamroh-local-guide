@@ -15,6 +15,7 @@ import { SpotlightsPanel } from "@/components/admin/SpotlightsPanel";
 import { ToursPanel } from "@/components/admin/ToursPanel";
 import { VerificationsPanel } from "@/components/admin/VerificationsPanel";
 import { GuideInvitationsPanel } from "@/components/admin/GuideInvitationsPanel";
+import { EarningsAdminPanel } from "@/components/admin/EarningsAdminPanel";
 
 import { useAdminI18n } from "@/lib/admin-i18n";
 import hamrohLogo from "@/assets/hamroh-logo.png";
