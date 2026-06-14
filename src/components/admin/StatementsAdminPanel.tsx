@@ -297,12 +297,18 @@ export function StatementsAdminPanel() {
             ))}
           </tbody>
         </table>
-      </div>
+          </div>
 
-      <p className="text-xs text-muted-foreground">
-        Statements auto-generate on the 1st of each month at 02:00 (UTC) for the previous month
-        and guides receive a Telegram notification. You can re-run safely — it's idempotent.
-      </p>
+          <p className="text-xs text-muted-foreground">
+            Statements auto-generate on the 1st of each month at 02:00 (UTC) for the previous month
+            and guides receive a Telegram notification. You can re-run safely — it's idempotent.
+          </p>
+        </TabsContent>
+
+        <TabsContent value="revenue" className="mt-4">
+          <HamrohRevenuePanel period={period} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
