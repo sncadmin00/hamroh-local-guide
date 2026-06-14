@@ -29,6 +29,7 @@ import { assessLanguageTest } from "@/lib/language-test.functions";
 import { useCities, useCategories } from "@/lib/content-queries";
 import { GuidePostsPanel } from "@/components/GuidePostsPanel";
 import { useGuideI18n } from "@/lib/guide-i18n";
+import { GuideOfferGate } from "@/components/guide/GuideOfferGate";
 
 const TourMapPicker = lazy(() => import("@/components/TourMapPicker"));
 
