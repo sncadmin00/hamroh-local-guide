@@ -95,8 +95,9 @@ export function EarningsPanel() {
         {([
           ["overview", tg("earn.overview"), <Wallet key="i1" className="h-4 w-4" />],
           ["transactions", tg("earn.transactions"), <ReceiptText key="i2" className="h-4 w-4" />],
-          ["payouts", tg("earn.payouts"), <CalendarRange key="i3" className="h-4 w-4" />],
-          ["reports", tg("earn.reports"), <FileText key="i4" className="h-4 w-4" />],
+          ["statements", tg("earn.statements"), <Scale key="i3" className="h-4 w-4" />],
+          ["payouts", tg("earn.payouts"), <CalendarRange key="i4" className="h-4 w-4" />],
+          ["reports", tg("earn.reports"), <FileText key="i5" className="h-4 w-4" />],
         ] as const).map(([k, label, icon]) => (
           <button
             key={k}
