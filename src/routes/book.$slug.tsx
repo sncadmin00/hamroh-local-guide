@@ -398,8 +398,19 @@ function BookPage() {
                   <span className="tabular-nums">${total}</span>
                 </div>
                 <div className="flex justify-between"><span className="text-muted-foreground">{form.adults} {form.adults === 1 ? "adult" : "adults"}{form.children > 0 ? `, ${form.children} ${form.children === 1 ? "child" : "children"}` : ""}</span><span className="tabular-nums" /></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Service fee</span><span className="tabular-nums">${fee}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Service fee (5%)</span><span className="tabular-nums">${fee}</span></div>
                 <div className="flex justify-between border-t border-border/60 pt-3 text-base font-semibold"><span>Total</span><span className="tabular-nums">${total + fee}</span></div>
+                <div className="mt-2 rounded-xl bg-secondary/60 p-3 text-xs text-muted-foreground">
+                  {paymentMethod === "cash" ? (
+                    <>
+                      <span className="font-medium text-foreground">Cash to guide:</span> ${total} paid to {guide?.name?.split(" ")[0] ?? "your guide"} on tour day. <span className="font-medium text-foreground">${fee}</span> service fee handled via Hamroh.
+                    </>
+                  ) : (
+                    <>
+                      <span className="font-medium text-foreground">Pay online:</span> all ${total + fee} charged to your card now.
+                    </>
+                  )}
+                </div>
               </div>
               <div className="mt-5 border-t border-border/60 pt-4">
                 <PaymentMethods variant="checkout" />
