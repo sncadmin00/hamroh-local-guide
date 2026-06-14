@@ -814,6 +814,12 @@ function BecomeAGuidePage() {
         console.error("Admin notify failed", err),
       );
 
+      if (inviteToken) {
+        markInviteRegistered({ data: { token: inviteToken, application_id: applicationId } })
+          .catch((err: unknown) => console.error("Invite registration failed", err));
+      }
+
+
       try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
 
       toast.success(t("bg.applicationSent"));
