@@ -143,6 +143,40 @@ export function ProfilePanel({ guideId }: { guideId: string }) {
           </div>
         )}
       </div>
+
+      <div className="space-y-3 pt-6 border-t border-border">
+        <h2 className="font-display text-xl font-semibold">{tg("profile.tax.title")}</h2>
+        <div className="grid sm:grid-cols-2 gap-3">
+          <label className="text-sm flex flex-col gap-1">
+            <span className="text-muted-foreground">{tg("profile.tax.status")}</span>
+            <select
+              value={taxStatus}
+              onChange={(e) => setTaxStatus(e.target.value as any)}
+              className="h-10 px-3 rounded-md border border-border bg-background"
+            >
+              <option value="none">{tg("profile.tax.none")}</option>
+              <option value="self_employed">{tg("profile.tax.self")}</option>
+              <option value="ip">{tg("profile.tax.ip")}</option>
+            </select>
+          </label>
+          <label className="text-sm flex flex-col gap-1">
+            <span className="text-muted-foreground">{tg("profile.tax.id")}</span>
+            <input
+              value={taxId}
+              onChange={(e) => setTaxId(e.target.value.replace(/\D/g, "").slice(0, 14))}
+              placeholder={tg("profile.tax.idPh")}
+              className="h-10 px-3 rounded-md border border-border bg-background"
+            />
+          </label>
+        </div>
+        <button
+          onClick={saveTax}
+          disabled={taxSaving}
+          className="h-10 px-5 rounded-full bg-primary text-primary-foreground text-sm font-medium disabled:opacity-50"
+        >
+          {taxSaving ? tg("common.loading") : tg("common.save")}
+        </button>
+      </div>
     </section>
   );
 }
