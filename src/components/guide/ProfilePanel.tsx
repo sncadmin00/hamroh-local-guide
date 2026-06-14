@@ -25,7 +25,7 @@ export function ProfilePanel({ guideId }: { guideId: string }) {
     (async () => {
       setLoading(true);
       const [g, t, p] = await Promise.all([
-        supabase.from("guides").select("photo_url, cover_url").eq("id", guideId).maybeSingle(),
+        supabase.from("guides").select("photo_url, cover_url, tax_status, tax_id").eq("id", guideId).maybeSingle(),
         supabase.from("tours").select("title, cover_url").eq("guide_id", guideId).not("cover_url", "is", null),
         supabase.from("guide_posts").select("caption, thumbnail_url").eq("guide_id", guideId).not("thumbnail_url", "is", null),
       ]);
