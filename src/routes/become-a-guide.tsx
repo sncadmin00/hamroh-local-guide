@@ -151,6 +151,7 @@ function BecomeAGuidePage() {
         hasTransport?: boolean;
         transportSeats?: string;
         hasCertificate?: boolean | null;
+        taxId?: string;
       };
       if (parsed.form) setForm({ ...emptyForm, ...parsed.form });
       if (parsed.languages) setSelectedLanguages(parsed.languages);
@@ -159,6 +160,7 @@ function BecomeAGuidePage() {
       if (typeof parsed.hasTransport === "boolean") setHasTransport(parsed.hasTransport);
       if (typeof parsed.transportSeats === "string") setTransportSeats(parsed.transportSeats);
       if (parsed.hasCertificate === true || parsed.hasCertificate === false) setHasCertificate(parsed.hasCertificate);
+      if (typeof parsed.taxId === "string") setTaxId(parsed.taxId);
     } catch {
       // ignore
     }
