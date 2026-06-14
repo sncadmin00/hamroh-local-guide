@@ -72,6 +72,8 @@ export const searchExistingGuides = createServerFn({ method: "POST" })
 
 /* ---------------- Create invitations ---------------- */
 
+const LocaleSchema = z.enum(["ru", "uz", "en"]).default("ru");
+
 const InviteItemSchema = z.object({
   email: z.string().trim().email().max(255),
   name: z.string().trim().max(200).optional().default(""),
@@ -79,6 +81,7 @@ const InviteItemSchema = z.object({
   source: z.enum(["manual", "web"]).default("manual"),
   source_url: z.string().trim().max(500).optional().default(""),
   notes: z.string().trim().max(1000).optional().default(""),
+  locale: LocaleSchema.optional(),
 });
 
 export const createGuideInvitations = createServerFn({ method: "POST" })
@@ -86,6 +89,7 @@ export const createGuideInvitations = createServerFn({ method: "POST" })
   .inputValidator((input) =>
     z.object({
       items: z.array(InviteItemSchema).min(1).max(50),
+      locale: LocaleSchema.optional(),
     }).parse(input),
   )
   .handler(async ({ context, data }) => {
@@ -144,6 +148,7 @@ export const createGuideInvitations = createServerFn({ method: "POST" })
       }
 
       const inviteUrl = `${SITE_URL}/invite/${inserted.token}`;
+      const itemLocale = item.locale ?? data.locale ?? "ru";
       const ok = await enqueueTransactionalEmail({
         supabase: supabaseAdmin,
         templateName: "guide-invitation",
@@ -152,6 +157,7 @@ export const createGuideInvitations = createServerFn({ method: "POST" })
           recipientName: item.name || undefined,
           inviteUrl,
           siteUrl: SITE_URL,
+          locale: itemLocale,
         },
         idempotencyKey: `guide-invite-${inserted.id}`,
       });
@@ -182,7 +188,9 @@ export const listGuideInvitations = createServerFn({ method: "POST" })
 
 export const resendGuideInvitation = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input) => z.object({ id: z.string().uuid() }).parse(input))
+  .inputValidator((input) =>
+    z.object({ id: z.string().uuid(), locale: LocaleSchema.optional() }).parse(input),
+  )
   .handler(async ({ context, data }) => {
     const { userId } = context;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -210,6 +218,7 @@ export const resendGuideInvitation = createServerFn({ method: "POST" })
         recipientName: inv.name || undefined,
         inviteUrl,
         siteUrl: SITE_URL,
+        locale: data.locale ?? "ru",
       },
       idempotencyKey: `guide-invite-resend-${inv.id}-${Date.now()}`,
     });
