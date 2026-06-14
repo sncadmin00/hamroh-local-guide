@@ -9,6 +9,8 @@ import {
   adminGetCommissionRate,
   adminSetCommissionRate,
 } from "@/lib/earnings.functions";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { HamrohRevenuePanel } from "./HamrohRevenuePanel";
 
 function money(n: number) {
   return Math.round(Number(n)).toLocaleString("en-US") + " UZS";
