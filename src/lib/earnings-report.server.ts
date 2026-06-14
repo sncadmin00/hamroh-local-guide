@@ -186,7 +186,7 @@ export async function loadReportData(args: {
     kind: args.kind,
     rows: list,
     summary,
-    payouts: (payouts ?? []) as any[],
+    payouts,
     byMonth,
   };
 }
