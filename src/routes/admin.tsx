@@ -2071,6 +2071,21 @@ function ApplicationsPanel({
                       )}
                     </div>
 
+                    {/* Tax ID (INN) */}
+                    <div>
+                      <p className="text-xs font-medium text-muted-foreground mb-1">{ta("applications.taxId")}</p>
+                      {a.tax_id ? (
+                        <span className="font-mono text-sm">{a.tax_id}</span>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">{ta("applications.taxIdMissing")}</span>
+                      )}
+                    </div>
+
+
+
+
+
+
 
 
 
