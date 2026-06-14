@@ -396,6 +396,12 @@ function AdminPage() {
           >
             Приглашения
           </button>
+          <button
+            onClick={() => setTab("earnings")}
+            className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "earnings" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+          >
+            Earnings
+          </button>
         </div>
 
         {tab === "bookings" && <BookingsPanel bookings={bookings} reload={loadData} />}
