@@ -136,6 +136,7 @@ function BecomeAGuidePage() {
   const [transportSeats, setTransportSeats] = useState<string>("");
   const [hasCertificate, setHasCertificate] = useState<boolean | null>(null);
   const [certificate, setCertificate] = useState<File | null>(null);
+  const [taxId, setTaxId] = useState<string>("");
 
   // Load draft
   useEffect(() => {
