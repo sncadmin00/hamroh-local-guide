@@ -323,6 +323,39 @@ function BookPage() {
               <textarea value={form.notes} onChange={handleFieldChange} name="notes" rows={4} className="mt-2 w-full rounded-xl border border-input bg-background p-4 text-sm outline-none focus:ring-2 focus:ring-ring" placeholder="Anything specific you'd love to see or do…" />
             </div>
 
+            <div>
+              <label className="text-sm font-medium">Payment method</label>
+              <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod("cash")}
+                  className={`rounded-2xl border p-4 text-left transition ${paymentMethod === "cash" ? "border-primary bg-primary/5 ring-2 ring-primary" : "border-input bg-background hover:bg-muted"}`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium text-sm">Cash to guide</span>
+                    {paymentMethod === "cash" && <Check className="h-4 w-4 text-primary" />}
+                  </div>
+                  <p className="mt-1 text-xs text-muted-foreground">Pay the guide directly on tour day. Only the small service fee is charged online.</p>
+                </button>
+                <button
+                  type="button"
+                  disabled
+                  className="rounded-2xl border border-input bg-muted/40 p-4 text-left opacity-60 cursor-not-allowed"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium text-sm">Pay online (card)</span>
+                    <span className="text-[10px] uppercase tracking-wide rounded-full bg-muted px-2 py-0.5 text-muted-foreground">Soon</span>
+                  </div>
+                  <p className="mt-1 text-xs text-muted-foreground">Click, Payme & Visa/Mastercard — coming with Phase 2.</p>
+                </button>
+              </div>
+              {paymentMethod === "cash" && (
+                <p className="mt-2 text-xs text-muted-foreground">
+                  Service fee (${fee}) will be settled with your booking. Payment provider integration coming soon — for now your request is sent to the guide and the fee is recorded as pending.
+                </p>
+              )}
+            </div>
+
             <button type="submit" disabled={submitting || adultsExceedAll || total === 0} className="inline-flex h-12 w-full items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.01] disabled:opacity-60">
               {submitting ? "Sending…" : isInstantMode ? `Confirm & book — $${total + fee}` : `Request booking — $${total + fee}`}
             </button>
