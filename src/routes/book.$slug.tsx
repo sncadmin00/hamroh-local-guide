@@ -154,6 +154,8 @@ function BookPage() {
           source: getBookingSource(),
           locale: lang,
           payment_method: paymentMethod,
+          offer_version: offerVersion!,
+          offer_accepted: true as const,
         },
       });
       setConfirmed(true);
