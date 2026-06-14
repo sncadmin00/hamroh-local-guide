@@ -471,6 +471,14 @@ export const adminGenerateStatements = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     const { supabase, userId } = context;
     if (!(await isAdmin(supabase, userId))) throw new Error("Forbidden");
+    const from = new Date(Date.UTC(data.year, data.month - 1, 1)).toISOString().slice(0, 10);
+    const to = new Date(Date.UTC(data.year, data.month, 0)).toISOString().slice(0, 10);
+    const { count: completedCount } = await supabase
+      .from("bookings")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "completed")
+      .gte("date", from)
+      .lte("date", to);
     const results = await generateStatementsForPeriod(supabase, data.year, data.month);
     let notified = 0;
     if (data.notify) {
@@ -478,7 +486,7 @@ export const adminGenerateStatements = createServerFn({ method: "POST" })
         if (await notifyGuideStatement(supabase, r, data.year, data.month)) notified++;
       }
     }
-    return { count: results.length, notified, results };
+    return { count: results.length, notified, results, completedBookings: completedCount ?? 0 };
   });
 
 export const adminListStatements = createServerFn({ method: "POST" })
