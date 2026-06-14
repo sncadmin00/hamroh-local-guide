@@ -155,6 +155,20 @@ export function HamrohRevenuePanel({ period }: { period: string }) {
 
   return (
     <div className="space-y-5">
+      <div className="flex justify-end gap-2">
+        <button
+          onClick={() => downloadFile(`hamroh-revenue-${data.month.year}-${String(data.month.month).padStart(2, "0")}.csv`, buildCsv(data), "text/csv")}
+          className="h-9 px-3 inline-flex items-center gap-1 rounded-full bg-secondary text-sm font-medium"
+        >
+          <Download className="h-4 w-4" /> CSV
+        </button>
+        <button
+          onClick={() => printRevenuePdf(data)}
+          className="h-9 px-3 inline-flex items-center gap-1 rounded-full bg-secondary text-sm font-medium"
+        >
+          <FileText className="h-4 w-4" /> PDF
+        </button>
+      </div>
       {/* Headline */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <div className="bg-background border border-border rounded-xl p-4">
