@@ -177,27 +177,38 @@ export function StatementsAdminPanel() {
             className="h-9 px-2 rounded-md border border-border bg-background"
           />
         </div>
-        <button
-          onClick={() => generate(false)}
-          disabled={busy}
-          className="h-9 px-4 inline-flex items-center gap-1 rounded-full bg-primary text-primary-foreground text-sm font-medium disabled:opacity-50"
-        >
-          {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
-          Generate
-        </button>
-        <button
-          onClick={() => generate(true)}
-          disabled={busy}
-          className="h-9 px-4 inline-flex items-center gap-1 rounded-full bg-secondary text-sm font-medium disabled:opacity-50"
-        >
-          <Send className="h-4 w-4" />
-          Generate + notify
-        </button>
-        <div className="ml-auto text-xs text-muted-foreground space-x-3">
-          <span>Payouts: <b className="text-foreground">{money(totals.payouts)}</b></span>
-          <span>Invoices: <b className="text-foreground">{money(totals.invoices)}</b></span>
-        </div>
       </div>
+
+      <Tabs defaultValue="statements" className="w-full">
+        <TabsList>
+          <TabsTrigger value="statements">Guide statements</TabsTrigger>
+          <TabsTrigger value="revenue">Hamroh revenue</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="statements" className="space-y-5 mt-4">
+          <div className="bg-background border border-border rounded-xl p-4 flex flex-wrap items-center gap-3">
+            <button
+              onClick={() => generate(false)}
+              disabled={busy}
+              className="h-9 px-4 inline-flex items-center gap-1 rounded-full bg-primary text-primary-foreground text-sm font-medium disabled:opacity-50"
+            >
+              {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
+              Generate
+            </button>
+            <button
+              onClick={() => generate(true)}
+              disabled={busy}
+              className="h-9 px-4 inline-flex items-center gap-1 rounded-full bg-secondary text-sm font-medium disabled:opacity-50"
+            >
+              <Send className="h-4 w-4" />
+              Generate + notify
+            </button>
+            <div className="ml-auto text-xs text-muted-foreground space-x-3">
+              <span>Payouts: <b className="text-foreground">{money(totals.payouts)}</b></span>
+              <span>Invoices: <b className="text-foreground">{money(totals.invoices)}</b></span>
+            </div>
+          </div>
+
 
       <div className="overflow-x-auto bg-background border border-border rounded-xl">
         <table className="w-full text-sm">
