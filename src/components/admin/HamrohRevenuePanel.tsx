@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Loader2, TrendingUp } from "lucide-react";
+import { Loader2, TrendingUp, Download, FileText } from "lucide-react";
 import { adminGetHamrohRevenue } from "@/lib/earnings.functions";
 
 function money(n: number) {
@@ -9,6 +9,116 @@ function money(n: number) {
 }
 
 type Revenue = Awaited<ReturnType<typeof adminGetHamrohRevenue>>;
+
+function downloadFile(filename: string, content: string, mime: string) {
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function buildCsv(d: Revenue): string {
+  const periodLabel = `${d.month.year}-${String(d.month.month).padStart(2, "0")}`;
+  const rows: string[][] = [
+    ["Hamroh revenue", periodLabel],
+    [],
+    ["Section", "Metric", "Value (UZS)"],
+    ["Totals", "Revenue", String(Math.round(d.totals.revenue))],
+    ["Totals", "Paid to guides", String(Math.round(d.totals.payoutToGuide))],
+    ["Totals", "Net profit", String(Math.round(d.totals.netProfit))],
+    ["Totals", "Bookings", String(d.totals.bookings)],
+    ["Totals", "Avg check", String(Math.round(d.totals.avgCheck))],
+    ["Online", "Revenue", String(Math.round(d.online.revenue))],
+    ["Online", "Payout to guides", String(Math.round(d.online.payoutToGuide))],
+    ["Online", "Commission (profit)", String(Math.round(d.online.commission))],
+    ["Online", "Bookings", String(d.online.count)],
+    ["Cash", "Revenue", String(Math.round(d.cash.revenue))],
+    ["Cash", "Commission", String(Math.round(d.cash.commission))],
+    ["Cash", "Bookings", String(d.cash.count)],
+    ["Statements", "Settled", String(d.statements.settled)],
+    ["Statements", "Pending", String(d.statements.pending)],
+    ["Statements", "Total", String(d.statements.total)],
+    [],
+    ["Last 12 months"],
+    ["Period", "Revenue", "Payouts", "Net profit", "Bookings"],
+    ...d.series.map((s) => [
+      s.period,
+      String(Math.round(s.revenue)),
+      String(Math.round(s.payouts)),
+      String(Math.round(s.profit)),
+      String(s.count),
+    ]),
+  ];
+  return rows
+    .map((r) => r.map((c) => (c.includes(",") || c.includes('"') ? `"${c.replace(/"/g, '""')}"` : c)).join(","))
+    .join("\n");
+}
+
+function printRevenuePdf(d: Revenue) {
+  const periodLabel = `${d.month.year}-${String(d.month.month).padStart(2, "0")}`;
+  const html = `<!doctype html><html><head><meta charset="utf-8"><title>Hamroh revenue ${periodLabel}</title>
+<style>
+body{font-family:system-ui,-apple-system,sans-serif;color:#111;padding:32px;max-width:800px;margin:0 auto}
+h1{font-size:22px;margin:0 0 4px} .sub{color:#666;margin-bottom:24px}
+.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:24px}
+.card{border:1px solid #ddd;border-radius:10px;padding:12px}
+.card .l{font-size:11px;color:#666} .card .v{font-size:18px;font-weight:600;margin-top:4px}
+.profit .v{color:#047857}
+h2{font-size:14px;margin:24px 0 8px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{padding:6px 8px;border-bottom:1px solid #eee;text-align:left}
+th{color:#666;font-weight:500} td.r,th.r{text-align:right}
+.foot{margin-top:32px;color:#888;font-size:11px}
+@media print{body{padding:0}}
+</style></head><body>
+<h1>Hamroh revenue</h1><div class="sub">Period: ${periodLabel}</div>
+<div class="grid">
+  <div class="card"><div class="l">Revenue</div><div class="v">${money(d.totals.revenue)}</div></div>
+  <div class="card"><div class="l">Paid to guides</div><div class="v">${money(d.totals.payoutToGuide)}</div></div>
+  <div class="card profit"><div class="l">Net profit</div><div class="v">${money(d.totals.netProfit)}</div></div>
+</div>
+<h2>Breakdown</h2>
+<table><tbody>
+<tr><th>Online — revenue</th><td class="r">${money(d.online.revenue)}</td></tr>
+<tr><th>Online — payout to guides</th><td class="r">− ${money(d.online.payoutToGuide)}</td></tr>
+<tr><th>Online — commission (profit)</th><td class="r"><b>${money(d.online.commission)}</b></td></tr>
+<tr><th>Online bookings</th><td class="r">${d.online.count}</td></tr>
+<tr><th>Cash — revenue (guide collects)</th><td class="r">${money(d.cash.revenue)}</td></tr>
+<tr><th>Cash — commission (profit)</th><td class="r"><b>${money(d.cash.commission)}</b></td></tr>
+<tr><th>Cash bookings</th><td class="r">${d.cash.count}</td></tr>
+<tr><th>Total bookings</th><td class="r">${d.totals.bookings}</td></tr>
+<tr><th>Average check</th><td class="r">${money(d.totals.avgCheck)}</td></tr>
+</tbody></table>
+<h2>Statement settlement</h2>
+<table><tbody>
+<tr><th>Settled</th><td class="r">${d.statements.settled}</td></tr>
+<tr><th>Pending</th><td class="r">${d.statements.pending}</td></tr>
+<tr><th>Total</th><td class="r">${d.statements.total}</td></tr>
+</tbody></table>
+<h2>Last 12 months</h2>
+<table>
+<thead><tr><th>Period</th><th class="r">Revenue</th><th class="r">Payouts</th><th class="r">Net profit</th><th class="r">Bookings</th></tr></thead>
+<tbody>
+${d.series.map((s) => `<tr><td>${s.period}</td><td class="r">${money(s.revenue)}</td><td class="r">${money(s.payouts)}</td><td class="r"><b>${money(s.profit)}</b></td><td class="r">${s.count}</td></tr>`).join("")}
+</tbody></table>
+<div class="foot">Generated ${new Date().toLocaleString()} · Hamroh admin</div>
+<script>window.onload=()=>{setTimeout(()=>window.print(),200)}</script>
+</body></html>`;
+  const w = window.open("", "_blank");
+  if (!w) {
+    toast.error("Pop-ups are blocked");
+    return;
+  }
+  w.document.open();
+  w.document.write(html);
+  w.document.close();
+}
+
 
 export function HamrohRevenuePanel({ period }: { period: string }) {
   const getFn = useServerFn(adminGetHamrohRevenue);
