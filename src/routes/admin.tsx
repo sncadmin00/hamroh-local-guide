@@ -420,7 +420,6 @@ function AdminPage() {
         {tab === "users" && <UsersPanel />}
         {tab === "verifications" && <VerificationsPanel />}
         {tab === "invitations" && <GuideInvitationsPanel />}
-        {tab === "earnings" && <EarningsAdminPanel />}
         {tab === "statements" && <StatementsAdminPanel />}
 
       </div>
