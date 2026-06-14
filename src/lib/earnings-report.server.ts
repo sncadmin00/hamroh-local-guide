@@ -150,12 +150,15 @@ export async function loadReportData(args: {
     net: completed.reduce((s, x) => s + x.net, 0),
   };
 
-  const { data: payouts } = await supabaseAdmin
+  const { data: allPayouts } = await supabaseAdmin
     .from("payouts")
     .select("id, payout_number, amount, currency, method, status, paid_at, created_at")
     .eq("guide_id", args.guideId)
-    .or(`paid_at.gte.${range.from},and(paid_at.is.null,created_at.gte.${range.from})`)
-    .lte("created_at", `${range.to}T23:59:59`);
+    .order("created_at", { ascending: false });
+  const payouts = ((allPayouts ?? []) as any[]).filter((p) => {
+    const refDate = (p.paid_at ?? p.created_at).slice(0, 10);
+    return refDate >= range.from && refDate <= range.to;
+  });
 
   let byMonth: ReportData["byMonth"] | undefined;
   if (args.kind === "annual") {
