@@ -11,6 +11,7 @@ import { useTour, computeTourPrice, offeredCategories, GROUP_CATEGORY_MAX, GROUP
 import { getBookingSource } from "@/hooks/useTrackSource";
 import { getGuideSlots, createBooking } from "@/lib/booking.functions";
 import { getCurrentOffer } from "@/lib/legal-offer.functions";
+import { getPublicServiceFeeRate } from "@/lib/earnings.functions";
 import { useI18n } from "@/lib/i18n";
 import { trackEvent } from "@/lib/analytics";
 import { getMyTelegramAccount } from "@/lib/telegram.functions";
