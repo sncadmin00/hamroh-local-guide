@@ -14,7 +14,6 @@ export const Route = createFileRoute("/invite/$token")({
 
 function InviteLanding() {
   const { token } = Route.useParams();
-  const navigate = useNavigate();
   const markOpened = useServerFn(markInvitationOpened);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,21 +25,17 @@ function InviteLanding() {
           setError("Приглашение не найдено или истекло.");
           return;
         }
-        // Prefill via query params on become-a-guide page
         const params = new URLSearchParams({ invite: token });
         if (res.invitation.email) params.set("email", res.invitation.email);
         if (res.invitation.name) params.set("name", res.invitation.name);
         if (res.invitation.city) params.set("city", res.invitation.city);
-        navigate({
-          to: "/become-a-guide",
-          search: Object.fromEntries(params) as Record<string, string>,
-          replace: true,
-        });
+        window.location.replace(`/become-a-guide?${params.toString()}`);
       } catch (e) {
         setError(e instanceof Error ? e.message : "Ошибка");
       }
     })();
-  }, [token, markOpened, navigate]);
+  }, [token, markOpened]);
+
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
