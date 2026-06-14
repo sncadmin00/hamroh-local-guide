@@ -403,6 +403,12 @@ function AdminPage() {
           >
             Earnings
           </button>
+          <button
+            onClick={() => setTab("statements")}
+            className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "statements" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+          >
+            Statements
+          </button>
         </div>
 
         {tab === "bookings" && <BookingsPanel bookings={bookings} reload={loadData} />}
