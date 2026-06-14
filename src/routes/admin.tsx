@@ -398,12 +398,6 @@ function AdminPage() {
             Приглашения
           </button>
           <button
-            onClick={() => setTab("earnings")}
-            className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "earnings" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
-          >
-            Earnings
-          </button>
-          <button
             onClick={() => setTab("statements")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "statements" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
