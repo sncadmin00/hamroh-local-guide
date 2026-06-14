@@ -604,12 +604,6 @@ export const adminGetHamrohRevenue = createServerFn({ method: "POST" })
       .select("status, direction, net_amount, online_payout_to_guide, cash_commission_to_us")
       .eq("period_year", data.year)
       .eq("period_month", data.month);
-    let settledNet = 0;
-    let pendingNet = 0;
-    for (const s of (stmts ?? []) as any[]) {
-      const profit = Number(s.cash_commission_to_us ?? 0) + Math.max(0, Number(s.online_payout_to_guide ?? 0)) * 0; // commission only — see below
-    }
-    // simpler: settled/pending of payouts/invoices flow
     let settledStatements = 0;
     let pendingStatements = 0;
     for (const s of (stmts ?? []) as any[]) {
