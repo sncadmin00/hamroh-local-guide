@@ -69,7 +69,7 @@ export function EarningsPanel() {
     } finally {
       setLoading(false);
     }
-  }, [fetchSummary, fetchTx, fetchPayouts, period, customFrom, customTo, statusFilter]);
+  }, [fetchSummary, fetchTx, fetchPayouts, fetchStatements, period, customFrom, customTo, statusFilter]);
 
   useEffect(() => {
     load();
