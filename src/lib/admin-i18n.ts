@@ -170,6 +170,8 @@ const adminTranslations = {
   "applications.openCertificate": { en: "Open certificate file", uz: "Sertifikat faylini ochish", ru: "Открыть файл сертификата" },
   "applications.confirmLicense": { en: "License confirmed (grants Licensed badge)", uz: "Litsenziya tasdiqlangan (Licensed nishonini beradi)", ru: "Лицензия подтверждена (даёт знак Licensed)" },
   "applications.licenseConfirmed": { en: "License confirmation updated", uz: "Litsenziya tasdiqlash yangilandi", ru: "Подтверждение лицензии обновлено" },
+  "applications.taxId": { en: "Tax ID (TIN) — self-employed", uz: "STIR (INN) — o'zini-o'zi band qiluvchi", ru: "ИНН (самозанятый)" },
+  "applications.taxIdMissing": { en: "Not provided", uz: "Ko'rsatilmagan", ru: "Не указан" },
 
   // Filters
   "filter.all": { en: "all", uz: "barchasi", ru: "все" },

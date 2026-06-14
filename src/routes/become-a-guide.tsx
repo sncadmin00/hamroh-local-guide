@@ -136,6 +136,7 @@ function BecomeAGuidePage() {
   const [transportSeats, setTransportSeats] = useState<string>("");
   const [hasCertificate, setHasCertificate] = useState<boolean | null>(null);
   const [certificate, setCertificate] = useState<File | null>(null);
+  const [taxId, setTaxId] = useState<string>("");
 
   // Load draft
   useEffect(() => {
@@ -150,6 +151,7 @@ function BecomeAGuidePage() {
         hasTransport?: boolean;
         transportSeats?: string;
         hasCertificate?: boolean | null;
+        taxId?: string;
       };
       if (parsed.form) setForm({ ...emptyForm, ...parsed.form });
       if (parsed.languages) setSelectedLanguages(parsed.languages);
@@ -158,6 +160,7 @@ function BecomeAGuidePage() {
       if (typeof parsed.hasTransport === "boolean") setHasTransport(parsed.hasTransport);
       if (typeof parsed.transportSeats === "string") setTransportSeats(parsed.transportSeats);
       if (parsed.hasCertificate === true || parsed.hasCertificate === false) setHasCertificate(parsed.hasCertificate);
+      if (typeof parsed.taxId === "string") setTaxId(parsed.taxId);
     } catch {
       // ignore
     }
@@ -169,12 +172,12 @@ function BecomeAGuidePage() {
     try {
       localStorage.setItem(
         DRAFT_KEY,
-        JSON.stringify({ form, languages: selectedLanguages, categories: selectedCategories, languageTests, hasTransport, transportSeats, hasCertificate }),
+        JSON.stringify({ form, languages: selectedLanguages, categories: selectedCategories, languageTests, hasTransport, transportSeats, hasCertificate, taxId }),
       );
     } catch {
       // ignore
     }
-  }, [form, selectedLanguages, selectedCategories, languageTests, hasTransport, transportSeats, hasCertificate]);
+  }, [form, selectedLanguages, selectedCategories, languageTests, hasTransport, transportSeats, hasCertificate, taxId]);
 
 
   useEffect(() => {
@@ -603,6 +606,20 @@ function BecomeAGuidePage() {
               )}
             </div>
           )}
+
+          <div className="pt-2 border-t border-border/60">
+            <label className="block text-sm font-medium mb-1">{t("bg.tax.label")}</label>
+            <p className="text-xs text-muted-foreground mb-2">{t("bg.tax.hint")}</p>
+            <input
+              type="text"
+              inputMode="numeric"
+              maxLength={14}
+              className={inputCls}
+              value={taxId}
+              onChange={(e) => setTaxId(e.target.value.replace(/[^0-9]/g, ""))}
+              placeholder={t("bg.tax.ph")}
+            />
+          </div>
         </div>
       ),
     },
@@ -801,6 +818,7 @@ function BecomeAGuidePage() {
           transport_seats: hasTransport && transportSeats ? Number(transportSeats) : null,
           has_certificate: hasCertificate === true,
           certificate_url,
+          tax_id: taxId.trim() || null,
           language_tests: selectedLanguages.map((l) => ({
             language: l,
             ...(languageTests[l] ?? { level: "N/A", transcript: "", feedback: "", skipped: true }),

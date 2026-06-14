@@ -111,6 +111,7 @@ type GuideApplication = {
   has_certificate: boolean;
   certificate_url: string | null;
   certificate_confirmed: boolean;
+  tax_id: string | null;
   language_tests: Array<{ language: string; level: string; transcript?: string; feedback?: string; skipped?: boolean }> | null;
   user_id: string | null;
 };
@@ -2069,6 +2070,21 @@ function ApplicationsPanel({
                         </div>
                       )}
                     </div>
+
+                    {/* Tax ID (INN) */}
+                    <div>
+                      <p className="text-xs font-medium text-muted-foreground mb-1">{ta("applications.taxId")}</p>
+                      {a.tax_id ? (
+                        <span className="font-mono text-sm">{a.tax_id}</span>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">{ta("applications.taxIdMissing")}</span>
+                      )}
+                    </div>
+
+
+
+
+
 
 
 
