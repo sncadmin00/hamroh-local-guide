@@ -136,6 +136,7 @@ export const finalizeApprovedGuide = createServerFn({ method: "POST" })
         licensed: isLicensed,
         license_url: isLicensed ? app.certificate_url ?? null : null,
         licensed_at: isLicensed ? new Date().toISOString() : null,
+        ...((app as any).tax_id ? { tax_status: "self_employed", tax_id: (app as any).tax_id } : {}),
       })
       .eq("id", guide.id);
     if (upErr) throw new Error(upErr.message);
