@@ -48,6 +48,13 @@ function BookPage() {
   const fetchSlots = useServerFn(getGuideSlots);
   const createBookingFn = useServerFn(createBooking);
   const fetchTelegram = useServerFn(getMyTelegramAccount);
+  const fetchOffer = useServerFn(getCurrentOffer);
+
+  useEffect(() => {
+    fetchOffer()
+      .then((o: any) => setOfferVersion(o.version))
+      .catch(() => {});
+  }, [fetchOffer]);
 
   useEffect(() => {
     if (!tour) return;
