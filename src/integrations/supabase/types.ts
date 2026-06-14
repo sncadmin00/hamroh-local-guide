@@ -317,6 +317,7 @@ export type Database = {
           adults: number
           cancellation_reason: string | null
           children: number
+          commission_amount: number
           created_at: string
           customer_email: string | null
           customer_name: string
@@ -331,20 +332,27 @@ export type Database = {
           group_category: string | null
           guests: number
           guide_id: string
+          guide_payout_amount: number
           id: string
           language: string | null
           locale: string
           notes: string
+          payment_method: string
           proposed_at: string | null
           proposed_date: string | null
           proposed_note: string | null
           proposed_time: string | null
+          service_fee_amount: number
+          service_fee_paid_at: string | null
+          service_fee_status: string
           slot_id: string | null
           source: string
           start_time: string | null
+          statement_id: string | null
           status: string
           total: number
           tour_id: string | null
+          tour_price: number | null
           updated_at: string
           user_id: string | null
         }
@@ -352,6 +360,7 @@ export type Database = {
           adults?: number
           cancellation_reason?: string | null
           children?: number
+          commission_amount?: number
           created_at?: string
           customer_email?: string | null
           customer_name: string
@@ -366,20 +375,27 @@ export type Database = {
           group_category?: string | null
           guests?: number
           guide_id: string
+          guide_payout_amount?: number
           id?: string
           language?: string | null
           locale?: string
           notes?: string
+          payment_method?: string
           proposed_at?: string | null
           proposed_date?: string | null
           proposed_note?: string | null
           proposed_time?: string | null
+          service_fee_amount?: number
+          service_fee_paid_at?: string | null
+          service_fee_status?: string
           slot_id?: string | null
           source?: string
           start_time?: string | null
+          statement_id?: string | null
           status?: string
           total?: number
           tour_id?: string | null
+          tour_price?: number | null
           updated_at?: string
           user_id?: string | null
         }
@@ -387,6 +403,7 @@ export type Database = {
           adults?: number
           cancellation_reason?: string | null
           children?: number
+          commission_amount?: number
           created_at?: string
           customer_email?: string | null
           customer_name?: string
@@ -401,20 +418,27 @@ export type Database = {
           group_category?: string | null
           guests?: number
           guide_id?: string
+          guide_payout_amount?: number
           id?: string
           language?: string | null
           locale?: string
           notes?: string
+          payment_method?: string
           proposed_at?: string | null
           proposed_date?: string | null
           proposed_note?: string | null
           proposed_time?: string | null
+          service_fee_amount?: number
+          service_fee_paid_at?: string | null
+          service_fee_status?: string
           slot_id?: string | null
           source?: string
           start_time?: string | null
+          statement_id?: string | null
           status?: string
           total?: number
           tour_id?: string | null
+          tour_price?: number | null
           updated_at?: string
           user_id?: string | null
         }
@@ -424,6 +448,13 @@ export type Database = {
             columns: ["guide_id"]
             isOneToOne: false
             referencedRelation: "guides"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_statement_id_fkey"
+            columns: ["statement_id"]
+            isOneToOne: false
+            referencedRelation: "monthly_statements"
             referencedColumns: ["id"]
           },
           {
@@ -1253,6 +1284,89 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      monthly_statements: {
+        Row: {
+          cash_bookings_count: number
+          cash_commission_to_us: number
+          cash_revenue: number
+          created_at: string
+          direction: string
+          due_date: string | null
+          guide_id: string
+          id: string
+          net_amount: number
+          notes: string | null
+          online_bookings_count: number
+          online_payout_to_guide: number
+          online_revenue: number
+          payment_method: string | null
+          payment_reference: string | null
+          pdf_url: string | null
+          period_month: number
+          period_year: number
+          settled_at: string | null
+          statement_number: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          cash_bookings_count?: number
+          cash_commission_to_us?: number
+          cash_revenue?: number
+          created_at?: string
+          direction: string
+          due_date?: string | null
+          guide_id: string
+          id?: string
+          net_amount?: number
+          notes?: string | null
+          online_bookings_count?: number
+          online_payout_to_guide?: number
+          online_revenue?: number
+          payment_method?: string | null
+          payment_reference?: string | null
+          pdf_url?: string | null
+          period_month: number
+          period_year: number
+          settled_at?: string | null
+          statement_number: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          cash_bookings_count?: number
+          cash_commission_to_us?: number
+          cash_revenue?: number
+          created_at?: string
+          direction?: string
+          due_date?: string | null
+          guide_id?: string
+          id?: string
+          net_amount?: number
+          notes?: string | null
+          online_bookings_count?: number
+          online_payout_to_guide?: number
+          online_revenue?: number
+          payment_method?: string | null
+          payment_reference?: string | null
+          pdf_url?: string | null
+          period_month?: number
+          period_year?: number
+          settled_at?: string | null
+          statement_number?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "monthly_statements_guide_id_fkey"
+            columns: ["guide_id"]
+            isOneToOne: false
+            referencedRelation: "guides"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       newsletter_subscribers: {
         Row: {
