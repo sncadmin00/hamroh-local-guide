@@ -723,6 +723,7 @@ export type Database = {
           portrait_url: string | null
           specialization: string
           status: string
+          tax_id: string | null
           telegram: string
           transport_seats: number | null
           updated_at: string
@@ -750,6 +751,7 @@ export type Database = {
           portrait_url?: string | null
           specialization?: string
           status?: string
+          tax_id?: string | null
           telegram?: string
           transport_seats?: number | null
           updated_at?: string
@@ -777,6 +779,7 @@ export type Database = {
           portrait_url?: string | null
           specialization?: string
           status?: string
+          tax_id?: string | null
           telegram?: string
           transport_seats?: number | null
           updated_at?: string
