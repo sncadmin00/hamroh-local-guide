@@ -108,7 +108,10 @@ function BecomeAGuidePage() {
   const notifyAdmins = useServerFn(notifyAdminsOfGuideApplication);
   const generateBio = useServerFn(generateGuideBio);
   const assessLang = useServerFn(assessLanguageTest);
+  const markInviteRegistered = useServerFn(markInvitationRegistered);
+  const [inviteToken, setInviteToken] = useState<string | null>(null);
   const { t, tCategory, tLanguage } = useI18n();
+
   const [otherLanguage, setOtherLanguage] = useState("");
   const [languageTests, setLanguageTests] = useState<Record<string, LangTestResult>>({});
 
