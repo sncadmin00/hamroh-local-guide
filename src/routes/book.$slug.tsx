@@ -139,6 +139,7 @@ function BookPage() {
           notes: form.notes,
           source: getBookingSource(),
           locale: lang,
+          payment_method: paymentMethod,
         },
       });
       setConfirmed(true);
