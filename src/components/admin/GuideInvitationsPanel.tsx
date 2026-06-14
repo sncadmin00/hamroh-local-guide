@@ -100,7 +100,7 @@ export function GuideInvitationsPanel() {
   const addFromSearch = (email: string, title: string, url: string) => {
     setDrafts((d) => [
       ...d.filter((x) => x.email.trim()),
-      { email, name: title.slice(0, 100), city: "", source: "web", source_url: url },
+      { email, name: title.slice(0, 100), city: "", source: "web", source_url: url, locale: defaultLocale },
     ]);
     toast.success(`Добавлено: ${email}`);
   };
@@ -109,7 +109,7 @@ export function GuideInvitationsPanel() {
     setDrafts((d) => d.map((x, idx) => (idx === i ? { ...x, ...patch } : x)));
   };
   const removeDraft = (i: number) => setDrafts((d) => d.filter((_, idx) => idx !== i));
-  const addDraft = () => setDrafts((d) => [...d, { ...emptyDraft }]);
+  const addDraft = () => setDrafts((d) => [...d, makeEmptyDraft(defaultLocale)]);
 
   const sendAll = async () => {
     const items = drafts.filter((d) => d.email.trim() && /.+@.+\..+/.test(d.email));
@@ -122,7 +122,7 @@ export function GuideInvitationsPanel() {
       const res = await create({ data: { items } });
       toast.success(`Отправлено: ${res.sent}, пропущено (уже приглашены): ${res.skipped}`);
       if (res.errors.length) console.warn("Invite errors:", res.errors);
-      setDrafts([{ ...emptyDraft }]);
+      setDrafts([makeEmptyDraft(defaultLocale)]);
       await reload();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Не удалось отправить");
