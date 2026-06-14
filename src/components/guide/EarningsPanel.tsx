@@ -1,17 +1,18 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Loader2, Download, FileText, Wallet, ReceiptText, CalendarRange } from "lucide-react";
+import { Loader2, Download, FileText, Wallet, ReceiptText, CalendarRange, Scale } from "lucide-react";
 import {
   getMyEarningsSummary,
   listMyTransactions,
   listMyPayouts,
+  listMyStatements,
   getMyReportUrls,
 } from "@/lib/earnings.functions";
 import { useGuideI18n } from "@/lib/guide-i18n";
 
 type Period = "today" | "week" | "month" | "year" | "custom";
-type SubTab = "overview" | "transactions" | "payouts" | "reports";
+type SubTab = "overview" | "transactions" | "payouts" | "statements" | "reports";
 
 function money(n: number) {
   return "$" + Number(n).toLocaleString("en-US", { maximumFractionDigits: 0 });
@@ -22,6 +23,7 @@ export function EarningsPanel() {
   const fetchSummary = useServerFn(getMyEarningsSummary);
   const fetchTx = useServerFn(listMyTransactions);
   const fetchPayouts = useServerFn(listMyPayouts);
+  const fetchStatements = useServerFn(listMyStatements);
   const fetchReportUrls = useServerFn(getMyReportUrls);
 
   const [sub, setSub] = useState<SubTab>("overview");
@@ -31,6 +33,7 @@ export function EarningsPanel() {
   const [summary, setSummary] = useState<any>(null);
   const [tx, setTx] = useState<any>(null);
   const [payouts, setPayouts] = useState<any[]>([]);
+  const [statements, setStatements] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>("");
 
@@ -59,12 +62,14 @@ export function EarningsPanel() {
       setTx(t);
       const p = await fetchPayouts();
       setPayouts(p as any[]);
+      const st = await fetchStatements();
+      setStatements(st as any[]);
     } catch (e: any) {
       toast.error(e.message ?? "Failed");
     } finally {
       setLoading(false);
     }
-  }, [fetchSummary, fetchTx, fetchPayouts, period, customFrom, customTo, statusFilter]);
+  }, [fetchSummary, fetchTx, fetchPayouts, fetchStatements, period, customFrom, customTo, statusFilter]);
 
   useEffect(() => {
     load();
@@ -90,8 +95,9 @@ export function EarningsPanel() {
         {([
           ["overview", tg("earn.overview"), <Wallet key="i1" className="h-4 w-4" />],
           ["transactions", tg("earn.transactions"), <ReceiptText key="i2" className="h-4 w-4" />],
-          ["payouts", tg("earn.payouts"), <CalendarRange key="i3" className="h-4 w-4" />],
-          ["reports", tg("earn.reports"), <FileText key="i4" className="h-4 w-4" />],
+          ["statements", tg("earn.statements"), <Scale key="i3" className="h-4 w-4" />],
+          ["payouts", tg("earn.payouts"), <CalendarRange key="i4" className="h-4 w-4" />],
+          ["reports", tg("earn.reports"), <FileText key="i5" className="h-4 w-4" />],
         ] as const).map(([k, label, icon]) => (
           <button
             key={k}
@@ -213,6 +219,22 @@ export function EarningsPanel() {
               </tbody>
             </table>
           </div>
+        </div>
+      )}
+
+      {/* Statements (Net Settlement) */}
+      {sub === "statements" && (
+        <div className="space-y-4">
+          <div className="rounded-xl bg-primary/5 border border-primary/15 p-4 text-sm text-muted-foreground">
+            {tg("earn.st.intro")}
+          </div>
+          {statements.length === 0 ? (
+            <div className="rounded-xl bg-background border border-border p-8 text-center text-sm text-muted-foreground">
+              {tg("earn.st.empty")}
+            </div>
+          ) : (
+            statements.map((s) => <StatementCard key={s.id} s={s} tg={tg} lang={lang} />)
+          )}
         </div>
       )}
 
@@ -344,4 +366,98 @@ function PayoutStatusPill({ status }: { status: string }) {
     status === "failed" ? "bg-red-100 text-red-700" :
     "bg-muted text-muted-foreground";
   return <span className={`inline-block px-2 py-0.5 rounded-full text-xs ${color}`}>{status}</span>;
+}
+
+function StatementCard({ s, tg, lang }: { s: any; tg: (k: any) => string; lang: string }) {
+  const monthName = new Date(s.period_year, s.period_month - 1, 1).toLocaleDateString(
+    lang === "ru" ? "ru-RU" : lang === "uz" ? "uz-UZ" : "en-US",
+    { month: "long", year: "numeric" },
+  );
+  const direction = s.direction as "payout" | "invoice" | "zero";
+  const net = Number(s.net_amount);
+  const dirColor =
+    direction === "payout" ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+    : direction === "invoice" ? "bg-amber-50 text-amber-700 border-amber-200"
+    : "bg-muted text-muted-foreground border-border";
+  const statusColor =
+    s.status === "settled" ? "bg-emerald-100 text-emerald-700"
+    : s.status === "rolled_over" ? "bg-blue-100 text-blue-700"
+    : s.status === "cancelled" ? "bg-red-100 text-red-700"
+    : "bg-amber-100 text-amber-700";
+
+  return (
+    <div className="bg-background border border-border rounded-2xl overflow-hidden">
+      {/* Header */}
+      <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b border-border/60">
+        <div>
+          <div className="font-display text-lg font-semibold capitalize">{monthName}</div>
+          <div className="text-xs text-muted-foreground font-mono mt-0.5">{s.statement_number}</div>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border ${dirColor}`}>
+            {tg(`earn.st.direction.${direction}` as any)}
+          </span>
+          <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${statusColor}`}>
+            {tg(`earn.st.status.${s.status}` as any)}
+          </span>
+        </div>
+      </div>
+
+      {/* Two columns: online (we owe) | cash (you owe) */}
+      <div className="grid sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-border/60">
+        <div className="p-5 space-y-2">
+          <div className="text-xs uppercase tracking-wider text-muted-foreground">{tg("earn.st.online")}</div>
+          <div className="flex justify-between text-sm">
+            <span className="text-muted-foreground">{tg("earn.st.revenue")}</span>
+            <span className="tabular-nums">${Number(s.online_revenue).toLocaleString()}</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-muted-foreground">{s.online_bookings_count} {tg("earn.st.count")}</span>
+            <span />
+          </div>
+          <div className="flex justify-between text-sm font-medium border-t border-border/60 pt-2">
+            <span className="text-foreground">{tg("earn.st.payout")}</span>
+            <span className="tabular-nums text-emerald-700">+${Number(s.online_payout_to_guide).toLocaleString()}</span>
+          </div>
+        </div>
+        <div className="p-5 space-y-2">
+          <div className="text-xs uppercase tracking-wider text-muted-foreground">{tg("earn.st.cash")}</div>
+          <div className="flex justify-between text-sm">
+            <span className="text-muted-foreground">{tg("earn.st.revenue")}</span>
+            <span className="tabular-nums">${Number(s.cash_revenue).toLocaleString()}</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-muted-foreground">{s.cash_bookings_count} {tg("earn.st.count")}</span>
+            <span />
+          </div>
+          <div className="flex justify-between text-sm font-medium border-t border-border/60 pt-2">
+            <span className="text-foreground">{tg("earn.st.commission")}</span>
+            <span className="tabular-nums text-amber-700">−${Number(s.cash_commission_to_us).toLocaleString()}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Net Settlement */}
+      <div className="bg-primary/5 px-5 py-4 border-t border-border/60">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="text-xs uppercase tracking-wider text-muted-foreground">{tg("earn.st.net")}</div>
+            <div className="text-sm text-muted-foreground mt-0.5">
+              {direction === "payout" ? tg("earn.st.weOwe") : direction === "invoice" ? tg("earn.st.youOwe") : ""}
+            </div>
+          </div>
+          <div className={`font-display text-2xl font-semibold tabular-nums ${direction === "payout" ? "text-emerald-700" : direction === "invoice" ? "text-amber-700" : "text-muted-foreground"}`}>
+            ${Math.abs(net).toLocaleString()}
+          </div>
+        </div>
+        {(s.due_date || s.settled_at) && (
+          <div className="mt-3 text-xs text-muted-foreground flex flex-wrap gap-x-4 gap-y-1">
+            {s.due_date && s.status === "pending" && <span>{tg("earn.st.due")}: {s.due_date}</span>}
+            {s.settled_at && <span>{tg("earn.st.settled")}: {String(s.settled_at).slice(0, 10)}</span>}
+            {s.payment_reference && <span className="font-mono">{s.payment_reference}</span>}
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }

@@ -213,6 +213,22 @@ export const listMyPayouts = createServerFn({ method: "GET" })
     return (data ?? []) as any[];
   });
 
+/** List monthly Net Settlement statements for the current guide */
+export const listMyStatements = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
+    const guideId = await requireMyGuideId(supabase, userId);
+    const { data, error } = await supabase
+      .from("monthly_statements")
+      .select("id, statement_number, period_year, period_month, online_revenue, online_payout_to_guide, online_bookings_count, cash_revenue, cash_commission_to_us, cash_bookings_count, net_amount, direction, status, due_date, settled_at, payment_method, payment_reference, pdf_url, notes, created_at")
+      .eq("guide_id", guideId)
+      .order("period_year", { ascending: false })
+      .order("period_month", { ascending: false });
+    if (error) throw new Error(error.message);
+    return (data ?? []) as any[];
+  });
+
 /** Generate signed PDF/CSV report URLs (PDF served by /api/earnings/report). */
 export const getMyReportUrls = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
