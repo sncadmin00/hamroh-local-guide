@@ -41,6 +41,30 @@ export function StatementsAdminPanel() {
   const listFn = useServerFn(adminListStatements);
   const genFn = useServerFn(adminGenerateStatements);
   const settleFn = useServerFn(adminSettleStatement);
+  const getRateFn = useServerFn(adminGetCommissionRate);
+  const setRateFn = useServerFn(adminSetCommissionRate);
+
+  const [ratePct, setRatePct] = useState("15");
+
+  useEffect(() => {
+    getRateFn()
+      .then((r: any) => setRatePct(String((r.rate * 100).toFixed(2))))
+      .catch(() => {});
+  }, [getRateFn]);
+
+  async function saveRate() {
+    const n = Number(ratePct) / 100;
+    if (!Number.isFinite(n) || n < 0 || n >= 0.9) {
+      toast.error("Invalid rate");
+      return;
+    }
+    try {
+      await setRateFn({ data: { rate: n } });
+      toast.success("Commission rate updated");
+    } catch (e: any) {
+      toast.error(e.message);
+    }
+  }
 
   const today = new Date();
   // default to previous month
