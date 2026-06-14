@@ -62,6 +62,8 @@ export function EarningsPanel() {
       setTx(t);
       const p = await fetchPayouts();
       setPayouts(p as any[]);
+      const st = await fetchStatements();
+      setStatements(st as any[]);
     } catch (e: any) {
       toast.error(e.message ?? "Failed");
     } finally {
