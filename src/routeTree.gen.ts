@@ -53,6 +53,7 @@ import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/em
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as ApiPublicTelegramWebhookRouteImport } from './routes/api/public/telegram/webhook'
 import { Route as ApiPublicHooksGoogleOauthCallbackRouteImport } from './routes/api/public/hooks/google-oauth-callback'
+import { Route as ApiPublicHooksGenerateStatementsRouteImport } from './routes/api/public/hooks/generate-statements'
 import { Route as ApiPublicHooksExpireBookingsRouteImport } from './routes/api/public/hooks/expire-bookings'
 import { Route as ApiPublicHooksDailyBriefRouteImport } from './routes/api/public/hooks/daily-brief'
 import { Route as ApiPublicHooksChatNotificationsRouteImport } from './routes/api/public/hooks/chat-notifications'
@@ -285,6 +286,12 @@ const ApiPublicHooksGoogleOauthCallbackRoute =
     path: '/api/public/hooks/google-oauth-callback',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksGenerateStatementsRoute =
+  ApiPublicHooksGenerateStatementsRouteImport.update({
+    id: '/api/public/hooks/generate-statements',
+    path: '/api/public/hooks/generate-statements',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksExpireBookingsRoute =
   ApiPublicHooksExpireBookingsRouteImport.update({
     id: '/api/public/hooks/expire-bookings',
@@ -364,6 +371,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/chat-notifications': typeof ApiPublicHooksChatNotificationsRoute
   '/api/public/hooks/daily-brief': typeof ApiPublicHooksDailyBriefRoute
   '/api/public/hooks/expire-bookings': typeof ApiPublicHooksExpireBookingsRoute
+  '/api/public/hooks/generate-statements': typeof ApiPublicHooksGenerateStatementsRoute
   '/api/public/hooks/google-oauth-callback': typeof ApiPublicHooksGoogleOauthCallbackRoute
   '/api/public/telegram/webhook': typeof ApiPublicTelegramWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -415,6 +423,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/chat-notifications': typeof ApiPublicHooksChatNotificationsRoute
   '/api/public/hooks/daily-brief': typeof ApiPublicHooksDailyBriefRoute
   '/api/public/hooks/expire-bookings': typeof ApiPublicHooksExpireBookingsRoute
+  '/api/public/hooks/generate-statements': typeof ApiPublicHooksGenerateStatementsRoute
   '/api/public/hooks/google-oauth-callback': typeof ApiPublicHooksGoogleOauthCallbackRoute
   '/api/public/telegram/webhook': typeof ApiPublicTelegramWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -468,6 +477,7 @@ export interface FileRoutesById {
   '/api/public/hooks/chat-notifications': typeof ApiPublicHooksChatNotificationsRoute
   '/api/public/hooks/daily-brief': typeof ApiPublicHooksDailyBriefRoute
   '/api/public/hooks/expire-bookings': typeof ApiPublicHooksExpireBookingsRoute
+  '/api/public/hooks/generate-statements': typeof ApiPublicHooksGenerateStatementsRoute
   '/api/public/hooks/google-oauth-callback': typeof ApiPublicHooksGoogleOauthCallbackRoute
   '/api/public/telegram/webhook': typeof ApiPublicTelegramWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -522,6 +532,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/chat-notifications'
     | '/api/public/hooks/daily-brief'
     | '/api/public/hooks/expire-bookings'
+    | '/api/public/hooks/generate-statements'
     | '/api/public/hooks/google-oauth-callback'
     | '/api/public/telegram/webhook'
     | '/lovable/email/auth/preview'
@@ -573,6 +584,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/chat-notifications'
     | '/api/public/hooks/daily-brief'
     | '/api/public/hooks/expire-bookings'
+    | '/api/public/hooks/generate-statements'
     | '/api/public/hooks/google-oauth-callback'
     | '/api/public/telegram/webhook'
     | '/lovable/email/auth/preview'
@@ -625,6 +637,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/chat-notifications'
     | '/api/public/hooks/daily-brief'
     | '/api/public/hooks/expire-bookings'
+    | '/api/public/hooks/generate-statements'
     | '/api/public/hooks/google-oauth-callback'
     | '/api/public/telegram/webhook'
     | '/lovable/email/auth/preview'
@@ -674,6 +687,7 @@ export interface RootRouteChildren {
   ApiPublicHooksChatNotificationsRoute: typeof ApiPublicHooksChatNotificationsRoute
   ApiPublicHooksDailyBriefRoute: typeof ApiPublicHooksDailyBriefRoute
   ApiPublicHooksExpireBookingsRoute: typeof ApiPublicHooksExpireBookingsRoute
+  ApiPublicHooksGenerateStatementsRoute: typeof ApiPublicHooksGenerateStatementsRoute
   ApiPublicHooksGoogleOauthCallbackRoute: typeof ApiPublicHooksGoogleOauthCallbackRoute
   ApiPublicTelegramWebhookRoute: typeof ApiPublicTelegramWebhookRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
@@ -994,6 +1008,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksGoogleOauthCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/generate-statements': {
+      id: '/api/public/hooks/generate-statements'
+      path: '/api/public/hooks/generate-statements'
+      fullPath: '/api/public/hooks/generate-statements'
+      preLoaderRoute: typeof ApiPublicHooksGenerateStatementsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/expire-bookings': {
       id: '/api/public/hooks/expire-bookings'
       path: '/api/public/hooks/expire-bookings'
@@ -1113,6 +1134,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksChatNotificationsRoute: ApiPublicHooksChatNotificationsRoute,
   ApiPublicHooksDailyBriefRoute: ApiPublicHooksDailyBriefRoute,
   ApiPublicHooksExpireBookingsRoute: ApiPublicHooksExpireBookingsRoute,
+  ApiPublicHooksGenerateStatementsRoute: ApiPublicHooksGenerateStatementsRoute,
   ApiPublicHooksGoogleOauthCallbackRoute:
     ApiPublicHooksGoogleOauthCallbackRoute,
   ApiPublicTelegramWebhookRoute: ApiPublicTelegramWebhookRoute,
