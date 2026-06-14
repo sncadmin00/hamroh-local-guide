@@ -543,3 +543,145 @@ export const adminSettleStatement = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+// ===== Hamroh platform revenue (admin) =====
+
+export const adminGetHamrohRevenue = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) =>
+    z
+      .object({
+        year: z.number().int().min(2024).max(2100),
+        month: z.number().int().min(1).max(12),
+      })
+      .parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const { supabase, userId } = context;
+    if (!(await isAdmin(supabase, userId))) throw new Error("Forbidden");
+
+    const from = new Date(Date.UTC(data.year, data.month - 1, 1)).toISOString().slice(0, 10);
+    const to = new Date(Date.UTC(data.year, data.month, 0)).toISOString().slice(0, 10);
+
+    // Month bookings
+    const { data: bks, error } = await supabase
+      .from("bookings")
+      .select("payment_method, tour_price, total, commission_amount, guide_payout_amount, status, date")
+      .eq("status", "completed")
+      .gte("date", from)
+      .lte("date", to);
+    if (error) throw new Error(error.message);
+
+    let onlineRevenue = 0;
+    let onlinePayoutToGuide = 0;
+    let onlineCommission = 0;
+    let onlineCount = 0;
+    let cashRevenue = 0;
+    let cashCommission = 0;
+    let cashCount = 0;
+    for (const b of (bks ?? []) as any[]) {
+      const price = Number(b.tour_price ?? b.total ?? 0);
+      if (b.payment_method === "online") {
+        onlineRevenue += price;
+        const payout = Number(b.guide_payout_amount ?? 0);
+        onlinePayoutToGuide += payout;
+        onlineCommission += price - payout;
+        onlineCount += 1;
+      } else {
+        cashRevenue += price;
+        cashCommission += Number(b.commission_amount ?? 0);
+        cashCount += 1;
+      }
+    }
+    const totalRevenue = onlineRevenue + cashRevenue;
+    const totalCount = onlineCount + cashCount;
+    const netProfit = onlineCommission + cashCommission;
+    const avgCheck = totalCount ? totalRevenue / totalCount : 0;
+
+    // Settled vs pending from monthly_statements
+    const { data: stmts } = await supabase
+      .from("monthly_statements")
+      .select("status, direction, net_amount, online_payout_to_guide, cash_commission_to_us")
+      .eq("period_year", data.year)
+      .eq("period_month", data.month);
+    let settledNet = 0;
+    let pendingNet = 0;
+    for (const s of (stmts ?? []) as any[]) {
+      const profit = Number(s.cash_commission_to_us ?? 0) + Math.max(0, Number(s.online_payout_to_guide ?? 0)) * 0; // commission only — see below
+    }
+    // simpler: settled/pending of payouts/invoices flow
+    let settledStatements = 0;
+    let pendingStatements = 0;
+    for (const s of (stmts ?? []) as any[]) {
+      if (s.status === "settled") settledStatements += 1;
+      else if (s.status === "pending") pendingStatements += 1;
+    }
+
+    // 12-month series
+    const seriesFromDate = new Date(Date.UTC(data.year, data.month - 11, 1));
+    const seriesFrom = seriesFromDate.toISOString().slice(0, 10);
+    const { data: yearBks } = await supabase
+      .from("bookings")
+      .select("payment_method, tour_price, total, commission_amount, guide_payout_amount, date")
+      .eq("status", "completed")
+      .gte("date", seriesFrom)
+      .lte("date", to);
+
+    const buckets = new Map<string, { revenue: number; payouts: number; profit: number; count: number }>();
+    for (let i = 0; i < 12; i++) {
+      const d = new Date(Date.UTC(data.year, data.month - 11 + i, 1));
+      const key = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
+      buckets.set(key, { revenue: 0, payouts: 0, profit: 0, count: 0 });
+    }
+    for (const b of (yearBks ?? []) as any[]) {
+      const dt = new Date(b.date);
+      const key = `${dt.getUTCFullYear()}-${String(dt.getUTCMonth() + 1).padStart(2, "0")}`;
+      const bucket = buckets.get(key);
+      if (!bucket) continue;
+      const price = Number(b.tour_price ?? b.total ?? 0);
+      bucket.revenue += price;
+      bucket.count += 1;
+      if (b.payment_method === "online") {
+        const payout = Number(b.guide_payout_amount ?? 0);
+        bucket.payouts += payout;
+        bucket.profit += price - payout;
+      } else {
+        bucket.profit += Number(b.commission_amount ?? 0);
+      }
+    }
+    const series = Array.from(buckets.entries()).map(([key, v]) => ({
+      period: key,
+      revenue: +v.revenue.toFixed(2),
+      payouts: +v.payouts.toFixed(2),
+      profit: +v.profit.toFixed(2),
+      count: v.count,
+    }));
+
+    return {
+      month: { year: data.year, month: data.month },
+      online: {
+        revenue: +onlineRevenue.toFixed(2),
+        payoutToGuide: +onlinePayoutToGuide.toFixed(2),
+        commission: +onlineCommission.toFixed(2),
+        count: onlineCount,
+      },
+      cash: {
+        revenue: +cashRevenue.toFixed(2),
+        commission: +cashCommission.toFixed(2),
+        count: cashCount,
+      },
+      totals: {
+        revenue: +totalRevenue.toFixed(2),
+        payoutToGuide: +onlinePayoutToGuide.toFixed(2),
+        netProfit: +netProfit.toFixed(2),
+        bookings: totalCount,
+        avgCheck: +avgCheck.toFixed(2),
+      },
+      statements: {
+        settled: settledStatements,
+        pending: pendingStatements,
+        total: settledStatements + pendingStatements,
+      },
+      series,
+    };
+  });
