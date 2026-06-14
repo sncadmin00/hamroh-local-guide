@@ -190,6 +190,24 @@ export function StatementsAdminPanel() {
           </div>
           <p className="text-xs text-muted-foreground mt-1">Applies to new bookings only. Cash → guide owes us. Online → we owe guide payout.</p>
         </div>
+        <div className="w-px h-12 bg-border hidden sm:block" />
+        <div>
+          <div className="text-xs text-muted-foreground">Service fee (all bookings)</div>
+          <div className="flex items-center gap-2 mt-1">
+            <input
+              type="number"
+              min={0}
+              max={90}
+              step={0.1}
+              value={feePct}
+              onChange={(e) => setFeePct(e.target.value)}
+              className="h-9 w-24 px-2 rounded-md border border-border bg-background"
+            />
+            <span>%</span>
+            <button onClick={saveFee} className="h-9 px-4 rounded-full bg-primary text-primary-foreground text-sm font-medium">Save</button>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">Charged to clients on top of tour price. Applies to new bookings only.</p>
+        </div>
       </div>
 
       <div className="bg-background border border-border rounded-xl p-4 flex flex-wrap items-end gap-3">
