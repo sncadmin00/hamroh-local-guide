@@ -337,6 +337,8 @@ export type Database = {
           language: string | null
           locale: string
           notes: string
+          offer_accepted_at: string | null
+          offer_version: string | null
           payment_method: string
           proposed_at: string | null
           proposed_date: string | null
@@ -380,6 +382,8 @@ export type Database = {
           language?: string | null
           locale?: string
           notes?: string
+          offer_accepted_at?: string | null
+          offer_version?: string | null
           payment_method?: string
           proposed_at?: string | null
           proposed_date?: string | null
@@ -423,6 +427,8 @@ export type Database = {
           language?: string | null
           locale?: string
           notes?: string
+          offer_accepted_at?: string | null
+          offer_version?: string | null
           payment_method?: string
           proposed_at?: string | null
           proposed_date?: string | null
@@ -1065,6 +1071,48 @@ export type Database = {
           },
         ]
       }
+      guide_offer_acceptances: {
+        Row: {
+          accepted_at: string
+          guide_id: string
+          id: string
+          ip: string | null
+          user_agent: string | null
+          version: string
+        }
+        Insert: {
+          accepted_at?: string
+          guide_id: string
+          id?: string
+          ip?: string | null
+          user_agent?: string | null
+          version: string
+        }
+        Update: {
+          accepted_at?: string
+          guide_id?: string
+          id?: string
+          ip?: string | null
+          user_agent?: string | null
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guide_offer_acceptances_guide_id_fkey"
+            columns: ["guide_id"]
+            isOneToOne: false
+            referencedRelation: "guides"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "guide_offer_acceptances_version_fkey"
+            columns: ["version"]
+            isOneToOne: false
+            referencedRelation: "legal_offers"
+            referencedColumns: ["version"]
+          },
+        ]
+      }
       guide_posts: {
         Row: {
           caption: string
@@ -1282,6 +1330,36 @@ export type Database = {
           name?: string
           sort_order?: number
           updated_at?: string
+        }
+        Relationships: []
+      }
+      legal_offers: {
+        Row: {
+          content_en: string
+          content_ru: string
+          content_uz: string
+          created_at: string
+          is_current: boolean
+          published_at: string
+          version: string
+        }
+        Insert: {
+          content_en: string
+          content_ru: string
+          content_uz: string
+          created_at?: string
+          is_current?: boolean
+          published_at?: string
+          version: string
+        }
+        Update: {
+          content_en?: string
+          content_ru?: string
+          content_uz?: string
+          created_at?: string
+          is_current?: boolean
+          published_at?: string
+          version?: string
         }
         Relationships: []
       }

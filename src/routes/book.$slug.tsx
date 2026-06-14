@@ -10,6 +10,7 @@ import { PaymentMethods } from "@/components/PaymentMethods";
 import { useTour, computeTourPrice, offeredCategories, GROUP_CATEGORY_MAX, GROUP_CATEGORY_LABEL, type GroupCategory } from "@/lib/content-queries";
 import { getBookingSource } from "@/hooks/useTrackSource";
 import { getGuideSlots, createBooking } from "@/lib/booking.functions";
+import { getCurrentOffer } from "@/lib/legal-offer.functions";
 import { useI18n } from "@/lib/i18n";
 import { trackEvent } from "@/lib/analytics";
 import { getMyTelegramAccount } from "@/lib/telegram.functions";
@@ -31,6 +32,8 @@ function BookPage() {
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [telegramContact, setTelegramContact] = useState<{ telegram_user_id: number; telegram_chat_id: number | null; telegram_username: string | null } | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "online">("cash");
+  const [offerVersion, setOfferVersion] = useState<string | null>(null);
+  const [offerAccepted, setOfferAccepted] = useState(false);
   const [form, setForm] = useState({
     date: "",
     adults: 2,
@@ -45,6 +48,13 @@ function BookPage() {
   const fetchSlots = useServerFn(getGuideSlots);
   const createBookingFn = useServerFn(createBooking);
   const fetchTelegram = useServerFn(getMyTelegramAccount);
+  const fetchOffer = useServerFn(getCurrentOffer);
+
+  useEffect(() => {
+    fetchOffer()
+      .then((o: any) => setOfferVersion(o.version))
+      .catch(() => {});
+  }, [fetchOffer]);
 
   useEffect(() => {
     if (!tour) return;
@@ -118,6 +128,10 @@ function BookPage() {
       toast.error("Add an email or link Telegram for booking updates");
       return;
     }
+    if (!offerVersion || !offerAccepted) {
+      toast.error("Please accept the public offer to continue");
+      return;
+    }
     setSubmitting(true);
     try {
       await createBookingFn({
@@ -140,6 +154,8 @@ function BookPage() {
           source: getBookingSource(),
           locale: lang,
           payment_method: paymentMethod,
+          offer_version: offerVersion!,
+          offer_accepted: true as const,
         },
       });
       setConfirmed(true);
@@ -356,7 +372,22 @@ function BookPage() {
               )}
             </div>
 
-            <button type="submit" disabled={submitting || adultsExceedAll || total === 0} className="inline-flex h-12 w-full items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.01] disabled:opacity-60">
+            <label className="flex items-start gap-3 rounded-2xl border border-input bg-card/50 p-4 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={offerAccepted}
+                onChange={(e) => setOfferAccepted(e.target.checked)}
+                className="mt-1 h-4 w-4 rounded border-border accent-primary"
+                required
+              />
+              <span className="text-sm text-foreground/90">
+                {lang === "ru" && <>Я принимаю условия <Link to="/offer" target="_blank" className="underline underline-offset-2">публичной оферты</Link> Hamroh{offerVersion ? ` (версия ${offerVersion})` : ""}.</>}
+                {lang === "uz" && <>Hamroh <Link to="/offer" target="_blank" className="underline underline-offset-2">ommaviy ofertasi</Link>{offerVersion ? ` (versiya ${offerVersion})` : ""} shartlarini qabul qilaman.</>}
+                {lang === "en" && <>I accept the terms of the Hamroh <Link to="/offer" target="_blank" className="underline underline-offset-2">public offer</Link>{offerVersion ? ` (version ${offerVersion})` : ""}.</>}
+              </span>
+            </label>
+
+            <button type="submit" disabled={submitting || adultsExceedAll || total === 0 || !offerAccepted || !offerVersion} className="inline-flex h-12 w-full items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.01] disabled:opacity-60">
               {submitting ? "Sending…" : isInstantMode ? `Confirm & book — $${total + fee}` : `Request booking — $${total + fee}`}
             </button>
             <p className="text-center text-xs text-muted-foreground">{isInstantMode ? "Your slot is locked in instantly." : "Your guide will review and confirm this request."}</p>

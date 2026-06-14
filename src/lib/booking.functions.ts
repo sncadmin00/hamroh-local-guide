@@ -51,6 +51,8 @@ const bookingSchema = z.object({
   source: z.string().max(64).optional(),
   locale: z.enum(["ru", "uz", "en"]).optional(),
   payment_method: z.enum(["cash", "online"]).default("cash"),
+  offer_version: z.string().min(1).max(40),
+  offer_accepted: z.literal(true),
 }).refine((data) => data.customer_email || data.customer_telegram_chat_id, {
   message: "Email or Telegram contact is required",
 });
@@ -67,6 +69,18 @@ export const createBooking = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const clientLocale = normalizeLocale(data.locale);
     const authedUserId = await getOptionalUserId();
+
+    // Verify accepted offer version is the current one
+    const { data: currentOffer, error: offerErr } = await supabaseAdmin
+      .from("legal_offers")
+      .select("version")
+      .eq("is_current", true)
+      .maybeSingle();
+    if (offerErr) throw new Error(offerErr.message);
+    if (!currentOffer || (currentOffer as any).version !== data.offer_version) {
+      throw new Error("The public offer has been updated. Please reload and accept the current version.");
+    }
+    const offerAcceptedAtIso = new Date().toISOString();
 
     // Load tour authoritatively — never trust client-side price.
     const { data: tour, error: tourErr } = await supabaseAdmin
@@ -149,6 +163,8 @@ export const createBooking = createServerFn({ method: "POST" })
       status: isInstant ? "confirmed" : "pending",
       locale: clientLocale,
       expires_at: expiresAt,
+      offer_version: data.offer_version,
+      offer_accepted_at: offerAcceptedAtIso,
     };
     const { data: row, error } = await supabaseAdmin
       .from("bookings")

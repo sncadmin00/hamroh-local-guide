@@ -18,6 +18,7 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as RefundPolicyRouteImport } from './routes/refund-policy'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as OfferRouteImport } from './routes/offer'
 import { Route as MyBookingsRouteImport } from './routes/my-bookings'
 import { Route as MessagesRouteImport } from './routes/messages'
 import { Route as LoginRouteImport } from './routes/login'
@@ -104,6 +105,11 @@ const RefundPolicyRoute = RefundPolicyRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OfferRoute = OfferRouteImport.update({
+  id: '/offer',
+  path: '/offer',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MyBookingsRoute = MyBookingsRouteImport.update({
@@ -343,6 +349,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/messages': typeof MessagesRouteWithChildren
   '/my-bookings': typeof MyBookingsRoute
+  '/offer': typeof OfferRoute
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
   '/search': typeof SearchRoute
@@ -395,6 +402,7 @@ export interface FileRoutesByTo {
   '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
   '/my-bookings': typeof MyBookingsRoute
+  '/offer': typeof OfferRoute
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
   '/search': typeof SearchRoute
@@ -449,6 +457,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/messages': typeof MessagesRouteWithChildren
   '/my-bookings': typeof MyBookingsRoute
+  '/offer': typeof OfferRoute
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
   '/search': typeof SearchRoute
@@ -504,6 +513,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/messages'
     | '/my-bookings'
+    | '/offer'
     | '/privacy'
     | '/refund-policy'
     | '/search'
@@ -556,6 +566,7 @@ export interface FileRouteTypes {
     | '/how-it-works'
     | '/login'
     | '/my-bookings'
+    | '/offer'
     | '/privacy'
     | '/refund-policy'
     | '/search'
@@ -609,6 +620,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/messages'
     | '/my-bookings'
+    | '/offer'
     | '/privacy'
     | '/refund-policy'
     | '/search'
@@ -663,6 +675,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   MessagesRoute: typeof MessagesRouteWithChildren
   MyBookingsRoute: typeof MyBookingsRoute
+  OfferRoute: typeof OfferRoute
   PrivacyRoute: typeof PrivacyRoute
   RefundPolicyRoute: typeof RefundPolicyRoute
   SearchRoute: typeof SearchRoute
@@ -761,6 +774,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/offer': {
+      id: '/offer'
+      path: '/offer'
+      fullPath: '/offer'
+      preLoaderRoute: typeof OfferRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/my-bookings': {
@@ -1110,6 +1130,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   MessagesRoute: MessagesRouteWithChildren,
   MyBookingsRoute: MyBookingsRoute,
+  OfferRoute: OfferRoute,
   PrivacyRoute: PrivacyRoute,
   RefundPolicyRoute: RefundPolicyRoute,
   SearchRoute: SearchRoute,

@@ -22,6 +22,7 @@ export function SiteFooter() {
             <Link to="/terms" className="hover:text-foreground">{t("footer.terms")}</Link>
             <Link to="/privacy" className="hover:text-foreground">{t("footer.privacy")}</Link>
             <Link to="/refund-policy" className="hover:text-foreground">{t("footer.refunds")}</Link>
+            <Link to="/offer" className="hover:text-foreground">Public Offer</Link>
           </nav>
 
           <div className="flex items-center gap-2">

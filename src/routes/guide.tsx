@@ -29,6 +29,7 @@ import { assessLanguageTest } from "@/lib/language-test.functions";
 import { useCities, useCategories } from "@/lib/content-queries";
 import { GuidePostsPanel } from "@/components/GuidePostsPanel";
 import { useGuideI18n } from "@/lib/guide-i18n";
+import { GuideOfferGate } from "@/components/guide/GuideOfferGate";
 
 const TourMapPicker = lazy(() => import("@/components/TourMapPicker"));
 
@@ -166,6 +167,7 @@ function GuidePortal() {
 
   return (
     <div className="min-h-screen bg-muted/30">
+      <GuideOfferGate />
       <header className="border-b border-border bg-background">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="min-w-0">
