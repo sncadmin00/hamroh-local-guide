@@ -1,16 +1,24 @@
 import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Check, X, Image as ImageIcon } from "lucide-react";
+import { updateMyTaxInfo } from "@/lib/earnings.functions";
+import { useGuideI18n } from "@/lib/guide-i18n";
 
 type MediaItem = { url: string; label: string; source: "photo" | "tour" | "post" };
 
 export function ProfilePanel({ guideId }: { guideId: string }) {
+  const { tg } = useGuideI18n();
+  const updateTaxFn = useServerFn(updateMyTaxInfo);
   const [currentCover, setCurrentCover] = useState<string | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [media, setMedia] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [taxStatus, setTaxStatus] = useState<"none" | "self_employed" | "ip">("none");
+  const [taxId, setTaxId] = useState("");
+  const [taxSaving, setTaxSaving] = useState(false);
 
   useEffect(() => {
     let alive = true;
