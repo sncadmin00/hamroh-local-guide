@@ -167,6 +167,7 @@ function GuidePortal() {
 
   return (
     <div className="min-h-screen bg-muted/30">
+      <GuideOfferGate />
       <header className="border-b border-border bg-background">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="min-w-0">
