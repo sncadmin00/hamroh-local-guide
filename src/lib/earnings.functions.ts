@@ -447,6 +447,36 @@ export const adminSetCommissionRate = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const adminGetServiceFeeRate = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
+    if (!(await isAdmin(supabase, userId))) throw new Error("Forbidden");
+    return { rate: await getServiceFeeRate(supabase) };
+  });
+
+export const adminSetServiceFeeRate = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) =>
+    z.object({ rate: z.number().min(0).max(0.9) }).parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const { supabase, userId } = context;
+    if (!(await isAdmin(supabase, userId))) throw new Error("Forbidden");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("app_settings")
+      .upsert({ key: "hamroh_service_fee_rate", value: data.rate as any, updated_at: new Date().toISOString() });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+/** Public: current service fee rate (used by booking page). */
+export const getPublicServiceFeeRate = createServerFn({ method: "GET" }).handler(async () => {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  return { rate: await getServiceFeeRate(supabaseAdmin) };
+});
+
 export const updateMyTaxInfo = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) =>
