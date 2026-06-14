@@ -211,6 +211,27 @@ function BecomeAGuidePage() {
     return () => sub.subscription.unsubscribe();
   }, []);
 
+  // Prefill from invitation link (/invite/:token redirects here with query params)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const sp = new URLSearchParams(window.location.search);
+    const invite = sp.get("invite");
+    const email = sp.get("email");
+    const name = sp.get("name");
+    const city = sp.get("city");
+    if (invite) setInviteToken(invite);
+    if (email || name || city) {
+      setForm((f) => ({
+        ...f,
+        email: f.email || email || "",
+        full_name: f.full_name || name || "",
+        city: f.city || city || "",
+      }));
+    }
+  }, []);
+
+
+
 
   const update = <K extends keyof FormState>(k: K, v: FormState[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
