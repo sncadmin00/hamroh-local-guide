@@ -163,6 +163,8 @@ export const createBooking = createServerFn({ method: "POST" })
       status: isInstant ? "confirmed" : "pending",
       locale: clientLocale,
       expires_at: expiresAt,
+      offer_version: data.offer_version,
+      offer_accepted_at: offerAcceptedAtIso,
     };
     const { data: row, error } = await supabaseAdmin
       .from("bookings")
