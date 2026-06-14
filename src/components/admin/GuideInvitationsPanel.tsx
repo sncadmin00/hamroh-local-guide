@@ -131,9 +131,9 @@ export function GuideInvitationsPanel() {
     }
   };
 
-  const doResend = async (id: string) => {
+  const doResend = async (id: string, locale: InviteLocale = defaultLocale) => {
     try {
-      const res = await resend({ data: { id } });
+      const res = await resend({ data: { id, locale } });
       if (res.ok) toast.success("Письмо отправлено повторно");
       else toast.error("Не удалось отправить (возможно, email в списке отписавшихся)");
       await reload();
@@ -205,7 +205,7 @@ export function GuideInvitationsPanel() {
         </h2>
         <div className="space-y-2">
           {drafts.map((d, i) => (
-            <div key={i} className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_1fr_auto] gap-2">
+            <div key={i} className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_1fr_90px_auto] gap-2">
               <input
                 type="email"
                 placeholder="email@example.com"
@@ -225,6 +225,16 @@ export function GuideInvitationsPanel() {
                 onChange={(e) => updateDraft(i, { city: e.target.value })}
                 className="h-9 rounded-md border border-border px-2 text-sm"
               />
+              <select
+                value={d.locale}
+                onChange={(e) => updateDraft(i, { locale: e.target.value as InviteLocale })}
+                className="h-9 rounded-md border border-border px-2 text-sm bg-background"
+                title="Язык письма"
+              >
+                <option value="ru">RU</option>
+                <option value="uz">UZ</option>
+                <option value="en">EN</option>
+              </select>
               <button
                 onClick={() => removeDraft(i)}
                 className="h-9 w-9 inline-flex items-center justify-center rounded-md text-muted-foreground hover:text-destructive"
