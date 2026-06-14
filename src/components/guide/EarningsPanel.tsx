@@ -1,17 +1,18 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Loader2, Download, FileText, Wallet, ReceiptText, CalendarRange } from "lucide-react";
+import { Loader2, Download, FileText, Wallet, ReceiptText, CalendarRange, Scale } from "lucide-react";
 import {
   getMyEarningsSummary,
   listMyTransactions,
   listMyPayouts,
+  listMyStatements,
   getMyReportUrls,
 } from "@/lib/earnings.functions";
 import { useGuideI18n } from "@/lib/guide-i18n";
 
 type Period = "today" | "week" | "month" | "year" | "custom";
-type SubTab = "overview" | "transactions" | "payouts" | "reports";
+type SubTab = "overview" | "transactions" | "payouts" | "statements" | "reports";
 
 function money(n: number) {
   return "$" + Number(n).toLocaleString("en-US", { maximumFractionDigits: 0 });
