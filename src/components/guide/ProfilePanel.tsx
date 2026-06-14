@@ -44,10 +44,24 @@ export function ProfilePanel({ guideId }: { guideId: string }) {
       setMedia(unique);
       setPhotoUrl(g.data?.photo_url ?? null);
       setCurrentCover(g.data?.cover_url ?? null);
+      setTaxStatus(((g.data as any)?.tax_status ?? "none") as any);
+      setTaxId(((g.data as any)?.tax_id ?? "") as string);
       setLoading(false);
     })();
     return () => { alive = false; };
   }, [guideId]);
+
+  const saveTax = async () => {
+    setTaxSaving(true);
+    try {
+      await updateTaxFn({ data: { tax_status: taxStatus, tax_id: taxId.trim() || null } });
+      toast.success(tg("common.saved"));
+    } catch (e: any) {
+      toast.error(e.message);
+    } finally {
+      setTaxSaving(false);
+    }
+  };
 
   const save = async (url: string | null) => {
     setSaving(true);
