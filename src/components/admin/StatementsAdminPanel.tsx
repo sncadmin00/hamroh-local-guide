@@ -98,9 +98,16 @@ export function StatementsAdminPanel() {
     setBusy(true);
     try {
       const r = (await genFn({ data: { year, month, notify } })) as any;
-      toast.success(
-        `Generated ${r.count} statement${r.count === 1 ? "" : "s"}${notify ? ` · notified ${r.notified}` : ""}`,
-      );
+      if (r.count === 0) {
+        toast.info(
+          `No statements generated — found ${r.completedBookings ?? 0} completed bookings for ${period}. Statements are only created for guides with completed bookings in that month.`,
+          { duration: 8000 },
+        );
+      } else {
+        toast.success(
+          `Generated ${r.count} statement${r.count === 1 ? "" : "s"}${notify ? ` · notified ${r.notified}` : ""}`,
+        );
+      }
       load();
     } catch (e: any) {
       toast.error(e.message);
