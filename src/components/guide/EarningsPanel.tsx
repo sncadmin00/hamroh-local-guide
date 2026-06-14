@@ -222,6 +222,22 @@ export function EarningsPanel() {
         </div>
       )}
 
+      {/* Statements (Net Settlement) */}
+      {sub === "statements" && (
+        <div className="space-y-4">
+          <div className="rounded-xl bg-primary/5 border border-primary/15 p-4 text-sm text-muted-foreground">
+            {tg("earn.st.intro")}
+          </div>
+          {statements.length === 0 ? (
+            <div className="rounded-xl bg-background border border-border p-8 text-center text-sm text-muted-foreground">
+              {tg("earn.st.empty")}
+            </div>
+          ) : (
+            statements.map((s) => <StatementCard key={s.id} s={s} tg={tg} lang={lang} />)
+          )}
+        </div>
+      )}
+
       {/* Payouts */}
       {sub === "payouts" && (
         <div className="overflow-x-auto bg-background border border-border rounded-xl">
