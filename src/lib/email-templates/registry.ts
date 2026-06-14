@@ -19,6 +19,7 @@ import { template as bookingCancelledByClient } from './booking-cancelled-by-cli
 import { template as guideApplicationAdmin } from './guide-application-admin'
 import { template as welcome } from './welcome'
 import { template as guideApplicationStatus } from './guide-application-status'
+import { template as guideInvitation } from './guide-invitation'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'unread-chat-message': unreadChatMessage,
@@ -31,5 +32,7 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'guide-application-admin': guideApplicationAdmin,
   'welcome': welcome,
   'guide-application-status': guideApplicationStatus,
+  'guide-invitation': guideInvitation,
 }
+
 
