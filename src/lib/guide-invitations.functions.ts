@@ -222,6 +222,27 @@ export const resendGuideInvitation = createServerFn({ method: "POST" })
     return { ok };
   });
 
+export const markInvitationRegistered = createServerFn({ method: "POST" })
+  .inputValidator((input) =>
+    z.object({
+      token: z.string().min(8).max(128),
+      application_id: z.string().uuid(),
+    }).parse(input),
+  )
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin
+      .from("guide_invitations")
+      .update({
+        status: "registered",
+        registered_at: new Date().toISOString(),
+        application_id: data.application_id,
+      })
+      .eq("token", data.token);
+    return { ok: true };
+  });
+
+
 /* ---------------- Public: track open by token ---------------- */
 
 export const markInvitationOpened = createServerFn({ method: "POST" })
