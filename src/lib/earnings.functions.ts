@@ -452,3 +452,86 @@ export const updateMyTaxInfo = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+// ===== Net Settlement Statements (admin) =====
+
+import { generateStatementsForPeriod, notifyGuideStatement } from "@/lib/statements.server";
+
+export const adminGenerateStatements = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) =>
+    z
+      .object({
+        year: z.number().int().min(2024).max(2100),
+        month: z.number().int().min(1).max(12),
+        notify: z.boolean().optional().default(false),
+      })
+      .parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const { supabase, userId } = context;
+    if (!(await isAdmin(supabase, userId))) throw new Error("Forbidden");
+    const results = await generateStatementsForPeriod(supabase, data.year, data.month);
+    let notified = 0;
+    if (data.notify) {
+      for (const r of results) {
+        if (await notifyGuideStatement(supabase, r, data.year, data.month)) notified++;
+      }
+    }
+    return { count: results.length, notified, results };
+  });
+
+export const adminListStatements = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) =>
+    z
+      .object({
+        year: z.number().int().min(2024).max(2100),
+        month: z.number().int().min(1).max(12),
+      })
+      .parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const { supabase, userId } = context;
+    if (!(await isAdmin(supabase, userId))) throw new Error("Forbidden");
+    const { data: rows, error } = await supabase
+      .from("monthly_statements")
+      .select(
+        "id, statement_number, guide_id, period_year, period_month, online_revenue, online_payout_to_guide, online_bookings_count, cash_revenue, cash_commission_to_us, cash_bookings_count, net_amount, direction, status, due_date, settled_at, payment_method, payment_reference, notes, created_at, guides(name)",
+      )
+      .eq("period_year", data.year)
+      .eq("period_month", data.month)
+      .order("net_amount", { ascending: false });
+    if (error) throw new Error(error.message);
+    return (rows ?? []) as any[];
+  });
+
+export const adminSettleStatement = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) =>
+    z
+      .object({
+        statementId: z.string().uuid(),
+        status: z.enum(["pending", "settled", "rolled_over", "cancelled"]),
+        payment_method: z.string().trim().max(40).optional(),
+        payment_reference: z.string().trim().max(200).optional(),
+        notes: z.string().trim().max(2000).optional(),
+      })
+      .parse(input),
+  )
+  .handler(async ({ context, data }) => {
+    const { supabase, userId } = context;
+    if (!(await isAdmin(supabase, userId))) throw new Error("Forbidden");
+    const patch: any = { status: data.status };
+    if (data.status === "settled") patch.settled_at = new Date().toISOString();
+    else patch.settled_at = null;
+    if (data.payment_method !== undefined) patch.payment_method = data.payment_method || null;
+    if (data.payment_reference !== undefined) patch.payment_reference = data.payment_reference || null;
+    if (data.notes !== undefined) patch.notes = data.notes || null;
+    const { error } = await supabase
+      .from("monthly_statements")
+      .update(patch)
+      .eq("id", data.statementId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
