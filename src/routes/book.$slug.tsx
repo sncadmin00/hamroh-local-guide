@@ -124,7 +124,7 @@ function BookPage() {
 
   const computedPrice = computeTourPrice(tour, { category: selectedCategory, language: currentLanguage || null });
   const total = computedPrice ?? 0;
-  const fee = Math.round(total * 0.05);
+  const fee = Math.round(total * serviceFeeRate);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
