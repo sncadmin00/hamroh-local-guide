@@ -1,8 +1,9 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { markInvitationOpened } from "@/lib/guide-invitations.functions";
+
 
 export const Route = createFileRoute("/invite/$token")({
   head: () => ({
