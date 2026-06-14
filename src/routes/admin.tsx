@@ -388,6 +388,12 @@ function AdminPage() {
           >
             {ta("tab.verifications")}
           </button>
+          <button
+            onClick={() => setTab("invitations")}
+            className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "invitations" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+          >
+            Приглашения
+          </button>
         </div>
 
         {tab === "bookings" && <BookingsPanel bookings={bookings} reload={loadData} />}
@@ -404,6 +410,8 @@ function AdminPage() {
         {tab === "social" && <SocialPanel embeds={embeds} cities={cities} reload={loadData} />}
         {tab === "users" && <UsersPanel />}
         {tab === "verifications" && <VerificationsPanel />}
+        {tab === "invitations" && <GuideInvitationsPanel />}
+
       </div>
     </div>
   );
