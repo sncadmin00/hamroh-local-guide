@@ -124,7 +124,7 @@ export function HeroSearch() {
       />
 
       {/* Content */}
-      <div className="relative z-10 w-full" style={{ maxWidth: 760, paddingTop: 120 }}>
+      <div className="relative z-10 w-full pt-24 md:pt-[120px]" style={{ maxWidth: 760 }}>
         {/* Eyebrow */}
         <div
           className="inline-flex items-center gap-2 mb-6 animate-fade-in"
