@@ -81,7 +81,7 @@ export function PopularCategoriesCarousel() {
               to="/guides"
               search={{ category: c.slug }}
               className="group relative rounded-2xl overflow-hidden aspect-[3/4] border transition-all hover:-translate-y-1.5 block"
-              style={{ borderColor: "rgba(201,168,76,0.12)" }}
+              style={{ borderColor: "color-mix(in srgb, var(--gold) 12rgba(201,168,76,0.12)%, transparent)" }}
             >
               <img
                 src={cover}
@@ -100,8 +100,8 @@ export function PopularCategoriesCarousel() {
                 <div
                   className="mb-2.5 h-[34px] w-[34px] rounded-lg flex items-center justify-center border"
                   style={{
-                    background: "rgba(201,168,76,0.15)",
-                    borderColor: "rgba(201,168,76,0.3)",
+                    background: "color-mix(in srgb, var(--gold) 15rgba(201,168,76,0.15)%, transparent)",
+                    borderColor: "color-mix(in srgb, var(--gold) 3rgba(201,168,76,0.3)%, transparent)",
                     color: "#C9A84C",
                   }}
                 >
