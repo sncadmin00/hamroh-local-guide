@@ -46,28 +46,32 @@ export function PopularCategoriesCarousel() {
   const { t, tCategory } = useI18n();
   const { data: categories = [] } = useCategories();
   const { data: counts = {} } = useCategoryGuideCounts();
+  const { ref, scroll } = useCarouselControls(280);
 
   if (categories.length === 0) return null;
 
   return (
     <section className="px-6 md:px-12 py-16 md:py-[72px] max-w-[1280px] mx-auto">
-      <div className="flex items-baseline justify-between mb-9">
+      <div className="flex items-baseline justify-between mb-9 gap-4">
         <h2
           className="font-display text-[1.6rem] md:text-[2.2rem] tracking-tight"
           style={{ color: "#F0EBE0", fontFamily: "'DM Serif Display', serif" }}
         >
           {t("home.categories.title")}
         </h2>
-        <Link
-          to="/guides"
-          className="text-sm font-medium inline-flex items-center gap-1.5 hover:gap-2.5 transition-all"
-          style={{ color: "#C9A84C" }}
-        >
-          {t("home.categories.viewAll")} <ArrowRight className="h-3.5 w-3.5" />
-        </Link>
+        <div className="flex items-center gap-4 shrink-0">
+          <Link
+            to="/guides"
+            className="text-sm font-medium inline-flex items-center gap-1.5 hover:gap-2.5 transition-all"
+            style={{ color: "#C9A84C" }}
+          >
+            {t("home.categories.viewAll")} <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+          <CarouselArrows onPrev={() => scroll(-1)} onNext={() => scroll(1)} />
+        </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+      <ScrollRow scrollerRef={ref} cardWidth={280}>
         {categories.map((c) => {
           const cover = COVER[c.slug] ?? coverCity;
           const count = counts[c.id] ?? 0;
@@ -76,7 +80,7 @@ export function PopularCategoriesCarousel() {
               key={c.id}
               to="/guides"
               search={{ category: c.slug }}
-              className="group relative rounded-2xl overflow-hidden aspect-[3/4] border transition-all hover:-translate-y-1.5"
+              className="group relative rounded-2xl overflow-hidden aspect-[3/4] border transition-all hover:-translate-y-1.5 block"
               style={{ borderColor: "rgba(201,168,76,0.12)" }}
             >
               <img
@@ -119,7 +123,8 @@ export function PopularCategoriesCarousel() {
             </Link>
           );
         })}
-      </div>
+      </ScrollRow>
     </section>
   );
 }
+
