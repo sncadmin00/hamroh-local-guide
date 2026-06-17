@@ -56,9 +56,12 @@
   --accent: #1F9BB4;
   --accent-foreground: #FFFFFF;
 
-  /* Gold — premium markers only (verified, ratings, premium guides) */
-  --gold: #C99A3D;
+  /* Gold — premium accent (verified, ratings, premium markers, home accents) */
+  --gold: #C9A84C;
+  --gold-hover: #F59E0B;
+  --gold-glow: rgba(201, 168, 76, 0.2);
   --gold-foreground: #FFFFFF;
+
 
   --secondary: #F7F9FC;
   --secondary-foreground: #0F172A;
