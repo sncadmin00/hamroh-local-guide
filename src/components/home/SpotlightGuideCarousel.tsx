@@ -3,6 +3,8 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRight, Check, MapPin, Star } from "lucide-react";
 import { useGuides } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
+import { CarouselArrows, ScrollRow, useCarouselControls } from "./ScrollCarousel";
+
 
 export function SpotlightGuideCarousel() {
   const { t } = useI18n();
