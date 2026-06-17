@@ -1,162 +1,187 @@
 import { useMemo } from "react";
 import { Link } from "@tanstack/react-router";
-import { Star, MapPin, Check } from "lucide-react";
+import { ArrowRight, Check, MapPin, Star } from "lucide-react";
 import { useTours, pickTourTitle, pickTourShortDescription, pickTourIncluded } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
-import { HorizontalCarousel } from "@/components/home/HorizontalCarousel";
 import { WishlistHeart } from "@/components/WishlistHeart";
 
 export function SpotlightTourCarousel() {
   const { t, lang } = useI18n();
   const { data: tours = [] } = useTours();
   const items = useMemo(
-    () => [...tours].sort((a, b) => Number(b.rating ?? 0) - Number(a.rating ?? 0)).slice(0, 8),
+    () => [...tours].sort((a, b) => Number(b.rating ?? 0) - Number(a.rating ?? 0)).slice(0, 4),
     [tours],
   );
 
   if (items.length === 0) return null;
 
   return (
-    <section className="px-6 py-12 md:py-16">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex items-end justify-between mb-5 md:mb-6">
-          <h2 className="font-display text-2xl md:text-3xl font-semibold text-foreground">
-            {t("home.spotlightTour.title")}
-          </h2>
-          <Link
-            to="/tours"
-            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-          >
-            {t("topTours.viewAll")}
-          </Link>
-        </div>
-
-        <HorizontalCarousel
-          itemClassName="w-[300px] md:w-[340px]"
-          twoRowsDesktop={false}
+    <section className="px-6 md:px-12 py-16 md:py-[72px] max-w-[1280px] mx-auto">
+      <div className="flex items-baseline justify-between mb-9">
+        <h2
+          className="font-display text-[1.6rem] md:text-[2.2rem] tracking-tight"
+          style={{ color: "#F0EBE0", fontFamily: "'DM Serif Display', serif" }}
         >
-          {items.map((tour) => {
-            const title = pickTourTitle(tour, lang);
-            const desc = pickTourShortDescription(tour, lang);
-            const included = pickTourIncluded(tour, lang).slice(0, 4);
-            const cat = tour.tour_categories?.[0]?.categories;
-            return (
-              <Link
-                key={tour.id}
-                to="/tours/$slug"
-                params={{ slug: tour.slug }}
-                className="flex flex-col h-full overflow-hidden rounded-2xl bg-card ring-1 ring-border shadow-sm hover:shadow-md transition-shadow"
-              >
-                <div className="flex items-center justify-end h-9 px-3 bg-white border-b border-border">
+          {t("home.spotlightTour.title")}
+        </h2>
+        <Link
+          to="/tours"
+          className="text-sm font-medium inline-flex items-center gap-1.5 hover:gap-2.5 transition-all"
+          style={{ color: "#C9A84C" }}
+        >
+          {t("topTours.viewAll")} <ArrowRight className="h-3.5 w-3.5" />
+        </Link>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {items.map((tour) => {
+          const title = pickTourTitle(tour, lang);
+          const desc = pickTourShortDescription(tour, lang);
+          const included = pickTourIncluded(tour, lang).slice(0, 3);
+          const cat = tour.tour_categories?.[0]?.categories;
+          return (
+            <Link
+              key={tour.id}
+              to="/tours/$slug"
+              params={{ slug: tour.slug }}
+              className="group relative flex flex-col overflow-hidden rounded-[20px] border transition-all hover:-translate-y-1.5"
+              style={{ background: "#111827", borderColor: "#1e2d45" }}
+            >
+              {/* Image */}
+              <div className="relative aspect-[16/10] overflow-hidden">
+                {tour.cover_url && (
+                  <img
+                    src={tour.cover_url}
+                    alt={title}
+                    loading="lazy"
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                )}
+                {cat?.name && (
+                  <span
+                    className="absolute top-3 left-3 rounded-full px-2.5 py-1 text-[0.68rem] font-semibold uppercase tracking-wider backdrop-blur border"
+                    style={{
+                      background: "rgba(10,15,30,0.75)",
+                      borderColor: "rgba(201,168,76,0.25)",
+                      color: "#C9A84C",
+                    }}
+                  >
+                    {cat.name}
+                  </span>
+                )}
+                <div
+                  className="absolute top-3 right-3 rounded-full backdrop-blur border"
+                  style={{ background: "rgba(10,15,30,0.7)", borderColor: "#1e2d45" }}
+                >
                   <WishlistHeart type="tour" id={tour.id} size="sm" variant="ghost" />
                 </div>
-                <div className="relative">
-                  <div className="aspect-[16/10] w-full overflow-hidden bg-secondary">
-                    {tour.cover_url && (
+              </div>
+
+              {/* Body */}
+              <div className="flex flex-1 flex-col p-4 pt-4">
+                <h3
+                  className="text-[0.98rem] font-semibold leading-snug mb-3 line-clamp-2"
+                  style={{ color: "#F0EBE0" }}
+                >
+                  {title}
+                </h3>
+
+                {tour.guides?.name && (
+                  <div className="flex items-center gap-2 mb-2.5">
+                    {tour.guides.photo_url && (
                       <img
-                        src={tour.cover_url}
-                        alt={title}
-                        className="h-full w-full object-cover"
+                        src={tour.guides.photo_url}
+                        alt={tour.guides.name}
                         loading="lazy"
+                        className="h-[26px] w-[26px] rounded-full object-cover border"
+                        style={{ borderColor: "rgba(201,168,76,0.3)" }}
                       />
                     )}
+                    <span className="text-[0.78rem]" style={{ color: "#4A6080" }}>
+                      {t("home.spotlightTour.by")}{" "}
+                      <span style={{ color: "#94A3B8" }} className="font-medium">
+                        {tour.guides.name}
+                      </span>
+                    </span>
                   </div>
-                  {cat?.name && (
-                    <span className="absolute left-4 -bottom-4 z-10 inline-flex items-center h-8 px-3 rounded-lg bg-white text-[11px] font-semibold uppercase tracking-wide text-foreground shadow-md ring-1 ring-border">
-                      {cat.name}
+                )}
+
+                <div className="flex items-center gap-3.5 text-[0.78rem] mb-3.5">
+                  {Number(tour.rating ?? 0) > 0 && (
+                    <span className="inline-flex items-center gap-1 font-semibold" style={{ color: "#F0EBE0" }}>
+                      <Star className="h-3.5 w-3.5 fill-current" style={{ color: "#C9A84C" }} />
+                      {Number(tour.rating).toFixed(1)}
+                    </span>
+                  )}
+                  {tour.cities?.name && (
+                    <span className="inline-flex items-center gap-1" style={{ color: "#4A6080" }}>
+                      <MapPin className="h-3.5 w-3.5" style={{ color: "#C9A84C" }} />
+                      {tour.cities.name}
                     </span>
                   )}
                 </div>
 
+                {desc && (
+                  <p
+                    className="text-[0.82rem] leading-relaxed mb-3.5 line-clamp-2"
+                    style={{ color: "#4A6080" }}
+                  >
+                    {desc}
+                  </p>
+                )}
 
-                <div className="flex flex-1 flex-col p-5">
-                  <h3 className="font-display text-lg font-semibold text-foreground leading-snug line-clamp-2">
-                    {title}
-                  </h3>
+                {included.length > 0 && (
+                  <div className="mb-4">
+                    <p
+                      className="text-[0.72rem] font-semibold uppercase tracking-wider mb-2"
+                      style={{ color: "#4A6080" }}
+                    >
+                      {t("tours.included")}
+                    </p>
+                    <ul className="space-y-1.5">
+                      {included.map((it, i) => (
+                        <li
+                          key={i}
+                          className="flex items-center gap-2 text-[0.8rem]"
+                          style={{ color: "#94A3B8" }}
+                        >
+                          <Check className="h-3.5 w-3.5 shrink-0" style={{ color: "#C9A84C" }} />
+                          <span className="line-clamp-1">{it}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
 
-                  {tour.guides?.name && (
-                    <div className="mt-2 flex items-center gap-2">
-                      {tour.guides.photo_url && (
-                        <img
-                          src={tour.guides.photo_url}
-                          alt={tour.guides.name}
-                          className="h-6 w-6 rounded-full object-cover ring-1 ring-border"
-                          loading="lazy"
-                        />
-                      )}
-                      <span className="text-xs text-muted-foreground">
-                        {t("home.spotlightTour.by")} <span className="font-medium text-foreground">{tour.guides.name}</span>
-                      </span>
-
+              {/* Footer */}
+              <div
+                className="mt-auto flex items-center justify-between px-4 py-3.5 border-t"
+                style={{ borderColor: "#1e2d45" }}
+              >
+                <div>
+                  <div className="text-[0.7rem]" style={{ color: "#4A6080" }}>
+                    {t("tours.priceFrom")}
+                  </div>
+                  {Number(tour.price_from) > 0 && (
+                    <div
+                      className="text-[1.2rem] font-bold tracking-tight"
+                      style={{ color: "#F0EBE0" }}
+                    >
+                      ${Number(tour.price_from)}
                     </div>
                   )}
-
-
-                  <div className="mt-2 flex items-center gap-3 text-sm">
-                    {Number(tour.rating ?? 0) > 0 && (
-                      <span className="inline-flex items-center gap-1">
-                        <Star className="h-4 w-4 fill-accent text-accent" />
-                        <span className="font-semibold tabular-nums text-foreground">
-                          {Number(tour.rating).toFixed(1)}
-                        </span>
-                        {Number(tour.reviews_count ?? 0) > 0 && (
-                          <span className="text-muted-foreground">
-                            ({tour.reviews_count})
-                          </span>
-                        )}
-                      </span>
-                    )}
-                    {tour.cities?.name && (
-                      <span className="inline-flex items-center gap-1 text-muted-foreground">
-                        <MapPin className="h-3.5 w-3.5" />
-                        {tour.cities.name}
-                      </span>
-                    )}
-                  </div>
-
-                  {desc && (
-                    <p className="mt-3 text-sm text-muted-foreground line-clamp-3">{desc}</p>
-                  )}
-
-                  {included.length > 0 && (
-                    <div className="mt-4">
-                      <p className="text-sm font-semibold text-foreground">
-                        {t("tours.included")}
-                      </p>
-                      <ul className="mt-2 space-y-1.5">
-                        {included.map((it, i) => (
-                          <li key={i} className="flex items-start gap-2 text-sm text-foreground">
-                            <Check className="mt-0.5 h-4 w-4 shrink-0 text-foreground" />
-                            <span className="line-clamp-1">{it}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                  <div className="mt-auto pt-5 flex items-end justify-between gap-3">
-                    {Number(tour.price_from) > 0 ? (
-                      <div className="text-sm">
-                        <div className="text-muted-foreground">{t("tours.priceFrom")}</div>
-                        <div className="text-foreground">
-                          <span className="font-display text-lg font-semibold">
-                            ${Number(tour.price_from)}
-                          </span>
-                        </div>
-                      </div>
-                    ) : (
-                      <span />
-                    )}
-
-                    <span className="inline-flex items-center h-10 px-5 rounded-xl bg-foreground text-background text-sm font-semibold hover:opacity-90 transition-opacity">
-                      {t("home.spotlightTour.cta")}
-                    </span>
-                  </div>
                 </div>
-              </Link>
-            );
-          })}
-        </HorizontalCarousel>
+                <span
+                  className="inline-flex items-center rounded-full px-4 py-2.5 text-[0.82rem] font-semibold transition-all group-hover:scale-105"
+                  style={{ background: "#C9A84C", color: "#0a0f1e" }}
+                >
+                  {t("home.spotlightTour.cta")}
+                </span>
+              </div>
+            </Link>
+          );
+        })}
       </div>
     </section>
   );
