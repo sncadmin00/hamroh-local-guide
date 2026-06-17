@@ -10,31 +10,36 @@ export function SpotlightGuideCarousel() {
   const { t } = useI18n();
   const { data: guides = [] } = useGuides();
   const items = useMemo(
-    () => [...guides].sort((a, b) => b.rating - a.rating).slice(0, 4),
+    () => [...guides].sort((a, b) => b.rating - a.rating).slice(0, 12),
     [guides],
   );
+  const { ref, scroll } = useCarouselControls(280);
 
   if (items.length === 0) return null;
 
   return (
     <section className="px-6 md:px-12 py-16 md:py-[72px] max-w-[1280px] mx-auto">
-      <div className="flex items-baseline justify-between mb-9">
+      <div className="flex items-baseline justify-between mb-9 gap-4">
         <h2
           className="font-display text-[1.6rem] md:text-[2.2rem] tracking-tight"
           style={{ color: "#F0EBE0", fontFamily: "'DM Serif Display', serif" }}
         >
           {t("home.spotlightGuide.title")}
         </h2>
-        <Link
-          to="/guides"
-          className="text-sm font-medium inline-flex items-center gap-1.5 hover:gap-2.5 transition-all"
-          style={{ color: "#C9A84C" }}
-        >
-          {t("featured.viewAll")} <ArrowRight className="h-3.5 w-3.5" />
-        </Link>
+        <div className="flex items-center gap-4 shrink-0">
+          <Link
+            to="/guides"
+            className="text-sm font-medium inline-flex items-center gap-1.5 hover:gap-2.5 transition-all"
+            style={{ color: "#C9A84C" }}
+          >
+            {t("featured.viewAll")} <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+          <CarouselArrows onPrev={() => scroll(-1)} onNext={() => scroll(1)} />
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
+      <ScrollRow scrollerRef={ref} cardWidth={280}>
+
         {items.map((g) => (
           <Link
             key={g.id}
