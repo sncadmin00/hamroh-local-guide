@@ -92,6 +92,15 @@ export function HeroSearch() {
         </picture>
       </div>
 
+      {/* Top gradient for navbar readability */}
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{
+          background:
+            "linear-gradient(to bottom, rgba(10,15,30,0.65) 0%, rgba(10,15,30,0) 20%)",
+        }}
+      />
+
       {/* Gradient overlay */}
       <div
         className="absolute inset-0 z-0 pointer-events-none"
