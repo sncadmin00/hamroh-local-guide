@@ -82,14 +82,8 @@ export function ScrollRow({
             <div
               key={i}
               className="snap-start shrink-0"
-              style={{
-                width: `min(${mobileVw}vw, ${cardWidth}px)`,
-              }}
+              style={{ width: `min(${cardWidth}px, ${mobileVw}vw)` }}
             >
-              <div
-                className="hidden md:block"
-                style={{ width: `${cardWidth}px` }}
-              />
               {child}
             </div>
           ))
@@ -97,3 +91,4 @@ export function ScrollRow({
     </div>
   );
 }
+
