@@ -73,7 +73,7 @@ function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-background md:bg-white md:pt-6">
+    <div className="min-h-screen flex flex-col" style={{ background: "#0a0f1e", color: "#F0EBE0" }}>
       <SiteHeader transparent sticky={false} />
 
       <main className="flex-1">
@@ -81,34 +81,95 @@ function Home() {
           <HeroSearch />
         </div>
 
+        <TrustBar />
 
-        <div className="px-6 pt-20 md:pt-24 pb-2">
-          <TrustBar />
-        </div>
         <PopularCategoriesCarousel />
         <SpotlightGuideCarousel />
         <SpotlightTourCarousel />
-        
+
         <FeaturedReviews />
 
         {/* Become a guide banner */}
-        <section className="px-6 py-10 md:py-14">
-          <div className="max-w-5xl mx-auto">
-            <div className="relative overflow-hidden rounded-3xl p-8 md:p-12 text-center text-white shadow-[var(--shadow-elegant)]"
-              style={{ background: "linear-gradient(135deg, #082A78 0%, #1F9BB4 100%)" }}
+        <section className="px-6 md:px-12 pb-16 md:pb-[72px]">
+          <div
+            className="relative max-w-[1280px] mx-auto rounded-3xl overflow-hidden flex flex-col md:flex-row items-center gap-10 px-8 py-10 md:px-16 md:py-14"
+            style={{
+              background: "linear-gradient(135deg, #1a2236 0%, #111827 100%)",
+              border: "1px solid rgba(201,168,76,0.2)",
+            }}
+          >
+            <div
+              className="absolute -top-20 -right-20 w-[300px] h-[300px] rounded-full pointer-events-none"
+              style={{ background: "radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%)" }}
+            />
+            <div
+              className="absolute -bottom-16 left-[200px] w-[200px] h-[200px] rounded-full pointer-events-none"
+              style={{ background: "radial-gradient(circle, rgba(201,168,76,0.05) 0%, transparent 70%)" }}
+            />
+
+            <div className="relative max-w-[500px] flex-1">
+              <p
+                className="text-[0.72rem] font-semibold uppercase tracking-[0.14em] mb-4"
+                style={{ color: "#C9A84C" }}
+              >
+                {t("nav.becomeGuide")}
+              </p>
+              <h2
+                className="text-[1.6rem] md:text-[2.4rem] leading-[1.15] tracking-tight mb-5 whitespace-pre-line"
+                style={{ color: "#F0EBE0", fontFamily: "'DM Serif Display', serif" }}
+              >
+                {t("banner.guide.title")}
+              </h2>
+              <p className="text-[0.95rem] leading-relaxed mb-8 whitespace-pre-line" style={{ color: "#94A3B8" }}>
+                {t("banner.guide.points")}
+              </p>
+              <Link
+                to={isGuide ? "/guide" : "/become-a-guide"}
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-sm font-semibold transition-all hover:-translate-y-0.5"
+                style={{ background: "#C9A84C", color: "#0a0f1e" }}
+              >
+                {isGuide ? t("nav.guideDashboard") : t("banner.guide.button")} →
+              </Link>
+            </div>
+
+            <div
+              className="relative rounded-[20px] p-7 min-w-[240px] flex-shrink-0 md:rotate-2 w-full md:w-auto"
+              style={{
+                background: "rgba(26,34,54,0.8)",
+                backdropFilter: "blur(12px)",
+                border: "1px solid rgba(201,168,76,0.2)",
+                boxShadow: "0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)",
+              }}
             >
-              <div className="absolute -top-20 -right-20 w-72 h-72 rounded-full opacity-30 blur-3xl bg-white" />
-              <div className="relative">
-                <h2 className="font-display text-2xl md:text-3xl font-semibold whitespace-pre-line">{t("banner.guide.title")}</h2>
-                <div className="mt-4 text-base md:text-lg opacity-90 max-w-md mx-auto whitespace-pre-line">
-                  {t("banner.guide.points")}
-                </div>
-                <Link
-                  to={isGuide ? "/guide" : "/become-a-guide"}
-                  className="mt-6 inline-flex items-center gap-2 h-11 px-6 rounded-full bg-white text-foreground text-sm font-semibold hover:bg-white/90 transition-colors"
-                >
-                  {isGuide ? t("nav.guideDashboard") : t("banner.guide.button")}
-                </Link>
+              <div
+                className="w-16 h-16 rounded-full mx-auto mb-3.5 flex items-center justify-center text-3xl border-2"
+                style={{
+                  background: "linear-gradient(135deg, #2a3a5c, #1a2236)",
+                  borderColor: "rgba(201,168,76,0.3)",
+                }}
+              >
+                🧑‍💼
+              </div>
+              <p className="font-semibold text-[0.95rem] text-center mb-1" style={{ color: "#F0EBE0" }}>
+                {t("nav.becomeGuide")}
+              </p>
+              <p className="text-[0.78rem] text-center mb-3.5" style={{ color: "#4A6080" }}>
+                Uzbekistan
+              </p>
+              <div className="flex justify-center gap-1 mb-3.5">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <span key={i} style={{ color: "#C9A84C" }}>★</span>
+                ))}
+              </div>
+              <div
+                className="inline-flex items-center justify-center gap-1.5 rounded-full px-3 py-1.5 text-[0.72rem] font-semibold tracking-wider w-full"
+                style={{
+                  background: "rgba(201,168,76,0.1)",
+                  border: "1px solid rgba(201,168,76,0.25)",
+                  color: "#C9A84C",
+                }}
+              >
+                ✓ Verified Guide
               </div>
             </div>
           </div>
