@@ -241,7 +241,7 @@ export function HeroSearch() {
 
         {/* Trust badges */}
         <div
-          className="flex items-center justify-center gap-2.5 flex-wrap animate-fade-in"
+          className="flex flex-row items-center justify-center gap-2 flex-wrap animate-fade-in"
           style={{ animationDelay: "0.38s" }}
         >
           {[
@@ -253,13 +253,13 @@ export function HeroSearch() {
           ].map((label) => (
             <span
               key={label}
-              className="inline-flex items-center gap-2 whitespace-nowrap transition-colors"
+              className="inline-flex items-center gap-1.5 whitespace-nowrap transition-colors"
               style={{
                 background: "rgba(26, 34, 54, 0.7)",
                 border: "1px solid #1e2d45",
                 borderRadius: 999,
-                padding: "7px 14px",
-                fontSize: "0.78rem",
+                padding: "5px 10px",
+                fontSize: "0.7rem",
                 fontWeight: 500,
                 color: "#94A3B8",
                 backdropFilter: "blur(8px)",
@@ -268,11 +268,11 @@ export function HeroSearch() {
             >
               <span
                 style={{
-                  width: 6,
-                  height: 6,
+                  width: 5,
+                  height: 5,
                   background: GOLD,
                   borderRadius: "50%",
-                  boxShadow: "0 0 5px rgba(201,168,76,0.6)",
+                  boxShadow: "0 0 4px rgba(201,168,76,0.6)",
                   flexShrink: 0,
                 }}
               />
