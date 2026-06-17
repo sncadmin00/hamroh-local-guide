@@ -4,6 +4,8 @@ import { ArrowRight, Check, MapPin, Star } from "lucide-react";
 import { useTours, pickTourTitle, pickTourShortDescription, pickTourIncluded } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
 import { WishlistHeart } from "@/components/WishlistHeart";
+import { CarouselArrows, ScrollRow, useCarouselControls } from "./ScrollCarousel";
+
 
 export function SpotlightTourCarousel() {
   const { t, lang } = useI18n();
