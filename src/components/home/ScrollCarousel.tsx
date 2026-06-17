@@ -43,7 +43,7 @@ export function CarouselArrows({
         type="button"
         aria-label="Previous"
         onClick={onPrev}
-        className={`${base} hover:[border-color:color-mix(in srgb, var(--gold) 50%, transparent)] hover:[background:#1e2d45]`}
+        className={`${base} hover:[border-color:color-mix(in_srgb,_var(--gold)_50%,_transparent)] hover:[background:#1e2d45]`}
         style={style}
       >
         <ChevronLeft className="h-4 w-4" />
@@ -52,7 +52,7 @@ export function CarouselArrows({
         type="button"
         aria-label="Next"
         onClick={onNext}
-        className={`${base} hover:[border-color:color-mix(in srgb, var(--gold) 50%, transparent)] hover:[background:#1e2d45]`}
+        className={`${base} hover:[border-color:color-mix(in_srgb,_var(--gold)_50%,_transparent)] hover:[background:#1e2d45]`}
         style={style}
       >
         <ChevronRight className="h-4 w-4" />
