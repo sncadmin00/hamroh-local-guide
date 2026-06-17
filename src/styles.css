@@ -96,7 +96,10 @@
   --accent: #4ABBD0;
   --accent-foreground: #0B1430;
   --gold: #D9B065;
+  --gold-hover: #F5B642;
+  --gold-glow: rgba(217, 176, 101, 0.25);
   --gold-foreground: #0B1430;
+
   --telegram: oklch(0.72 0.14 235);
   --telegram-foreground: #0B1430;
   --secondary: #1A2547;
