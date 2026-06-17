@@ -1,199 +1,95 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo } from "react";
 import { Link } from "@tanstack/react-router";
-import { ChevronLeft, ChevronRight, Star, BadgeCheck, ShieldCheck } from "lucide-react";
+import { ArrowRight, Check, MapPin, Star } from "lucide-react";
 import { useGuides } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
-
-const AUTOPLAY_MS = 6000;
-const DESKTOP_VISIBLE = 4;
 
 export function SpotlightGuideCarousel() {
   const { t } = useI18n();
   const { data: guides = [] } = useGuides();
   const items = useMemo(
-    () => [...guides].sort((a, b) => b.rating - a.rating).slice(0, 8),
+    () => [...guides].sort((a, b) => b.rating - a.rating).slice(0, 4),
     [guides],
   );
-  const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(false);
-  const touchStartX = useRef<number | null>(null);
-  const count = items.length;
 
-  useEffect(() => {
-    const mq = window.matchMedia("(min-width: 768px)");
-    const update = () => setIsDesktop(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, []);
-
-  const visible = isDesktop ? Math.min(DESKTOP_VISIBLE, count) : 1;
-  const pages = Math.max(1, count - visible + 1);
-
-  useEffect(() => {
-    if (paused || pages <= 1) return;
-    const id = window.setInterval(() => setIndex((i) => (i + 1) % pages), AUTOPLAY_MS);
-    return () => window.clearInterval(id);
-  }, [paused, pages]);
-
-  useEffect(() => {
-    if (index >= pages) setIndex(0);
-  }, [pages, index]);
-
-  if (count === 0) return null;
-
-  const goTo = (i: number) => setIndex(((i % pages) + pages) % pages);
-  const prev = () => goTo(index - 1);
-  const next = () => goTo(index + 1);
-
-  const onTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-  };
-  const onTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX.current == null) return;
-    const dx = e.changedTouches[0].clientX - touchStartX.current;
-    if (Math.abs(dx) > 40) (dx < 0 ? next : prev)();
-    touchStartX.current = null;
-  };
-
-  const shown = items.slice(index, index + visible);
+  if (items.length === 0) return null;
 
   return (
-    <section className="px-6 py-12 md:py-16">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex items-end justify-between mb-8">
-          <h2 className="font-display text-2xl md:text-3xl font-semibold text-foreground">
-            {t("home.spotlightGuide.title")}
-          </h2>
-          <Link
-            to="/guides"
-            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-          >
-            {t("featured.viewAll")}
-          </Link>
-        </div>
-
-        <div
-          className="group relative"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
-          onFocus={() => setPaused(true)}
-          onBlur={() => setPaused(false)}
-          onTouchStart={onTouchStart}
-          onTouchEnd={onTouchEnd}
+    <section className="px-6 md:px-12 py-16 md:py-[72px] max-w-[1280px] mx-auto">
+      <div className="flex items-baseline justify-between mb-9">
+        <h2
+          className="font-display text-[1.6rem] md:text-[2.2rem] tracking-tight"
+          style={{ color: "#F0EBE0", fontFamily: "'DM Serif Display', serif" }}
         >
-          <div
-            className={`grid gap-6 md:gap-8 animate-fade-in ${
-              visible === 1
-                ? "grid-cols-1"
-                : visible === 2
-                  ? "grid-cols-2"
-                  : visible === 3
-                    ? "grid-cols-3"
-                    : "grid-cols-4"
-            }`}
-            key={index}
+          {t("home.spotlightGuide.title")}
+        </h2>
+        <Link
+          to="/guides"
+          className="text-sm font-medium inline-flex items-center gap-1.5 hover:gap-2.5 transition-all"
+          style={{ color: "#C9A84C" }}
+        >
+          {t("featured.viewAll")} <ArrowRight className="h-3.5 w-3.5" />
+        </Link>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
+        {items.map((g) => (
+          <Link
+            key={g.id}
+            to="/guides/$guideId"
+            params={{ guideId: g.id }}
+            className="group relative flex flex-col items-center text-center rounded-[20px] border px-5 pt-7 pb-6 transition-all hover:-translate-y-1.5 overflow-hidden"
+            style={{ background: "#111827", borderColor: "#1e2d45" }}
           >
-            {shown.map((g) => (
-              <Link
-                key={g.id}
-                to="/guides/$guideId"
-                params={{ guideId: g.id }}
-                className="block group/card rounded-2xl bg-card ring-1 ring-border shadow-sm hover:shadow-md transition-shadow p-6"
-              >
-                <div className="mx-auto aspect-square w-full max-w-[200px] overflow-hidden rounded-full bg-secondary ring-4 ring-white shadow-[0_10px_40px_-10px_rgba(0,0,0,0.2)] transition-transform duration-500 group-hover/card:scale-[1.03]">
-                  <img
-                    src={g.photo}
-                    alt={g.name}
-                    className="h-full w-full object-cover"
-                    loading="lazy"
-                  />
-                </div>
-                <div className="mt-4 flex items-center justify-center gap-1.5">
-                  <h3 className="font-display text-lg font-semibold text-foreground line-clamp-1">
-                    {g.name.split(" ")[0]}
-                  </h3>
-                  {g.verified && <BadgeCheck className="h-4 w-4 shrink-0 text-gold fill-gold/10" />}
-                </div>
-                <p className="mt-0.5 text-sm text-muted-foreground text-center">{g.city}</p>
-                {g.licensed && (
-                  <div className="mt-1.5 inline-flex items-center justify-center gap-1 text-xs font-medium text-accent">
-                    <ShieldCheck className="h-3.5 w-3.5" />
-                    <span>{t("home.spotlightGuide.licensed")}</span>
-                  </div>
-                )}
-                <div className="mt-1.5 flex items-center justify-center gap-3 text-sm text-foreground">
-                  {g.reviews > 0 && (
-                    <div className="inline-flex items-center gap-1">
-                      <Star className="h-3.5 w-3.5 fill-accent text-accent" />
-                      <span className="tabular-nums font-medium">{g.rating.toFixed(1)}</span>
-                    </div>
-                  )}
-                  {g.completedToursCount > 0 && (
-                    <span className="font-medium text-accent">
-                      {g.completedToursCount} {t("home.spotlightGuide.tours")}
-                    </span>
-                  )}
-                </div>
-                {g.languages?.length > 0 && (
-                  <p className="mt-1.5 text-xs uppercase tracking-wide text-muted-foreground text-center">
-                    {g.languages.slice(0, 4).join(" · ")}
-                  </p>
-                )}
-              </Link>
-            ))}
-          </div>
-
-          {visible === 1 && (
-            <div className="mt-5 text-center">
-              <Link
-                to="/guides/$guideId"
-                params={{ guideId: shown[0].id }}
-                className="inline-flex items-center h-10 px-6 rounded-full bg-foreground text-background text-sm font-semibold hover:opacity-90 transition-opacity"
-              >
-                {t("home.spotlightGuide.cta")}
-              </Link>
-            </div>
-          )}
-
-          {pages > 1 && (
-            <>
-              <button
-                type="button"
-                onClick={prev}
-                aria-label="Previous"
-                className="absolute -left-2 md:-left-6 top-24 md:top-28 -translate-y-1/2 h-10 w-10 flex items-center justify-center rounded-full bg-white shadow-md ring-1 ring-slate-200 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-slate-50"
-              >
-                <ChevronLeft className="h-5 w-5 text-slate-700" />
-              </button>
-              <button
-                type="button"
-                onClick={next}
-                aria-label="Next"
-                className="absolute -right-2 md:-right-6 top-24 md:top-28 -translate-y-1/2 h-10 w-10 flex items-center justify-center rounded-full bg-white shadow-md ring-1 ring-slate-200 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-slate-50"
-              >
-                <ChevronRight className="h-5 w-5 text-slate-700" />
-              </button>
-            </>
-          )}
-        </div>
-
-        {pages > 1 && (
-          <div className="mt-6 flex items-center justify-center gap-1.5">
-            {Array.from({ length: pages }).map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => goTo(i)}
-                aria-label={`Go to slide ${i + 1}`}
-                className={`h-1.5 rounded-full transition-all ${
-                  i === index ? "w-5 bg-foreground" : "w-1.5 bg-slate-300 hover:bg-slate-400"
-                }`}
+            <div className="relative mb-4">
+              <img
+                src={g.photo}
+                alt={g.name}
+                loading="lazy"
+                className="h-[88px] w-[88px] rounded-full object-cover border-2 transition-colors"
+                style={{ borderColor: "#1e2d45" }}
               />
-            ))}
-          </div>
-        )}
+              {g.verified && (
+                <span
+                  className="absolute bottom-0.5 right-0.5 h-[22px] w-[22px] rounded-full flex items-center justify-center border-2"
+                  style={{ background: "#C9A84C", borderColor: "#111827" }}
+                >
+                  <Check className="h-3 w-3" strokeWidth={3} style={{ color: "#0a0f1e" }} />
+                </span>
+              )}
+            </div>
+            <h3 className="text-base font-semibold mb-1" style={{ color: "#F0EBE0" }}>
+              {g.name.split(" ")[0]}
+            </h3>
+            <p
+              className="text-xs mb-3 inline-flex items-center justify-center gap-1"
+              style={{ color: "#4A6080" }}
+            >
+              <MapPin className="h-3 w-3" style={{ color: "#C9A84C" }} />
+              {g.city}
+            </p>
+            {g.languages?.length > 0 && (
+              <p
+                className="text-[0.72rem] font-medium uppercase tracking-wider mb-4"
+                style={{ color: "#4A6080" }}
+              >
+                {g.languages.slice(0, 4).join(" · ")}
+              </p>
+            )}
+            <div className="flex items-center justify-center gap-1">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star
+                  key={i}
+                  className="h-3.5 w-3.5"
+                  style={{
+                    color: i < Math.round(g.rating) ? "#C9A84C" : "#1e2d45",
+                    fill: i < Math.round(g.rating) ? "#C9A84C" : "transparent",
+                  }}
+                />
+              ))}
+            </div>
+          </Link>
+        ))}
       </div>
     </section>
   );
