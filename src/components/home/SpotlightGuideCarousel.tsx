@@ -30,7 +30,7 @@ export function SpotlightGuideCarousel() {
           <Link
             to="/guides"
             className="text-sm font-medium inline-flex items-center gap-1.5 hover:gap-2.5 transition-all"
-            style={{ color: "#C9A84C" }}
+            style={{ color: "var(--gold)" }}
           >
             {t("featured.viewAll")} <ArrowRight className="h-3.5 w-3.5" />
           </Link>
@@ -59,7 +59,7 @@ export function SpotlightGuideCarousel() {
               {g.verified && (
                 <span
                   className="absolute bottom-0.5 right-0.5 h-[22px] w-[22px] rounded-full flex items-center justify-center border-2"
-                  style={{ background: "#C9A84C", borderColor: "#111827" }}
+                  style={{ background: "var(--gold)", borderColor: "#111827" }}
                 >
                   <Check className="h-3 w-3" strokeWidth={3} style={{ color: "#0a0f1e" }} />
                 </span>
@@ -72,7 +72,7 @@ export function SpotlightGuideCarousel() {
               className="text-xs mb-3 inline-flex items-center justify-center gap-1"
               style={{ color: "#4A6080" }}
             >
-              <MapPin className="h-3 w-3" style={{ color: "#C9A84C" }} />
+              <MapPin className="h-3 w-3" style={{ color: "var(--gold)" }} />
               {g.city}
             </p>
             {g.languages?.length > 0 && (
@@ -89,8 +89,8 @@ export function SpotlightGuideCarousel() {
                   key={i}
                   className="h-3.5 w-3.5"
                   style={{
-                    color: i < Math.round(g.rating) ? "#C9A84C" : "#1e2d45",
-                    fill: i < Math.round(g.rating) ? "#C9A84C" : "transparent",
+                    color: i < Math.round(g.rating) ? "var(--gold)" : "#1e2d45",
+                    fill: i < Math.round(g.rating) ? "var(--gold)" : "transparent",
                   }}
                 />
               ))}

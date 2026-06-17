@@ -56,9 +56,12 @@
   --accent: #1F9BB4;
   --accent-foreground: #FFFFFF;
 
-  /* Gold — premium markers only (verified, ratings, premium guides) */
-  --gold: #C99A3D;
+  /* Gold — premium accent (verified, ratings, premium markers, home accents) */
+  --gold: #C9A84C;
+  --gold-hover: #F59E0B;
+  --gold-glow: rgba(201, 168, 76, 0.2);
   --gold-foreground: #FFFFFF;
+
 
   --secondary: #F7F9FC;
   --secondary-foreground: #0F172A;
@@ -93,7 +96,10 @@
   --accent: #4ABBD0;
   --accent-foreground: #0B1430;
   --gold: #D9B065;
+  --gold-hover: #F5B642;
+  --gold-glow: rgba(217, 176, 101, 0.25);
   --gold-foreground: #0B1430;
+
   --telegram: oklch(0.72 0.14 235);
   --telegram-foreground: #0B1430;
   --secondary: #1A2547;

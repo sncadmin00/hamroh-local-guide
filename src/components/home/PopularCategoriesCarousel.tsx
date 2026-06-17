@@ -63,7 +63,7 @@ export function PopularCategoriesCarousel() {
           <Link
             to="/guides"
             className="text-sm font-medium inline-flex items-center gap-1.5 hover:gap-2.5 transition-all"
-            style={{ color: "#C9A84C" }}
+            style={{ color: "var(--gold)" }}
           >
             {t("home.categories.viewAll")} <ArrowRight className="h-3.5 w-3.5" />
           </Link>
@@ -81,7 +81,7 @@ export function PopularCategoriesCarousel() {
               to="/guides"
               search={{ category: c.slug }}
               className="group relative rounded-2xl overflow-hidden aspect-[3/4] border transition-all hover:-translate-y-1.5 block"
-              style={{ borderColor: "rgba(201,168,76,0.12)" }}
+              style={{ borderColor: "color-mix(in srgb, var(--gold) 12%, transparent)" }}
             >
               <img
                 src={cover}
@@ -100,9 +100,9 @@ export function PopularCategoriesCarousel() {
                 <div
                   className="mb-2.5 h-[34px] w-[34px] rounded-lg flex items-center justify-center border"
                   style={{
-                    background: "rgba(201,168,76,0.15)",
-                    borderColor: "rgba(201,168,76,0.3)",
-                    color: "#C9A84C",
+                    background: "color-mix(in srgb, var(--gold) 15%, transparent)",
+                    borderColor: "color-mix(in srgb, var(--gold) 30%, transparent)",
+                    color: "var(--gold)",
                   }}
                 >
                   <CategoryIcon name={c.icon} className="h-4 w-4" />

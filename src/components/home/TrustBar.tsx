@@ -21,7 +21,7 @@ export function TrustBar() {
           className="inline-flex items-center gap-2 text-xs font-medium whitespace-nowrap"
           style={{ color: "#94A3B8" }}
         >
-          <Icon className="h-4 w-4 shrink-0" style={{ color: "#C9A84C" }} />
+          <Icon className="h-4 w-4 shrink-0" style={{ color: "var(--gold)" }} />
           {label}
         </span>
       ))}

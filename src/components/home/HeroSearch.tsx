@@ -8,8 +8,8 @@ import { supabase } from "@/integrations/supabase/client";
 import heroDesktopAsset from "@/assets/hero-samarkand-v3-desktop.jpg.asset.json";
 import heroMobileAsset from "@/assets/hero-samarkand-v3-mobile.jpg.asset.json";
 
-const GOLD = "#C9A84C";
-const AMBER = "#F59E0B";
+const GOLD = "var(--gold)";
+const AMBER = "var(--gold-hover)";
 const BG = "#0a0f1e";
 
 export function HeroSearch() {
@@ -119,7 +119,7 @@ export function HeroSearch() {
           transform: "translateX(-50%)",
           width: 600,
           height: 300,
-          background: "radial-gradient(ellipse, rgba(201,168,76,0.12) 0%, transparent 70%)",
+          background: "radial-gradient(ellipse, color-mix(in srgb, var(--gold) 12%, transparent) 0%, transparent 70%)",
         }}
       />
 
@@ -182,7 +182,7 @@ export function HeroSearch() {
             display: "flex",
             alignItems: "center",
             background: "rgba(26, 34, 54, 0.85)",
-            border: "1px solid rgba(201, 168, 76, 0.3)",
+            border: "1px solid color-mix(in srgb, var(--gold) 30%, transparent)",
             borderRadius: 14,
             padding: "6px 6px 6px 20px",
             gap: 12,
@@ -279,7 +279,7 @@ export function HeroSearch() {
                   height: 5,
                   background: GOLD,
                   borderRadius: "50%",
-                  boxShadow: "0 0 4px rgba(201,168,76,0.6)",
+                  boxShadow: "0 0 4px color-mix(in srgb, var(--gold) 60%, transparent)",
                   flexShrink: 0,
                 }}
               />
