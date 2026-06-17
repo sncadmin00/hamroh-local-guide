@@ -1,4 +1,4 @@
-import { BadgeCheck, Languages, MessageCircle, ShieldCheck, Sparkles, Star } from "lucide-react";
+import { BadgeCheck, Languages, MessageCircle, ShieldCheck, Sparkles } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 
 export function TrustBar() {
@@ -9,16 +9,19 @@ export function TrustBar() {
     { Icon: MessageCircle, label: t("trust.directChat") },
     { Icon: ShieldCheck, label: t("trust.secureBooking") },
     { Icon: Sparkles, label: t("trust.trustedReviews") },
-    { Icon: Star, label: t("trust.rated") },
   ];
   return (
-    <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm font-medium text-muted-foreground">
+    <div
+      className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 border-y px-6 md:px-12 py-3.5"
+      style={{ background: "#111827", borderColor: "#1e2d45" }}
+    >
       {items.map(({ Icon, label }, i) => (
-        <span key={i} className="inline-flex items-center gap-2">
-          <Icon
-            className={`h-4.5 w-4.5 ${Icon === BadgeCheck ? "text-gold" : "text-accent"}`}
-            style={{ width: 18, height: 18 }}
-          />
+        <span
+          key={i}
+          className="inline-flex items-center gap-2 text-xs font-medium whitespace-nowrap"
+          style={{ color: "#94A3B8" }}
+        >
+          <Icon className="h-4 w-4 shrink-0" style={{ color: "#C9A84C" }} />
           {label}
         </span>
       ))}
