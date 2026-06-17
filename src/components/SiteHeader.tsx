@@ -96,7 +96,7 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
           <LanguageSwitcher
             className={
               transparent
-                ? "md:text-[#F0EBE0] md:ring-[#F0EBE0]/30 md:hover:bg-white/10"
+                ? "text-[#F0EBE0] ring-[rgba(255,255,255,0.4)] bg-[rgba(10,15,30,0.35)] backdrop-blur-[8px] hover:bg-white/10"
                 : undefined
             }
           />
