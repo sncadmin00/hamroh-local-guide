@@ -110,7 +110,7 @@ function Home() {
             <div className="relative max-w-[500px] flex-1">
               <p
                 className="text-[0.72rem] font-semibold uppercase tracking-[0.14em] mb-4"
-                style={{ color: "#C9A84C" }}
+                style={{ color: "var(--gold)" }}
               >
                 {t("nav.becomeGuide")}
               </p>
@@ -126,7 +126,7 @@ function Home() {
               <Link
                 to={isGuide ? "/guide" : "/become-a-guide"}
                 className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-sm font-semibold transition-all hover:-translate-y-0.5"
-                style={{ background: "#C9A84C", color: "#0a0f1e" }}
+                style={{ background: "var(--gold)", color: "#0a0f1e" }}
               >
                 {isGuide ? t("nav.guideDashboard") : t("banner.guide.button")} →
               </Link>
@@ -158,7 +158,7 @@ function Home() {
               </p>
               <div className="flex justify-center gap-1 mb-3.5">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <span key={i} style={{ color: "#C9A84C" }}>★</span>
+                  <span key={i} style={{ color: "var(--gold)" }}>★</span>
                 ))}
               </div>
               <div
@@ -166,7 +166,7 @@ function Home() {
                 style={{
                   background: "color-mix(in srgb, var(--gold) 10%, transparent)",
                   border: "1px solid color-mix(in srgb, var(--gold) 25%, transparent)",
-                  color: "#C9A84C",
+                  color: "var(--gold)",
                 }}
               >
                 ✓ Verified Guide

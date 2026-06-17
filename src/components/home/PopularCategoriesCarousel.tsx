@@ -63,7 +63,7 @@ export function PopularCategoriesCarousel() {
           <Link
             to="/guides"
             className="text-sm font-medium inline-flex items-center gap-1.5 hover:gap-2.5 transition-all"
-            style={{ color: "#C9A84C" }}
+            style={{ color: "var(--gold)" }}
           >
             {t("home.categories.viewAll")} <ArrowRight className="h-3.5 w-3.5" />
           </Link>
@@ -102,7 +102,7 @@ export function PopularCategoriesCarousel() {
                   style={{
                     background: "color-mix(in srgb, var(--gold) 15%, transparent)",
                     borderColor: "color-mix(in srgb, var(--gold) 30%, transparent)",
-                    color: "#C9A84C",
+                    color: "var(--gold)",
                   }}
                 >
                   <CategoryIcon name={c.icon} className="h-4 w-4" />

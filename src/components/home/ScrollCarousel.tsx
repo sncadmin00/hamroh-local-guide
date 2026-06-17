@@ -35,7 +35,7 @@ export function CarouselArrows({
   const style = {
     background: "#1a2236",
     border: "1px solid #1e2d45",
-    color: "#C9A84C",
+    color: "var(--gold)",
   } as const;
   return (
     <div className="flex items-center gap-2">

@@ -8,8 +8,8 @@ import { supabase } from "@/integrations/supabase/client";
 import heroDesktopAsset from "@/assets/hero-samarkand-v3-desktop.jpg.asset.json";
 import heroMobileAsset from "@/assets/hero-samarkand-v3-mobile.jpg.asset.json";
 
-const GOLD = "#C9A84C";
-const AMBER = "#F59E0B";
+const GOLD = "var(--gold)";
+const AMBER = "var(--gold-hover)";
 const BG = "#0a0f1e";
 
 export function HeroSearch() {

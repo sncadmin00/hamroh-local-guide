@@ -31,7 +31,7 @@ export function SpotlightTourCarousel() {
           <Link
             to="/tours"
             className="text-sm font-medium inline-flex items-center gap-1.5 hover:gap-2.5 transition-all"
-            style={{ color: "#C9A84C" }}
+            style={{ color: "var(--gold)" }}
           >
             {t("topTours.viewAll")} <ArrowRight className="h-3.5 w-3.5" />
           </Link>
@@ -70,7 +70,7 @@ export function SpotlightTourCarousel() {
                     style={{
                       background: "rgba(10,15,30,0.75)",
                       borderColor: "color-mix(in srgb, var(--gold) 25%, transparent)",
-                      color: "#C9A84C",
+                      color: "var(--gold)",
                     }}
                   >
                     {cat.name}
@@ -116,13 +116,13 @@ export function SpotlightTourCarousel() {
                 <div className="flex items-center gap-3.5 text-[0.78rem] mb-3.5">
                   {Number(tour.rating ?? 0) > 0 && (
                     <span className="inline-flex items-center gap-1 font-semibold" style={{ color: "#F0EBE0" }}>
-                      <Star className="h-3.5 w-3.5 fill-current" style={{ color: "#C9A84C" }} />
+                      <Star className="h-3.5 w-3.5 fill-current" style={{ color: "var(--gold)" }} />
                       {Number(tour.rating).toFixed(1)}
                     </span>
                   )}
                   {tour.cities?.name && (
                     <span className="inline-flex items-center gap-1" style={{ color: "#4A6080" }}>
-                      <MapPin className="h-3.5 w-3.5" style={{ color: "#C9A84C" }} />
+                      <MapPin className="h-3.5 w-3.5" style={{ color: "var(--gold)" }} />
                       {tour.cities.name}
                     </span>
                   )}
@@ -152,7 +152,7 @@ export function SpotlightTourCarousel() {
                           className="flex items-center gap-2 text-[0.8rem]"
                           style={{ color: "#94A3B8" }}
                         >
-                          <Check className="h-3.5 w-3.5 shrink-0" style={{ color: "#C9A84C" }} />
+                          <Check className="h-3.5 w-3.5 shrink-0" style={{ color: "var(--gold)" }} />
                           <span className="line-clamp-1">{it}</span>
                         </li>
                       ))}
@@ -181,7 +181,7 @@ export function SpotlightTourCarousel() {
                 </div>
                 <span
                   className="inline-flex items-center rounded-full px-4 py-2.5 text-[0.82rem] font-semibold transition-all group-hover:scale-105"
-                  style={{ background: "#C9A84C", color: "#0a0f1e" }}
+                  style={{ background: "var(--gold)", color: "#0a0f1e" }}
                 >
                   {t("home.spotlightTour.cta")}
                 </span>
