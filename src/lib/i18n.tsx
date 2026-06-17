@@ -47,6 +47,17 @@ export const translations: Dict = {
   "common.settings": { en: "Account settings", uz: "Hisob sozlamalari", ru: "Настройки аккаунта" },
   "common.admin": { en: "Admin", uz: "Admin", ru: "Админ" },
   "hero.title": { en: "Find your local guide", uz: "Mahalliy hamrohizni toping", ru: "Найдите своего местного гида" },
+  "hero.eyebrow": {
+    en: "Uzbekistan's trusted guide network",
+    uz: "O'zbekistonning ishonchli hamrohlar tarmog'i",
+    ru: "Надёжная сеть гидов Узбекистана",
+  },
+  "hero.scroll": { en: "Explore", uz: "Ko'rish", ru: "Смотреть" },
+  "hero.badge.identity": { en: "Verified identity", uz: "Tasdiqlangan shaxs", ru: "Проверенная личность" },
+  "hero.badge.language": { en: "Verified language", uz: "Tasdiqlangan til", ru: "Проверенный язык" },
+  "hero.badge.chat": { en: "Direct chat", uz: "To'g'ridan-to'g'ri chat", ru: "Прямой чат" },
+  "hero.badge.booking": { en: "Secure booking", uz: "Xavfsiz bron", ru: "Безопасное бронирование" },
+  "hero.badge.reviews": { en: "Trusted reviews", uz: "Ishonchli sharhlar", ru: "Надёжные отзывы" },
   "hero.h1": {
     en: "Explore Uzbekistan with locals",
     uz: "Har bir safar uchun ishonchli hamroh",
