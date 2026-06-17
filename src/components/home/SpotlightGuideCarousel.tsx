@@ -97,7 +97,8 @@ export function SpotlightGuideCarousel() {
             </div>
           </Link>
         ))}
-      </div>
+      </ScrollRow>
+
     </section>
   );
 }
