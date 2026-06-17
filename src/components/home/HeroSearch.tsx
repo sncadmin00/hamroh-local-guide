@@ -70,7 +70,7 @@ export function HeroSearch() {
 
   return (
     <section
-      className="relative flex flex-col items-center justify-center text-center overflow-hidden"
+      className="relative flex flex-col items-center justify-start text-center overflow-hidden"
       style={{
         backgroundColor: BG,
         minHeight: "100vh",
@@ -85,8 +85,8 @@ export function HeroSearch() {
           <img
             src={heroMobileAsset.url}
             alt="Local Uzbek companion exploring Samarkand with a traveler at golden hour"
-            className="h-full w-full object-cover"
-            style={{ objectPosition: "center 30%", filter: "brightness(0.7) saturate(1.1)" }}
+            className="h-full w-full object-cover object-[center_20%] md:object-[30%_center] lg:object-[center_30%]"
+            style={{ filter: "brightness(0.7) saturate(1.1)" }}
             loading="eager"
           />
         </picture>
