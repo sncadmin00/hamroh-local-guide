@@ -5,6 +5,8 @@ import { CategoryIcon } from "@/components/CategoryIcon";
 import { supabase } from "@/integrations/supabase/client";
 import { useCategories } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
+import { CarouselArrows, ScrollRow, useCarouselControls } from "./ScrollCarousel";
+
 
 import coverCity from "@/assets/cat-city.jpg";
 import coverGastro from "@/assets/cat-gastro.jpg";
