@@ -83,7 +83,7 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
           <img
             src={hamrohLogo}
             alt="Hamroh"
-            className={`h-[3.25rem] w-auto object-contain ${transparent ? "md:brightness-0 md:invert md:drop-shadow-[0_1px_8px_rgba(0,0,0,0.4)]" : ""}`}
+            className="h-[3.25rem] w-auto object-contain"
           />
         </Link>
 
