@@ -70,7 +70,7 @@ export function HeroSearch() {
 
   return (
     <section
-      className="relative flex flex-col items-center justify-center text-center overflow-hidden"
+      className="relative flex flex-col items-center justify-start text-center overflow-hidden"
       style={{
         backgroundColor: BG,
         minHeight: "100vh",
@@ -85,8 +85,8 @@ export function HeroSearch() {
           <img
             src={heroMobileAsset.url}
             alt="Local Uzbek companion exploring Samarkand with a traveler at golden hour"
-            className="h-full w-full object-cover"
-            style={{ objectPosition: "center 30%", filter: "brightness(0.7) saturate(1.1)" }}
+            className="h-full w-full object-cover object-[center_20%] md:object-[30%_center] lg:object-[center_30%]"
+            style={{ filter: "brightness(0.7) saturate(1.1)" }}
             loading="eager"
           />
         </picture>
@@ -124,16 +124,18 @@ export function HeroSearch() {
       />
 
       {/* Content */}
-      <div className="relative z-10 w-full" style={{ maxWidth: 760, paddingTop: 120 }}>
+      <div className="relative z-10 w-full pt-24 md:pt-[120px]" style={{ maxWidth: 760 }}>
         {/* Eyebrow */}
         <div
           className="inline-flex items-center gap-2 mb-6 animate-fade-in"
           style={{
             fontSize: "0.75rem",
             fontWeight: 600,
-            letterSpacing: "0.14em",
+            letterSpacing: "0.12em",
             textTransform: "uppercase",
             color: GOLD,
+            opacity: 1,
+            textShadow: "0 1px 6px rgba(0,0,0,0.6)",
           }}
         >
           <span style={{ width: 28, height: 1, background: GOLD, opacity: 0.6, display: "inline-block" }} />
