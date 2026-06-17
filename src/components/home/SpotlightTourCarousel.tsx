@@ -189,7 +189,8 @@ export function SpotlightTourCarousel() {
             </Link>
           );
         })}
-      </div>
+      </ScrollRow>
+
     </section>
   );
 }
