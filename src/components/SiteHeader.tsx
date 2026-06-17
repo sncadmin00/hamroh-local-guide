@@ -80,7 +80,12 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
       <div className={`${transparent ? "max-w-6xl mx-auto" : "container mx-auto"} flex h-16 items-center justify-between gap-4 px-4`}>
         {/* Left: logo */}
         <Link to="/" className="flex items-center shrink-0 leading-none">
-          <img src={hamrohLogo} alt="Hamroh" className="h-[3.25rem] w-auto object-contain" />
+          <img
+            src={hamrohLogo}
+            alt="Hamroh"
+            className={`h-[3.25rem] w-auto object-contain ${transparent ? "md:brightness-0 md:invert" : ""}`}
+            style={transparent ? { filter: "brightness(0) invert(1) drop-shadow(0 1px 8px rgba(0,0,0,0.4))" } : undefined}
+          />
         </Link>
 
 
