@@ -69,7 +69,7 @@ export function SpotlightTourCarousel() {
                     className="absolute top-3 left-3 rounded-full px-2.5 py-1 text-[0.68rem] font-semibold uppercase tracking-wider backdrop-blur border"
                     style={{
                       background: "rgba(10,15,30,0.75)",
-                      borderColor: "color-mix(in srgb, var(--gold) 25rgba(201,168,76,0.25)%, transparent)",
+                      borderColor: "color-mix(in srgb, var(--gold) 25%, transparent)",
                       color: "#C9A84C",
                     }}
                   >
@@ -101,7 +101,7 @@ export function SpotlightTourCarousel() {
                         alt={tour.guides.name}
                         loading="lazy"
                         className="h-[26px] w-[26px] rounded-full object-cover border"
-                        style={{ borderColor: "color-mix(in srgb, var(--gold) 3rgba(201,168,76,0.3)%, transparent)" }}
+                        style={{ borderColor: "color-mix(in srgb, var(--gold) 30%, transparent)" }}
                       />
                     )}
                     <span className="text-[0.78rem]" style={{ color: "#4A6080" }}>
