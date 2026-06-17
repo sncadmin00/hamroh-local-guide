@@ -108,13 +108,13 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
                 aria-label="Open menu"
                 className={`inline-flex items-center gap-2 h-10 pl-2.5 pr-1.5 rounded-full ring-1 hover:shadow-md transition-shadow ${
                   transparent
-                    ? "ring-[#F0EBE0]/30 md:bg-black/20"
+                    ? "ring-[rgba(255,255,255,0.4)] bg-[rgba(10,15,30,0.35)] backdrop-blur-[8px]"
                     : "ring-border/70 bg-card/80"
                 }`}
               >
-                <Menu className={`h-4 w-4 ${transparent ? "md:text-[#F0EBE0]" : "text-foreground/70"}`} />
-                <span className={`inline-flex h-7 w-7 items-center justify-center rounded-full overflow-hidden ${
-                  transparent ? "md:bg-white/10 md:text-[#F0EBE0]" : "bg-secondary text-foreground/70"
+                <Menu className={`h-4 w-4 drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)] ${transparent ? "text-[#F0EBE0]" : "text-foreground/70"}`} />
+                <span className={`inline-flex h-7 w-7 items-center justify-center rounded-full overflow-hidden border-2 border-[rgba(255,255,255,0.3)] ${
+                  transparent ? "bg-white/10 text-[#F0EBE0]" : "bg-secondary text-foreground/70"
                 }`}>
                   {avatarUrl ? (
                     <img
@@ -125,11 +125,11 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
                       onError={() => setAvatarUrl(null)}
                     />
                   ) : displayName ? (
-                    <span className={`text-xs font-semibold ${transparent ? "md:text-[#F0EBE0]" : "text-foreground/80"}`}>
+                    <span className={`text-xs font-semibold ${transparent ? "text-[#F0EBE0]" : "text-foreground/80"}`}>
                       {displayName.trim().charAt(0).toUpperCase()}
                     </span>
                   ) : (
-                    <User className={`h-4 w-4 ${transparent ? "md:text-[#F0EBE0]" : ""}`} />
+                    <User className={`h-4 w-4 ${transparent ? "text-[#F0EBE0]" : ""}`} />
                   )}
                 </span>
               </button>
