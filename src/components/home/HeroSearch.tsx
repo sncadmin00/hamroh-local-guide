@@ -131,9 +131,11 @@ export function HeroSearch() {
           style={{
             fontSize: "0.75rem",
             fontWeight: 600,
-            letterSpacing: "0.14em",
+            letterSpacing: "0.12em",
             textTransform: "uppercase",
             color: GOLD,
+            opacity: 1,
+            textShadow: "0 1px 6px rgba(0,0,0,0.6)",
           }}
         >
           <span style={{ width: 28, height: 1, background: GOLD, opacity: 0.6, display: "inline-block" }} />
