@@ -80,7 +80,11 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
       <div className={`${transparent ? "max-w-6xl mx-auto" : "container mx-auto"} flex h-16 items-center justify-between gap-4 px-4`}>
         {/* Left: logo */}
         <Link to="/" className="flex items-center shrink-0 leading-none">
-          <img src={hamrohLogo} alt="Hamroh" className="h-[3.25rem] w-auto object-contain" />
+          <img
+            src={hamrohLogo}
+            alt="Hamroh"
+            className={`h-[3.25rem] w-auto object-contain ${transparent ? "md:brightness-0 md:invert md:drop-shadow-[0_1px_8px_rgba(0,0,0,0.4)]" : ""}`}
+          />
         </Link>
 
 
@@ -89,17 +93,29 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
         <div className="flex items-center gap-1.5 shrink-0">
 
 
-          <LanguageSwitcher />
+          <LanguageSwitcher
+            className={
+              transparent
+                ? "md:text-[#F0EBE0] md:ring-[#F0EBE0]/30 md:hover:bg-white/10"
+                : undefined
+            }
+          />
 
           {/* Airbnb-style avatar+menu pill */}
           <Sheet>
             <SheetTrigger asChild>
               <button
                 aria-label="Open menu"
-                className="inline-flex items-center gap-2 h-10 pl-2.5 pr-1.5 rounded-full ring-1 ring-border/70 bg-card/80 hover:shadow-md transition-shadow"
+                className={`inline-flex items-center gap-2 h-10 pl-2.5 pr-1.5 rounded-full ring-1 hover:shadow-md transition-shadow ${
+                  transparent
+                    ? "ring-[#F0EBE0]/30 md:bg-black/20"
+                    : "ring-border/70 bg-card/80"
+                }`}
               >
-                <Menu className="h-4 w-4 text-foreground/70" />
-                <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-secondary text-foreground/70 overflow-hidden">
+                <Menu className={`h-4 w-4 ${transparent ? "md:text-[#F0EBE0]" : "text-foreground/70"}`} />
+                <span className={`inline-flex h-7 w-7 items-center justify-center rounded-full overflow-hidden ${
+                  transparent ? "md:bg-white/10 md:text-[#F0EBE0]" : "bg-secondary text-foreground/70"
+                }`}>
                   {avatarUrl ? (
                     <img
                       src={avatarUrl}
@@ -109,11 +125,11 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
                       onError={() => setAvatarUrl(null)}
                     />
                   ) : displayName ? (
-                    <span className="text-xs font-semibold text-foreground/80">
+                    <span className={`text-xs font-semibold ${transparent ? "md:text-[#F0EBE0]" : "text-foreground/80"}`}>
                       {displayName.trim().charAt(0).toUpperCase()}
                     </span>
                   ) : (
-                    <User className="h-4 w-4" />
+                    <User className={`h-4 w-4 ${transparent ? "md:text-[#F0EBE0]" : ""}`} />
                   )}
                 </span>
               </button>
