@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Menu, Settings, Shield, LogIn, LogOut, Mail, Phone, MessageSquare, User, Heart, Briefcase } from "lucide-react";
+import { Menu, Settings, Shield, LogIn, LogOut, Mail, Phone, MessageSquare, User, Heart, Briefcase, X } from "lucide-react";
 
 import hamrohLogo from "@/assets/hamroh-logo.png";
 import { useEffect, useState } from "react";
