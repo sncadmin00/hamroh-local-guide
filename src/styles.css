@@ -174,3 +174,35 @@
 .glass-divider {
   border-color: rgba(255, 255, 255, 0.06) !important;
 }
+
+/* Gold gradient divider with center diamond */
+.gold-divider {
+  position: relative;
+  height: 1px;
+  margin: 0 48px;
+  background: linear-gradient(90deg, transparent 0%, rgba(201,168,76,0.15) 20%, rgba(201,168,76,0.4) 50%, rgba(201,168,76,0.15) 80%, transparent 100%);
+}
+.gold-divider::after {
+  content: '◆';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.5rem;
+  color: #C9A84C;
+  background: #0d1424;
+  padding: 0 10px;
+}
+
+/* Ghost section number — large barely-visible background numeral */
+.ghost-number {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  font-family: 'DM Serif Display', serif;
+  font-size: 5rem;
+  line-height: 1;
+  color: rgba(201, 168, 76, 0.04);
+  pointer-events: none;
+  user-select: none;
+}
