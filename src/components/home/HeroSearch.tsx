@@ -85,7 +85,7 @@ export function HeroSearch() {
           <img
             src={heroMobileAsset.url}
             alt="Local Uzbek companion exploring Samarkand with a traveler at golden hour"
-            className="h-full w-full object-cover object-[center_20%] md:object-[72%_center] xl:object-[center_30%]"
+            className="h-full w-full object-cover object-[center_20%] md:object-[72%_center] lg:object-[center_8%]"
             style={{ filter: "brightness(0.7) saturate(1.1)" }}
             loading="eager"
           />
@@ -124,7 +124,7 @@ export function HeroSearch() {
       />
 
       {/* Content */}
-      <div className="relative z-10 w-full pt-24 md:pt-[120px]" style={{ maxWidth: 760 }}>
+      <div className="relative z-10 w-full pt-24 md:pt-[120px] lg:pt-[80px]" style={{ maxWidth: 760 }}>
         {/* Eyebrow */}
         <div
           className="inline-flex items-center gap-2 mb-6 animate-fade-in"
