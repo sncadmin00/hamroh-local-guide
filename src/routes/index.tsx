@@ -73,7 +73,7 @@ function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "#0a0f1e", color: "#F0EBE0" }}>
+    <div className="min-h-screen flex flex-col" style={{ background: "var(--background)", color: "var(--foreground)" }}>
       <SiteHeader transparent />
 
       <main className="flex-1">
@@ -96,7 +96,7 @@ function Home() {
           <div
             className="relative max-w-[1280px] mx-auto rounded-3xl overflow-hidden flex flex-col md:flex-row items-center gap-10 px-8 py-10 md:px-16 md:py-14"
             style={{
-              background: "linear-gradient(135deg, #1a2236 0%, #111827 100%)",
+              background: "linear-gradient(135deg, var(--card) 0%, var(--card) 100%)",
               border: "1px solid var(--gold-glow)",
             }}
           >
@@ -118,17 +118,17 @@ function Home() {
               </p>
               <h2
                 className="text-[1.6rem] md:text-[2.4rem] leading-[1.15] tracking-tight mb-5 whitespace-pre-line"
-                style={{ color: "#F0EBE0", fontFamily: "'DM Serif Display', serif" }}
+                style={{ color: "var(--foreground)", fontFamily: "'DM Serif Display', serif" }}
               >
                 {t("banner.guide.title")}
               </h2>
-              <p className="text-[0.95rem] leading-relaxed mb-8 whitespace-pre-line" style={{ color: "#94A3B8" }}>
+              <p className="text-[0.95rem] leading-relaxed mb-8 whitespace-pre-line" style={{ color: "var(--muted-foreground)" }}>
                 {t("banner.guide.points")}
               </p>
               <Link
                 to={isGuide ? "/guide" : "/become-a-guide"}
                 className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-sm font-semibold transition-all hover:-translate-y-0.5"
-                style={{ background: "var(--gold)", color: "#0a0f1e" }}
+                style={{ background: "var(--gold)", color: "var(--background)" }}
               >
                 {isGuide ? t("nav.guideDashboard") : t("banner.guide.button")} →
               </Link>
@@ -146,16 +146,16 @@ function Home() {
               <div
                 className="w-16 h-16 rounded-full mx-auto mb-3.5 flex items-center justify-center text-3xl border-2"
                 style={{
-                  background: "linear-gradient(135deg, #2a3a5c, #1a2236)",
+                  background: "linear-gradient(135deg, #2a3a5c, var(--card))",
                   borderColor: "color-mix(in srgb, var(--gold) 30%, transparent)",
                 }}
               >
                 🧑‍💼
               </div>
-              <p className="font-semibold text-[0.95rem] text-center mb-1" style={{ color: "#F0EBE0" }}>
+              <p className="font-semibold text-[0.95rem] text-center mb-1" style={{ color: "var(--foreground)" }}>
                 {t("nav.becomeGuide")}
               </p>
-              <p className="text-[0.78rem] text-center mb-3.5" style={{ color: "#4A6080" }}>
+              <p className="text-[0.78rem] text-center mb-3.5" style={{ color: "var(--muted-foreground)" }}>
                 Uzbekistan
               </p>
               <div className="flex justify-center gap-1 mb-3.5">

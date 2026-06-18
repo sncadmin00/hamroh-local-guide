@@ -48,16 +48,16 @@ function GuidesPage() {
 
 
   const pillBase = "inline-flex items-center gap-1.5 h-9 px-4 rounded-full text-sm transition";
-  const pillInactive = "bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.08)] text-[#94A3B8] hover:text-[#F0EBE0]";
-  const pillActive = "bg-[#C9A84C] text-[#0d1424] font-semibold border-0";
+  const pillInactive = "bg-[var(--secondary)] border border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)]";
+  const pillActive = "bg-[#C9A84C] text-[var(--background)] font-semibold border-0";
 
   return (
-    <div className="min-h-screen bg-[#0d1424]">
+    <div className="min-h-screen bg-[var(--background)]">
       <SiteHeader />
-      <section className="border-b border-[rgba(255,255,255,0.06)]">
+      <section className="border-b border-[var(--border)]">
         <div className="container mx-auto px-4 py-12 md:py-16">
-          <h1 className="font-display text-4xl font-semibold md:text-5xl text-[#F0EBE0]">Find your guide</h1>
-          <p className="mt-3 max-w-xl text-[#94A3B8]">
+          <h1 className="font-display text-4xl font-semibold md:text-5xl text-[var(--foreground)]">Find your guide</h1>
+          <p className="mt-3 max-w-xl text-[var(--muted-foreground)]">
             {isLoading ? "Loading guides…" : `${filtered.length} verified locals ready to show you around.`}
           </p>
         </div>
@@ -65,11 +65,11 @@ function GuidesPage() {
 
       <section className="container mx-auto px-4 py-10" aria-labelledby="filter-heading">
         <h2 id="filter-heading" className="sr-only">Filter guides</h2>
-        <div className="flex flex-col gap-4 rounded-2xl bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.08)] p-4 md:flex-row md:items-center md:p-5">
+        <div className="flex flex-col gap-4 rounded-2xl bg-[var(--secondary)] border border-[var(--border)] p-4 md:flex-row md:items-center md:p-5">
           <CityPicker value={city} onChange={setCity} />
 
-          <div className="md:ml-auto md:pl-5 md:border-l md:border-[rgba(255,255,255,0.06)] flex flex-wrap items-center gap-3">
-            <label className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-[#F0EBE0]">
+          <div className="md:ml-auto md:pl-5 md:border-l md:border-[var(--border)] flex flex-wrap items-center gap-3">
+            <label className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-[var(--foreground)]">
               <input type="checkbox" checked={instant} onChange={(e) => setInstant(e.target.checked)} className="accent-[#C9A84C]" />
               Instant book
             </label>
@@ -124,9 +124,9 @@ function GuidesPage() {
           {isLoading ? "Loading guides" : `${filtered.length} guides found`}
         </h2>
         {isLoading ? (
-          <div className="mt-16 text-center text-[#94A3B8]">Loading…</div>
+          <div className="mt-16 text-center text-[var(--muted-foreground)]">Loading…</div>
         ) : filtered.length === 0 ? (
-          <div className="mt-16 text-center text-[#94A3B8]">No guides match your filters yet — try widening your search.</div>
+          <div className="mt-16 text-center text-[var(--muted-foreground)]">No guides match your filters yet — try widening your search.</div>
         ) : (
           <div aria-labelledby="guides-heading" className="mt-10 grid gap-8 md:grid-cols-2 xl:grid-cols-3">
             {filtered.map((g) => <GuideCard key={g.id} guide={g} />)}

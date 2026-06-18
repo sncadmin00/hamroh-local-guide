@@ -62,7 +62,7 @@ const SheetContent = React.forwardRef<
     <SheetOverlay />
     <SheetPrimitive.Content ref={ref} className={cn(sheetVariants({ side }), className)} {...props}>
       <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[rgba(201,168,76,0.4)] to-transparent pointer-events-none" />
-      <SheetPrimitive.Close className="absolute right-4 top-4 inline-flex h-8 w-8 items-center justify-center rounded-full border border-[rgba(255,255,255,0.1)] text-[#94A3B8] cursor-pointer transition-all hover:border-[rgba(201,168,76,0.4)] hover:text-[#C9A84C] focus:outline-none disabled:pointer-events-none">
+      <SheetPrimitive.Close className="absolute right-4 top-4 inline-flex h-8 w-8 items-center justify-center rounded-full border border-[rgba(255,255,255,0.1)] text-[var(--muted-foreground)] cursor-pointer transition-all hover:border-[rgba(201,168,76,0.4)] hover:text-[#C9A84C] focus:outline-none disabled:pointer-events-none">
         <X className="h-4 w-4" />
         <span className="sr-only">Close</span>
       </SheetPrimitive.Close>

@@ -33,8 +33,8 @@ export function CarouselArrows({
   const base =
     "h-9 w-9 rounded-full flex items-center justify-center transition-all";
   const style = {
-    background: "#1a2236",
-    border: "1px solid #1e2d45",
+    background: "var(--card)",
+    border: "1px solid var(--border)",
     color: "var(--gold)",
   } as const;
   return (
@@ -43,7 +43,7 @@ export function CarouselArrows({
         type="button"
         aria-label="Previous"
         onClick={onPrev}
-        className={`${base} hover:[border-color:color-mix(in_srgb,_var(--gold)_50%,_transparent)] hover:[background:#1e2d45]`}
+        className={`${base} hover:[border-color:color-mix(in_srgb,_var(--gold)_50%,_transparent)] hover:[background:var(--border)]`}
         style={style}
       >
         <ChevronLeft className="h-4 w-4" />
@@ -52,7 +52,7 @@ export function CarouselArrows({
         type="button"
         aria-label="Next"
         onClick={onNext}
-        className={`${base} hover:[border-color:color-mix(in_srgb,_var(--gold)_50%,_transparent)] hover:[background:#1e2d45]`}
+        className={`${base} hover:[border-color:color-mix(in_srgb,_var(--gold)_50%,_transparent)] hover:[background:var(--border)]`}
         style={style}
       >
         <ChevronRight className="h-4 w-4" />
