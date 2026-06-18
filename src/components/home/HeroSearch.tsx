@@ -70,7 +70,7 @@ export function HeroSearch() {
 
   return (
     <section
-      className="relative flex flex-col items-center justify-start text-center overflow-hidden"
+      className="hero relative flex flex-col items-center justify-start text-center overflow-hidden"
       style={{
         backgroundColor: BG,
         minHeight: "100vh",
