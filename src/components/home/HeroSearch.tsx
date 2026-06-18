@@ -178,7 +178,7 @@ export function HeroSearch() {
         {/* Search bar */}
         <form
           onSubmit={onSubmit}
-          className="mx-auto mb-8 animate-fade-in w-full md:max-w-[580px] lg:mt-[220px]"
+          className="mx-auto mb-8 animate-fade-in w-full md:max-w-[580px] lg:mt-[300px]"
           style={{
             animationDelay: "0.25s",
             display: "flex",
