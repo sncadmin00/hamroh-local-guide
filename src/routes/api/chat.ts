@@ -13,6 +13,7 @@ const MAX_QUERY_LEN = 300;
 async function buildSystemPrompt(
   client: ReturnType<typeof createClient<any, any, any>>,
   articleContext: Array<{ title: string; slug: string; content: string }> = [],
+  lang: "en" | "uz" | "ru" = "en",
 ) {
 
   const [guidesRes, placesRes, toursRes] = await Promise.all([
