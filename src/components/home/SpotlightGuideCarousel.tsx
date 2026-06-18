@@ -45,8 +45,8 @@ export function SpotlightGuideCarousel() {
             key={g.id}
             to="/guides/$guideId"
             params={{ guideId: g.id }}
-            className="group relative flex flex-col items-center text-center rounded-[20px] border px-5 pt-7 pb-6 transition-all hover:-translate-y-1.5 overflow-hidden"
-            style={{ background: "#111827", borderColor: "#1e2d45" }}
+            className="glass-card group relative flex flex-col items-center text-center px-5 pt-7 pb-6 overflow-hidden"
+
           >
             <div className="relative mb-4">
               <img
