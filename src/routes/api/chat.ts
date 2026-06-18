@@ -4,7 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
 import { retrieveArticleContext } from "@/lib/articles-rag.functions";
 
-type ChatBody = { messages?: UIMessage[]; threadId?: string };
+type ChatBody = { messages?: UIMessage[]; threadId?: string; lang?: "en" | "uz" | "ru" };
 
 
 const DAILY_LIMIT = 20;
