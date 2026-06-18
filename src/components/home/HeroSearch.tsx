@@ -127,10 +127,10 @@ export function HeroSearch() {
       <div className="relative z-10 w-full pt-24 md:pt-[120px] lg:pt-[80px]" style={{ maxWidth: 760 }}>
         {/* Eyebrow */}
         <div
-          className="inline-flex items-center gap-2 mb-6 animate-fade-in"
+          className="hero-eyebrow inline-flex items-center gap-2 mb-6 animate-fade-in"
           style={{
             fontSize: "0.75rem",
-            fontWeight: 600,
+            fontWeight: 700,
             letterSpacing: "0.12em",
             textTransform: "uppercase",
             color: GOLD,
@@ -138,9 +138,10 @@ export function HeroSearch() {
             textShadow: "0 1px 6px rgba(0,0,0,0.6)",
           }}
         >
-          <span style={{ width: 28, height: 1, background: GOLD, opacity: 0.6, display: "inline-block" }} />
+          <span className="hero-eyebrow-rule" style={{ width: 28, height: 1, background: GOLD, opacity: 0.6, display: "inline-block" }} />
           {t("hero.eyebrow")}
         </div>
+
 
         {/* H1 */}
         <h1
