@@ -85,7 +85,7 @@ export function HeroSearch() {
           <img
             src={heroMobileAsset.url}
             alt="Local Uzbek companion exploring Samarkand with a traveler at golden hour"
-            className="h-full w-full object-cover object-[center_20%] md:object-[72%_center] xl:object-[center_30%]"
+            className="h-full w-full object-cover object-[center_20%] md:object-[72%_center] lg:object-[center_8%]"
             style={{ filter: "brightness(0.7) saturate(1.1)" }}
             loading="eager"
           />
