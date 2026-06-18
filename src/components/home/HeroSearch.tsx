@@ -70,7 +70,7 @@ export function HeroSearch() {
 
   return (
     <section
-      className="relative flex flex-col items-center justify-start text-center overflow-hidden"
+      className="hero relative flex flex-col items-center justify-start text-center overflow-hidden"
       style={{
         backgroundColor: BG,
         minHeight: "100vh",
@@ -85,7 +85,7 @@ export function HeroSearch() {
           <img
             src={heroMobileAsset.url}
             alt="Local Uzbek companion exploring Samarkand with a traveler at golden hour"
-            className="h-full w-full object-cover object-[center_20%] md:object-[72%_center] lg:object-[center_8%]"
+            className="hero-bg h-full w-full object-cover object-[center_20%] md:object-[72%_center] lg:object-[center_8%]"
             style={{ filter: "brightness(0.7) saturate(1.1)" }}
             loading="eager"
           />
@@ -103,7 +103,7 @@ export function HeroSearch() {
 
       {/* Gradient overlay */}
       <div
-        className="absolute inset-0 z-0 pointer-events-none"
+        className="hero-gradient absolute inset-0 z-0 pointer-events-none"
         style={{
           background:
             "linear-gradient(to bottom, rgba(10,15,30,0.55) 0%, rgba(10,15,30,0) 35%, rgba(10,15,30,0.72) 65%, rgba(10,15,30,1) 100%)",
@@ -262,7 +262,7 @@ export function HeroSearch() {
           ].map((label) => (
             <span
               key={label}
-              className="inline-flex items-center gap-1.5 whitespace-nowrap transition-colors"
+              className="badge inline-flex items-center gap-1.5 whitespace-nowrap transition-colors"
               style={{
                 background: "rgba(26, 34, 54, 0.7)",
                 border: "1px solid var(--border)",
