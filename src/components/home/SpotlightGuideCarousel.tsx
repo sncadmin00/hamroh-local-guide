@@ -54,7 +54,7 @@ export function SpotlightGuideCarousel() {
                 alt={g.name}
                 loading="lazy"
                 className="h-[88px] w-[88px] rounded-full object-cover border-2 transition-colors"
-                style={{ borderColor: "#1e2d45" }}
+                style={{ borderColor: "rgba(255,255,255,0.06)" }}
               />
               {g.verified && (
                 <span
