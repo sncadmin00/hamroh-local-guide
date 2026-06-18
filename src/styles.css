@@ -180,7 +180,7 @@
   position: relative;
   height: 1px;
   margin: 0 48px;
-  background: linear-gradient(90deg, transparent 0%, rgba(201,168,76,0.15) 20%, rgba(201,168,76,0.4) 50%, rgba(201,168,76,0.15) 80%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, rgba(201,168,76,0.15) 20%, rgba(201,168,76,0.6) 50%, rgba(201,168,76,0.15) 80%, transparent 100%);
 }
 .gold-divider::after {
   content: '◆';
@@ -192,6 +192,16 @@
   color: #C9A84C;
   background: #0d1424;
   padding: 0 10px;
+}
+
+/* ScrollRow item — mobile vw width, desktop fixed px */
+.sr-item {
+  width: var(--sr-mob);
+}
+@media (min-width: 768px) {
+  .sr-item {
+    width: var(--sr-desk);
+  }
 }
 
 /* Ghost section number — large barely-visible background numeral */
