@@ -164,7 +164,8 @@ export function SpotlightTourCarousel() {
               {/* Footer */}
               <div
                 className="mt-auto flex items-center justify-between px-4 py-3.5 border-t"
-                style={{ borderColor: "#1e2d45" }}
+                style={{ borderColor: "rgba(255,255,255,0.06)" }}
+
               >
                 <div>
                   <div className="text-[0.7rem]" style={{ color: "#4A6080" }}>
