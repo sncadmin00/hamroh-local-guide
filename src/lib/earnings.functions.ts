@@ -477,6 +477,22 @@ export const getPublicServiceFeeRate = createServerFn({ method: "GET" }).handler
   return { rate: await getServiceFeeRate(supabaseAdmin) };
 });
 
+export const getMyTaxInfo = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data, error } = await supabaseAdmin
+      .from("guides")
+      .select("tax_status, tax_id")
+      .eq("user_id", context.userId)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    return {
+      tax_status: (data?.tax_status ?? "none") as "none" | "self_employed" | "ip",
+      tax_id: (data?.tax_id ?? "") as string,
+    };
+  });
+
 export const updateMyTaxInfo = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) =>
