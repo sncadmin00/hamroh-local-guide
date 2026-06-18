@@ -103,7 +103,7 @@ export function HeroSearch() {
 
       {/* Gradient overlay */}
       <div
-        className="absolute inset-0 z-0 pointer-events-none"
+        className="hero-gradient absolute inset-0 z-0 pointer-events-none"
         style={{
           background:
             "linear-gradient(to bottom, rgba(10,15,30,0.55) 0%, rgba(10,15,30,0) 35%, rgba(10,15,30,0.72) 65%, rgba(10,15,30,1) 100%)",
