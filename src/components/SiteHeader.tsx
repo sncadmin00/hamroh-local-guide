@@ -83,7 +83,7 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
   ] as const;
 
   return (
-    <header className={`${sticky ? "sticky top-0" : "sticky top-0 md:static"} z-40 ${transparent ? "bg-transparent" : "bg-background/85 backdrop-blur-md"}`}>
+    <header className={`sticky top-0 z-40 transition-colors ${transparent && !scrolled ? "bg-transparent" : "bg-background/85 backdrop-blur-md"}`}>
       <div className={`${transparent ? "max-w-6xl mx-auto" : "container mx-auto"} flex h-16 items-center justify-between gap-4 px-4`}>
         {/* Left: logo */}
         <Link to="/" className="flex items-center shrink-0 leading-none">
