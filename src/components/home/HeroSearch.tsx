@@ -262,7 +262,7 @@ export function HeroSearch() {
           ].map((label) => (
             <span
               key={label}
-              className="inline-flex items-center gap-1.5 whitespace-nowrap transition-colors"
+              className="badge inline-flex items-center gap-1.5 whitespace-nowrap transition-colors"
               style={{
                 background: "rgba(26, 34, 54, 0.7)",
                 border: "1px solid var(--border)",
