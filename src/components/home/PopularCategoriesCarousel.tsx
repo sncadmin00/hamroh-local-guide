@@ -51,7 +51,8 @@ export function PopularCategoriesCarousel() {
   if (categories.length === 0) return null;
 
   return (
-    <section className="px-6 md:px-12 py-16 md:py-[72px] max-w-[1280px] mx-auto">
+    <section className="relative px-6 md:px-12 py-16 md:py-[72px] max-w-[1280px] mx-auto">
+      <span className="ghost-number">01</span>
       <div className="flex items-baseline justify-between mb-9 gap-4">
         <h2
           className="font-display text-[1.6rem] md:text-[2.2rem] tracking-tight"

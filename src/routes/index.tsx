@@ -84,7 +84,9 @@ function Home() {
         <TrustBar />
 
         <PopularCategoriesCarousel />
+        <div className="gold-divider" />
         <SpotlightGuideCarousel />
+        <div className="gold-divider" />
         <SpotlightTourCarousel />
 
         <FeaturedReviews />
