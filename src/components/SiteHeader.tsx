@@ -144,7 +144,7 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
                 </span>
               </button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-80 bg-[var(--card)] border-[rgba(255,255,255,0.06)] p-0">
+            <SheetContent side="right" className="w-80 bg-[var(--card)] border-[var(--border)] p-0">
               <SheetHeader className="px-6 pt-8 pb-2">
                 <SheetTitle className="text-left font-['DM_Serif_Display',serif] text-[var(--foreground)] text-2xl tracking-wide">
                   {t("common.menu")}
@@ -153,8 +153,8 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
               <nav className="mt-2 flex flex-col px-6">
                 <Link
                   to="/wishlist"
-                  className="py-[14px] text-[1.1rem] text-[var(--foreground)] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1"
-                  activeProps={{ className: "py-[14px] text-[1.1rem] text-[#C9A84C] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1" }}
+                  className="py-[14px] text-[1.1rem] text-[var(--foreground)] inline-flex items-center gap-3 border-b border-[var(--border)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1"
+                  activeProps={{ className: "py-[14px] text-[1.1rem] text-[#C9A84C] inline-flex items-center gap-3 border-b border-[var(--border)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1" }}
                 >
                   <Heart className="h-5 w-5 text-[#C9A84C]" /> {t("nav.wishlist")}
                 </Link>
@@ -162,8 +162,8 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
                   <Link
                     key={link.to}
                     to={link.to}
-                    className="py-[14px] text-[1.1rem] text-[var(--foreground)] border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1"
-                    activeProps={{ className: "py-[14px] text-[1.1rem] text-[#C9A84C] border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1" }}
+                    className="py-[14px] text-[1.1rem] text-[var(--foreground)] border-b border-[var(--border)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1"
+                    activeProps={{ className: "py-[14px] text-[1.1rem] text-[#C9A84C] border-b border-[var(--border)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1" }}
                   >
                     {link.label}
                   </Link>
@@ -171,8 +171,8 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
                 {signedIn && (
                   <Link
                     to="/messages"
-                    className="py-[14px] text-[1.1rem] text-[var(--foreground)] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1"
-                    activeProps={{ className: "py-[14px] text-[1.1rem] text-[#C9A84C] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1" }}
+                    className="py-[14px] text-[1.1rem] text-[var(--foreground)] inline-flex items-center gap-3 border-b border-[var(--border)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1"
+                    activeProps={{ className: "py-[14px] text-[1.1rem] text-[#C9A84C] inline-flex items-center gap-3 border-b border-[var(--border)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1" }}
                   >
                     <MessageSquare className="h-5 w-5 text-[#C9A84C]" /> {t("common.messages")}
                   </Link>
@@ -180,8 +180,8 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
                 {signedIn && (
                   <Link
                     to="/settings"
-                    className="py-[14px] text-[1.1rem] text-[var(--foreground)] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1"
-                    activeProps={{ className: "py-[14px] text-[1.1rem] text-[#C9A84C] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1" }}
+                    className="py-[14px] text-[1.1rem] text-[var(--foreground)] inline-flex items-center gap-3 border-b border-[var(--border)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1"
+                    activeProps={{ className: "py-[14px] text-[1.1rem] text-[#C9A84C] inline-flex items-center gap-3 border-b border-[var(--border)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1" }}
                   >
                     <Settings className="h-5 w-5 text-[#C9A84C]" /> {t("common.settings")}
                   </Link>
@@ -189,8 +189,8 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
                 {isGuide && (
                   <Link
                     to="/guide"
-                    className="py-[14px] text-[1.1rem] text-[var(--foreground)] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1"
-                    activeProps={{ className: "py-[14px] text-[1.1rem] text-[#C9A84C] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1" }}
+                    className="py-[14px] text-[1.1rem] text-[var(--foreground)] inline-flex items-center gap-3 border-b border-[var(--border)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1"
+                    activeProps={{ className: "py-[14px] text-[1.1rem] text-[#C9A84C] inline-flex items-center gap-3 border-b border-[var(--border)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1" }}
                   >
                     <Briefcase className="h-5 w-5 text-[#C9A84C]" /> {t("nav.guideDashboard")}
                   </Link>
@@ -198,8 +198,8 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
                 {isAdmin && (
                   <Link
                     to="/admin"
-                    className="py-[14px] text-[1.1rem] text-[var(--foreground)] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1"
-                    activeProps={{ className: "py-[14px] text-[1.1rem] text-[#C9A84C] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1" }}
+                    className="py-[14px] text-[1.1rem] text-[var(--foreground)] inline-flex items-center gap-3 border-b border-[var(--border)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1"
+                    activeProps={{ className: "py-[14px] text-[1.1rem] text-[#C9A84C] inline-flex items-center gap-3 border-b border-[var(--border)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1" }}
                   >
                     <Shield className="h-5 w-5 text-[#C9A84C]" /> {t("common.admin")}
                   </Link>
@@ -207,14 +207,14 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
                 {signedIn ? (
                   <button
                     onClick={signOut}
-                    className="py-[14px] text-[1.1rem] text-[var(--muted-foreground)] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#ef4444] hover:translate-x-1 text-left"
+                    className="py-[14px] text-[1.1rem] text-[var(--muted-foreground)] inline-flex items-center gap-3 border-b border-[var(--border)] transition-all duration-200 hover:text-[#ef4444] hover:translate-x-1 text-left"
                   >
                     <LogOut className="h-5 w-5" /> {t("common.signOut")}
                   </button>
                 ) : (
                   <Link
                     to="/login"
-                    className="py-[14px] text-[1.1rem] font-semibold text-[#0B1430] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:translate-x-1 bg-[#C9A84C] rounded-lg px-3 mt-2"
+                    className="py-[14px] text-[1.1rem] font-semibold text-[#0B1430] inline-flex items-center gap-3 border-b border-[var(--border)] transition-all duration-200 hover:translate-x-1 bg-[#C9A84C] rounded-lg px-3 mt-2"
                   >
                     <LogIn className="h-5 w-5" /> {t("common.signIn")}
                   </Link>
