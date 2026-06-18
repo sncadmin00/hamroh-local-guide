@@ -51,8 +51,8 @@ export function SpotlightTourCarousel() {
               key={tour.id}
               to="/tours/$slug"
               params={{ slug: tour.slug }}
-              className="group relative flex flex-col overflow-hidden rounded-[20px] border transition-all hover:-translate-y-1.5"
-              style={{ background: "#111827", borderColor: "#1e2d45" }}
+              className="glass-card group relative flex flex-col overflow-hidden"
+
             >
               {/* Image */}
               <div className="relative aspect-[16/10] overflow-hidden">
@@ -164,7 +164,8 @@ export function SpotlightTourCarousel() {
               {/* Footer */}
               <div
                 className="mt-auto flex items-center justify-between px-4 py-3.5 border-t"
-                style={{ borderColor: "#1e2d45" }}
+                style={{ borderColor: "rgba(255,255,255,0.06)" }}
+
               >
                 <div>
                   <div className="text-[0.7rem]" style={{ color: "#4A6080" }}>
