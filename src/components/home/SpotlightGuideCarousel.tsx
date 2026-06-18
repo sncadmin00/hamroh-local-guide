@@ -23,7 +23,7 @@ export function SpotlightGuideCarousel() {
       <div className="flex items-baseline justify-between mb-9 gap-4">
         <h2
           className="font-display text-[1.6rem] md:text-[2.2rem] tracking-tight"
-          style={{ color: "#F0EBE0", fontFamily: "'DM Serif Display', serif" }}
+          style={{ color: "var(--foreground)", fontFamily: "'DM Serif Display', serif" }}
         >
           {t("home.spotlightGuide.title")}
         </h2>
@@ -60,18 +60,18 @@ export function SpotlightGuideCarousel() {
               {g.verified && (
                 <span
                   className="absolute bottom-0.5 right-0.5 h-[22px] w-[22px] rounded-full flex items-center justify-center border-2"
-                  style={{ background: "var(--gold)", borderColor: "#111827" }}
+                  style={{ background: "var(--gold)", borderColor: "var(--card)" }}
                 >
-                  <Check className="h-3 w-3" strokeWidth={3} style={{ color: "#0a0f1e" }} />
+                  <Check className="h-3 w-3" strokeWidth={3} style={{ color: "var(--background)" }} />
                 </span>
               )}
             </div>
-            <h3 className="text-base font-semibold mb-1" style={{ color: "#F0EBE0" }}>
+            <h3 className="text-base font-semibold mb-1" style={{ color: "var(--foreground)" }}>
               {g.name.split(" ")[0]}
             </h3>
             <p
               className="text-xs mb-3 inline-flex items-center justify-center gap-1"
-              style={{ color: "#4A6080" }}
+              style={{ color: "var(--muted-foreground)" }}
             >
               <MapPin className="h-3 w-3" style={{ color: "var(--gold)" }} />
               {g.city}
@@ -79,7 +79,7 @@ export function SpotlightGuideCarousel() {
             {g.languages?.length > 0 && (
               <p
                 className="text-[0.72rem] font-medium uppercase tracking-wider mb-4"
-                style={{ color: "#4A6080" }}
+                style={{ color: "var(--muted-foreground)" }}
               >
                 {g.languages.slice(0, 4).join(" · ")}
               </p>
@@ -90,7 +90,7 @@ export function SpotlightGuideCarousel() {
                   key={i}
                   className="h-3.5 w-3.5"
                   style={{
-                    color: i < Math.round(g.rating) ? "var(--gold)" : "#1e2d45",
+                    color: i < Math.round(g.rating) ? "var(--gold)" : "var(--border)",
                     fill: i < Math.round(g.rating) ? "var(--gold)" : "transparent",
                   }}
                 />

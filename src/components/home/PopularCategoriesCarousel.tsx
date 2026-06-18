@@ -56,7 +56,7 @@ export function PopularCategoriesCarousel() {
       <div className="flex items-baseline justify-between mb-9 gap-4">
         <h2
           className="font-display text-[1.6rem] md:text-[2.2rem] tracking-tight"
-          style={{ color: "#F0EBE0", fontFamily: "'DM Serif Display', serif" }}
+          style={{ color: "var(--foreground)", fontFamily: "'DM Serif Display', serif" }}
         >
           {t("home.categories.title")}
         </h2>
@@ -110,13 +110,13 @@ export function PopularCategoriesCarousel() {
                 </div>
                 <h3
                   className="text-[0.95rem] font-semibold mb-0.5 line-clamp-1"
-                  style={{ color: "#F0EBE0" }}
+                  style={{ color: "var(--foreground)" }}
                 >
                   {tCategory(c.slug, c.name)}
                 </h3>
                 <p
                   className="text-[0.72rem] tracking-wider"
-                  style={{ color: "#4A6080" }}
+                  style={{ color: "var(--muted-foreground)" }}
                 >
                   {count} {t("home.categories.guidesCount")}
                 </p>

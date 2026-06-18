@@ -12,7 +12,7 @@ export function ThemeToggle({ transparent = false }: { transparent?: boolean }) 
       title={isDark ? "Light mode" : "Dark mode"}
       className={`inline-flex h-9 w-9 items-center justify-center rounded-full ring-1 transition-all hover:scale-105 ${
         transparent
-          ? "ring-[rgba(255,255,255,0.4)] bg-[rgba(10,15,30,0.35)] backdrop-blur-[8px] text-[#F0EBE0]"
+          ? "ring-[rgba(255,255,255,0.4)] bg-[rgba(10,15,30,0.35)] backdrop-blur-[8px] text-[var(--foreground)]"
           : "ring-border bg-card text-foreground/80"
       }`}
     >

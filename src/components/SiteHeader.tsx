@@ -106,7 +106,7 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
           <LanguageSwitcher
             className={
               transparent
-                ? "text-[#F0EBE0] ring-[rgba(255,255,255,0.4)] bg-[rgba(10,15,30,0.35)] backdrop-blur-[8px] hover:bg-white/10"
+                ? "text-[var(--foreground)] ring-[rgba(255,255,255,0.4)] bg-[rgba(10,15,30,0.35)] backdrop-blur-[8px] hover:bg-white/10"
                 : undefined
             }
           />
@@ -122,9 +122,9 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
                     : "ring-border/70 bg-card/80"
                 }`}
               >
-                <Menu className={`h-4 w-4 drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)] ${transparent ? "text-[#F0EBE0]" : "text-foreground/70"}`} />
+                <Menu className={`h-4 w-4 drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)] ${transparent ? "text-[var(--foreground)]" : "text-foreground/70"}`} />
                 <span className={`inline-flex h-7 w-7 items-center justify-center rounded-full overflow-hidden border-2 border-[rgba(255,255,255,0.3)] ${
-                  transparent ? "bg-white/10 text-[#F0EBE0]" : "bg-secondary text-foreground/70"
+                  transparent ? "bg-white/10 text-[var(--foreground)]" : "bg-secondary text-foreground/70"
                 }`}>
                   {avatarUrl ? (
                     <img
@@ -135,25 +135,25 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
                       onError={() => setAvatarUrl(null)}
                     />
                   ) : displayName ? (
-                    <span className={`text-xs font-semibold ${transparent ? "text-[#F0EBE0]" : "text-foreground/80"}`}>
+                    <span className={`text-xs font-semibold ${transparent ? "text-[var(--foreground)]" : "text-foreground/80"}`}>
                       {displayName.trim().charAt(0).toUpperCase()}
                     </span>
                   ) : (
-                    <User className={`h-4 w-4 ${transparent ? "text-[#F0EBE0]" : ""}`} />
+                    <User className={`h-4 w-4 ${transparent ? "text-[var(--foreground)]" : ""}`} />
                   )}
                 </span>
               </button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-80 bg-[#111827] border-[rgba(255,255,255,0.06)] p-0">
+            <SheetContent side="right" className="w-80 bg-[var(--card)] border-[rgba(255,255,255,0.06)] p-0">
               <SheetHeader className="px-6 pt-8 pb-2">
-                <SheetTitle className="text-left font-['DM_Serif_Display',serif] text-[#F0EBE0] text-2xl tracking-wide">
+                <SheetTitle className="text-left font-['DM_Serif_Display',serif] text-[var(--foreground)] text-2xl tracking-wide">
                   {t("common.menu")}
                 </SheetTitle>
               </SheetHeader>
               <nav className="mt-2 flex flex-col px-6">
                 <Link
                   to="/wishlist"
-                  className="py-[14px] text-[1.1rem] text-[#F0EBE0] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1"
+                  className="py-[14px] text-[1.1rem] text-[var(--foreground)] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1"
                   activeProps={{ className: "py-[14px] text-[1.1rem] text-[#C9A84C] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1" }}
                 >
                   <Heart className="h-5 w-5 text-[#C9A84C]" /> {t("nav.wishlist")}
@@ -162,7 +162,7 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
                   <Link
                     key={link.to}
                     to={link.to}
-                    className="py-[14px] text-[1.1rem] text-[#F0EBE0] border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1"
+                    className="py-[14px] text-[1.1rem] text-[var(--foreground)] border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1"
                     activeProps={{ className: "py-[14px] text-[1.1rem] text-[#C9A84C] border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1" }}
                   >
                     {link.label}
@@ -171,7 +171,7 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
                 {signedIn && (
                   <Link
                     to="/messages"
-                    className="py-[14px] text-[1.1rem] text-[#F0EBE0] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1"
+                    className="py-[14px] text-[1.1rem] text-[var(--foreground)] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1"
                     activeProps={{ className: "py-[14px] text-[1.1rem] text-[#C9A84C] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1" }}
                   >
                     <MessageSquare className="h-5 w-5 text-[#C9A84C]" /> {t("common.messages")}
@@ -180,7 +180,7 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
                 {signedIn && (
                   <Link
                     to="/settings"
-                    className="py-[14px] text-[1.1rem] text-[#F0EBE0] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1"
+                    className="py-[14px] text-[1.1rem] text-[var(--foreground)] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1"
                     activeProps={{ className: "py-[14px] text-[1.1rem] text-[#C9A84C] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1" }}
                   >
                     <Settings className="h-5 w-5 text-[#C9A84C]" /> {t("common.settings")}
@@ -189,7 +189,7 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
                 {isGuide && (
                   <Link
                     to="/guide"
-                    className="py-[14px] text-[1.1rem] text-[#F0EBE0] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1"
+                    className="py-[14px] text-[1.1rem] text-[var(--foreground)] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1"
                     activeProps={{ className: "py-[14px] text-[1.1rem] text-[#C9A84C] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1" }}
                   >
                     <Briefcase className="h-5 w-5 text-[#C9A84C]" /> {t("nav.guideDashboard")}
@@ -198,7 +198,7 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
                 {isAdmin && (
                   <Link
                     to="/admin"
-                    className="py-[14px] text-[1.1rem] text-[#F0EBE0] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1"
+                    className="py-[14px] text-[1.1rem] text-[var(--foreground)] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1"
                     activeProps={{ className: "py-[14px] text-[1.1rem] text-[#C9A84C] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1" }}
                   >
                     <Shield className="h-5 w-5 text-[#C9A84C]" /> {t("common.admin")}
@@ -207,7 +207,7 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
                 {signedIn ? (
                   <button
                     onClick={signOut}
-                    className="py-[14px] text-[1.1rem] text-[#4A6080] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#ef4444] hover:translate-x-1 text-left"
+                    className="py-[14px] text-[1.1rem] text-[var(--muted-foreground)] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#ef4444] hover:translate-x-1 text-left"
                   >
                     <LogOut className="h-5 w-5" /> {t("common.signOut")}
                   </button>
@@ -221,13 +221,13 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
                 )}
               </nav>
               <div className="mt-6 flex items-center gap-3 px-6">
-                <span className="text-sm text-[#4A6080]">{t("common.contactUs")}</span>
+                <span className="text-sm text-[var(--muted-foreground)]">{t("common.contactUs")}</span>
                 <a
                   href="https://t.me/yourtelegram"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Join Telegram"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[#94A3B8] hover:text-[#C9A84C] transition-colors"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[var(--muted-foreground)] hover:text-[#C9A84C] transition-colors"
                 >
                   <TelegramIcon className="h-5 w-5" />
                 </a>
@@ -236,21 +236,21 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Chat on WhatsApp"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[#94A3B8] hover:text-[#C9A84C] transition-colors"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[var(--muted-foreground)] hover:text-[#C9A84C] transition-colors"
                 >
                   <WhatsAppIcon className="h-5 w-5" />
                 </a>
                 <a
                   href="mailto:hello@hamroh.com"
                   aria-label="Email us"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[#94A3B8] hover:text-[#C9A84C] transition-colors"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[var(--muted-foreground)] hover:text-[#C9A84C] transition-colors"
                 >
                   <Mail className="h-5 w-5" />
                 </a>
                 <a
                   href="tel:+1234567890"
                   aria-label="Call us"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[#94A3B8] hover:text-[#C9A84C] transition-colors"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[var(--muted-foreground)] hover:text-[#C9A84C] transition-colors"
                 >
                   <Phone className="h-5 w-5" />
                 </a>

@@ -10,7 +10,7 @@ import heroMobileAsset from "@/assets/hero-samarkand-v3-mobile.jpg.asset.json";
 
 const GOLD = "var(--gold)";
 const AMBER = "var(--gold-hover)";
-const BG = "#0a0f1e";
+const BG = "var(--background)";
 
 export function HeroSearch() {
   const { t } = useI18n();
@@ -75,7 +75,7 @@ export function HeroSearch() {
         backgroundColor: BG,
         minHeight: "100vh",
         padding: "0 24px 80px",
-        color: "#F0EBE0",
+        color: "var(--foreground)",
       }}
     >
       {/* Background image */}
@@ -150,7 +150,7 @@ export function HeroSearch() {
             fontSize: "clamp(2.6rem, 7vw, 4.8rem)",
             lineHeight: 1.05,
             letterSpacing: "-0.02em",
-            color: "#F0EBE0",
+            color: "var(--foreground)",
             marginBottom: 32,
             animationDelay: "0.12s",
           }}
@@ -192,7 +192,7 @@ export function HeroSearch() {
             WebkitBackdropFilter: "blur(16px)",
           }}
         >
-          <Search className="h-5 w-5 shrink-0" style={{ color: "#4A6080" }} />
+          <Search className="h-5 w-5 shrink-0" style={{ color: "var(--muted-foreground)" }} />
           <div className="relative flex-1 min-w-0">
             <input
               type="text"
@@ -202,7 +202,7 @@ export function HeroSearch() {
               style={{
                 fontFamily: "Inter, sans-serif",
                 fontSize: "1rem",
-                color: "#F0EBE0",
+                color: "var(--foreground)",
                 padding: "12px 0",
                 border: "none",
               }}
@@ -216,7 +216,7 @@ export function HeroSearch() {
                 className={`pointer-events-none absolute inset-0 flex items-center truncate transition-all duration-300 ${
                   animating ? "opacity-0 -translate-y-1" : "opacity-100 translate-y-0"
                 }`}
-                style={{ color: "#4A6080", fontSize: "1rem" }}
+                style={{ color: "var(--muted-foreground)", fontSize: "1rem" }}
               >
                 {phrases[phraseIdx]}
               </span>
@@ -265,12 +265,12 @@ export function HeroSearch() {
               className="inline-flex items-center gap-1.5 whitespace-nowrap transition-colors"
               style={{
                 background: "rgba(26, 34, 54, 0.7)",
-                border: "1px solid #1e2d45",
+                border: "1px solid var(--border)",
                 borderRadius: 999,
                 padding: "5px 10px",
                 fontSize: "0.7rem",
                 fontWeight: 500,
-                color: "#94A3B8",
+                color: "var(--muted-foreground)",
                 backdropFilter: "blur(8px)",
                 WebkitBackdropFilter: "blur(8px)",
               }}
@@ -301,7 +301,7 @@ export function HeroSearch() {
             fontSize: "0.7rem",
             letterSpacing: "0.1em",
             textTransform: "uppercase",
-            color: "#4A6080",
+            color: "var(--muted-foreground)",
           }}
         >
           {t("hero.scroll")}
