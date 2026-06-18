@@ -138,7 +138,6 @@ export function HeroSearch() {
             textShadow: "0 1px 2px rgba(0,0,0,0.9), 0 0 12px rgba(0,0,0,0.7)",
           }}
         >
-          <span className="hero-eyebrow-rule" style={{ width: 28, height: 2, background: GOLD, opacity: 0.9, display: "inline-block" }} />
           {t("hero.eyebrow")}
         </div>
 

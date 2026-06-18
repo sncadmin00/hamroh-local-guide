@@ -312,7 +312,3 @@ body, body * {
   color: #8a6a1f !important;
   text-shadow: none !important;
 }
-:root[data-theme="light"] .hero-eyebrow .hero-eyebrow-rule {
-  background: #8a6a1f !important;
-  opacity: 0.8 !important;
-}
