@@ -134,24 +134,26 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
                 </span>
               </button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-72">
-              <SheetHeader>
-                <SheetTitle className="text-left">{t("common.menu")}</SheetTitle>
+            <SheetContent side="right" className="w-80 bg-[#111827] border-[rgba(255,255,255,0.06)] p-0">
+              <SheetHeader className="px-6 pt-8 pb-2">
+                <SheetTitle className="text-left font-['DM_Serif_Display',serif] text-[#F0EBE0] text-2xl tracking-wide">
+                  {t("common.menu")}
+                </SheetTitle>
               </SheetHeader>
-              <nav className="mt-6 flex flex-col">
+              <nav className="mt-2 flex flex-col px-6">
                 <Link
                   to="/wishlist"
-                  className="px-3 py-3 rounded-lg text-base font-medium text-foreground hover:bg-secondary/60 inline-flex items-center gap-2"
-                  activeProps={{ className: "px-3 py-3 rounded-lg text-base font-medium bg-secondary text-foreground inline-flex items-center gap-2" }}
+                  className="py-[14px] text-[1.1rem] text-[#F0EBE0] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1"
+                  activeProps={{ className: "py-[14px] text-[1.1rem] text-[#C9A84C] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1" }}
                 >
-                  <Heart className="h-4 w-4" /> {t("nav.wishlist")}
+                  <Heart className="h-5 w-5 text-[#C9A84C]" /> {t("nav.wishlist")}
                 </Link>
                 {menuLinks.map((link) => (
                   <Link
                     key={link.to}
                     to={link.to}
-                    className="px-3 py-3 rounded-lg text-base font-medium text-foreground hover:bg-secondary/60"
-                    activeProps={{ className: "px-3 py-3 rounded-lg text-base font-medium bg-secondary text-foreground" }}
+                    className="py-[14px] text-[1.1rem] text-[#F0EBE0] border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1"
+                    activeProps={{ className: "py-[14px] text-[1.1rem] text-[#C9A84C] border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1" }}
                   >
                     {link.label}
                   </Link>
@@ -159,63 +161,63 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
                 {signedIn && (
                   <Link
                     to="/messages"
-                    className="px-3 py-3 rounded-lg text-base font-medium text-foreground hover:bg-secondary/60 inline-flex items-center gap-2"
-                    activeProps={{ className: "px-3 py-3 rounded-lg text-base font-medium bg-secondary text-foreground inline-flex items-center gap-2" }}
+                    className="py-[14px] text-[1.1rem] text-[#F0EBE0] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1"
+                    activeProps={{ className: "py-[14px] text-[1.1rem] text-[#C9A84C] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1" }}
                   >
-                    <MessageSquare className="h-4 w-4" /> {t("common.messages")}
+                    <MessageSquare className="h-5 w-5 text-[#C9A84C]" /> {t("common.messages")}
                   </Link>
                 )}
                 {signedIn && (
                   <Link
                     to="/settings"
-                    className="px-3 py-3 rounded-lg text-base font-medium text-foreground hover:bg-secondary/60 inline-flex items-center gap-2"
-                    activeProps={{ className: "px-3 py-3 rounded-lg text-base font-medium bg-secondary text-foreground inline-flex items-center gap-2" }}
+                    className="py-[14px] text-[1.1rem] text-[#F0EBE0] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1"
+                    activeProps={{ className: "py-[14px] text-[1.1rem] text-[#C9A84C] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1" }}
                   >
-                    <Settings className="h-4 w-4" /> {t("common.settings")}
+                    <Settings className="h-5 w-5 text-[#C9A84C]" /> {t("common.settings")}
                   </Link>
                 )}
                 {isGuide && (
                   <Link
                     to="/guide"
-                    className="px-3 py-3 rounded-lg text-base font-medium text-foreground hover:bg-secondary/60 inline-flex items-center gap-2"
-                    activeProps={{ className: "px-3 py-3 rounded-lg text-base font-medium bg-secondary text-foreground inline-flex items-center gap-2" }}
+                    className="py-[14px] text-[1.1rem] text-[#F0EBE0] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1"
+                    activeProps={{ className: "py-[14px] text-[1.1rem] text-[#C9A84C] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1" }}
                   >
-                    <Briefcase className="h-4 w-4" /> {t("nav.guideDashboard")}
+                    <Briefcase className="h-5 w-5 text-[#C9A84C]" /> {t("nav.guideDashboard")}
                   </Link>
                 )}
                 {isAdmin && (
                   <Link
                     to="/admin"
-                    className="px-3 py-3 rounded-lg text-base font-medium text-foreground hover:bg-secondary/60 inline-flex items-center gap-2"
-                    activeProps={{ className: "px-3 py-3 rounded-lg text-base font-medium bg-secondary text-foreground inline-flex items-center gap-2" }}
+                    className="py-[14px] text-[1.1rem] text-[#F0EBE0] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1"
+                    activeProps={{ className: "py-[14px] text-[1.1rem] text-[#C9A84C] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1" }}
                   >
-                    <Shield className="h-4 w-4" /> {t("common.admin")}
+                    <Shield className="h-5 w-5 text-[#C9A84C]" /> {t("common.admin")}
                   </Link>
                 )}
                 {signedIn ? (
                   <button
                     onClick={signOut}
-                    className="mt-2 px-3 py-3 rounded-lg text-base font-medium text-foreground hover:bg-secondary/60 inline-flex items-center gap-2 text-left"
+                    className="py-[14px] text-[1.1rem] text-[#4A6080] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:text-[#ef4444] hover:translate-x-1 text-left"
                   >
-                    <LogOut className="h-4 w-4" /> {t("common.signOut")}
+                    <LogOut className="h-5 w-5" /> {t("common.signOut")}
                   </button>
                 ) : (
                   <Link
                     to="/login"
-                    className="mt-2 px-3 py-3 rounded-lg text-base font-semibold bg-primary text-primary-foreground inline-flex items-center gap-2"
+                    className="py-[14px] text-[1.1rem] font-semibold text-[#0B1430] inline-flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] transition-all duration-200 hover:translate-x-1 bg-[#C9A84C] rounded-lg px-3 mt-2"
                   >
-                    <LogIn className="h-4 w-4" /> {t("common.signIn")}
+                    <LogIn className="h-5 w-5" /> {t("common.signIn")}
                   </Link>
                 )}
               </nav>
-              <div className="mt-6 flex items-center gap-3 px-3">
-                <span className="text-sm text-muted-foreground">{t("common.contactUs")}</span>
+              <div className="mt-6 flex items-center gap-3 px-6">
+                <span className="text-sm text-[#4A6080]">{t("common.contactUs")}</span>
                 <a
                   href="https://t.me/yourtelegram"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Join Telegram"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[#229ED9]/10 text-[#229ED9] hover:bg-[#229ED9]/20 transition-colors"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[#94A3B8] hover:text-[#C9A84C] transition-colors"
                 >
                   <TelegramIcon className="h-5 w-5" />
                 </a>
@@ -224,21 +226,21 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Chat on WhatsApp"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20 transition-colors"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[#94A3B8] hover:text-[#C9A84C] transition-colors"
                 >
                   <WhatsAppIcon className="h-5 w-5" />
                 </a>
                 <a
                   href="mailto:hello@hamroh.com"
                   aria-label="Email us"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-secondary text-foreground hover:bg-secondary/80 transition-colors"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[#94A3B8] hover:text-[#C9A84C] transition-colors"
                 >
                   <Mail className="h-5 w-5" />
                 </a>
                 <a
                   href="tel:+1234567890"
                   aria-label="Call us"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-secondary text-foreground hover:bg-secondary/80 transition-colors"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[#94A3B8] hover:text-[#C9A84C] transition-colors"
                 >
                   <Phone className="h-5 w-5" />
                 </a>
