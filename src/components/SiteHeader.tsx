@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useI18n } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { supabase } from "@/integrations/supabase/client";
 
 function WhatsAppIcon({ className }: { className?: string }) {
@@ -99,6 +100,8 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
         {/* Right: language, user pill */}
         <div className="flex items-center gap-1.5 shrink-0">
 
+
+          <ThemeToggle transparent={transparent} />
 
           <LanguageSwitcher
             className={

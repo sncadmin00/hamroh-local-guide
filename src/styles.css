@@ -84,6 +84,70 @@
   --shadow-elegant: 0 20px 50px -20px rgba(0, 0, 0, 0.60);
 }
 
+/* Light theme — applied when data-theme="light" on <html> */
+:root[data-theme="light"] {
+  --background: #F8F6F2;
+  --foreground: #1a1a2e;
+
+  --card: #FFFFFF;
+  --card-foreground: #1a1a2e;
+  --popover: #FFFFFF;
+  --popover-foreground: #1a1a2e;
+
+  --primary: #C9A84C;
+  --primary-foreground: #1a1a2e;
+
+  --accent: #1F9BB4;
+  --accent-foreground: #FFFFFF;
+
+  --gold: #C9A84C;
+  --gold-hover: #B8962A;
+  --gold-glow: rgba(201, 168, 76, 0.12);
+  --gold-foreground: #1a1a2e;
+
+  --secondary: #F0EDE8;
+  --secondary-foreground: #1a1a2e;
+  --muted: #F0EDE8;
+  --muted-foreground: #6B7280;
+
+  --destructive: oklch(0.6 0.22 27);
+  --destructive-foreground: #FFFFFF;
+
+  --telegram: oklch(0.62 0.16 235);
+  --telegram-foreground: #FFFFFF;
+
+  --border: rgba(0, 0, 0, 0.08);
+  --input: rgba(0, 0, 0, 0.12);
+  --ring: #C9A84C;
+
+  --gradient-hero: linear-gradient(135deg, #F8F6F2 0%, #F0EDE8 100%);
+  --gradient-warm: linear-gradient(135deg, #F8F6F2 0%, #F0EDE8 100%);
+  --shadow-card: 0 2px 16px rgba(0, 0, 0, 0.06);
+  --shadow-elegant: 0 20px 50px -20px rgba(0, 0, 0, 0.18);
+}
+
+:root[data-theme="light"] .glass-card {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+}
+:root[data-theme="light"] .glass-card:hover {
+  background: #FFFFFF;
+  border-color: rgba(201, 168, 76, 0.45);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+}
+:root[data-theme="light"] .glass-divider {
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+:root[data-theme="light"] .gold-divider::after {
+  background: #F8F6F2;
+}
+
+/* Smooth theme transition */
+body, body * {
+  transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease;
+}
+
 .dark {
   --background: #0B1430;
   --foreground: #F7F9FC;

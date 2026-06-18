@@ -15,6 +15,7 @@ import { I18nProvider } from "@/lib/i18n";
 import { useTrackSource } from "@/hooks/useTrackSource";
 import { useCaptureReferral } from "@/hooks/useCaptureReferral";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/hooks/use-theme";
 
 const SITE_URL = "https://hamroh-local-guide.lovable.app";
 const OG_IMAGE = `${SITE_URL}${ogDefault}`;
@@ -101,9 +102,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: React.ReactNode }) {
+  const themeInit = `(function(){try{var t=localStorage.getItem('hamroh-theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark');}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();`;
   return (
-    <html lang="en">
-      <head><HeadContent /></head>
+    <html lang="en" data-theme="dark">
+      <head>
+        <HeadContent />
+        <script dangerouslySetInnerHTML={{ __html: themeInit }} />
+      </head>
       <body>
         {children}
         <Scripts />
@@ -118,10 +123,12 @@ function RootComponent() {
   useCaptureReferral();
   return (
     <QueryClientProvider client={queryClient}>
-      <I18nProvider>
-        <Outlet />
-        <Toaster />
-      </I18nProvider>
+      <ThemeProvider>
+        <I18nProvider>
+          <Outlet />
+          <Toaster />
+        </I18nProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
