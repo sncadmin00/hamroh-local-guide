@@ -74,7 +74,7 @@ function Home() {
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#0a0f1e", color: "#F0EBE0" }}>
-      <SiteHeader transparent sticky={false} />
+      <SiteHeader transparent />
 
       <main className="flex-1">
         <div className="-mt-16">
