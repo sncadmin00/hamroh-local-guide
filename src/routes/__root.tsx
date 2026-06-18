@@ -119,10 +119,12 @@ function RootComponent() {
   useCaptureReferral();
   return (
     <QueryClientProvider client={queryClient}>
-      <I18nProvider>
-        <Outlet />
-        <Toaster />
-      </I18nProvider>
+      <ThemeProvider>
+        <I18nProvider>
+          <Outlet />
+          <Toaster />
+        </I18nProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
