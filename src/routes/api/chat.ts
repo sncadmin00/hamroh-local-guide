@@ -4,7 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
 import { retrieveArticleContext } from "@/lib/articles-rag.functions";
 
-type ChatBody = { messages?: UIMessage[]; threadId?: string };
+type ChatBody = { messages?: UIMessage[]; threadId?: string; lang?: "en" | "uz" | "ru" };
 
 
 const DAILY_LIMIT = 20;
@@ -13,6 +13,7 @@ const MAX_QUERY_LEN = 300;
 async function buildSystemPrompt(
   client: ReturnType<typeof createClient<any, any, any>>,
   articleContext: Array<{ title: string; slug: string; content: string }> = [],
+  lang: "en" | "uz" | "ru" = "en",
 ) {
 
   const [guidesRes, placesRes, toursRes] = await Promise.all([
@@ -101,7 +102,7 @@ ${placesCatalog || "(no places yet)"}
 ${articlesBlock}
 
 === HOW TO ANSWER ===
-- Match the user's language (RU/UZ/EN).
+- ALWAYS reply in this language: ${lang === "ru" ? "Russian (русский)" : lang === "uz" ? "Uzbek (o'zbek tili, latin script)" : "English"}. This is the user's selected UI language — ignore the language of their query and respond ONLY in the selected language.
 - Keep replies warm, concise, useful. Light markdown (bold, lists).
 - Whenever the user asks about a trip, city, food, or activity, recommend a combination of GUIDES + TOURS that fit.
 - Naturally mention 2-4 relevant PLACES inline in your prose (things to see, eat, photograph). Each mentioned place MUST be a markdown link to its MapsURL from the PLACES CATALOG, e.g. "попробуйте плов в [Besh Qozon](https://www.google.com/maps/...)". Never invent a place or a URL — only use places and URLs from the catalog above. Do not create a separate "Places" list/section.
@@ -218,7 +219,7 @@ export const Route = createFileRoute("/api/chat")({
 
         const result = streamText({
           model,
-          system: await buildSystemPrompt(userClient, articleContext),
+          system: await buildSystemPrompt(userClient, articleContext, body.lang ?? "en"),
           messages: await convertToModelMessages(body.messages),
           stopWhen: stepCountIs(3),
         });

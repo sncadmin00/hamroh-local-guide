@@ -50,14 +50,15 @@ function ThreadPage() {
 }
 
 function ChatWindow({ threadId, initial, token }: { threadId: string; initial: { id: string; role: "user" | "assistant" | "system"; parts: Array<{ type: string; text?: string }> }[]; token: string }) {
+  const { lang } = useI18n();
   const transport = useMemo(
     () =>
       new DefaultChatTransport({
         api: "/api/chat",
         headers: { Authorization: `Bearer ${token}` },
-        body: { threadId },
+        body: { threadId, lang },
       }),
-    [token, threadId],
+    [token, threadId, lang],
   );
 
   const initialMessages = useMemo<UIMessage[]>(
