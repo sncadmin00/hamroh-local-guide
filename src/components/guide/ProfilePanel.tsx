@@ -3,7 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Check, X, Image as ImageIcon } from "lucide-react";
-import { updateMyTaxInfo } from "@/lib/earnings.functions";
+import { getMyTaxInfo, updateMyTaxInfo } from "@/lib/earnings.functions";
 import { useGuideI18n } from "@/lib/guide-i18n";
 
 type MediaItem = { url: string; label: string; source: "photo" | "tour" | "post" };
@@ -11,6 +11,7 @@ type MediaItem = { url: string; label: string; source: "photo" | "tour" | "post"
 export function ProfilePanel({ guideId }: { guideId: string }) {
   const { tg } = useGuideI18n();
   const updateTaxFn = useServerFn(updateMyTaxInfo);
+  const getTaxFn = useServerFn(getMyTaxInfo);
   const [currentCover, setCurrentCover] = useState<string | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [media, setMedia] = useState<MediaItem[]>([]);
@@ -24,10 +25,11 @@ export function ProfilePanel({ guideId }: { guideId: string }) {
     let alive = true;
     (async () => {
       setLoading(true);
-      const [g, t, p] = await Promise.all([
-        supabase.from("guides").select("photo_url, cover_url, tax_status, tax_id").eq("id", guideId).maybeSingle(),
+      const [g, t, p, tax] = await Promise.all([
+        supabase.from("guides").select("photo_url, cover_url").eq("id", guideId).maybeSingle(),
         supabase.from("tours").select("title, cover_url").eq("guide_id", guideId).not("cover_url", "is", null),
         supabase.from("guide_posts").select("caption, thumbnail_url").eq("guide_id", guideId).not("thumbnail_url", "is", null),
+        getTaxFn().catch(() => ({ tax_status: "none" as const, tax_id: "" })),
       ]);
       if (!alive) return;
       const items: MediaItem[] = [];
@@ -44,8 +46,8 @@ export function ProfilePanel({ guideId }: { guideId: string }) {
       setMedia(unique);
       setPhotoUrl(g.data?.photo_url ?? null);
       setCurrentCover(g.data?.cover_url ?? null);
-      setTaxStatus(((g.data as any)?.tax_status ?? "none") as any);
-      setTaxId(((g.data as any)?.tax_id ?? "") as string);
+      setTaxStatus(((tax as any)?.tax_status ?? "none") as any);
+      setTaxId(((tax as any)?.tax_id ?? "") as string);
       setLoading(false);
     })();
     return () => { alive = false; };
