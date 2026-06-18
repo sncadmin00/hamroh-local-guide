@@ -32,6 +32,13 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
   const [isGuide, setIsGuide] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [displayName, setDisplayName] = useState<string | null>(null);
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
   useEffect(() => {
     const checkAdmin = async (userId: string | undefined) => {
       if (!userId) { setIsAdmin(false); return; }
