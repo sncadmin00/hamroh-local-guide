@@ -101,6 +101,8 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
         <div className="flex items-center gap-1.5 shrink-0">
 
 
+          <ThemeToggle transparent={transparent} />
+
           <LanguageSwitcher
             className={
               transparent
