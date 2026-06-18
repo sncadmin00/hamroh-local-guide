@@ -80,8 +80,8 @@ export function PopularCategoriesCarousel() {
               key={c.id}
               to="/guides"
               search={{ category: c.slug }}
-              className="group relative rounded-2xl overflow-hidden aspect-[3/4] border transition-all hover:-translate-y-1.5 block"
-              style={{ borderColor: "color-mix(in srgb, var(--gold) 12%, transparent)" }}
+              className="glass-card group relative overflow-hidden aspect-[3/4] block"
+
             >
               <img
                 src={cover}
