@@ -49,10 +49,10 @@ function GuidesPage() {
 
   const pillBase = "inline-flex items-center gap-1.5 h-9 px-4 rounded-full text-sm transition";
   const pillInactive = "bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.08)] text-[#94A3B8] hover:text-[#F0EBE0]";
-  const pillActive = "bg-[#C9A84C] text-[#0d1424] font-semibold border-0";
+  const pillActive = "bg-[#C9A84C] text-[hsl(var(--bg))] font-semibold border-0";
 
   return (
-    <div className="min-h-screen bg-[#0d1424]">
+    <div className="min-h-screen bg-[hsl(var(--bg))]">
       <SiteHeader />
       <section className="border-b border-[rgba(255,255,255,0.06)]">
         <div className="container mx-auto px-4 py-12 md:py-16">
