@@ -102,9 +102,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: React.ReactNode }) {
+  const themeInit = `(function(){try{var t=localStorage.getItem('hamroh-theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark');}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();`;
   return (
-    <html lang="en">
-      <head><HeadContent /></head>
+    <html lang="en" data-theme="dark">
+      <head>
+        <HeadContent />
+        <script dangerouslySetInnerHTML={{ __html: themeInit }} />
+      </head>
       <body>
         {children}
         <Scripts />
