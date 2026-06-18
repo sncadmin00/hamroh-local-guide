@@ -81,8 +81,8 @@ export function ScrollRow({
         ? children.map((child, i) => (
             <div
               key={i}
-              className="snap-start shrink-0"
-              style={{ width: `min(${cardWidth}px, ${mobileVw}vw)` }}
+              className="snap-start shrink-0 sr-item"
+              style={{ '--sr-mob': `${mobileVw}vw`, '--sr-desk': `${cardWidth}px` } as React.CSSProperties}
             >
               {child}
             </div>
