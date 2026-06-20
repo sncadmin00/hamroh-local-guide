@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Menu, Settings, Shield, LogIn, LogOut, Mail, Phone, MessageSquare, User, Heart, Briefcase } from "lucide-react";
+import { Menu, Settings, Shield, LogIn, LogOut, Mail, Phone, MessageSquare, User, User as UserIcon, Heart, Briefcase, Calendar } from "lucide-react";
 
 import hamrohLogo from "@/assets/hamroh-logo.png";
 import { useEffect, useState } from "react";
@@ -175,6 +175,24 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
                     activeProps={{ className: "py-[14px] text-[1.1rem] text-[#C9A84C] inline-flex items-center gap-3 border-b border-[var(--border)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1" }}
                   >
                     <MessageSquare className="h-5 w-5 text-[#C9A84C]" /> {t("common.messages")}
+                  </Link>
+                )}
+                {signedIn && (
+                  <Link
+                    to="/account"
+                    className="py-[14px] text-[1.1rem] text-[var(--foreground)] inline-flex items-center gap-3 border-b border-[var(--border)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1"
+                    activeProps={{ className: "py-[14px] text-[1.1rem] text-[#C9A84C] inline-flex items-center gap-3 border-b border-[var(--border)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1" }}
+                  >
+                    <UserIcon className="h-5 w-5 text-[#C9A84C]" /> {t("nav.myAccount")}
+                  </Link>
+                )}
+                {signedIn && (
+                  <Link
+                    to="/my-bookings"
+                    className="py-[14px] text-[1.1rem] text-[var(--foreground)] inline-flex items-center gap-3 border-b border-[var(--border)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1"
+                    activeProps={{ className: "py-[14px] text-[1.1rem] text-[#C9A84C] inline-flex items-center gap-3 border-b border-[var(--border)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1" }}
+                  >
+                    <Calendar className="h-5 w-5 text-[#C9A84C]" /> {t("nav.myBookings")}
                   </Link>
                 )}
                 {signedIn && (
