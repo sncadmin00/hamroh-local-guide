@@ -2236,8 +2236,33 @@ export type Database = {
         }
         Relationships: []
       }
+      wishlist_collections: {
+        Row: {
+          created_at: string
+          emoji: string
+          id: string
+          name: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          emoji?: string
+          id?: string
+          name: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          emoji?: string
+          id?: string
+          name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       wishlists: {
         Row: {
+          collection_id: string | null
           created_at: string
           id: string
           item_id: string
@@ -2245,6 +2270,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          collection_id?: string | null
           created_at?: string
           id?: string
           item_id: string
@@ -2252,13 +2278,22 @@ export type Database = {
           user_id: string
         }
         Update: {
+          collection_id?: string | null
           created_at?: string
           id?: string
           item_id?: string
           item_type?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "wishlists_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "wishlist_collections"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
