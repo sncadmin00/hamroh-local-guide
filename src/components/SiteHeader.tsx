@@ -183,7 +183,7 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
                     className="py-[14px] text-[1.1rem] text-[var(--foreground)] inline-flex items-center gap-3 border-b border-[var(--border)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1"
                     activeProps={{ className: "py-[14px] text-[1.1rem] text-[#C9A84C] inline-flex items-center gap-3 border-b border-[var(--border)] transition-all duration-200 hover:text-[#C9A84C] hover:translate-x-1" }}
                   >
-                    <UserIcon className="h-5 w-5 text-[#C9A84C]" /> {t("nav.myAccount")}
+                    <User className="h-5 w-5 text-[#C9A84C]" /> {t("nav.myAccount")}
                   </Link>
                 )}
                 {signedIn && (
