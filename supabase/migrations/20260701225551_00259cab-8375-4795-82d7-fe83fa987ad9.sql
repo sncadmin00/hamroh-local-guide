@@ -1,0 +1,2 @@
+ALTER TABLE public.guide_posts ADD COLUMN IF NOT EXISTS featured_on_home boolean NOT NULL DEFAULT false;
+CREATE INDEX IF NOT EXISTS idx_guide_posts_featured_home ON public.guide_posts (featured_on_home, created_at DESC) WHERE featured_on_home = true AND visible = true;
