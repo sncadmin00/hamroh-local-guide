@@ -2,15 +2,13 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { HeroSearch } from "@/components/home/HeroSearch";
-import { TrustBar } from "@/components/home/TrustBar";
-
-import { SpotlightGuideCarousel } from "@/components/home/SpotlightGuideCarousel";
-import { PopularCategoriesCarousel } from "@/components/home/PopularCategoriesCarousel";
-import { SpotlightTourCarousel } from "@/components/home/SpotlightTourCarousel";
-
-import { FeaturedReviews } from "@/components/home/FeaturedReviews";
-
+import { NotificationBanner } from "@/components/home/NotificationBanner";
+import { PersonalCard } from "@/components/home/PersonalCard";
+import { AISearchBar } from "@/components/home/AISearchBar";
+import { ExploreCarousel } from "@/components/home/ExploreCarousel";
+import { ReelsRow } from "@/components/home/ReelsRow";
+import { BudgetCalculator } from "@/components/home/BudgetCalculator";
+import { TravelDiary } from "@/components/home/TravelDiary";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 
@@ -27,9 +25,7 @@ export const Route = createFileRoute("/")({
       { name: "twitter:title", content: "Hamroh — Find your verified local guide with AI" },
       { name: "twitter:description", content: "Tell us your trip, get matched with a verified local guide in seconds." },
     ],
-    links: [
-      { rel: "canonical", href: "https://hamroh-local-guide.lovable.app/" },
-    ],
+    links: [{ rel: "canonical", href: "https://hamroh-local-guide.lovable.app/" }],
     scripts: [
       {
         type: "application/ld+json",
@@ -43,16 +39,6 @@ export const Route = createFileRoute("/")({
             target: "https://hamroh-local-guide.lovable.app/guides?q={query}",
             "query-input": "required name=query",
           },
-        }),
-      },
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "Organization",
-          name: "Hamroh",
-          url: "https://hamroh-local-guide.lovable.app/",
-          description: "AI-powered marketplace for verified local guides.",
         }),
       },
     ],
@@ -74,107 +60,40 @@ function Home() {
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "var(--background)", color: "var(--foreground)" }}>
-      <SiteHeader transparent />
+      <SiteHeader />
 
       <main className="flex-1">
-        <div className="-mt-16">
-          <HeroSearch />
-        </div>
-
-        <TrustBar />
-
-        <PopularCategoriesCarousel />
-        <div className="gold-divider" />
-        <SpotlightGuideCarousel />
-        <div className="gold-divider" />
-        <SpotlightTourCarousel />
-
-        <FeaturedReviews />
+        <NotificationBanner />
+        <PersonalCard />
+        <AISearchBar />
+        <ExploreCarousel />
+        <ReelsRow />
+        <BudgetCalculator />
+        <TravelDiary />
 
         {/* Become a guide banner */}
-        <section className="px-6 md:px-12 pb-16 md:pb-[72px]">
-          <div
-            className="relative max-w-[1280px] mx-auto rounded-3xl overflow-hidden flex flex-col md:flex-row items-center gap-10 px-8 py-10 md:px-16 md:py-14"
+        <section className="px-6 md:px-12 py-14 md:py-[72px]">
+          <Link
+            to={isGuide ? "/guide" : "/become-a-guide"}
+            className="relative max-w-[1280px] mx-auto rounded-3xl overflow-hidden flex items-center justify-between gap-6 px-6 py-6 md:px-10 md:py-8 transition-transform hover:-translate-y-0.5"
             style={{
-              background: "linear-gradient(135deg, var(--card) 0%, var(--card) 100%)",
-              border: "1px solid var(--gold-glow)",
+              background: "linear-gradient(135deg, #C9A84C 0%, #B39038 100%)",
+              color: "#0F1F5C",
             }}
           >
-            <div
-              className="absolute -top-20 -right-20 w-[300px] h-[300px] rounded-full pointer-events-none"
-              style={{ background: "radial-gradient(circle, color-mix(in srgb, var(--gold) 8%, transparent) 0%, transparent 70%)" }}
-            />
-            <div
-              className="absolute -bottom-16 left-[200px] w-[200px] h-[200px] rounded-full pointer-events-none"
-              style={{ background: "radial-gradient(circle, color-mix(in srgb, var(--gold) 5%, transparent) 0%, transparent 70%)" }}
-            />
-
-            <div className="relative max-w-[500px] flex-1">
-              <p
-                className="text-[0.72rem] font-semibold uppercase tracking-[0.14em] mb-4"
-                style={{ color: "var(--gold)" }}
-              >
+            <div className="flex-1 min-w-0">
+              <p className="text-[0.72rem] font-semibold uppercase tracking-[0.14em] mb-2 opacity-80">
                 {t("nav.becomeGuide")}
               </p>
-              <h2
-                className="text-[1.6rem] md:text-[2.4rem] leading-[1.15] tracking-tight mb-5 whitespace-pre-line"
-                style={{ color: "var(--foreground)", fontFamily: "'DM Serif Display', serif" }}
-              >
+              <h2 className="text-[1.4rem] md:text-[2rem] leading-[1.15] tracking-tight" style={{ fontFamily: "'DM Serif Display', serif" }}>
                 {t("banner.guide.title")}
               </h2>
-              <p className="text-[0.95rem] leading-relaxed mb-8 whitespace-pre-line" style={{ color: "var(--muted-foreground)" }}>
-                {t("banner.guide.points")}
+              <p className="mt-2 text-sm md:text-base opacity-80">
+                {t("banner.guide.subtitle") || "Earn from your local knowledge."}
               </p>
-              <Link
-                to={isGuide ? "/guide" : "/become-a-guide"}
-                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-sm font-semibold transition-all hover:-translate-y-0.5"
-                style={{ background: "var(--gold)", color: "var(--background)" }}
-              >
-                {isGuide ? t("nav.guideDashboard") : t("banner.guide.button")} →
-              </Link>
             </div>
-
-            <div
-              className="relative rounded-[20px] p-7 min-w-[240px] flex-shrink-0 md:rotate-2 w-full md:w-auto"
-              style={{
-                background: "rgba(26,34,54,0.8)",
-                backdropFilter: "blur(12px)",
-                border: "1px solid var(--gold-glow)",
-                boxShadow: "0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)",
-              }}
-            >
-              <div
-                className="w-16 h-16 rounded-full mx-auto mb-3.5 flex items-center justify-center text-3xl border-2"
-                style={{
-                  background: "linear-gradient(135deg, #2a3a5c, var(--card))",
-                  borderColor: "color-mix(in srgb, var(--gold) 30%, transparent)",
-                }}
-              >
-                🧑‍💼
-              </div>
-              <p className="font-semibold text-[0.95rem] text-center mb-1" style={{ color: "var(--foreground)" }}>
-                {t("nav.becomeGuide")}
-              </p>
-              <p className="text-[0.78rem] text-center mb-3.5" style={{ color: "var(--muted-foreground)" }}>
-                Uzbekistan
-              </p>
-              <div className="flex justify-center gap-1 mb-3.5">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <span key={i} style={{ color: "var(--gold)" }}>★</span>
-                ))}
-              </div>
-              <div
-                className="inline-flex items-center justify-center gap-1.5 rounded-full px-3 py-1.5 text-[0.72rem] font-semibold tracking-wider w-full"
-                style={{
-                  background: "color-mix(in srgb, var(--gold) 10%, transparent)",
-                  border: "1px solid color-mix(in srgb, var(--gold) 25%, transparent)",
-                  color: "var(--gold)",
-                }}
-              >
-                ✓ Verified Guide
-              </div>
-            </div>
-          </div>
+            <span className="text-3xl md:text-4xl shrink-0">→</span>
+          </Link>
         </section>
       </main>
 
