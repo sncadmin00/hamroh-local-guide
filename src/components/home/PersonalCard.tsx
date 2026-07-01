@@ -48,8 +48,12 @@ export function PersonalCard() {
     try { localStorage.setItem("tripPrefs", JSON.stringify(next)); } catch {}
   };
 
-  const hour = new Date().getHours();
-  const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+  const [greeting, setGreeting] = useState("Good day");
+
+  useEffect(() => {
+    const hour = new Date().getHours();
+    setGreeting(hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening");
+  }, []);
 
   const tripLabel = prefs.startDate && prefs.endDate
     ? `${prefs.startDate} — ${prefs.endDate}`
