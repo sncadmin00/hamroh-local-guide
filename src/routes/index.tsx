@@ -77,9 +77,6 @@ function Home() {
         <AISearchBar />
 
         <ExploreCarousel cards={exploreCards} />
-        <PopularCategoriesCarousel />
-        <SpotlightTourCarousel />
-        <SpotlightGuideCarousel />
         <ReelsRow />
         <BudgetCalculator />
         <TravelDiary />
