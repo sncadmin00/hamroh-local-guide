@@ -2562,12 +2562,18 @@ function SuggestionsPanel({
             <li key={s.id} className="py-4 space-y-2">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
-                  <p className="font-medium">
-                    {s.name}{" "}
-                    <span className="text-xs text-muted-foreground font-normal">
-                      / {s.category} · {s.city_name}
-                    </span>
-                  </p>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <p className="font-medium">
+                      {s.name}{" "}
+                      <span className="text-xs text-muted-foreground font-normal">
+                        / {s.category} · {s.city_name}
+                      </span>
+                    </p>
+                    <SourceBadge source={s.source ?? "ai"} />
+                  </div>
+                  {s.contact_email && (
+                    <p className="text-[11px] text-muted-foreground mt-0.5">{s.contact_email}</p>
+                  )}
                   <p className="mt-1 text-sm text-muted-foreground">{s.description}</p>
                   {s.source_url && (
                     <a
