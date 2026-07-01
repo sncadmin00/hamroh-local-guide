@@ -1,7 +1,7 @@
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
-const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY")!;
-const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent";
+const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY")!;
+const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -16,7 +16,7 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
     const [toursRes, guidesRes, placesRes, articlesRes] = await Promise.all([
@@ -35,14 +35,14 @@ Deno.serve(async (req) => {
 
 ВАЖНО: Отвечай ТОЛЬКО на основе данных из нашей базы ниже. Не используй внешние знания.
 Если информации нет в базе — честно скажи "У нас пока нет такого в базе".
-Отвечай на русском языке. Будь дружелюбным и конкретным.
+Отвечай на языке: ${lang}. Будь дружелюбным и конкретным.
 
 В конце КАЖДОГО ответа добавляй JSON блок с рекомендациями в точно таком формате:
 <recommendations>
-[{"type":"tour","id":"ID_ТУРА","title":"НАЗВАНИЕ","price":ЦЕНА,"rating":РЕЙТИНГ},{"type":"guide","id":"ID_ГИДА","title":"ИМЯ","rating":РЕЙТИНГ},{"type":"place","id":"ID_МЕСТА","title":"НАЗВАНИЕ","category":"КАТЕГОРИЯ"},{"type":"article","id":"ID","title":"НАЗВАНИЕ","slug":"SLUG"}]
+[{"type":"tour","id":"ID","title":"НАЗВАНИЕ","price":ЦЕНА,"rating":РЕЙТИНГ},{"type":"guide","id":"ID","title":"ИМЯ","rating":РЕЙТИНГ},{"type":"place","id":"ID","title":"НАЗВАНИЕ","category":"КАТЕГОРИЯ"},{"type":"article","id":"ID","title":"НАЗВАНИЕ","slug":"SLUG"}]
 </recommendations>
 
-Включай только РЕАЛЬНО РЕЛЕВАНТНЫЕ рекомендации из базы. Максимум 4 рекомендации.
+Максимум 4 релевантных рекомендации из базы.
 
 НАШИ ТУРЫ:
 ${tours.map((t: any) => `ID:${t.id} | ${t.title_ru || t.title_en}: ${t.short_description_ru || t.short_description_en || ""} | $${t.price_from} | ${t.duration_hours}ч | Языки: ${(t.languages || []).join(", ")} | ★${t.rating}`).join("\n")}
@@ -56,32 +56,52 @@ ${places.map((p: any) => `ID:${p.id} | ${p.name} (${p.category}): ${p.short_desc
 СТАТЬИ:
 ${articles.map((a: any) => `ID:${a.id} | ${a.title}: ${a.excerpt || ""} | slug:${a.slug}`).join("\n")}`;
 
-    const geminiMessages = messages.map((m: any) => ({
-      role: m.role === "assistant" ? "model" : "user",
-      parts: [{ text: m.content }],
-    }));
+    const chatMessages = [
+      { role: "system", content: systemPrompt },
+      ...messages.map((m: any) => ({ role: m.role, content: m.content })),
+    ];
 
-    const response = await fetch(`${GEMINI_URL}?key=${GEMINI_API_KEY}`, {
+    const response = await fetch(GATEWAY_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Lovable-API-Key": LOVABLE_API_KEY,
+        "X-Lovable-AIG-SDK": "custom",
+      },
       body: JSON.stringify({
-        system_instruction: { parts: [{ text: systemPrompt }] },
-        contents: geminiMessages,
-        generationConfig: { temperature: 0.5, maxOutputTokens: 1500 },
+        model: "google/gemini-3-flash-preview",
+        messages: chatMessages,
+        temperature: 0.5,
+        max_tokens: 1500,
       }),
     });
 
+    if (!response.ok) {
+      const errText = await response.text();
+      if (response.status === 429) {
+        return new Response(JSON.stringify({ error: "Слишком много запросов. Попробуйте позже." }), {
+          status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      if (response.status === 402) {
+        return new Response(JSON.stringify({ error: "Кредиты Lovable AI закончились. Пополните баланс." }), {
+          status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      throw new Error(`Gateway ${response.status}: ${errText}`);
+    }
+
     const data = await response.json();
-    const fullText = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+    const fullText = data.choices?.[0]?.message?.content || "";
 
     const recMatch = fullText.match(/<recommendations>([\s\S]*?)<\/recommendations>/);
     let recommendations = [];
-    let text = fullText.replace(/<recommendations>[\s\S]*?<\/recommendations>/g, "").trim();
+    const text = fullText.replace(/<recommendations>[\s\S]*?<\/recommendations>/g, "").trim();
 
     if (recMatch) {
       try {
         recommendations = JSON.parse(recMatch[1].trim());
-      } catch (e) {}
+      } catch (_e) {}
     }
 
     return new Response(JSON.stringify({ message: text, recommendations }), {
