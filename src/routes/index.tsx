@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { NotificationBanner } from "@/components/home/NotificationBanner";
+import { WeatherBanner } from "@/components/home/WeatherBanner";
 import { PersonalCard } from "@/components/home/PersonalCard";
 import { AISearchBar } from "@/components/home/AISearchBar";
 import { ExploreCarousel } from "@/components/home/ExploreCarousel";
@@ -12,6 +13,10 @@ import { SpotlightGuideCarousel } from "@/components/home/SpotlightGuideCarousel
 import { ReelsRow } from "@/components/home/ReelsRow";
 import { BudgetCalculator } from "@/components/home/BudgetCalculator";
 import { TravelDiary } from "@/components/home/TravelDiary";
+import { MobileTabBar } from "@/components/home/MobileTabBar";
+import { supabase } from "@/integrations/supabase/client";
+import { useI18n } from "@/lib/i18n";
+
 
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
