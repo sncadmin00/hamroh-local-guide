@@ -78,7 +78,7 @@ export function ExploreCarousel() {
                   >
                     {c.kind}
                   </span>
-                  {c.rating != null && (
+                  {c.kind !== "place" && c.rating != null && (
                     <span className="inline-flex items-center gap-1 text-xs" style={{ color: "var(--muted-foreground)" }}>
                       <Star className="h-3 w-3 fill-current" style={{ color: "#C9A84C" }} />
                       {Number(c.rating).toFixed(1)}
