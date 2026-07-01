@@ -118,6 +118,7 @@ export function GuidePostsPanel() {
                 <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-muted-foreground">
                   <span>{p.platform}</span>
                   {!p.visible && <span className="text-amber-600">{tg("posts.hidden")}</span>}
+                  {p.featured_on_home && <span className="text-amber-500 normal-case tracking-normal inline-flex items-center gap-1"><Star className="h-3 w-3 fill-amber-500" /> On home</span>}
                 </div>
                 <p className="text-sm mt-1 line-clamp-3 break-words">{p.caption || <span className="text-muted-foreground italic">{tg("posts.noCaption")}</span>}</p>
               </div>
