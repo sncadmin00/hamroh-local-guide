@@ -25,12 +25,34 @@ export const listMyGuidePosts = createServerFn({ method: "GET" })
     const guideId = await getOwnedGuideId(supabase, userId);
     const { data, error } = await supabase
       .from("guide_posts")
-      .select("id, platform, thumbnail_url, caption, visible, sort_order, created_at")
+      .select("id, platform, thumbnail_url, caption, visible, sort_order, featured_on_home, created_at")
       .eq("guide_id", guideId)
       .order("sort_order", { ascending: true })
       .order("created_at", { ascending: false });
     if (error) throw new Error(error.message);
     return { guideId, posts: data ?? [] };
+  });
+
+export const toggleMyGuidePostFeatured = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) => z.object({ id: z.string().uuid() }).parse(input))
+  .handler(async ({ context, data }) => {
+    const { supabase, userId } = context;
+    const guideId = await getOwnedGuideId(supabase, userId);
+    const { data: row, error: e1 } = await supabase
+      .from("guide_posts")
+      .select("featured_on_home, guide_id")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (e1) throw new Error(e1.message);
+    if (!row || row.guide_id !== guideId) throw new Error("Post not found");
+    const next = !row.featured_on_home;
+    const { error } = await supabase
+      .from("guide_posts")
+      .update({ featured_on_home: next })
+      .eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true, featured_on_home: next };
   });
 
 const createSchema = z.object({

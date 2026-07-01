@@ -1117,6 +1117,7 @@ export type Database = {
         Row: {
           caption: string
           created_at: string
+          featured_on_home: boolean
           guide_id: string
           id: string
           platform: string
@@ -1130,6 +1131,7 @@ export type Database = {
         Insert: {
           caption?: string
           created_at?: string
+          featured_on_home?: boolean
           guide_id: string
           id?: string
           platform: string
@@ -1143,6 +1145,7 @@ export type Database = {
         Update: {
           caption?: string
           created_at?: string
+          featured_on_home?: boolean
           guide_id?: string
           id?: string
           platform?: string

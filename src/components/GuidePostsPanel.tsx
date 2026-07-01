@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Eye, EyeOff, Trash2, ArrowUp, ArrowDown, Loader2, Plus, ImagePlus } from "lucide-react";
+import { Eye, EyeOff, Trash2, ArrowUp, ArrowDown, Loader2, Plus, ImagePlus, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useGuideI18n } from "@/lib/guide-i18n";
 import {
@@ -9,6 +9,7 @@ import {
   createMyGuidePost,
   deleteMyGuidePost,
   toggleMyGuidePostVisible,
+  toggleMyGuidePostFeatured,
   reorderMyGuidePost,
 } from "@/lib/guide-posts.functions";
 
@@ -19,6 +20,7 @@ type Post = {
   caption: string;
   visible: boolean;
   sort_order: number;
+  featured_on_home: boolean;
 };
 
 const PLATFORMS = ["instagram", "facebook", "tiktok", "youtube", "other"] as const;
@@ -37,6 +39,7 @@ export function GuidePostsPanel() {
   const createFn = useServerFn(createMyGuidePost);
   const deleteFn = useServerFn(deleteMyGuidePost);
   const toggleFn = useServerFn(toggleMyGuidePostVisible);
+  const featureFn = useServerFn(toggleMyGuidePostFeatured);
   const reorderFn = useServerFn(reorderMyGuidePost);
 
   const load = useCallback(async () => {
@@ -115,6 +118,7 @@ export function GuidePostsPanel() {
                 <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-muted-foreground">
                   <span>{p.platform}</span>
                   {!p.visible && <span className="text-amber-600">{tg("posts.hidden")}</span>}
+                  {p.featured_on_home && <span className="text-amber-500 normal-case tracking-normal inline-flex items-center gap-1"><Star className="h-3 w-3 fill-amber-500" /> On home</span>}
                 </div>
                 <p className="text-sm mt-1 line-clamp-3 break-words">{p.caption || <span className="text-muted-foreground italic">{tg("posts.noCaption")}</span>}</p>
               </div>
@@ -130,6 +134,10 @@ export function GuidePostsPanel() {
                   </IconBtn>
                 </div>
                 <div className="flex gap-1">
+                  <IconBtn title={p.featured_on_home ? "Remove from home" : "Show on home"}
+                    onClick={async () => { try { const r = await featureFn({ data: { id: p.id } }); toast.success(r.featured_on_home ? "Featured on home" : "Removed from home"); await load(); } catch (e) { toast.error((e as Error).message); } }}>
+                    <Star className={`h-4 w-4 ${p.featured_on_home ? "fill-amber-500 text-amber-500" : ""}`} />
+                  </IconBtn>
                   <IconBtn title={p.visible ? tg("posts.hide") : tg("posts.show")}
                     onClick={async () => { try { await toggleFn({ data: { id: p.id } }); await load(); } catch (e) { toast.error((e as Error).message); } }}>
                     {p.visible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
