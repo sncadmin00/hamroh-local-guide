@@ -62,15 +62,15 @@ export function PersonalCard() {
           style={{ background: "radial-gradient(circle, color-mix(in srgb, #1F9BB4 20%, transparent), transparent 70%)" }}
         />
         <div className="relative">
-          <p className="text-[0.72rem] font-semibold uppercase tracking-[0.14em] mb-2" style={{ color: "#1F9BB4" }}>
-            {signedIn ? t("home.welcomeBack") || "Welcome back" : t("home.welcome") || "Welcome to Hamroh"}
-          </p>
           <h1
             className="text-[1.8rem] md:text-[2.6rem] leading-[1.1] tracking-tight mb-4"
             style={{ color: "var(--foreground)", fontFamily: "'DM Serif Display', serif" }}
           >
-            {signedIn && name ? `${t("home.hi") || "Hi"}, ${name}!` : t("home.planYourTrip") || "Plan your Uzbekistan trip"}
+            {signedIn && name
+              ? `${t("home.hi") || "Hi"}, ${name}!`
+              : `${t("home.hello") || "Hello"}!`}
           </h1>
+
 
           <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-4">
             <div
