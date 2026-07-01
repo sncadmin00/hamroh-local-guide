@@ -39,6 +39,7 @@ export function GuidePostsPanel() {
   const createFn = useServerFn(createMyGuidePost);
   const deleteFn = useServerFn(deleteMyGuidePost);
   const toggleFn = useServerFn(toggleMyGuidePostVisible);
+  const featureFn = useServerFn(toggleMyGuidePostFeatured);
   const reorderFn = useServerFn(reorderMyGuidePost);
 
   const load = useCallback(async () => {
