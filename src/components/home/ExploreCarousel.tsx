@@ -83,7 +83,7 @@ export function ExploreCarousel() {
     if (c.kind === "tour") return <Link key={key} to="/tours/$slug" params={{ slug: c.slug }} className={cls} style={style}>{inner}</Link>;
     if (c.kind === "guide") return <Link key={key} to="/guides/$guideId" params={{ guideId: c.slug }} className={cls} style={style}>{inner}</Link>;
     if (c.kind === "place") return <Link key={key} to="/explore/$slug" params={{ slug: c.slug }} className={cls} style={style}>{inner}</Link>;
-    if (c.kind === "article") return <Link key={key} to="/articles/$slug" params={{ slug: c.slug }} className={cls} style={style}>{inner}</Link>;
+    if (c.kind === "article") return <div key={key} className={cls} style={style}>{inner}</div>;
     return <a key={key} href={c.href} className={cls} style={style}>{inner}</a>;
   };
 
