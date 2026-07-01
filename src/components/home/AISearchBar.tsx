@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
@@ -12,11 +12,25 @@ const CHIPS = [
   { emoji: "🚌", label: "With transport" },
 ];
 
+const ROTATING_HINTS = [
+  "Find your local companion",
+  "Plan a tour with kids in Bukhara",
+  "Discover hidden places in Samarkand",
+];
+
 export function AISearchBar() {
   const { t } = useI18n();
   const [q, setQ] = useState("");
   const [busy, setBusy] = useState(false);
+  const [hintIndex, setHintIndex] = useState(0);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setHintIndex((i) => (i + 1) % ROTATING_HINTS.length);
+    }, 3000);
+    return () => clearInterval(id);
+  }, []);
 
   const go = (query: string) => {
     if (!query.trim()) return;
@@ -41,7 +55,7 @@ export function AISearchBar() {
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder={t("home.aiPlaceholder") || "I want a tour with kids in Bukhara…"}
+          placeholder={ROTATING_HINTS[hintIndex]}
           className="flex-1 bg-transparent outline-none text-sm md:text-base py-1"
           style={{ color: "var(--foreground)" }}
         />
