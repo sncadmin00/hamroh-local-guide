@@ -17,14 +17,14 @@ export function ExploreCarousel() {
   useEffect(() => {
     (async () => {
       const [tours, guides, places] = await Promise.all([
-        supabase.from("tours").select("id,title_en,cover_url,slug,city,rating").eq("published", true).limit(4),
-        supabase.from("guides").select("id,name,avatar_url,slug,city,rating").eq("verified", true).limit(4),
-        supabase.from("places").select("id,name,cover_url,slug,city").limit(4),
+        supabase.from("tours").select("id,title_en,cover_url,slug,rating").eq("published", true).limit(4),
+        supabase.from("guides").select("id,name,photo_url,slug,rating").eq("verified", true).limit(4),
+        supabase.from("places").select("id,name,photo_url,slug").eq("published", true).limit(4),
       ]);
       const mixed: Card[] = [];
-      const t2 = (tours.data ?? []).map<Card>((r) => ({ kind: "tour", id: r.id, title: r.title_en, image: r.cover_url, slug: r.slug, meta: r.city, rating: r.rating ?? undefined }));
-      const g2 = (guides.data ?? []).map<Card>((r) => ({ kind: "guide", id: r.id, title: (r.name || "").split(" ")[0], image: r.avatar_url, slug: r.slug, meta: r.city, rating: r.rating ?? undefined }));
-      const p2 = (places.data ?? []).map<Card>((r) => ({ kind: "place", id: r.id, title: r.name, image: r.cover_url, slug: r.slug, meta: r.city }));
+      const t2 = ((tours.data ?? []) as Array<{ id: string; title_en: string | null; cover_url: string | null; slug: string; rating: number | null }>).map<Card>((r) => ({ kind: "tour", id: r.id, title: r.title_en ?? "", image: r.cover_url, slug: r.slug, rating: r.rating ?? undefined }));
+      const g2 = ((guides.data ?? []) as Array<{ id: string; name: string | null; photo_url: string | null; slug: string; rating: number | null }>).map<Card>((r) => ({ kind: "guide", id: r.id, title: (r.name || "").split(" ")[0], image: r.photo_url, slug: r.slug, rating: r.rating ?? undefined }));
+      const p2 = ((places.data ?? []) as Array<{ id: string; name: string | null; photo_url: string | null; slug: string }>).map<Card>((r) => ({ kind: "place", id: r.id, title: r.name ?? "", image: r.photo_url, slug: r.slug }));
       const max = Math.max(t2.length, g2.length, p2.length);
       for (let i = 0; i < max; i++) { if (t2[i]) mixed.push(t2[i]); if (g2[i]) mixed.push(g2[i]); if (p2[i]) mixed.push(p2[i]); }
       setCards(mixed);
