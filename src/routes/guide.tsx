@@ -297,6 +297,7 @@ function GuidePortal() {
         )}
 
         {tab === "posts" && <GuidePostsPanel />}
+        {tab === "places" && <GuidePlacesPanel guideId={guide.id} />}
 
         {tab === "referral" && (
           <ReferralPanel code={guide.referral_code} clicks={guide.referral_clicks} />
