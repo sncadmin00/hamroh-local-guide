@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
@@ -10,6 +10,12 @@ const CHIPS = [
   { emoji: "🍽️", label: "Gastro" },
   { emoji: "🌅", label: "Sunset" },
   { emoji: "🚌", label: "With transport" },
+];
+
+const ROTATING_HINTS = [
+  "Find your local companion",
+  "Plan a tour with kids in Bukhara",
+  "Discover hidden places in Samarkand",
 ];
 
 export function AISearchBar() {
