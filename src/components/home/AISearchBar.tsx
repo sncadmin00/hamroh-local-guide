@@ -55,7 +55,7 @@ export function AISearchBar() {
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder={t("home.aiPlaceholder") || "I want a tour with kids in Bukhara…"}
+          placeholder={ROTATING_HINTS[hintIndex]}
           className="flex-1 bg-transparent outline-none text-sm md:text-base py-1"
           style={{ color: "var(--foreground)" }}
         />
