@@ -103,6 +103,8 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
 
 
           <ThemeToggle transparent={transparent} />
+          <NotificationsBell transparent={transparent} />
+
 
           <LanguageSwitcher
             className={
