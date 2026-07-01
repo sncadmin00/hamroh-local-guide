@@ -69,7 +69,7 @@ export function PersonalCard() {
           boxShadow: "0 8px 32px color-mix(in srgb, var(--foreground) 6%, transparent)",
         }}
       >
-        {/* Header row: greeting + AI badge */}
+        {/* Header row: greeting */}
         <div className="flex items-start justify-between gap-3 mb-4">
           <div className="min-w-0">
             <p className="text-sm mb-1" style={{ color: "var(--muted-foreground)" }}>
@@ -82,17 +82,6 @@ export function PersonalCard() {
               <span className="truncate">{signedIn && name ? name : t("home.hello") || "Traveler"}</span>
             </h1>
           </div>
-          <span
-            className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold shrink-0"
-            style={{
-              background: "color-mix(in srgb, #C9A84C 16%, transparent)",
-              color: "#C9A84C",
-              border: "1px solid color-mix(in srgb, #C9A84C 30%, transparent)",
-            }}
-          >
-            <span className="h-1.5 w-1.5 rounded-full" style={{ background: "#C9A84C" }} />
-            AI
-          </span>
         </div>
 
         {/* City row */}
