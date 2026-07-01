@@ -1,17 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
+import type { ExploreCard } from "@/lib/explore.functions";
 
-type Card =
-  | { kind: "tour"; id: string; title: string; image: string | null; slug: string; rating?: number }
-  | { kind: "guide"; id: string; title: string; image: string | null; slug: string; rating?: number }
-  | { kind: "place"; id: string; title: string; image: string | null; slug: string }
-  | { kind: "article"; id: string; title: string; image: string | null; slug: string }
-  | { kind: "spotlight"; id: string; title: string; image: string | null; href: string };
-
-const KIND_COLORS: Record<Card["kind"], string> = {
+const KIND_COLORS: Record<ExploreCard["kind"], string> = {
   tour: "#1F9BB4",
   guide: "#C9A84C",
   place: "#7AB87A",
@@ -19,38 +12,15 @@ const KIND_COLORS: Record<Card["kind"], string> = {
   spotlight: "#E07A5F",
 };
 
-export function ExploreCarousel() {
+export function ExploreCarousel({ cards }: { cards: ExploreCard[] }) {
   const { t } = useI18n();
-  const [cards, setCards] = useState<Card[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    (async () => {
-      const [tours, guides, places, articles, spotlights] = await Promise.all([
-        supabase.from("tours").select("id,title_en,cover_url,slug,rating").eq("published", true).limit(4),
-        supabase.from("guides").select("id,name,photo_url,slug,rating").eq("verified", true).limit(4),
-        supabase.from("places").select("id,name,photo_url,slug").eq("published", true).limit(4),
-        supabase.from("articles").select("id,title,cover_url,slug").eq("published", true).limit(4),
-        supabase.from("spotlights").select("id,title_en,image_url,href").eq("is_active", true).limit(4),
-      ]);
-      const t2 = ((tours.data ?? []) as Array<{ id: string; title_en: string | null; cover_url: string | null; slug: string; rating: number | null }>).map<Card>((r) => ({ kind: "tour", id: r.id, title: r.title_en ?? "", image: r.cover_url, slug: r.slug, rating: r.rating ?? undefined }));
-      const g2 = ((guides.data ?? []) as Array<{ id: string; name: string | null; photo_url: string | null; slug: string; rating: number | null }>).map<Card>((r) => ({ kind: "guide", id: r.id, title: (r.name || "").split(" ")[0], image: r.photo_url, slug: r.slug, rating: r.rating ?? undefined }));
-      const p2 = ((places.data ?? []) as Array<{ id: string; name: string | null; photo_url: string | null; slug: string }>).map<Card>((r) => ({ kind: "place", id: r.id, title: r.name ?? "", image: r.photo_url, slug: r.slug }));
-      const a2 = ((articles.data ?? []) as Array<{ id: string; title: string | null; cover_url: string | null; slug: string }>).map<Card>((r) => ({ kind: "article", id: r.id, title: r.title ?? "", image: r.cover_url, slug: r.slug }));
-      const s2 = ((spotlights.data ?? []) as Array<{ id: string; title_en: string | null; image_url: string | null; href: string | null }>).map<Card>((r) => ({ kind: "spotlight", id: r.id, title: r.title_en ?? "", image: r.image_url, href: r.href ?? "/" }));
-      const mixed: Card[] = [];
-      const groups = [t2, g2, p2, a2, s2];
-      const max = Math.max(...groups.map((x) => x.length));
-      for (let i = 0; i < max; i++) for (const grp of groups) if (grp[i]) mixed.push(grp[i]);
-      setCards(mixed);
-    })();
-  }, []);
 
   const scroll = (dir: 1 | -1) => {
     scrollRef.current?.scrollBy({ left: dir * 320, behavior: "smooth" });
   };
 
-  const renderCard = (c: Card) => {
+  const renderCard = (c: ExploreCard) => {
     const inner = (
       <>
         <div className="aspect-[4/3] bg-secondary overflow-hidden">
