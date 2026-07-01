@@ -70,9 +70,11 @@ function Home() {
       <SiteHeader />
 
       <main className="flex-1">
+        <WeatherBanner />
         <NotificationBanner />
         <PersonalCard />
         <AISearchBar />
+
         <ExploreCarousel />
         <PopularCategoriesCarousel />
         <SpotlightTourCarousel />
