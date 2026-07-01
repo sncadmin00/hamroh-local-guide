@@ -22,7 +22,15 @@ export function AISearchBar() {
   const { t } = useI18n();
   const [q, setQ] = useState("");
   const [busy, setBusy] = useState(false);
+  const [hintIndex, setHintIndex] = useState(0);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setHintIndex((i) => (i + 1) % ROTATING_HINTS.length);
+    }, 3000);
+    return () => clearInterval(id);
+  }, []);
 
   const go = (query: string) => {
     if (!query.trim()) return;
