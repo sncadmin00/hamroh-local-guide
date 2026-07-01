@@ -192,6 +192,9 @@ type PlaceSuggestion = {
   raw_query: string;
   status: string;
   created_at: string;
+  source?: string | null;
+  contact_email?: string | null;
+  guide_id?: string | null;
 };
 
 const PLACE_CATEGORIES = [
