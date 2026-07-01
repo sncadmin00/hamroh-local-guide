@@ -20,6 +20,7 @@ type Post = {
   caption: string;
   visible: boolean;
   sort_order: number;
+  featured_on_home: boolean;
 };
 
 const PLATFORMS = ["instagram", "facebook", "tiktok", "youtube", "other"] as const;
