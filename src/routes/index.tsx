@@ -111,6 +111,8 @@ function Home() {
       </main>
 
       <SiteFooter />
+      <MobileTabBar />
     </div>
   );
+
 }
