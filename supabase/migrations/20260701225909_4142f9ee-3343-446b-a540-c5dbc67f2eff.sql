@@ -1,0 +1,1 @@
+UPDATE public.guide_posts SET featured_on_home = true WHERE visible = true;
