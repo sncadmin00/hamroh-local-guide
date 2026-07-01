@@ -1660,37 +1660,49 @@ export type Database = {
           category: string
           city_id: string | null
           city_name: string
+          contact_email: string
           created_at: string
           description: string
+          guide_id: string | null
           id: string
           name: string
           raw_query: string
+          source: string
           source_url: string
           status: string
+          submitted_by: string | null
         }
         Insert: {
           category?: string
           city_id?: string | null
           city_name?: string
+          contact_email?: string
           created_at?: string
           description?: string
+          guide_id?: string | null
           id?: string
           name: string
           raw_query?: string
+          source?: string
           source_url?: string
           status?: string
+          submitted_by?: string | null
         }
         Update: {
           category?: string
           city_id?: string | null
           city_name?: string
+          contact_email?: string
           created_at?: string
           description?: string
+          guide_id?: string | null
           id?: string
           name?: string
           raw_query?: string
+          source?: string
           source_url?: string
           status?: string
+          submitted_by?: string | null
         }
         Relationships: [
           {
@@ -1698,6 +1710,13 @@ export type Database = {
             columns: ["city_id"]
             isOneToOne: false
             referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "place_suggestions_guide_id_fkey"
+            columns: ["guide_id"]
+            isOneToOne: false
+            referencedRelation: "guides"
             referencedColumns: ["id"]
           },
         ]
