@@ -1,0 +1,10 @@
+GRANT SELECT ON public.tours TO anon, authenticated;
+GRANT SELECT ON public.guides TO anon, authenticated;
+GRANT SELECT ON public.places TO anon, authenticated;
+GRANT SELECT ON public.articles TO anon, authenticated;
+GRANT SELECT ON public.spotlights TO anon, authenticated;
+GRANT ALL ON public.tours TO service_role;
+GRANT ALL ON public.guides TO service_role;
+GRANT ALL ON public.places TO service_role;
+GRANT ALL ON public.articles TO service_role;
+GRANT ALL ON public.spotlights TO service_role;
