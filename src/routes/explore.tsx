@@ -54,6 +54,7 @@ type Guide = {
 };
 
 function ExplorePage() {
+  const [suggestOpen, setSuggestOpen] = useState(false);
   const [articles, setArticles] = useState<Article[]>([]);
   const [cities, setCities] = useState<City[]>([]);
   const [embeds, setEmbeds] = useState<Embed[]>([]);
