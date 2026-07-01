@@ -218,6 +218,9 @@ function GuidePortal() {
           <TabBtn active={tab === "posts"} onClick={() => setTab("posts")}>
             <ImageIcon className="h-4 w-4" /> {tg("tab.posts")}
           </TabBtn>
+          <TabBtn active={tab === "places"} onClick={() => setTab("places")}>
+            <MapPin className="h-4 w-4" /> Places
+          </TabBtn>
           <TabBtn active={tab === "referral"} onClick={() => setTab("referral")}>
             <Link2 className="h-4 w-4" /> {tg("tab.referral")}
           </TabBtn>
