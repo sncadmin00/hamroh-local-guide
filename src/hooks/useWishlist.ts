@@ -1,8 +1,19 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-export type WishlistType = "guide" | "tour" | "city";
-export type WishlistItem = { type: WishlistType; id: string };
+export type WishlistType = "guide" | "tour" | "city" | "place" | "article" | "spotlight";
+export type WishlistItem = {
+  type: WishlistType;
+  id: string;
+  dbId?: string;
+  collectionId?: string | null;
+};
+export type WishlistCollection = {
+  id: string;
+  name: string;
+  emoji: string;
+  created_at: string;
+};
 
 const STORAGE_KEY = "hamroh:wishlist";
 const EVENT = "hamroh:wishlist:change";
@@ -33,9 +44,9 @@ function keyOf(type: WishlistType, id: string) {
 export function useWishlist() {
   const [userId, setUserId] = useState<string | null>(null);
   const [items, setItems] = useState<WishlistItem[]>([]);
+  const [collections, setCollections] = useState<WishlistCollection[]>([]);
   const [ready, setReady] = useState(false);
 
-  // Track auth
   useEffect(() => {
     let mounted = true;
     supabase.auth.getSession().then(({ data }) => {
@@ -45,7 +56,6 @@ export function useWishlist() {
     const { data: sub } = supabase.auth.onAuthStateChange(async (_e, session) => {
       const uid = session?.user.id ?? null;
       setUserId(uid);
-      // Migrate guest wishlist on sign-in
       if (uid) {
         const guest = readGuest();
         if (guest.length > 0) {
@@ -65,36 +75,48 @@ export function useWishlist() {
     };
   }, []);
 
-  // Load items when auth state resolves
-  useEffect(() => {
-    let cancelled = false;
-    const load = async () => {
-      if (userId) {
-        const { data } = await supabase
+  const reload = useCallback(async () => {
+    if (userId) {
+      const [w, c] = await Promise.all([
+        supabase
           .from("wishlists" as any)
-          .select("item_type, item_id")
-          .eq("user_id", userId);
-        if (cancelled) return;
-        setItems(((data as any[]) ?? []).map((r) => ({ type: r.item_type, id: r.item_id })));
-      } else {
-        setItems(readGuest());
-      }
-      setReady(true);
-    };
-    load();
-    const onChange = () => load();
+          .select("id, item_type, item_id, collection_id")
+          .eq("user_id", userId),
+        supabase
+          .from("wishlist_collections" as any)
+          .select("id, name, emoji, created_at")
+          .eq("user_id", userId)
+          .order("created_at", { ascending: true }),
+      ]);
+      setItems(
+        ((w.data as any[]) ?? []).map((r) => ({
+          type: r.item_type,
+          id: r.item_id,
+          dbId: r.id,
+          collectionId: r.collection_id,
+        })),
+      );
+      setCollections(((c.data as any[]) ?? []) as WishlistCollection[]);
+    } else {
+      setItems(readGuest());
+      setCollections([]);
+    }
+    setReady(true);
+  }, [userId]);
+
+  useEffect(() => {
+    reload();
+    const onChange = () => reload();
     window.addEventListener(EVENT, onChange);
     window.addEventListener("storage", onChange);
     return () => {
-      cancelled = true;
       window.removeEventListener(EVENT, onChange);
       window.removeEventListener("storage", onChange);
     };
-  }, [userId]);
+  }, [reload]);
 
   const isWishlisted = useCallback(
-    (type: WishlistType, id: string) =>
-      items.some((i) => i.type === type && i.id === id),
+    (type: WishlistType, id: string) => items.some((i) => i.type === type && i.id === id),
     [items],
   );
 
@@ -104,7 +126,7 @@ export function useWishlist() {
       const next = has
         ? items.filter((i) => !(i.type === type && i.id === id))
         : [...items, { type, id }];
-      setItems(next); // optimistic
+      setItems(next);
 
       if (userId) {
         if (has) {
@@ -119,19 +141,66 @@ export function useWishlist() {
             .from("wishlists" as any)
             .insert({ user_id: userId, item_type: type, item_id: id });
         }
+        reload();
       } else {
         writeGuest(next);
       }
-      return !has; // new state
+      return !has;
     },
-    [items, userId],
+    [items, userId, reload],
+  );
+
+  const createCollection = useCallback(
+    async (name: string, emoji: string) => {
+      if (!userId) return null;
+      const { data, error } = await supabase
+        .from("wishlist_collections" as any)
+        .insert({ user_id: userId, name: name.trim().slice(0, 80), emoji: emoji || "❤️" })
+        .select()
+        .single();
+      if (error) throw error;
+      await reload();
+      return data as unknown as WishlistCollection;
+    },
+    [userId, reload],
+  );
+
+  const deleteCollection = useCallback(
+    async (id: string) => {
+      if (!userId) return;
+      await supabase
+        .from("wishlist_collections" as any)
+        .delete()
+        .eq("id", id)
+        .eq("user_id", userId);
+      await reload();
+    },
+    [userId, reload],
+  );
+
+  const moveItem = useCallback(
+    async (dbId: string, collectionId: string | null) => {
+      if (!userId) return;
+      await supabase
+        .from("wishlists" as any)
+        .update({ collection_id: collectionId })
+        .eq("id", dbId)
+        .eq("user_id", userId);
+      await reload();
+    },
+    [userId, reload],
   );
 
   return {
     items,
+    collections,
     ready,
+    userId,
     isWishlisted,
     toggle,
+    createCollection,
+    deleteCollection,
+    moveItem,
     keyOf,
   };
 }
