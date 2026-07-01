@@ -80,7 +80,6 @@ export function PersonalCard() {
               style={{ color: "var(--foreground)", fontFamily: "'DM Serif Display', serif" }}
             >
               <span className="truncate">{signedIn && name ? name : t("home.hello") || "Traveler"}</span>
-              <Sparkles className="h-5 w-5 shrink-0" style={{ color: "#C9A84C" }} />
             </h1>
           </div>
           <span
