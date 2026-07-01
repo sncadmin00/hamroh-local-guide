@@ -1485,6 +1485,42 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          body: string | null
+          category: string | null
+          created_at: string
+          icon: string | null
+          id: string
+          link: string | null
+          read: boolean
+          title: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          category?: string | null
+          created_at?: string
+          icon?: string | null
+          id?: string
+          link?: string | null
+          read?: boolean
+          title: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          category?: string | null
+          created_at?: string
+          icon?: string | null
+          id?: string
+          link?: string | null
+          read?: boolean
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       payout_items: {
         Row: {
           booking_id: string
@@ -2214,6 +2250,93 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      travel_diaries: {
+        Row: {
+          city: string | null
+          cover_url: string | null
+          created_at: string
+          days: Json
+          end_date: string | null
+          id: string
+          is_public: boolean
+          start_date: string | null
+          stats: Json
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          city?: string | null
+          cover_url?: string | null
+          created_at?: string
+          days?: Json
+          end_date?: string | null
+          id?: string
+          is_public?: boolean
+          start_date?: string | null
+          stats?: Json
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          city?: string | null
+          cover_url?: string | null
+          created_at?: string
+          days?: Json
+          end_date?: string | null
+          id?: string
+          is_public?: boolean
+          start_date?: string | null
+          stats?: Json
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      trip_budgets: {
+        Row: {
+          city: string | null
+          created_at: string
+          currency: string
+          end_date: string | null
+          id: string
+          items: Json
+          start_date: string | null
+          total: number
+          travelers: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          currency?: string
+          end_date?: string | null
+          id?: string
+          items?: Json
+          start_date?: string | null
+          total?: number
+          travelers?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          currency?: string
+          end_date?: string | null
+          id?: string
+          items?: Json
+          start_date?: string | null
+          total?: number
+          travelers?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {
