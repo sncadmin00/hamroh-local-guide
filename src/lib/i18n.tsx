@@ -7,6 +7,16 @@ type Dict = Record<string, { en: string; uz: string; ru: string }>;
 
 export const translations: Dict = {
   "nav.findGuide": { en: "Guides", uz: "Hamrohlar", ru: "Гиды" },
+  "home.explore": { en: "Explore", uz: "Kashf eting", ru: "Обзор" },
+  "home.budgetCalculator": { en: "Budget calculator", uz: "Byudjet kalkulyatori", ru: "Калькулятор бюджета" },
+  "budget.days": { en: "Days", uz: "Kunlar", ru: "Дней" },
+  "budget.travelers": { en: "Travelers", uz: "Sayohatchilar", ru: "Путешественников" },
+  "budget.stay": { en: "Stay", uz: "Turar joy", ru: "Проживание" },
+  "budget.food": { en: "Food", uz: "Ovqat", ru: "Еда" },
+  "budget.transport": { en: "Transport", uz: "Transport", ru: "Транспорт" },
+  "budget.guide": { en: "Guide", uz: "Hamroh", ru: "Гид" },
+  "budget.activities": { en: "Activities", uz: "Faoliyatlar", ru: "Активности" },
+  "budget.estimated": { en: "Estimated total", uz: "Taxminiy jami", ru: "Итого примерно" },
   "home.spotlightGuide.title": { en: "Meet companions", uz: "Hamrohlar bilan tanishing", ru: "Познакомьтесь со спутниками" },
   "home.spotlightGuide.cta": { en: "View profile", uz: "Profilni ko'rish", ru: "Смотреть профиль" },
   "home.categories.title": { en: "Popular categories", uz: "Mashhur toifalar", ru: "Популярные категории" },
