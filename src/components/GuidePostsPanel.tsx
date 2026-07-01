@@ -134,6 +134,10 @@ export function GuidePostsPanel() {
                   </IconBtn>
                 </div>
                 <div className="flex gap-1">
+                  <IconBtn title={p.featured_on_home ? "Remove from home" : "Show on home"}
+                    onClick={async () => { try { const r = await featureFn({ data: { id: p.id } }); toast.success(r.featured_on_home ? "Featured on home" : "Removed from home"); await load(); } catch (e) { toast.error((e as Error).message); } }}>
+                    <Star className={`h-4 w-4 ${p.featured_on_home ? "fill-amber-500 text-amber-500" : ""}`} />
+                  </IconBtn>
                   <IconBtn title={p.visible ? tg("posts.hide") : tg("posts.show")}
                     onClick={async () => { try { await toggleFn({ data: { id: p.id } }); await load(); } catch (e) { toast.error((e as Error).message); } }}>
                     {p.visible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
