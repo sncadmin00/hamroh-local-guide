@@ -7,9 +7,6 @@ import { WeatherBanner } from "@/components/home/WeatherBanner";
 import { PersonalCard } from "@/components/home/PersonalCard";
 import { AISearchBar } from "@/components/home/AISearchBar";
 import { ExploreCarousel } from "@/components/home/ExploreCarousel";
-import { PopularCategoriesCarousel } from "@/components/home/PopularCategoriesCarousel";
-import { SpotlightTourCarousel } from "@/components/home/SpotlightTourCarousel";
-import { SpotlightGuideCarousel } from "@/components/home/SpotlightGuideCarousel";
 import { ReelsRow } from "@/components/home/ReelsRow";
 import { BudgetCalculator } from "@/components/home/BudgetCalculator";
 import { TravelDiary } from "@/components/home/TravelDiary";
@@ -80,9 +77,6 @@ function Home() {
         <AISearchBar />
 
         <ExploreCarousel cards={exploreCards} />
-        <PopularCategoriesCarousel />
-        <SpotlightTourCarousel />
-        <SpotlightGuideCarousel />
         <ReelsRow />
         <BudgetCalculator />
         <TravelDiary />
