@@ -18,7 +18,15 @@ function getInitialTheme(): Theme {
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>(getInitialTheme);
+  const [theme, setThemeState] = useState<Theme>("dark");
+
+  useEffect(() => {
+    const saved = typeof window !== "undefined" ? window.localStorage.getItem(STORAGE_KEY) : null;
+    if (saved === "light" || saved === "dark") {
+      setThemeState(saved);
+    }
+    document.documentElement.setAttribute("data-theme", saved === "light" ? "light" : "dark");
+  }, []);
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
