@@ -15,10 +15,12 @@ import { BudgetCalculator } from "@/components/home/BudgetCalculator";
 import { TravelDiary } from "@/components/home/TravelDiary";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
+import { getExploreCards } from "@/lib/explore.functions";
 
 
 
 export const Route = createFileRoute("/")({
+  loader: async () => ({ exploreCards: await getExploreCards() }),
   head: () => ({
     meta: [
       { title: "Hamroh — Find your verified local guide with AI" },
@@ -50,10 +52,13 @@ export const Route = createFileRoute("/")({
     ],
   }),
   component: Home,
+  errorComponent: ({ error }) => <div className="p-8 text-sm text-destructive">{error.message}</div>,
+  notFoundComponent: () => <div className="p-8 text-sm">Not found.</div>,
 });
 
 function Home() {
   const { t } = useI18n();
+  const { exploreCards } = Route.useLoaderData();
   const [isGuide, setIsGuide] = useState(false);
 
   useEffect(() => {
@@ -74,7 +79,7 @@ function Home() {
         <PersonalCard />
         <AISearchBar />
 
-        <ExploreCarousel />
+        <ExploreCarousel cards={exploreCards} />
         <PopularCategoriesCarousel />
         <SpotlightTourCarousel />
         <SpotlightGuideCarousel />
