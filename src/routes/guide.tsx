@@ -9,6 +9,7 @@ import { GuideAIPanel } from "@/components/guide/GuideAIPanel";
 import { VerificationPanel } from "@/components/guide/VerificationPanel";
 import { ProfilePanel } from "@/components/guide/ProfilePanel";
 import { EarningsPanel } from "@/components/guide/EarningsPanel";
+import { GuidePlacesPanel } from "@/components/guide/GuidePlacesPanel";
 
 import {
   getMyGuide,
@@ -91,7 +92,7 @@ function GuidePortal() {
   const [guide, setGuide] = useState<MyGuide | null>(null);
   const [slots, setSlots] = useState<Slot[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [tab, setTab] = useState<"calendar" | "ai" | "availability" | "bookings" | "tours" | "cities" | "languages" | "posts" | "referral" | "verification" | "profile" | "earnings">("calendar");
+  const [tab, setTab] = useState<"calendar" | "ai" | "availability" | "bookings" | "tours" | "cities" | "languages" | "posts" | "places" | "referral" | "verification" | "profile" | "earnings">("calendar");
 
   const fetchGuide = useServerFn(getMyGuide);
   const fetchSlots = useServerFn(listMySlots);
@@ -217,6 +218,9 @@ function GuidePortal() {
           <TabBtn active={tab === "posts"} onClick={() => setTab("posts")}>
             <ImageIcon className="h-4 w-4" /> {tg("tab.posts")}
           </TabBtn>
+          <TabBtn active={tab === "places"} onClick={() => setTab("places")}>
+            <MapPin className="h-4 w-4" /> Places
+          </TabBtn>
           <TabBtn active={tab === "referral"} onClick={() => setTab("referral")}>
             <Link2 className="h-4 w-4" /> {tg("tab.referral")}
           </TabBtn>
@@ -293,6 +297,7 @@ function GuidePortal() {
         )}
 
         {tab === "posts" && <GuidePostsPanel />}
+        {tab === "places" && <GuidePlacesPanel guideId={guide.id} />}
 
         {tab === "referral" && (
           <ReferralPanel code={guide.referral_code} clicks={guide.referral_clicks} />

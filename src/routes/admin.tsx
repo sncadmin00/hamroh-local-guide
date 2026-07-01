@@ -192,6 +192,9 @@ type PlaceSuggestion = {
   raw_query: string;
   status: string;
   created_at: string;
+  source?: string | null;
+  contact_email?: string | null;
+  guide_id?: string | null;
 };
 
 const PLACE_CATEGORIES = [
@@ -2559,12 +2562,18 @@ function SuggestionsPanel({
             <li key={s.id} className="py-4 space-y-2">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
-                  <p className="font-medium">
-                    {s.name}{" "}
-                    <span className="text-xs text-muted-foreground font-normal">
-                      / {s.category} · {s.city_name}
-                    </span>
-                  </p>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <p className="font-medium">
+                      {s.name}{" "}
+                      <span className="text-xs text-muted-foreground font-normal">
+                        / {s.category} · {s.city_name}
+                      </span>
+                    </p>
+                    <SourceBadge source={s.source ?? "ai"} />
+                  </div>
+                  {s.contact_email && (
+                    <p className="text-[11px] text-muted-foreground mt-0.5">{s.contact_email}</p>
+                  )}
                   <p className="mt-1 text-sm text-muted-foreground">{s.description}</p>
                   {s.source_url && (
                     <a
@@ -2604,6 +2613,24 @@ function SuggestionsPanel({
     </div>
   );
 }
+
+function SourceBadge({ source }: { source: string }) {
+  const map: Record<string, { color: string; label: string }> = {
+    client: { color: "#7AB87A", label: "Client" },
+    guide: { color: "#1F9BB4", label: "Guide" },
+    ai: { color: "#B47AC9", label: "AI" },
+  };
+  const cfg = map[source] || map.ai;
+  return (
+    <span
+      className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full"
+      style={{ background: `color-mix(in srgb, ${cfg.color} 15%, transparent)`, color: cfg.color }}
+    >
+      {cfg.label}
+    </span>
+  );
+}
+
 
 
 type AppUser = {

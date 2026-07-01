@@ -4,8 +4,9 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SocialEmbed } from "@/components/SocialEmbed";
 import { CityPicker } from "@/components/CityPicker";
+import { SuggestPlaceModal } from "@/components/SuggestPlaceModal";
 import { supabase } from "@/integrations/supabase/client";
-import { Calendar, Star, BadgeCheck } from "lucide-react";
+import { Calendar, Star, BadgeCheck, MapPin } from "lucide-react";
 
 export const Route = createFileRoute("/explore")({
   head: () => ({
@@ -53,6 +54,7 @@ type Guide = {
 };
 
 function ExplorePage() {
+  const [suggestOpen, setSuggestOpen] = useState(false);
   const [articles, setArticles] = useState<Article[]>([]);
   const [cities, setCities] = useState<City[]>([]);
   const [embeds, setEmbeds] = useState<Embed[]>([]);
@@ -120,7 +122,15 @@ function ExplorePage() {
         <header className="max-w-2xl">
           <h1 className="font-display text-4xl md:text-5xl font-semibold">Explore</h1>
           <p className="mt-3 text-muted-foreground">Stories, guides and moments — explore places with locals.</p>
+          <button
+            onClick={() => setSuggestOpen(true)}
+            className="mt-5 inline-flex items-center gap-2 px-4 h-10 rounded-full text-sm font-semibold"
+            style={{ background: "#C9A84C", color: "#0F1F5C" }}
+          >
+            <MapPin className="h-4 w-4" /> Suggest a place
+          </button>
         </header>
+        <SuggestPlaceModal open={suggestOpen} onClose={() => setSuggestOpen(false)} source="client" />
 
         <div className="mt-8 sticky top-16 z-30 -mx-4 px-4 py-3 bg-background/80 backdrop-blur-md border-b border-border/60">
           <CityPicker value={city} onChange={setCity} />
