@@ -2614,6 +2614,24 @@ function SuggestionsPanel({
   );
 }
 
+function SourceBadge({ source }: { source: string }) {
+  const map: Record<string, { color: string; label: string }> = {
+    client: { color: "#7AB87A", label: "Client" },
+    guide: { color: "#1F9BB4", label: "Guide" },
+    ai: { color: "#B47AC9", label: "AI" },
+  };
+  const cfg = map[source] || map.ai;
+  return (
+    <span
+      className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full"
+      style={{ background: `color-mix(in srgb, ${cfg.color} 15%, transparent)`, color: cfg.color }}
+    >
+      {cfg.label}
+    </span>
+  );
+}
+
+
 
 type AppUser = {
   id: string;
