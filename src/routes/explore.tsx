@@ -4,8 +4,9 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SocialEmbed } from "@/components/SocialEmbed";
 import { CityPicker } from "@/components/CityPicker";
+import { SuggestPlaceModal } from "@/components/SuggestPlaceModal";
 import { supabase } from "@/integrations/supabase/client";
-import { Calendar, Star, BadgeCheck } from "lucide-react";
+import { Calendar, Star, BadgeCheck, MapPin } from "lucide-react";
 
 export const Route = createFileRoute("/explore")({
   head: () => ({
