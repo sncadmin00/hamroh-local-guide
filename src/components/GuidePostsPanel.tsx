@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Eye, EyeOff, Trash2, ArrowUp, ArrowDown, Loader2, Plus, ImagePlus } from "lucide-react";
+import { Eye, EyeOff, Trash2, ArrowUp, ArrowDown, Loader2, Plus, ImagePlus, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useGuideI18n } from "@/lib/guide-i18n";
 import {
@@ -9,6 +9,7 @@ import {
   createMyGuidePost,
   deleteMyGuidePost,
   toggleMyGuidePostVisible,
+  toggleMyGuidePostFeatured,
   reorderMyGuidePost,
 } from "@/lib/guide-posts.functions";
 
