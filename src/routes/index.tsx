@@ -71,9 +71,13 @@ function Home() {
         <PersonalCard />
         <AISearchBar />
         <ExploreCarousel />
+        <PopularCategoriesCarousel />
+        <SpotlightTourCarousel />
+        <SpotlightGuideCarousel />
         <ReelsRow />
         <BudgetCalculator />
         <TravelDiary />
+
 
         {/* Become a guide banner */}
         <section className="px-6 md:px-12 py-14 md:py-[72px]">
