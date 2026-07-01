@@ -79,8 +79,8 @@ export function PersonalCard() {
             >
               <MapPin className="h-4 w-4" style={{ color: "#1F9BB4" }} />
               <CityPicker
-                value={prefs.city ?? null}
-                onChange={(v) => updatePrefs({ ...prefs, city: v ?? undefined })}
+                value={prefs.city ?? "All"}
+                onChange={(v) => updatePrefs({ ...prefs, city: v === "All" ? undefined : v })}
               />
             </div>
             <label
