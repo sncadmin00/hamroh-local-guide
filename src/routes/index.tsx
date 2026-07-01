@@ -6,9 +6,13 @@ import { NotificationBanner } from "@/components/home/NotificationBanner";
 import { PersonalCard } from "@/components/home/PersonalCard";
 import { AISearchBar } from "@/components/home/AISearchBar";
 import { ExploreCarousel } from "@/components/home/ExploreCarousel";
+import { PopularCategoriesCarousel } from "@/components/home/PopularCategoriesCarousel";
+import { SpotlightTourCarousel } from "@/components/home/SpotlightTourCarousel";
+import { SpotlightGuideCarousel } from "@/components/home/SpotlightGuideCarousel";
 import { ReelsRow } from "@/components/home/ReelsRow";
 import { BudgetCalculator } from "@/components/home/BudgetCalculator";
 import { TravelDiary } from "@/components/home/TravelDiary";
+
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 
@@ -67,9 +71,13 @@ function Home() {
         <PersonalCard />
         <AISearchBar />
         <ExploreCarousel />
+        <PopularCategoriesCarousel />
+        <SpotlightTourCarousel />
+        <SpotlightGuideCarousel />
         <ReelsRow />
         <BudgetCalculator />
         <TravelDiary />
+
 
         {/* Become a guide banner */}
         <section className="px-6 md:px-12 py-14 md:py-[72px]">
