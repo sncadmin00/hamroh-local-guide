@@ -17,6 +17,7 @@ export function ReelsRow() {
         .from("guide_posts")
         .select("id,url,caption,platform,thumbnail_url,guides(name)")
         .eq("visible", true)
+        .eq("featured_on_home", true)
         .order("sort_order", { ascending: true })
         .limit(12);
       setPosts((data ?? []).map((r: { id: string; url: string; caption: string | null; platform: string | null; thumbnail_url: string | null; guides?: { name?: string | null } | null }) => ({
