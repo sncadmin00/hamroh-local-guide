@@ -47,8 +47,8 @@ export function ExploreTabs() {
   const viewAllByTab: Record<TabKey, { label: string; to: string }> = {
     guides: { label: t("featured.viewAll"), to: "/guides" },
     tours: { label: t("topTours.viewAll") || t("featured.viewAll"), to: "/tours" },
-    places: { label: t("featured.viewAll"), to: "/places" },
-    articles: { label: t("featured.viewAll"), to: "/blog" },
+    places: { label: t("featured.viewAll"), to: "/explore" },
+    articles: { label: t("featured.viewAll"), to: "/explore" },
     spotlight: { label: t("featured.viewAll"), to: "/guides" },
   };
 
