@@ -14,7 +14,7 @@ import {
   useSpotlights,
   pickTourTitle,
 } from "@/lib/content-queries";
-import { useIsMobile } from "@/hooks/use-mobile";
+
 import { useI18n } from "@/lib/i18n";
 
 const platformMeta = {
@@ -28,7 +28,7 @@ const platformMeta = {
 type TabKey = "guides" | "tours" | "places" | "articles" | "spotlight";
 
 export function ExploreTabs() {
-  const isMobile = useIsMobile();
+  
   const { t, lang } = useI18n();
   const [tab, setTab] = useState<TabKey>("guides");
 
@@ -44,25 +44,13 @@ export function ExploreTabs() {
   const topPosts = posts.slice(0, 12);
   const topSpotlights = spotlights.filter((s) => s.is_active).slice(0, 12);
 
-  const viewAllByTab: Record<TabKey, { label: string; to: string }> = {
-    guides: { label: t("featured.viewAll"), to: "/guides" },
-    tours: { label: t("topTours.viewAll") || t("featured.viewAll"), to: "/tours" },
-    places: { label: t("featured.viewAll"), to: "/explore" },
-    articles: { label: t("featured.viewAll"), to: "/explore" },
-    spotlight: { label: t("featured.viewAll"), to: "/guides" },
-  };
-
-  const gridCls = "grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6";
   const itemW = "w-[240px] md:w-[260px]";
 
-  const renderGuides = () =>
-    isMobile ? (
-      <HorizontalCarousel itemClassName={itemW}>
-        {featuredGuides.map((g) => <GuideCard key={g.id} guide={g} />)}
-      </HorizontalCarousel>
-    ) : (
-      <div className={gridCls}>{featuredGuides.slice(0, 6).map((g) => <GuideCard key={g.id} guide={g} />)}</div>
-    );
+  const renderGuides = () => (
+    <HorizontalCarousel itemClassName={itemW}>
+      {featuredGuides.map((g) => <GuideCard key={g.id} guide={g} />)}
+    </HorizontalCarousel>
+  );
 
   const renderTours = () => {
     const list = topTours.map((tour) => {
@@ -107,11 +95,7 @@ export function ExploreTabs() {
         </Link>
       );
     });
-    return isMobile ? (
-      <HorizontalCarousel itemClassName={itemW}>{list}</HorizontalCarousel>
-    ) : (
-      <div className={gridCls}>{list.slice(0, 6)}</div>
-    );
+    return <HorizontalCarousel itemClassName={itemW}>{list}</HorizontalCarousel>;
   };
 
   const renderPlaces = () => {
@@ -120,11 +104,7 @@ export function ExploreTabs() {
         <PlaceCard place={p} />
       </div>
     ));
-    return isMobile ? (
-      <HorizontalCarousel itemClassName={itemW}>{list}</HorizontalCarousel>
-    ) : (
-      <div className={gridCls}>{list.slice(0, 6)}</div>
-    );
+    return <HorizontalCarousel itemClassName={itemW}>{list}</HorizontalCarousel>;
   };
 
   const renderArticles = () => {
@@ -159,11 +139,7 @@ export function ExploreTabs() {
         </Link>
       );
     });
-    return isMobile ? (
-      <HorizontalCarousel itemClassName="w-48">{list}</HorizontalCarousel>
-    ) : (
-      <div className={gridCls}>{list.slice(0, 6)}</div>
-    );
+    return <HorizontalCarousel itemClassName="w-48">{list}</HorizontalCarousel>;
   };
 
   const renderSpotlight = () => {
@@ -197,11 +173,7 @@ export function ExploreTabs() {
         </a>
       );
     });
-    return isMobile ? (
-      <HorizontalCarousel itemClassName="w-[260px]">{list}</HorizontalCarousel>
-    ) : (
-      <div className={gridCls}>{list.slice(0, 6)}</div>
-    );
+    return <HorizontalCarousel itemClassName="w-[260px]">{list}</HorizontalCarousel>;
   };
 
   // Always show all 5 tabs; each tab handles its own empty state.
@@ -238,11 +210,6 @@ export function ExploreTabs() {
             </TabsList>
           </div>
 
-          <div className="mb-6 flex justify-end">
-            <Link to={viewAllByTab[tab].to} className="text-sm font-medium text-primary hover:underline">
-              {viewAllByTab[tab].label} →
-            </Link>
-          </div>
 
           <TabsContent value="guides" className="mt-0">{renderGuides()}</TabsContent>
           <TabsContent value="tours" className="mt-0">{renderTours()}</TabsContent>

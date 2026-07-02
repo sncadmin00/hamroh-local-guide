@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, type ReactNode } from "react";
+import { useRef, useEffect, Children, type ReactNode } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type Props = {
@@ -15,32 +15,33 @@ export function HorizontalCarousel({
   twoRowsDesktop = true,
 }: Props) {
   const scrollerRef = useRef<HTMLDivElement>(null);
-  const [canLeft, setCanLeft] = useState(false);
-  const [canRight, setCanRight] = useState(false);
+  const trackRef = useRef<HTMLDivElement>(null);
 
-  const updateButtons = () => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    setCanLeft(el.scrollLeft > 4);
-    setCanRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
-  };
+  const items = Children.toArray(children);
+  const loop = items.length > 1;
+  // Duplicate items to enable seamless infinite scroll.
+  const rendered = loop ? [...items, ...items] : items;
 
+  // Seamless loop: when scrolling past the first copy, jump back by one copy's width.
   useEffect(() => {
-    updateButtons();
-    const el = scrollerRef.current;
-    if (!el) return;
-    const onScroll = () => updateButtons();
-    el.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", updateButtons);
-    const ro = new ResizeObserver(() => updateButtons());
-    ro.observe(el);
-    if (el.firstElementChild) ro.observe(el.firstElementChild);
-    return () => {
-      el.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", updateButtons);
-      ro.disconnect();
+    const scroller = scrollerRef.current;
+    const track = trackRef.current;
+    if (!scroller || !track || !loop) return;
+
+    const getHalf = () => track.scrollWidth / 2;
+
+    const onScroll = () => {
+      const half = getHalf();
+      if (half <= 0) return;
+      if (scroller.scrollLeft >= half) {
+        scroller.scrollLeft -= half;
+      } else if (scroller.scrollLeft <= 0) {
+        scroller.scrollLeft += half;
+      }
     };
-  }, [children]);
+    scroller.addEventListener("scroll", onScroll, { passive: true });
+    return () => scroller.removeEventListener("scroll", onScroll);
+  }, [loop, rendered.length]);
 
   const scrollBy = (dir: 1 | -1) => {
     const el = scrollerRef.current;
@@ -53,43 +54,36 @@ export function HorizontalCarousel({
       <button
         type="button"
         onClick={() => scrollBy(-1)}
-        disabled={!canLeft}
         aria-label="Scroll left"
-        className={`hidden md:flex absolute left-1 top-1/2 -translate-y-1/2 z-10 h-10 w-10 items-center justify-center rounded-full bg-background shadow-md ring-1 ring-border transition-opacity ${
-          canLeft ? "opacity-100 hover:bg-secondary" : "opacity-0 pointer-events-none"
-        }`}
+        className="hidden md:flex absolute left-1 top-1/2 -translate-y-1/2 z-10 h-10 w-10 items-center justify-center rounded-full bg-background shadow-md ring-1 ring-border hover:bg-secondary"
       >
         <ChevronLeft className="h-5 w-5" />
       </button>
       <button
         type="button"
         onClick={() => scrollBy(1)}
-        disabled={!canRight}
         aria-label="Scroll right"
-        className={`hidden md:flex absolute right-1 top-1/2 -translate-y-1/2 z-10 h-10 w-10 items-center justify-center rounded-full bg-background shadow-md ring-1 ring-border transition-opacity ${
-          canRight ? "opacity-100 hover:bg-secondary" : "opacity-0 pointer-events-none"
-        }`}
+        className="hidden md:flex absolute right-1 top-1/2 -translate-y-1/2 z-10 h-10 w-10 items-center justify-center rounded-full bg-background shadow-md ring-1 ring-border hover:bg-secondary"
       >
         <ChevronRight className="h-5 w-5" />
       </button>
 
       <div
         ref={scrollerRef}
-        className="overflow-x-auto pb-3 snap-x snap-mandatory [scrollbar-width:thin]"
+        className="overflow-x-auto pb-3 [scrollbar-width:thin]"
       >
         <div
+          ref={trackRef}
           className={`grid grid-flow-col ${
             twoRowsDesktop ? "grid-rows-1 md:grid-rows-2" : "grid-rows-1"
           } gap-4`}
           style={{ gridAutoColumns: "max-content" }}
         >
-          {Array.isArray(children)
-            ? children.map((child, i) => (
-                <div key={i} className={`${itemClassName} snap-start`}>
-                  {child}
-                </div>
-              ))
-            : children}
+          {rendered.map((child, i) => (
+            <div key={i} className={itemClassName}>
+              {child}
+            </div>
+          ))}
         </div>
       </div>
     </div>
