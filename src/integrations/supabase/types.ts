@@ -1789,6 +1789,47 @@ export type Database = {
           },
         ]
       }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          city_id: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          locale: string | null
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          city_id?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+          locale?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          city_id?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          locale?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       referral_clicks: {
         Row: {
           created_at: string
