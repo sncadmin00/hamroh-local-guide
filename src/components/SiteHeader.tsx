@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { Menu, Settings, Shield, LogIn, LogOut, Mail, Phone, MessageSquare, User, Heart, Briefcase, Calendar } from "lucide-react";
 
 import hamrohLogo from "@/assets/hamroh-logo.png";
@@ -28,7 +28,6 @@ function TelegramIcon({ className }: { className?: string }) {
 
 export function SiteHeader({ transparent = false, sticky = true }: { transparent?: boolean; sticky?: boolean } = {}) {
   const { t } = useI18n();
-  const navigate = useNavigate();
   const [signedIn, setSignedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isGuide, setIsGuide] = useState(false);
