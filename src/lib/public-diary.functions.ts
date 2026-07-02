@@ -43,11 +43,16 @@ export const getPublicDiary = createServerFn({ method: "GET" })
 
     if (error || !row) return null;
 
-    // Collect all photo paths, sign with admin, then map back
+    // Collect all photo paths (+ cover), sign with admin, then map back
     const rawDays = (Array.isArray(row.days) ? row.days : []) as DiaryDay[];
+    const coverPath =
+      row.cover_url && !/^https?:\/\//i.test(row.cover_url) ? row.cover_url : null;
     const allPaths = Array.from(
       new Set(
-        rawDays.flatMap((d) => (Array.isArray(d?.photos) ? d.photos : [])).filter(Boolean),
+        [
+          ...rawDays.flatMap((d) => (Array.isArray(d?.photos) ? d.photos : [])),
+          ...(coverPath ? [coverPath] : []),
+        ].filter(Boolean),
       ),
     );
 
@@ -77,8 +82,9 @@ export const getPublicDiary = createServerFn({ method: "GET" })
       city: row.city,
       start_date: row.start_date,
       end_date: row.end_date,
-      cover_url: row.cover_url,
+      cover_url: coverPath ? signedMap.get(coverPath) || null : row.cover_url,
       days,
       stats: row.stats as PublicDiary["stats"],
     };
   });
+
