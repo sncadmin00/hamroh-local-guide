@@ -1488,6 +1488,54 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_preferences: {
+        Row: {
+          bookings_email: boolean
+          bookings_inapp: boolean
+          bookings_push: boolean
+          created_at: string
+          marketing_push: boolean
+          messages_email: boolean
+          messages_inapp: boolean
+          messages_push: boolean
+          system_email: boolean
+          system_inapp: boolean
+          system_push: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          bookings_email?: boolean
+          bookings_inapp?: boolean
+          bookings_push?: boolean
+          created_at?: string
+          marketing_push?: boolean
+          messages_email?: boolean
+          messages_inapp?: boolean
+          messages_push?: boolean
+          system_email?: boolean
+          system_inapp?: boolean
+          system_push?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          bookings_email?: boolean
+          bookings_inapp?: boolean
+          bookings_push?: boolean
+          created_at?: string
+          marketing_push?: boolean
+          messages_email?: boolean
+          messages_inapp?: boolean
+          messages_push?: boolean
+          system_email?: boolean
+          system_inapp?: boolean
+          system_push?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           body: string | null
@@ -1829,6 +1877,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      push_tokens: {
+        Row: {
+          created_at: string
+          id: string
+          last_seen_at: string
+          platform: string
+          token: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_seen_at?: string
+          platform: string
+          token: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_seen_at?: string
+          platform?: string
+          token?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       referral_clicks: {
         Row: {
