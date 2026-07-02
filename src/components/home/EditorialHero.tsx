@@ -257,13 +257,13 @@ export function EditorialHero() {
                     Samarkand
                   </p>
                   <p className="text-xl font-medium truncate" style={{ color: "var(--foreground)" }}>
-                    28°C · Sunny
+                    28°C · {t("weather.sunny")}
                   </p>
                 </div>
               </div>
               <div className="text-right shrink-0">
                 <p className="text-[0.65rem]" style={{ color: "var(--muted-foreground)" }}>
-                  Humidity
+                  {t("weather.humidity")}
                 </p>
                 <p className="text-sm" style={{ color: "var(--foreground)" }}>
                   22%
