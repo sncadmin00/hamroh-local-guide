@@ -204,23 +204,14 @@ export function ExploreTabs() {
     );
   };
 
-  const allTabs: { key: TabKey; count: number }[] = [
+  // Always show all 5 tabs; each tab handles its own empty state.
+  const tabs: { key: TabKey; count: number }[] = [
     { key: "guides", count: featuredGuides.length },
     { key: "tours", count: topTours.length },
     { key: "places", count: topPlaces.length },
     { key: "articles", count: topPosts.length },
     { key: "spotlight", count: topSpotlights.length },
   ];
-  const nonEmpty = allTabs.filter((x) => x.count > 0);
-  // Always show the section even while data is still loading. Extra tabs
-  // appear automatically once their queries resolve with content.
-  const tabs =
-    nonEmpty.length > 0
-      ? nonEmpty
-      : [
-          { key: "guides" as const, count: 0 },
-          { key: "tours" as const, count: 0 },
-        ];
 
   return (
     <section className="px-6 py-14 md:py-20 bg-secondary/40">
