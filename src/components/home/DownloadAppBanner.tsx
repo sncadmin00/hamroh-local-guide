@@ -1,8 +1,6 @@
 import { Smartphone, Apple } from "lucide-react";
-import { useI18n } from "@/lib/i18n";
 
 export function DownloadAppBanner() {
-  const { t } = useI18n();
 
   return (
     <section className="px-6 md:px-12 py-14 md:py-[72px]">
