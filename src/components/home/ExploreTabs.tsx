@@ -139,11 +139,7 @@ export function ExploreTabs() {
         </Link>
       );
     });
-    return isMobile ? (
-      <HorizontalCarousel itemClassName="w-48">{list}</HorizontalCarousel>
-    ) : (
-      <div className={gridCls}>{list.slice(0, 6)}</div>
-    );
+    return <HorizontalCarousel itemClassName="w-48">{list}</HorizontalCarousel>;
   };
 
   const renderSpotlight = () => {
