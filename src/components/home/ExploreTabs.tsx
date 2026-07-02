@@ -109,6 +109,9 @@ export function ExploreTabs() {
       </div>
     ));
     return <HorizontalCarousel itemClassName={itemW}>{list}</HorizontalCarousel>;
+  };
+
+
 
   const renderReels = () => {
     const list = topReels.map((r) => {
