@@ -196,7 +196,7 @@ export function EditorialHero() {
             </form>
 
             {/* Trust badges — kept minimal */}
-            <div className="flex flex-wrap items-center gap-2 pt-2">
+            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 pt-2">
               {[
                 t("hero.badge.identity"),
                 t("hero.badge.language"),
