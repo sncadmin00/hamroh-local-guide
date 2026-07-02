@@ -2,33 +2,30 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { NotificationBanner } from "@/components/home/NotificationBanner";
-import { WeatherBanner } from "@/components/home/WeatherBanner";
-import { PersonalCard } from "@/components/home/PersonalCard";
-import { AISearchBar } from "@/components/home/AISearchBar";
-import { ExploreCarousel } from "@/components/home/ExploreCarousel";
-import { ReelsRow } from "@/components/home/ReelsRow";
-import { BudgetCalculator } from "@/components/home/BudgetCalculator";
-import { TravelDiary } from "@/components/home/TravelDiary";
+import { HeroSearch } from "@/components/home/HeroSearch";
+import { PopularCategoriesCarousel } from "@/components/home/PopularCategoriesCarousel";
+import { FeaturedGuides } from "@/components/home/FeaturedGuides";
+import { SpotlightTourCarousel } from "@/components/home/SpotlightTourCarousel";
+import { WhyHamroh } from "@/components/home/WhyHamroh";
+import { TrustBar } from "@/components/home/TrustBar";
+import { FeaturedReviews } from "@/components/home/FeaturedReviews";
+import { LatestPosts } from "@/components/home/LatestPosts";
+import { DownloadAppBanner } from "@/components/home/DownloadAppBanner";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
-import { getExploreCards } from "@/lib/explore.functions";
-
-
 
 export const Route = createFileRoute("/")({
-  loader: async () => ({ exploreCards: await getExploreCards() }),
   head: () => ({
     meta: [
-      { title: "Hamroh — Find your verified local guide with AI" },
-      { name: "description", content: "Chat with Hamroh AI to find a verified local guide in Uzbekistan and beyond. Tell us your trip, get matched in seconds, book and chat directly." },
-      { property: "og:title", content: "Hamroh — Find your verified local guide with AI" },
-      { property: "og:description", content: "Chat with Hamroh AI to find a verified local guide. Tell us your trip, get matched in seconds." },
+      { title: "Hamroh — Verified local guides & tours across Uzbekistan" },
+      { name: "description", content: "Book verified local guides and curated tours in Samarkand, Bukhara, Khiva and Tashkent. AI-matched, transparent pricing, direct chat with your guide." },
+      { property: "og:title", content: "Hamroh — Verified local guides & tours across Uzbekistan" },
+      { property: "og:description", content: "Book verified local guides and curated tours in Samarkand, Bukhara, Khiva and Tashkent." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://hamroh-local-guide.lovable.app/" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Hamroh — Find your verified local guide with AI" },
-      { name: "twitter:description", content: "Tell us your trip, get matched with a verified local guide in seconds." },
+      { name: "twitter:title", content: "Hamroh — Verified local guides & tours across Uzbekistan" },
+      { name: "twitter:description", content: "AI-matched local guides and tours in Uzbekistan." },
     ],
     links: [{ rel: "canonical", href: "https://hamroh-local-guide.lovable.app/" }],
     scripts: [
@@ -55,7 +52,6 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const { t } = useI18n();
-  const { exploreCards } = Route.useLoaderData();
   const [isGuide, setIsGuide] = useState(false);
 
   useEffect(() => {
@@ -68,19 +64,18 @@ function Home() {
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "var(--background)", color: "var(--foreground)" }}>
-      <SiteHeader />
+      <SiteHeader transparent />
 
       <main className="flex-1">
-        <WeatherBanner />
-        <NotificationBanner />
-        <PersonalCard />
-        <AISearchBar />
-
-        <ExploreCarousel cards={exploreCards} />
-        <ReelsRow />
-        <BudgetCalculator />
-        <TravelDiary />
-
+        <HeroSearch />
+        <TrustBar />
+        <PopularCategoriesCarousel />
+        <FeaturedGuides />
+        <SpotlightTourCarousel />
+        <WhyHamroh />
+        <FeaturedReviews />
+        <LatestPosts />
+        <DownloadAppBanner />
 
         {/* Become a guide banner */}
         <section className="px-6 md:px-12 py-14 md:py-[72px]">
@@ -111,5 +106,4 @@ function Home() {
       <SiteFooter />
     </div>
   );
-
 }
