@@ -186,6 +186,12 @@ export const translations: Dict = {
   "hero.stats.guides": { en: "verified guides", uz: "tasdiqlangan hamroh", ru: "проверенных гидов" },
   "hero.stats.cities": { en: "cities", uz: "shahar", ru: "городов" },
   "hero.stats.travelers": { en: "happy travelers", uz: "mamnun sayohatchi", ru: "довольных путешественников" },
+  "hero.welcome": { en: "Welcome", uz: "Xush kelibsiz", ru: "Добро пожаловать" },
+  "hero.welcome.guest": { en: "Welcome, traveler", uz: "Xush kelibsiz, sayohatchi", ru: "Добро пожаловать, путешественник" },
+  "hero.welcome.sub": { en: "Your Silk Road begins here", uz: "Sizning Ipak yo'lingiz shu yerda boshlanadi", ru: "Ваш Шёлковый путь начинается здесь" },
+  "weather.sunny": { en: "Sunny", uz: "Quyoshli", ru: "Солнечно" },
+  "weather.humidity": { en: "Humidity", uz: "Namlik", ru: "Влажность" },
+
 
  "spot.whatsNew": { en: "What's new", uz: "Yangilik", ru: "Что нового" },
  "spot.newExperience.label": { en: "New experience", uz: "Yangi tajriba", ru: "Новинка" },
