@@ -4,6 +4,8 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { EditorialHero } from "@/components/home/EditorialHero";
 import { ExploreTabs } from "@/components/home/ExploreTabs";
+import { SpotlightBanner } from "@/components/home/SpotlightBanner";
+
 import { WhyHamroh } from "@/components/home/WhyHamroh";
 import { TrustBar } from "@/components/home/TrustBar";
 import { FeaturedReviews } from "@/components/home/FeaturedReviews";
