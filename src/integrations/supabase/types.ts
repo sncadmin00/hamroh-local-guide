@@ -1938,7 +1938,10 @@ export type Database = {
           comment: string
           created_at: string
           guide_id: string
+          guide_reply: string | null
+          guide_reply_at: string | null
           id: string
+          photos: string[]
           rating: number
           tour_id: string
           updated_at: string
@@ -1949,7 +1952,10 @@ export type Database = {
           comment?: string
           created_at?: string
           guide_id: string
+          guide_reply?: string | null
+          guide_reply_at?: string | null
           id?: string
+          photos?: string[]
           rating: number
           tour_id: string
           updated_at?: string
@@ -1960,7 +1966,10 @@ export type Database = {
           comment?: string
           created_at?: string
           guide_id?: string
+          guide_reply?: string | null
+          guide_reply_at?: string | null
           id?: string
+          photos?: string[]
           rating?: number
           tour_id?: string
           updated_at?: string
