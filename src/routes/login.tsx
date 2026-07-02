@@ -70,7 +70,7 @@ function LoginPage() {
         navigate({ href: pendingRedirect, replace: true });
         return;
       }
-      navigate({ to: guide ? "/guide" : isAdmin ? "/admin" : "/ai", replace: true });
+      navigate({ to: guide ? "/guide" : isAdmin ? "/admin" : "/", replace: true });
     };
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
       if (session?.user) {
