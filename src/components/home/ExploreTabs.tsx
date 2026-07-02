@@ -265,6 +265,7 @@ export function ExploreTabs() {
           <TabsContent value="guides" className="mt-0">{renderGuides()}</TabsContent>
           <TabsContent value="tours" className="mt-0">{renderTours()}</TabsContent>
           <TabsContent value="places" className="mt-0">{renderPlaces()}</TabsContent>
+          <TabsContent value="reels" className="mt-0">{renderReels()}</TabsContent>
           <TabsContent value="articles" className="mt-0">{renderArticles()}</TabsContent>
           <TabsContent value="spotlight" className="mt-0">{renderSpotlight()}</TabsContent>
         </Tabs>
