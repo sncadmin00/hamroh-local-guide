@@ -134,13 +134,17 @@ function PublicDiaryPage() {
       </div>
 
       {diary.stats && (
-        <div className="flex flex-wrap gap-4 mb-10 text-xs text-muted-foreground">
+        <div className="flex flex-wrap gap-4 mb-6 text-xs text-muted-foreground">
           <span>{diary.stats.places ?? 0} places</span>
           <span>{diary.stats.tours ?? 0} tours</span>
           <span>{diary.stats.guides ?? 0} guides</span>
           <span>{diary.stats.photos ?? 0} photos</span>
         </div>
       )}
+
+      <ShareRow title={diary.title || "Travel diary"} diaryId={diary.id} />
+
+
 
       <div className="space-y-10">
         {diary.days.length === 0 && (
