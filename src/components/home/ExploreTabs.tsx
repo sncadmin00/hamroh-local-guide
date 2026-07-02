@@ -28,7 +28,7 @@ const platformMeta = {
 type TabKey = "guides" | "tours" | "places" | "articles" | "spotlight";
 
 export function ExploreTabs() {
-  const isMobile = useIsMobile();
+  
   const { t, lang } = useI18n();
   const [tab, setTab] = useState<TabKey>("guides");
 
