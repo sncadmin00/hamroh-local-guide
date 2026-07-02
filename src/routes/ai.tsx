@@ -159,7 +159,7 @@ function AiLayout() {
       <main className="flex-1 flex flex-col min-w-0">
         <header className="md:hidden sticky top-0 z-10 flex items-center justify-between gap-2 px-3 h-12 border-b border-border/60 bg-background/90 backdrop-blur">
           <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
-            <ArrowLeft className="h-4 w-4" /> Home
+            <ArrowLeft className="h-4 w-4" /> {t("ai.home")}
           </Link>
           <Link to="/" className="flex items-center gap-1.5">
             <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
@@ -169,7 +169,7 @@ function AiLayout() {
           </Link>
           <button
             onClick={newThread}
-            aria-label="New search"
+            aria-label={t("ai.newSearch")}
             className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground hover:opacity-90"
           >
             <Plus className="h-4 w-4" />
