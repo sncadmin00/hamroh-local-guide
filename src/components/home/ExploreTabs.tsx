@@ -225,7 +225,7 @@ export function ExploreTabs() {
           <TabsContent value="places" className="mt-0">{renderPlaces()}</TabsContent>
           <TabsContent value="reels" className="mt-0">{renderReels()}</TabsContent>
           <TabsContent value="articles" className="mt-0">{renderArticles()}</TabsContent>
-          <TabsContent value="spotlight" className="mt-0">{renderSpotlight()}</TabsContent>
+          
         </Tabs>
       </div>
     </section>
