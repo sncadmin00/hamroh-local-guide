@@ -170,10 +170,11 @@ export function useLatestPosts(limit = 12) {
   return useQuery({
     queryKey: ["latest-posts", limit],
     queryFn: async (): Promise<LatestPost[]> => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("guide_posts")
-        .select("id, platform, url, thumbnail_url, caption, posted_at, guide_id, guides(slug, name)")
+        .select("id, platform, url, thumbnail_url, caption, posted_at, guide_id, media_type, guides(slug, name)")
         .eq("visible", true)
+        .eq("media_type", "article")
         .order("posted_at", { ascending: false, nullsFirst: false })
         .limit(limit);
       if (error) throw error;
@@ -193,6 +194,84 @@ export function useLatestPosts(limit = 12) {
     },
   });
 }
+
+export type ReelItem = {
+  id: string;
+  source: "guide" | "admin";
+  url: string;
+  thumbnailUrl: string | null;
+  caption: string;
+  title: string;
+  postedAt: string | null;
+  platform: GuidePost["platform"] | null;
+  guideId: string | null;
+  guideSlug: string | null;
+  guideName: string | null;
+};
+
+export function useLatestReels(limit = 24) {
+  return useQuery({
+    queryKey: ["latest-reels", limit],
+    queryFn: async (): Promise<ReelItem[]> => {
+      const [gp, ar] = await Promise.all([
+        (supabase as any)
+          .from("guide_posts")
+          .select("id, platform, url, thumbnail_url, caption, posted_at, guide_id, guides(slug, name)")
+          .eq("visible", true)
+          .eq("media_type", "reel")
+          .order("posted_at", { ascending: false, nullsFirst: false })
+          .limit(limit),
+        (supabase as any)
+          .from("admin_reels")
+          .select("id, title, video_url, thumbnail_url, caption, posted_at")
+          .eq("visible", true)
+          .order("posted_at", { ascending: false, nullsFirst: false })
+          .limit(limit),
+      ]);
+      if (gp.error) throw gp.error;
+      if (ar.error) throw ar.error;
+
+      const fromGuides: ReelItem[] = (gp.data ?? [])
+        .filter((p: any) => p.guides)
+        .map((p: any) => ({
+          id: `g_${p.id}`,
+          source: "guide" as const,
+          url: p.url,
+          thumbnailUrl: p.thumbnail_url,
+          caption: p.caption ?? "",
+          title: p.guides.name,
+          postedAt: p.posted_at,
+          platform: p.platform,
+          guideId: p.guide_id,
+          guideSlug: p.guides.slug,
+          guideName: p.guides.name,
+        }));
+
+      const fromAdmin: ReelItem[] = (ar.data ?? []).map((r: any) => ({
+        id: `a_${r.id}`,
+        source: "admin" as const,
+        url: r.video_url,
+        thumbnailUrl: r.thumbnail_url,
+        caption: r.caption ?? "",
+        title: r.title ?? "",
+        postedAt: r.posted_at,
+        platform: null,
+        guideId: null,
+        guideSlug: null,
+        guideName: null,
+      }));
+
+      return [...fromGuides, ...fromAdmin]
+        .sort((a, b) => {
+          const da = a.postedAt ? new Date(a.postedAt).getTime() : 0;
+          const db = b.postedAt ? new Date(b.postedAt).getTime() : 0;
+          return db - da;
+        })
+        .slice(0, limit);
+    },
+  });
+}
+
 
 export type FeaturedReview = {
   id: string;
