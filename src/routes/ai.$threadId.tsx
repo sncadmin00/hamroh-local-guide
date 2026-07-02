@@ -208,7 +208,7 @@ function ChatWindow({ threadId, initial, token }: { threadId: string; initial: {
                 }
               }}
               rows={1}
-              placeholder="Ask about guides, cities, languages…"
+              placeholder={t("ai.placeholder")}
               className="flex-1 resize-none bg-transparent px-3 py-2 text-sm outline-none max-h-40"
               disabled={isLoading}
             />
@@ -216,12 +216,12 @@ function ChatWindow({ threadId, initial, token }: { threadId: string; initial: {
               type="submit"
               disabled={isLoading || !input.trim()}
               className="h-9 w-9 shrink-0 inline-flex items-center justify-center rounded-xl bg-primary text-primary-foreground disabled:opacity-40 hover:opacity-90"
-              aria-label="Send"
+              aria-label={t("ai.send")}
             >
               <ArrowUp className="h-4 w-4" />
             </button>
           </div>
-          <p className="mt-2 text-xs text-muted-foreground text-center">Hamroh AI · Recommendations from our verified guide catalog</p>
+          <p className="mt-2 text-xs text-muted-foreground text-center">{t("ai.footer")}</p>
         </form>
       </div>
     </div>
