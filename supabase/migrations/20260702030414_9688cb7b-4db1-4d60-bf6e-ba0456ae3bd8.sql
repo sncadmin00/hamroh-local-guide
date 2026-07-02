@@ -1,0 +1,2 @@
+ALTER TABLE public.bookings DROP CONSTRAINT IF EXISTS bookings_source_check;
+ALTER TABLE public.bookings ADD CONSTRAINT bookings_source_check CHECK (source = ANY (ARRAY['web'::text, 'instagram'::text, 'facebook'::text, 'telegram'::text, 'whatsapp'::text, 'other'::text, 'mobile'::text]));
