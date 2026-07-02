@@ -154,18 +154,21 @@ function ChatWindow({ threadId, initial, token }: { threadId: string; initial: {
               <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent text-primary-foreground mb-6 shadow-[var(--shadow-elegant)]">
                 <Sparkles className="h-7 w-7" />
               </div>
-              <h1 className="font-display text-3xl md:text-4xl font-semibold">Find your perfect guide</h1>
-              <p className="mt-3 text-muted-foreground">Describe the trip you want — language, city, vibe, budget.</p>
+              <h1 className="font-display text-3xl md:text-4xl font-semibold">{t("ai.findGuide")}</h1>
+              <p className="mt-3 text-muted-foreground">{t("ai.describeTrip")}</p>
               <div className="mt-8 grid gap-2 sm:grid-cols-2">
-                {SUGGESTIONS.map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => submit(s)}
-                    className="text-left rounded-2xl bg-card ring-1 ring-border/60 p-4 text-sm hover:ring-primary/40 hover:bg-secondary/60 transition-all"
-                  >
-                    {s}
-                  </button>
-                ))}
+                {SUGGESTION_KEYS.map((key) => {
+                  const label = t(key);
+                  return (
+                    <button
+                      key={key}
+                      onClick={() => submit(label)}
+                      className="text-left rounded-2xl bg-card ring-1 ring-border/60 p-4 text-sm hover:ring-primary/40 hover:bg-secondary/60 transition-all"
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           ) : (
