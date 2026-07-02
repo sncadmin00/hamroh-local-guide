@@ -66,12 +66,9 @@ function Home() {
       <main className="flex-1">
         <EditorialHero />
         <TrustBar />
-        <PopularCategoriesCarousel />
         <ExploreTabs />
-        <SpotlightTourCarousel />
         <WhyHamroh />
         <FeaturedReviews />
-        <LatestPosts />
         <DownloadAppBanner />
 
         {/* Become a guide banner */}
