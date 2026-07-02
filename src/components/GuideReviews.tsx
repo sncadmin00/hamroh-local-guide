@@ -48,7 +48,7 @@ export function GuideReviews({ guideId }: { guideId: string }) {
           )}
           {r.photoUrls && r.photoUrls.length > 0 && (
             <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-6">
-              {r.photoUrls.map((u, i) => (
+              {r.photoUrls.map((u: string, i: number) => (
                 <a
                   key={i}
                   href={u}
