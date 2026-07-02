@@ -4,7 +4,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { EditorialHero } from "@/components/home/EditorialHero";
 import { PopularCategoriesCarousel } from "@/components/home/PopularCategoriesCarousel";
-import { FeaturedGuides } from "@/components/home/FeaturedGuides";
+import { ExploreTabs } from "@/components/home/ExploreTabs";
 import { SpotlightTourCarousel } from "@/components/home/SpotlightTourCarousel";
 import { WhyHamroh } from "@/components/home/WhyHamroh";
 import { TrustBar } from "@/components/home/TrustBar";
@@ -70,7 +70,7 @@ function Home() {
         <EditorialHero />
         <TrustBar />
         <PopularCategoriesCarousel />
-        <FeaturedGuides />
+        <ExploreTabs />
         <SpotlightTourCarousel />
         <WhyHamroh />
         <FeaturedReviews />
