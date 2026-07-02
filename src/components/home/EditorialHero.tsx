@@ -288,11 +288,11 @@ export function EditorialHero() {
               >
                 {userName ? userName.slice(0, 1).toUpperCase() : "H"}
               </div>
-              <div className="min-w-0">
-                <p className="font-bold text-lg truncate">
+              <div className="min-w-0 flex-1">
+                <p className="font-bold text-base sm:text-lg leading-snug break-words">
                   {userName ? `${t("hero.welcome") || "Welcome"}, ${userName}` : t("hero.welcome.guest") || "Welcome, traveller"}
                 </p>
-                <p className="text-sm opacity-75 italic truncate">
+                <p className="text-sm opacity-75 italic break-words">
                   {t("hero.welcome.sub") || "Your Silk Road begins here"}
                 </p>
               </div>
