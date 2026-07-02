@@ -210,11 +210,6 @@ export function ExploreTabs() {
             </TabsList>
           </div>
 
-          <div className="mb-6 flex justify-end">
-            <Link to={viewAllByTab[tab].to} className="text-sm font-medium text-primary hover:underline">
-              {viewAllByTab[tab].label} →
-            </Link>
-          </div>
 
           <TabsContent value="guides" className="mt-0">{renderGuides()}</TabsContent>
           <TabsContent value="tours" className="mt-0">{renderTours()}</TabsContent>
