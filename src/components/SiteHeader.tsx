@@ -36,6 +36,7 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
   const [displayName, setDisplayName] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     onScroll();
@@ -74,19 +75,34 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
     });
     return () => sub.subscription.unsubscribe();
   }, []);
-  const signOut = async () => {
-    try {
-      await supabase.auth.signOut({ scope: "local" });
-    } catch (e) {
-      console.warn("signOut failed, clearing session locally", e);
+  const clearStoredAuthSession = () => {
+    if (typeof window === "undefined") return;
+
+    for (const storage of [window.localStorage, window.sessionStorage]) {
+      Object.keys(storage).forEach((key) => {
+        if (key.startsWith("sb-") && key.endsWith("-auth-token")) {
+          storage.removeItem(key);
+        }
+      });
     }
+  };
+
+  const signOut = () => {
+    if (signingOut) return;
+    setSigningOut(true);
     setSignedIn(false);
     setIsAdmin(false);
     setIsGuide(false);
     setAvatarUrl(null);
     setDisplayName(null);
     setMenuOpen(false);
-    navigate({ to: "/", replace: true });
+    clearStoredAuthSession();
+
+    void supabase.auth.signOut({ scope: "local" }).catch((e) => {
+      console.warn("signOut failed after local cleanup", e);
+    });
+
+    window.location.replace("/");
   };
   const menuLinks = [
     { to: "/tours", label: t("nav.tours") },
@@ -239,6 +255,7 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
                 {signedIn ? (
                   <button
                     onClick={signOut}
+                    disabled={signingOut}
                     className="py-[14px] text-[1.1rem] text-[var(--muted-foreground)] inline-flex items-center gap-3 border-b border-[var(--border)] transition-all duration-200 hover:text-[#ef4444] hover:translate-x-1 text-left"
                   >
                     <LogOut className="h-5 w-5" /> {t("common.signOut")}
