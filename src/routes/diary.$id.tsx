@@ -1,6 +1,8 @@
 import { createFileRoute, notFound, useRouter } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { BookOpen, MapPin, Calendar } from "lucide-react";
+import { BookOpen, MapPin, Calendar, Link2, Check } from "lucide-react";
+import { useState } from "react";
+
 import { getPublicDiary, type PublicDiary } from "@/lib/public-diary.functions";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -132,13 +134,17 @@ function PublicDiaryPage() {
       </div>
 
       {diary.stats && (
-        <div className="flex flex-wrap gap-4 mb-10 text-xs text-muted-foreground">
+        <div className="flex flex-wrap gap-4 mb-6 text-xs text-muted-foreground">
           <span>{diary.stats.places ?? 0} places</span>
           <span>{diary.stats.tours ?? 0} tours</span>
           <span>{diary.stats.guides ?? 0} guides</span>
           <span>{diary.stats.photos ?? 0} photos</span>
         </div>
       )}
+
+      <ShareRow title={diary.title || "Travel diary"} diaryId={diary.id} />
+
+
 
       <div className="space-y-10">
         {diary.days.length === 0 && (
@@ -202,3 +208,58 @@ function PublicDiaryPage() {
     </DiaryShell>
   );
 }
+
+function ShareRow({ title, diaryId }: { title: string; diaryId: string }) {
+  const [copied, setCopied] = useState(false);
+  const url = `https://hamroh-local-guide.lovable.app/diary/${diaryId}`;
+  const text = `${title} — Travel diary on Hamroh`;
+  const enc = encodeURIComponent;
+
+  const links = [
+    { label: "WhatsApp", href: `https://wa.me/?text=${enc(`${text} ${url}`)}` },
+    { label: "Telegram", href: `https://t.me/share/url?url=${enc(url)}&text=${enc(text)}` },
+    { label: "Facebook", href: `https://www.facebook.com/sharer/sharer.php?u=${enc(url)}` },
+    { label: "X", href: `https://twitter.com/intent/tweet?url=${enc(url)}&text=${enc(text)}` },
+  ];
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1600);
+    } catch {}
+  };
+
+  return (
+    <div className="mb-10">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-xs uppercase tracking-[0.14em] text-muted-foreground mr-1">Share</span>
+        {links.map((l) => (
+          <a
+            key={l.label}
+            href={l.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors hover:opacity-90"
+            style={{ background: "var(--secondary)", color: "var(--foreground)" }}
+          >
+            {l.label}
+          </a>
+        ))}
+        <button
+          type="button"
+          onClick={copy}
+          className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors hover:opacity-90"
+          style={{ background: "var(--secondary)", color: "var(--foreground)" }}
+        >
+          {copied ? <Check className="h-3.5 w-3.5" /> : <Link2 className="h-3.5 w-3.5" />}
+          {copied ? "Copied" : "Copy link"}
+        </button>
+      </div>
+      <p className="mt-2 text-[11px] text-muted-foreground">
+        Instagram doesn't support link sharing from the web — copy the link and paste it into your story or DM.
+      </p>
+    </div>
+  );
+}
+
