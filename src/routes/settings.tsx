@@ -21,6 +21,8 @@ function SettingsPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [hasPassword, setHasPassword] = useState<boolean | null>(null);
   const [savingEmail, setSavingEmail] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
   const [telegramEmail, setTelegramEmail] = useState("");
