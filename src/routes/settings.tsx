@@ -50,8 +50,13 @@ function SettingsPage() {
       setEmail(data.user.email ?? "");
       setChecking(false);
       loadTelegram();
+      supabase.auth.getUserIdentities().then(({ data: idData }) => {
+        const identities = idData?.identities ?? [];
+        setHasPassword(identities.some((i) => i.provider === "email"));
+      }).catch(() => setHasPassword(false));
     });
   }, [navigate]);
+
 
   const updateTelegramEmail = async (e: React.FormEvent) => {
     e.preventDefault();
