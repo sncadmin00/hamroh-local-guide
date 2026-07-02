@@ -116,9 +116,9 @@ export function ExploreTabs() {
 
   const renderPlaces = () => {
     const list = topPlaces.map((p) => (
-      <Link key={p.id} to="/places/$slug" params={{ slug: p.slug }} className="block">
+      <div key={p.id}>
         <PlaceCard place={p} />
-      </Link>
+      </div>
     ));
     return isMobile ? (
       <HorizontalCarousel itemClassName={itemW}>{list}</HorizontalCarousel>
