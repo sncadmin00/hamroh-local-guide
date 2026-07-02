@@ -555,6 +555,7 @@ const I18nContext = createContext<{ lang: Lang; setLang: (l: Lang) => void; t: (
 
 export function I18nProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>("en");
+  const [hydratedFromProfile, setHydratedFromProfile] = useState(false);
 
   useEffect(() => {
     const saved = (typeof window !== "undefined" && localStorage.getItem("lang")) as Lang | null;
@@ -567,23 +568,57 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     }
   }, [lang]);
 
-  // Sync current language to authenticated user's metadata and guide profile (if any).
+  // On login, load locale from profiles as the source of truth for the web.
   useEffect(() => {
+    const hydrateFromProfile = async (userId: string) => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("locale")
+        .eq("id", userId)
+        .maybeSingle();
+      const remote = data?.locale as Lang | null | undefined;
+      if (remote === "en" || remote === "uz" || remote === "ru") {
+        setLangState(remote);
+        try { localStorage.setItem("lang", remote); } catch {}
+      }
+      setHydratedFromProfile(true);
+    };
+
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) hydrateFromProfile(data.user.id);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" && session?.user) {
+        hydrateFromProfile(session.user.id);
+      }
+      if (event === "SIGNED_OUT") setHydratedFromProfile(false);
+    });
+    return () => { sub.subscription.unsubscribe(); };
+  }, []);
+
+  // Sync language to profiles.locale (primary), auth user_metadata (auth emails)
+  // and guides.locale (guide accounts). Skipped until profile has been read
+  // so we don't overwrite the stored preference with the localStorage guess.
+  useEffect(() => {
+    if (!hydratedFromProfile) return;
     let cancelled = false;
     const sync = async (l: Lang) => {
       const { data: { user } } = await supabase.auth.getUser();
       if (cancelled || !user) return;
+
+      await supabase
+        .from("profiles")
+        .upsert({ id: user.id, locale: l }, { onConflict: "id" });
+
       if (user.user_metadata?.locale !== l) {
         await supabase.auth.updateUser({ data: { locale: l } });
       }
+
       await supabase.from("guides").update({ locale: l }).eq("user_id", user.id);
     };
     sync(lang);
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      if (session?.user) sync(lang);
-    });
-    return () => { cancelled = true; sub.subscription.unsubscribe(); };
-  }, [lang]);
+    return () => { cancelled = true; };
+  }, [lang, hydratedFromProfile]);
 
   const setLang = (l: Lang) => {
     setLangState(l);
