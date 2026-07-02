@@ -43,7 +43,7 @@ function ThreadPage() {
   });
 
   if (history.isLoading || !token) {
-    return <div className="flex-1 flex items-center justify-center text-sm text-muted-foreground">Loading…</div>;
+    return <div className="flex-1 flex items-center justify-center text-sm text-muted-foreground">…</div>;
   }
 
   return <ChatWindow key={threadId} threadId={threadId} initial={history.data ?? []} token={token} />;
