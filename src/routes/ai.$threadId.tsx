@@ -19,12 +19,12 @@ export const Route = createFileRoute("/ai/$threadId")({
   component: ThreadPage,
 });
 
-const SUGGESTIONS = [
-  "Korean-speaking guide for food tours",
-  "Sunset photography tour with a local",
-  "Family-friendly history walking guide",
-  "Half-day artisan workshop with English-speaking guide",
-];
+const SUGGESTION_KEYS = [
+  "ai.suggestion.1",
+  "ai.suggestion.2",
+  "ai.suggestion.3",
+  "ai.suggestion.4",
+] as const;
 
 function ThreadPage() {
   const { threadId } = useParams({ from: "/ai/$threadId" });
