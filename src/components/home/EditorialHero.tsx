@@ -34,15 +34,15 @@ export function EditorialHero() {
   }, [describe, phrases.length]);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      const u = data.session?.user;
-      if (!u) return;
-      const name = (u.user_metadata?.full_name as string | undefined)
-        ?? (u.user_metadata?.name as string | undefined)
-        ?? u.email?.split("@")[0]
-        ?? null;
+    const applyUser = (user: { user_metadata?: Record<string, unknown>; email?: string | null } | null | undefined) => {
+      if (!user) { setUserName(null); return; }
+      const meta = (user.user_metadata ?? {}) as Record<string, unknown>;
+      const name = (meta.full_name as string) || (meta.name as string) || user.email?.split("@")[0] || null;
       setUserName(name);
-    });
+    };
+    supabase.auth.getSession().then(({ data }) => applyUser(data.session?.user));
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => applyUser(s?.user));
+    return () => sub.subscription.unsubscribe();
   }, []);
 
   const onSubmit = async (e: React.FormEvent) => {
