@@ -85,6 +85,7 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
     setIsGuide(false);
     setAvatarUrl(null);
     setDisplayName(null);
+    setMenuOpen(false);
     navigate({ to: "/", replace: true });
   };
   const menuLinks = [
