@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { listThreads, createThread, deleteThread } from "@/lib/ai-threads.functions";
 import { Compass, Plus, Trash2, MessageSquare, LogOut, ArrowLeft, Calendar } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { signOutAndRedirect } from "@/lib/auth";
 
 export const Route = createFileRoute("/ai")({
   head: () => ({ meta: [{ title: "Hamroh AI — Find your guide" }] }),
@@ -84,9 +85,7 @@ function AiLayout() {
     }
   };
 
-  const signOut = async () => {
-    await supabase.auth.signOut();
-  };
+  const signOut = () => signOutAndRedirect("/");
 
   if (!ready) {
     return <div className="min-h-screen flex items-center justify-center text-sm text-muted-foreground">{t("ai.loading")}</div>;

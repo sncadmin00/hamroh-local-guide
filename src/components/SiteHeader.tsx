@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { Menu, Settings, Shield, LogIn, LogOut, Mail, Phone, MessageSquare, User, Heart, Briefcase, Calendar } from "lucide-react";
 
 import hamrohLogo from "@/assets/hamroh-logo.png";
@@ -9,6 +9,7 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { NotificationsBell } from "@/components/home/NotificationsBell";
 import { supabase } from "@/integrations/supabase/client";
+import { signOutAndRedirect } from "@/lib/auth";
 
 function WhatsAppIcon({ className }: { className?: string }) {
   return (
@@ -28,7 +29,6 @@ function TelegramIcon({ className }: { className?: string }) {
 
 export function SiteHeader({ transparent = false, sticky = true }: { transparent?: boolean; sticky?: boolean } = {}) {
   const { t } = useI18n();
-  const navigate = useNavigate();
   const [signedIn, setSignedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isGuide, setIsGuide] = useState(false);
@@ -36,6 +36,7 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
   const [displayName, setDisplayName] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     onScroll();
@@ -74,19 +75,16 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
     });
     return () => sub.subscription.unsubscribe();
   }, []);
-  const signOut = async () => {
-    try {
-      await supabase.auth.signOut({ scope: "local" });
-    } catch (e) {
-      console.warn("signOut failed, clearing session locally", e);
-    }
+  const signOut = () => {
+    if (signingOut) return;
+    setSigningOut(true);
     setSignedIn(false);
     setIsAdmin(false);
     setIsGuide(false);
     setAvatarUrl(null);
     setDisplayName(null);
     setMenuOpen(false);
-    navigate({ to: "/", replace: true });
+    signOutAndRedirect("/");
   };
   const menuLinks = [
     { to: "/tours", label: t("nav.tours") },
@@ -239,6 +237,7 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
                 {signedIn ? (
                   <button
                     onClick={signOut}
+                    disabled={signingOut}
                     className="py-[14px] text-[1.1rem] text-[var(--muted-foreground)] inline-flex items-center gap-3 border-b border-[var(--border)] transition-all duration-200 hover:text-[#ef4444] hover:translate-x-1 text-left"
                   >
                     <LogOut className="h-5 w-5" /> {t("common.signOut")}
