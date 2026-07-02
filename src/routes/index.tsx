@@ -67,7 +67,7 @@ function Home() {
       <SiteHeader transparent />
 
       <main className="flex-1">
-        <HeroSearch />
+        <EditorialHero />
         <TrustBar />
         <PopularCategoriesCarousel />
         <FeaturedGuides />
