@@ -104,11 +104,7 @@ export function ExploreTabs() {
         <PlaceCard place={p} />
       </div>
     ));
-    return isMobile ? (
-      <HorizontalCarousel itemClassName={itemW}>{list}</HorizontalCarousel>
-    ) : (
-      <div className={gridCls}>{list.slice(0, 6)}</div>
-    );
+    return <HorizontalCarousel itemClassName={itemW}>{list}</HorizontalCarousel>;
   };
 
   const renderArticles = () => {
