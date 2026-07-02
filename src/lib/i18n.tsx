@@ -158,6 +158,25 @@ export const translations: Dict = {
     ru: "Хотите фильтры? Переключитесь на ручной поиск по городам, датам и категориям.",
   },
 
+  "ai.newSearch": { en: "New search", uz: "Yangi qidiruv", ru: "Новый поиск" },
+  "ai.recent": { en: "Recent", uz: "So'nggi", ru: "Недавние" },
+  "ai.noSearches": { en: "No searches yet", uz: "Hozircha qidiruvlar yo'q", ru: "Пока нет поисков" },
+  "ai.backToSite": { en: "Back to site", uz: "Saytga qaytish", ru: "Вернуться на сайт" },
+  "ai.home": { en: "Home", uz: "Bosh sahifa", ru: "Главная" },
+  "ai.loading": { en: "Loading…", uz: "Yuklanmoqda…", ru: "Загрузка…" },
+  "ai.deleteThread": { en: "Delete thread", uz: "Suhbatni o'chirish", ru: "Удалить чат" },
+  "ai.findGuide": { en: "Find your perfect guide", uz: "O'zingizga mos hamrohni toping", ru: "Найдите идеального гида" },
+  "ai.describeTrip": { en: "Describe the trip you want — language, city, vibe, budget.", uz: "Sayohatingizni tasvirlab bering — til, shahar, uslub, byudjet.", ru: "Опишите поездку — язык, город, стиль, бюджет." },
+  "ai.thinking": { en: "Thinking…", uz: "O'ylanmoqda…", ru: "Думаю…" },
+  "ai.placeholder": { en: "Ask about guides, cities, languages…", uz: "Hamrohlar, shaharlar, tillar haqida so'rang…", ru: "Спросите о гидах, городах, языках…" },
+  "ai.send": { en: "Send", uz: "Yuborish", ru: "Отправить" },
+  "ai.footer": { en: "Hamroh AI · Recommendations from our verified guide catalog", uz: "Hamroh AI · Tasdiqlangan hamrohlar katalogidan tavsiyalar", ru: "Hamroh AI · Рекомендации из каталога проверенных гидов" },
+  "ai.suggestion.1": { en: "Korean-speaking guide for food tours", uz: "Ovqat sayohatlari uchun koreys tilida so'zlashuvchi hamroh", ru: "Гид со знанием корейского для гастротуров" },
+  "ai.suggestion.2": { en: "Sunset photography tour with a local", uz: "Mahalliy hamroh bilan quyosh botishi fotosayohati", ru: "Фототур на закате с местным гидом" },
+  "ai.suggestion.3": { en: "Family-friendly history walking guide", uz: "Oilaviy tarix sayr hamrohi", ru: "Семейный гид по историческим прогулкам" },
+  "ai.suggestion.4": { en: "Half-day artisan workshop with English-speaking guide", uz: "Ingliz tilida so'zlashuvchi hamroh bilan yarim kunlik hunarmandchilik ustaxonasi", ru: "Полдневный мастер-класс ремесленника с англоговорящим гидом" },
+
+
   "hero.search.aiHint": {
     en: "Powered by Hamroh AI — we'll match you with the perfect guide.",
     uz: "Hamroh AI yordamida — sizga eng mos hamrohni topamiz.",
