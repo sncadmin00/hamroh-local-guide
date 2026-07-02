@@ -50,7 +50,7 @@ function ThreadPage() {
 }
 
 function ChatWindow({ threadId, initial, token }: { threadId: string; initial: { id: string; role: "user" | "assistant" | "system"; parts: Array<{ type: string; text?: string }> }[]; token: string }) {
-  const { lang } = useI18n();
+  const { lang, t } = useI18n();
   const transport = useMemo(
     () =>
       new DefaultChatTransport({
