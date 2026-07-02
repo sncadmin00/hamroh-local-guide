@@ -21,6 +21,8 @@ function SettingsPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [hasPassword, setHasPassword] = useState<boolean | null>(null);
   const [savingEmail, setSavingEmail] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
   const [telegramEmail, setTelegramEmail] = useState("");
@@ -48,8 +50,13 @@ function SettingsPage() {
       setEmail(data.user.email ?? "");
       setChecking(false);
       loadTelegram();
+      supabase.auth.getUserIdentities().then(({ data: idData }) => {
+        const identities = idData?.identities ?? [];
+        setHasPassword(identities.some((i) => i.provider === "email"));
+      }).catch(() => setHasPassword(false));
     });
   }, [navigate]);
+
 
   const updateTelegramEmail = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,15 +96,40 @@ function SettingsPage() {
       return;
     }
     setSavingPassword(true);
-    const { error } = await supabase.auth.updateUser({ password });
-    setSavingPassword(false);
-    if (error) toast.error(error.message);
-    else {
-      toast.success("Password updated");
+    try {
+      if (hasPassword) {
+        if (!currentEmail) {
+          toast.error("Missing account email");
+          return;
+        }
+        if (!currentPassword) {
+          toast.error("Enter your current password");
+          return;
+        }
+        const { error: reauthError } = await supabase.auth.signInWithPassword({
+          email: currentEmail,
+          password: currentPassword,
+        });
+        if (reauthError) {
+          toast.error("Current password is incorrect");
+          return;
+        }
+      }
+      const { error } = await supabase.auth.updateUser({ password });
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      toast.success(hasPassword ? "Password updated" : "Password created");
       setPassword("");
       setConfirm("");
+      setCurrentPassword("");
+      setHasPassword(true);
+    } finally {
+      setSavingPassword(false);
     }
   };
+
 
   const signOut = async () => {
     await supabase.auth.signOut();
@@ -167,34 +199,54 @@ function SettingsPage() {
         </form>
 
         <form onSubmit={updatePassword} className="mt-6 rounded-3xl bg-card p-6 ring-1 ring-border/60">
-          <h2 className="font-display text-lg font-semibold">Password</h2>
-          <p className="mt-1 text-sm text-muted-foreground">At least 8 characters.</p>
+          <h2 className="font-display text-lg font-semibold">
+            {hasPassword === false ? "Set a password" : "Change password"}
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {hasPassword === false
+              ? "You signed in with a social provider. Create a password to sign in with email too. At least 8 characters."
+              : "At least 8 characters. We'll ask for your current password to confirm it's you."}
+          </p>
+          {hasPassword && (
+            <input
+              type="password"
+              required
+              placeholder="Current password"
+              autoComplete="current-password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              className="mt-4 w-full h-11 rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring"
+            />
+          )}
           <input
             type="password"
             required
             minLength={8}
             placeholder="New password"
+            autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-4 w-full h-11 rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring"
+            className="mt-3 w-full h-11 rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring"
           />
           <input
             type="password"
             required
             minLength={8}
             placeholder="Confirm new password"
+            autoComplete="new-password"
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
             className="mt-3 w-full h-11 rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring"
           />
           <button
             type="submit"
-            disabled={savingPassword}
+            disabled={savingPassword || hasPassword === null}
             className="mt-4 h-11 px-6 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-60"
           >
-            {savingPassword ? "Saving…" : "Update password"}
+            {savingPassword ? "Saving…" : hasPassword === false ? "Create password" : "Update password"}
           </button>
         </form>
+
 
         <div className="mt-8 flex justify-end">
           <button
