@@ -420,6 +420,7 @@ function AdminPage() {
         {tab === "guides" && <GuidesPanel guides={guides} cities={cities} categories={categories} guideCategories={guideCategories} languages={languages} reload={loadData} />}
         {tab === "tours" && <ToursPanel />}
         {tab === "spotlights" && <SpotlightsPanel />}
+        {tab === "reels" && <AdminReelsPanel />}
         {tab === "categories" && <CategoriesPanel categories={categories} reload={loadData} />}
         {tab === "languages" && <LanguagesPanel languages={languages} reload={loadData} />}
         {tab === "places" && <PlacesPanel places={places} cities={cities} guides={guides} placeGuides={placeGuides} reload={loadData} />}
