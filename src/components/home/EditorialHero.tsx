@@ -204,37 +204,6 @@ export function EditorialHero() {
               </div>
             </form>
 
-            {/* Trust badges — kept minimal */}
-            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 pt-2">
-              {[
-                t("hero.badge.identity"),
-                t("hero.badge.language"),
-                t("hero.badge.chat"),
-                t("hero.badge.booking"),
-                t("hero.badge.reviews"),
-              ].map((label) => (
-                <span
-                  key={label}
-                  className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs"
-                  style={{
-                    background: "rgba(255,255,255,0.04)",
-                    border: "1px solid rgba(255,255,255,0.08)",
-                    color: "var(--muted-foreground)",
-                  }}
-                >
-                  <span
-                    style={{
-                      width: 5,
-                      height: 5,
-                      borderRadius: "50%",
-                      background: "var(--gold)",
-                      boxShadow: "0 0 6px color-mix(in srgb, var(--gold) 70%, transparent)",
-                    }}
-                  />
-                  {label}
-                </span>
-              ))}
-            </div>
           </div>
 
           {/* Right: sidecar (weather + welcome) */}

@@ -248,48 +248,6 @@ export function HeroSearch() {
             {submitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <ArrowRight className="h-5 w-5" />}
           </button>
         </form>
-
-        {/* Trust badges */}
-        <div
-          className="flex flex-row items-center justify-center gap-2 flex-wrap animate-fade-in"
-          style={{ animationDelay: "0.38s" }}
-        >
-          {[
-            t("hero.badge.identity"),
-            t("hero.badge.language"),
-            t("hero.badge.chat"),
-            t("hero.badge.booking"),
-            t("hero.badge.reviews"),
-          ].map((label) => (
-            <span
-              key={label}
-              className="badge inline-flex items-center gap-1.5 whitespace-nowrap transition-colors"
-              style={{
-                background: "rgba(26, 34, 54, 0.7)",
-                border: "1px solid var(--border)",
-                borderRadius: 999,
-                padding: "5px 10px",
-                fontSize: "0.7rem",
-                fontWeight: 500,
-                color: "var(--muted-foreground)",
-                backdropFilter: "blur(8px)",
-                WebkitBackdropFilter: "blur(8px)",
-              }}
-            >
-              <span
-                style={{
-                  width: 5,
-                  height: 5,
-                  background: GOLD,
-                  borderRadius: "50%",
-                  boxShadow: "0 0 4px color-mix(in srgb, var(--gold) 60%, transparent)",
-                  flexShrink: 0,
-                }}
-              />
-              {label}
-            </span>
-          ))}
-        </div>
       </div>
 
       {/* Scroll hint */}
