@@ -44,25 +44,13 @@ export function ExploreTabs() {
   const topPosts = posts.slice(0, 12);
   const topSpotlights = spotlights.filter((s) => s.is_active).slice(0, 12);
 
-  const viewAllByTab: Record<TabKey, { label: string; to: string }> = {
-    guides: { label: t("featured.viewAll"), to: "/guides" },
-    tours: { label: t("topTours.viewAll") || t("featured.viewAll"), to: "/tours" },
-    places: { label: t("featured.viewAll"), to: "/explore" },
-    articles: { label: t("featured.viewAll"), to: "/explore" },
-    spotlight: { label: t("featured.viewAll"), to: "/guides" },
-  };
-
-  const gridCls = "grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6";
   const itemW = "w-[240px] md:w-[260px]";
 
-  const renderGuides = () =>
-    isMobile ? (
-      <HorizontalCarousel itemClassName={itemW}>
-        {featuredGuides.map((g) => <GuideCard key={g.id} guide={g} />)}
-      </HorizontalCarousel>
-    ) : (
-      <div className={gridCls}>{featuredGuides.slice(0, 6).map((g) => <GuideCard key={g.id} guide={g} />)}</div>
-    );
+  const renderGuides = () => (
+    <HorizontalCarousel itemClassName={itemW}>
+      {featuredGuides.map((g) => <GuideCard key={g.id} guide={g} />)}
+    </HorizontalCarousel>
+  );
 
   const renderTours = () => {
     const list = topTours.map((tour) => {
