@@ -70,7 +70,7 @@ function Home() {
         <EditorialHero />
         <TrustBar />
         <PopularCategoriesCarousel />
-        <FeaturedGuides />
+        <ExploreTabs />
         <SpotlightTourCarousel />
         <WhyHamroh />
         <FeaturedReviews />
