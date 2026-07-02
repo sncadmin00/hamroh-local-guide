@@ -179,7 +179,7 @@ function ChatWindow({ threadId, initial, token }: { threadId: string; initial: {
               {isLoading && messages[messages.length - 1]?.role === "user" && (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <div className="h-2 w-2 rounded-full bg-muted-foreground animate-pulse" />
-                  Thinking…
+                  {t("ai.thinking")}
                 </div>
               )}
             </div>
