@@ -34,11 +34,20 @@ export function EditorialHero() {
   }, [describe, phrases.length]);
 
   useEffect(() => {
-    const applyUser = (user: { user_metadata?: Record<string, unknown>; email?: string | null } | null | undefined) => {
+    const applyUser = async (user: { id: string; user_metadata?: Record<string, unknown>; email?: string | null } | null | undefined) => {
       if (!user) { setUserName(null); return; }
       const meta = (user.user_metadata ?? {}) as Record<string, unknown>;
-      const name = (meta.full_name as string) || (meta.name as string) || user.email?.split("@")[0] || null;
-      setUserName(name);
+      const metaName = (meta.full_name as string) || (meta.name as string) || null;
+      let name = metaName;
+      if (!name) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("full_name")
+          .eq("id", user.id)
+          .single();
+        name = profile?.full_name || null;
+      }
+      setUserName(name || user.email?.split("@")[0] || null);
     };
     supabase.auth.getSession().then(({ data }) => applyUser(data.session?.user));
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => applyUser(s?.user));
