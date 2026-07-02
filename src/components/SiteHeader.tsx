@@ -74,7 +74,16 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
     return () => sub.subscription.unsubscribe();
   }, []);
   const signOut = async () => {
-    await supabase.auth.signOut();
+    try {
+      await supabase.auth.signOut({ scope: "local" });
+    } catch (e) {
+      console.warn("signOut failed, clearing session locally", e);
+    }
+    setSignedIn(false);
+    setIsAdmin(false);
+    setIsGuide(false);
+    setAvatarUrl(null);
+    setDisplayName(null);
     navigate({ to: "/", replace: true });
   };
   const menuLinks = [
