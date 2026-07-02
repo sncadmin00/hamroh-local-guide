@@ -111,7 +111,7 @@ function ChatWindow({ threadId, initial, token }: { threadId: string; initial: {
   const isLoading = status === "submitted" || status === "streaming";
   const isEmpty = messages.length === 0;
 
-  const { t } = useI18n();
+  const navigate2 = navigate;
   const navigate = useNavigate();
 
   const { data: cities = [] } = useCities();
