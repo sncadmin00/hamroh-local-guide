@@ -46,6 +46,21 @@ export function GuideReviews({ guideId }: { guideId: string }) {
           {r.comment && (
             <p className="mt-2 text-sm text-foreground/80 whitespace-pre-line">{r.comment}</p>
           )}
+          {r.photoUrls && r.photoUrls.length > 0 && (
+            <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-6">
+              {r.photoUrls.map((u, i) => (
+                <a
+                  key={i}
+                  href={u}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="block aspect-square overflow-hidden rounded-lg ring-1 ring-border/60 bg-muted"
+                >
+                  <img src={u} alt="" loading="lazy" className="h-full w-full object-cover" />
+                </a>
+              ))}
+            </div>
+          )}
           <p className="mt-2 text-xs text-muted-foreground">
             {new Date(r.createdAt).toLocaleDateString()}
           </p>
