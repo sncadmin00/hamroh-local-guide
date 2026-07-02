@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Clock, Instagram, Facebook, Youtube, Link2, Music2, ArrowUpRight } from "lucide-react";
+import { Clock, Instagram, Facebook, Youtube, Link2, Music2, ArrowUpRight, PlayCircle } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { GuideCard } from "@/components/GuideCard";
 import { PlaceCard } from "@/components/PlaceCard";
@@ -11,6 +11,7 @@ import {
   useTours,
   usePlaces,
   useLatestPosts,
+  useLatestReels,
   useSpotlights,
   pickTourTitle,
 } from "@/lib/content-queries";
@@ -25,7 +26,7 @@ const platformMeta = {
   other: { label: "Post", Icon: Link2 },
 } as const;
 
-type TabKey = "guides" | "tours" | "places" | "articles" | "spotlight";
+type TabKey = "guides" | "tours" | "places" | "reels" | "articles" | "spotlight";
 
 export function ExploreTabs() {
   
@@ -36,13 +37,16 @@ export function ExploreTabs() {
   const { data: tours = [] } = useTours();
   const { data: places = [] } = usePlaces();
   const { data: posts = [] } = useLatestPosts(12);
+  const { data: reels = [] } = useLatestReels(24);
   const { data: spotlights = [] } = useSpotlights();
 
   const featuredGuides = [...guides].sort((a, b) => b.rating - a.rating).slice(0, 12);
   const topTours = tours.slice(0, 12);
   const topPlaces = places.slice(0, 12);
   const topPosts = posts.slice(0, 12);
+  const topReels = reels.slice(0, 24);
   const topSpotlights = spotlights.filter((s) => s.is_active).slice(0, 12);
+
 
   const itemW = "w-[240px] md:w-[260px]";
 
@@ -106,6 +110,52 @@ export function ExploreTabs() {
     ));
     return <HorizontalCarousel itemClassName={itemW}>{list}</HorizontalCarousel>;
   };
+
+
+
+  const renderReels = () => {
+    const list = topReels.map((r) => {
+      const meta = r.platform ? platformMeta[r.platform] : null;
+      const badgeLabel = r.source === "admin" ? "Hamroh" : meta?.label ?? "Reel";
+      const BadgeIcon = r.source === "admin" ? PlayCircle : (meta?.Icon ?? PlayCircle);
+      const inner = (
+        <div className="relative flex h-72 flex-col overflow-hidden rounded-2xl bg-card ring-1 ring-border/60 transition-transform hover:-translate-y-0.5">
+          {r.thumbnailUrl ? (
+            <img
+              src={r.thumbnailUrl}
+              alt={r.caption || r.title || badgeLabel}
+              loading="lazy"
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/25 via-accent/10 to-background" />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <PlayCircle className="h-12 w-12 text-white/85 drop-shadow" />
+          </div>
+          <div className="relative mt-auto flex flex-col gap-2 p-3 text-white">
+            <span className="inline-flex w-fit items-center gap-1 rounded-full bg-white/15 px-2 py-0.5 text-[11px] font-medium backdrop-blur">
+              <BadgeIcon className="h-3 w-3" /> {badgeLabel}
+            </span>
+            {r.title && <p className="text-xs font-medium opacity-90 line-clamp-1">{r.title}</p>}
+            {r.caption && <p className="line-clamp-2 text-xs leading-snug opacity-80">{r.caption}</p>}
+          </div>
+        </div>
+      );
+      return r.source === "guide" && r.guideSlug ? (
+        <Link key={r.id} to="/guides/$guideId" params={{ guideId: r.guideSlug }}>
+          {inner}
+        </Link>
+      ) : (
+        <a key={r.id} href={r.url} target="_blank" rel="noopener noreferrer">
+          {inner}
+        </a>
+      );
+    });
+    return <HorizontalCarousel itemClassName="w-48">{list}</HorizontalCarousel>;
+  };
+
 
   const renderArticles = () => {
     const list = topPosts.map((p) => {
@@ -181,6 +231,7 @@ export function ExploreTabs() {
     { key: "guides", count: featuredGuides.length },
     { key: "tours", count: topTours.length },
     { key: "places", count: topPlaces.length },
+    { key: "reels", count: topReels.length },
     { key: "articles", count: topPosts.length },
     { key: "spotlight", count: topSpotlights.length },
   ];
@@ -214,6 +265,7 @@ export function ExploreTabs() {
           <TabsContent value="guides" className="mt-0">{renderGuides()}</TabsContent>
           <TabsContent value="tours" className="mt-0">{renderTours()}</TabsContent>
           <TabsContent value="places" className="mt-0">{renderPlaces()}</TabsContent>
+          <TabsContent value="reels" className="mt-0">{renderReels()}</TabsContent>
           <TabsContent value="articles" className="mt-0">{renderArticles()}</TabsContent>
           <TabsContent value="spotlight" className="mt-0">{renderSpotlight()}</TabsContent>
         </Tabs>
