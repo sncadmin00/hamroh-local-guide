@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_reels: {
+        Row: {
+          caption: string
+          created_at: string
+          id: string
+          posted_at: string | null
+          sort_order: number
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+          video_url: string
+          visible: boolean
+        }
+        Insert: {
+          caption?: string
+          created_at?: string
+          id?: string
+          posted_at?: string | null
+          sort_order?: number
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          video_url: string
+          visible?: boolean
+        }
+        Update: {
+          caption?: string
+          created_at?: string
+          id?: string
+          posted_at?: string | null
+          sort_order?: number
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          video_url?: string
+          visible?: boolean
+        }
+        Relationships: []
+      }
       ai_messages: {
         Row: {
           created_at: string
@@ -1120,6 +1159,7 @@ export type Database = {
           featured_on_home: boolean
           guide_id: string
           id: string
+          media_type: Database["public"]["Enums"]["post_media_type"]
           platform: string
           posted_at: string | null
           sort_order: number
@@ -1134,6 +1174,7 @@ export type Database = {
           featured_on_home?: boolean
           guide_id: string
           id?: string
+          media_type?: Database["public"]["Enums"]["post_media_type"]
           platform: string
           posted_at?: string | null
           sort_order?: number
@@ -1148,6 +1189,7 @@ export type Database = {
           featured_on_home?: boolean
           guide_id?: string
           id?: string
+          media_type?: Database["public"]["Enums"]["post_media_type"]
           platform?: string
           posted_at?: string | null
           sort_order?: number
@@ -2634,6 +2676,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin"
+      post_media_type: "reel" | "article"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2762,6 +2805,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin"],
+      post_media_type: ["reel", "article"],
     },
   },
 } as const
