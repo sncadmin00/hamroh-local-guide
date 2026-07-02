@@ -347,6 +347,12 @@ function AdminPage() {
             {ta("tab.spotlights")}
           </button>
           <button
+            onClick={() => setTab("reels")}
+            className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "reels" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+          >
+            Reels
+          </button>
+          <button
             onClick={() => setTab("categories")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "categories" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
