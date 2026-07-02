@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { HeroSearch } from "@/components/home/HeroSearch";
+import { EditorialHero } from "@/components/home/EditorialHero";
 import { PopularCategoriesCarousel } from "@/components/home/PopularCategoriesCarousel";
 import { FeaturedGuides } from "@/components/home/FeaturedGuides";
 import { SpotlightTourCarousel } from "@/components/home/SpotlightTourCarousel";
@@ -67,7 +67,7 @@ function Home() {
       <SiteHeader transparent />
 
       <main className="flex-1">
-        <HeroSearch />
+        <EditorialHero />
         <TrustBar />
         <PopularCategoriesCarousel />
         <FeaturedGuides />
