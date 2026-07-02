@@ -126,7 +126,7 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
           />
 
           {/* Airbnb-style avatar+menu pill */}
-          <Sheet>
+          <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
             <SheetTrigger asChild>
               <button
                 aria-label="Open menu"
