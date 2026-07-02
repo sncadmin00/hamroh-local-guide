@@ -204,13 +204,13 @@ export function ExploreTabs() {
     );
   };
 
-  const tabs: { key: TabKey; count: number }[] = [
-    { key: "guides", count: featuredGuides.length },
-    { key: "tours", count: topTours.length },
-    { key: "places", count: topPlaces.length },
-    { key: "articles", count: topPosts.length },
-    { key: "spotlight", count: topSpotlights.length },
-  ].filter((x) => x.count > 0);
+  const tabs: { key: TabKey; count: number }[] = ([
+    { key: "guides" as const, count: featuredGuides.length },
+    { key: "tours" as const, count: topTours.length },
+    { key: "places" as const, count: topPlaces.length },
+    { key: "articles" as const, count: topPosts.length },
+    { key: "spotlight" as const, count: topSpotlights.length },
+  ]).filter((x) => x.count > 0);
 
   if (tabs.length === 0) return null;
 
