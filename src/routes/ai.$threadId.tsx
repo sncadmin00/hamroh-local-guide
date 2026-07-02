@@ -19,12 +19,12 @@ export const Route = createFileRoute("/ai/$threadId")({
   component: ThreadPage,
 });
 
-const SUGGESTIONS = [
-  "Korean-speaking guide for food tours",
-  "Sunset photography tour with a local",
-  "Family-friendly history walking guide",
-  "Half-day artisan workshop with English-speaking guide",
-];
+const SUGGESTION_KEYS = [
+  "ai.suggestion.1",
+  "ai.suggestion.2",
+  "ai.suggestion.3",
+  "ai.suggestion.4",
+] as const;
 
 function ThreadPage() {
   const { threadId } = useParams({ from: "/ai/$threadId" });
@@ -43,14 +43,14 @@ function ThreadPage() {
   });
 
   if (history.isLoading || !token) {
-    return <div className="flex-1 flex items-center justify-center text-sm text-muted-foreground">Loading…</div>;
+    return <div className="flex-1 flex items-center justify-center text-sm text-muted-foreground">…</div>;
   }
 
   return <ChatWindow key={threadId} threadId={threadId} initial={history.data ?? []} token={token} />;
 }
 
 function ChatWindow({ threadId, initial, token }: { threadId: string; initial: { id: string; role: "user" | "assistant" | "system"; parts: Array<{ type: string; text?: string }> }[]; token: string }) {
-  const { lang } = useI18n();
+  const { lang, t } = useI18n();
   const transport = useMemo(
     () =>
       new DefaultChatTransport({
@@ -111,7 +111,6 @@ function ChatWindow({ threadId, initial, token }: { threadId: string; initial: {
   const isLoading = status === "submitted" || status === "streaming";
   const isEmpty = messages.length === 0;
 
-  const { t } = useI18n();
   const navigate = useNavigate();
 
   const { data: cities = [] } = useCities();
@@ -154,18 +153,21 @@ function ChatWindow({ threadId, initial, token }: { threadId: string; initial: {
               <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent text-primary-foreground mb-6 shadow-[var(--shadow-elegant)]">
                 <Sparkles className="h-7 w-7" />
               </div>
-              <h1 className="font-display text-3xl md:text-4xl font-semibold">Find your perfect guide</h1>
-              <p className="mt-3 text-muted-foreground">Describe the trip you want — language, city, vibe, budget.</p>
+              <h1 className="font-display text-3xl md:text-4xl font-semibold">{t("ai.findGuide")}</h1>
+              <p className="mt-3 text-muted-foreground">{t("ai.describeTrip")}</p>
               <div className="mt-8 grid gap-2 sm:grid-cols-2">
-                {SUGGESTIONS.map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => submit(s)}
-                    className="text-left rounded-2xl bg-card ring-1 ring-border/60 p-4 text-sm hover:ring-primary/40 hover:bg-secondary/60 transition-all"
-                  >
-                    {s}
-                  </button>
-                ))}
+                {SUGGESTION_KEYS.map((key) => {
+                  const label = t(key);
+                  return (
+                    <button
+                      key={key}
+                      onClick={() => submit(label)}
+                      className="text-left rounded-2xl bg-card ring-1 ring-border/60 p-4 text-sm hover:ring-primary/40 hover:bg-secondary/60 transition-all"
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           ) : (
@@ -176,7 +178,7 @@ function ChatWindow({ threadId, initial, token }: { threadId: string; initial: {
               {isLoading && messages[messages.length - 1]?.role === "user" && (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <div className="h-2 w-2 rounded-full bg-muted-foreground animate-pulse" />
-                  Thinking…
+                  {t("ai.thinking")}
                 </div>
               )}
             </div>
@@ -205,7 +207,7 @@ function ChatWindow({ threadId, initial, token }: { threadId: string; initial: {
                 }
               }}
               rows={1}
-              placeholder="Ask about guides, cities, languages…"
+              placeholder={t("ai.placeholder")}
               className="flex-1 resize-none bg-transparent px-3 py-2 text-sm outline-none max-h-40"
               disabled={isLoading}
             />
@@ -213,12 +215,12 @@ function ChatWindow({ threadId, initial, token }: { threadId: string; initial: {
               type="submit"
               disabled={isLoading || !input.trim()}
               className="h-9 w-9 shrink-0 inline-flex items-center justify-center rounded-xl bg-primary text-primary-foreground disabled:opacity-40 hover:opacity-90"
-              aria-label="Send"
+              aria-label={t("ai.send")}
             >
               <ArrowUp className="h-4 w-4" />
             </button>
           </div>
-          <p className="mt-2 text-xs text-muted-foreground text-center">Hamroh AI · Recommendations from our verified guide catalog</p>
+          <p className="mt-2 text-xs text-muted-foreground text-center">{t("ai.footer")}</p>
         </form>
       </div>
     </div>
