@@ -173,11 +173,7 @@ export function ExploreTabs() {
         </a>
       );
     });
-    return isMobile ? (
-      <HorizontalCarousel itemClassName="w-[260px]">{list}</HorizontalCarousel>
-    ) : (
-      <div className={gridCls}>{list.slice(0, 6)}</div>
-    );
+    return <HorizontalCarousel itemClassName="w-[260px]">{list}</HorizontalCarousel>;
   };
 
   // Always show all 5 tabs; each tab handles its own empty state.
