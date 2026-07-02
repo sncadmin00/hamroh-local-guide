@@ -261,6 +261,7 @@ export const translations: Dict = {
   "explore.tabs.guides": { en: "Guides", uz: "Hamrohlar", ru: "Гиды" },
   "explore.tabs.tours": { en: "Tours", uz: "Sayohatlar", ru: "Туры" },
   "explore.tabs.places": { en: "Places", uz: "Joylar", ru: "Места" },
+  "explore.tabs.reels": { en: "Reels", uz: "Reels", ru: "Reels" },
   "explore.tabs.articles": { en: "Articles", uz: "Maqolalar", ru: "Статьи" },
   "explore.tabs.spotlight": { en: "Spotlight", uz: "Spotlight", ru: "Спотлайт" },
   "explore.tabs.cities": { en: "Popular cities", uz: "Mashhur shaharlar", ru: "Популярные города" },
