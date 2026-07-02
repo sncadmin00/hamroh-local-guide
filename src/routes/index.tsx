@@ -68,8 +68,14 @@ function Home() {
       <main className="flex-1">
         <EditorialHero />
         <TrustBar />
+        <section className="px-6 pt-8 md:pt-12">
+          <div className="max-w-6xl mx-auto flex justify-center">
+            <SpotlightBanner />
+          </div>
+        </section>
         <ExploreTabs />
         <WhyHamroh />
+
         <FeaturedReviews />
         <DownloadAppBanner />
 
