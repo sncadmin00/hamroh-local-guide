@@ -79,9 +79,11 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
     } catch (e) {
       console.warn("signOut failed, clearing session locally", e);
     }
-    setUser(null);
+    setSignedIn(false);
     setIsAdmin(false);
     setIsGuide(false);
+    setAvatarUrl(null);
+    setDisplayName(null);
     navigate({ to: "/", replace: true });
   };
   const menuLinks = [
