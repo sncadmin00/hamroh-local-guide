@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Clock, Instagram, Facebook, Youtube, Link2, Music2, ArrowUpRight, PlayCircle } from "lucide-react";
+import { Clock, Instagram, Facebook, Youtube, Link2, Music2, PlayCircle } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { GuideCard } from "@/components/GuideCard";
 import { PlaceCard } from "@/components/PlaceCard";
@@ -10,9 +10,8 @@ import {
   useGuides,
   useTours,
   usePlaces,
-  useLatestPosts,
+  useLatestArticles,
   useLatestReels,
-  useSpotlights,
   pickTourTitle,
 } from "@/lib/content-queries";
 
@@ -26,7 +25,7 @@ const platformMeta = {
   other: { label: "Post", Icon: Link2 },
 } as const;
 
-type TabKey = "guides" | "tours" | "places" | "reels" | "articles" | "spotlight";
+type TabKey = "guides" | "tours" | "places" | "reels" | "articles";
 
 export function ExploreTabs() {
   
@@ -36,16 +35,16 @@ export function ExploreTabs() {
   const { data: guides = [] } = useGuides();
   const { data: tours = [] } = useTours();
   const { data: places = [] } = usePlaces();
-  const { data: posts = [] } = useLatestPosts(12);
+  const { data: articles = [] } = useLatestArticles(12);
   const { data: reels = [] } = useLatestReels(24);
-  const { data: spotlights = [] } = useSpotlights();
 
   const featuredGuides = [...guides].sort((a, b) => b.rating - a.rating).slice(0, 12);
   const topTours = tours.slice(0, 12);
   const topPlaces = places.slice(0, 12);
-  const topPosts = posts.slice(0, 12);
+  const topArticles = articles.slice(0, 12);
   const topReels = reels.slice(0, 24);
-  const topSpotlights = spotlights.filter((s) => s.is_active).slice(0, 12);
+
+
 
 
   const itemW = "w-[240px] md:w-[260px]";
