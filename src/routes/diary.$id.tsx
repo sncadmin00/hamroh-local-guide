@@ -213,6 +213,7 @@ function PublicDiaryPage() {
 
 function ShareRow({ title, diaryId }: { title: string; diaryId: string }) {
   const [copied, setCopied] = useState(false);
+  const [open, setOpen] = useState(false);
   const url = `https://hamroh-local-guide.lovable.app/diary/${diaryId}`;
   const text = `${title} — Travel diary on Hamroh`;
   const enc = encodeURIComponent;
@@ -232,36 +233,63 @@ function ShareRow({ title, diaryId }: { title: string; diaryId: string }) {
     } catch {}
   };
 
+  const handleShareClick = async () => {
+    const nav = typeof navigator !== "undefined" ? (navigator as Navigator & { share?: (d: ShareData) => Promise<void> }) : null;
+    if (nav?.share) {
+      try {
+        await nav.share({ title, text, url });
+        return;
+      } catch {
+        // fall through to popover
+      }
+    }
+    setOpen((v) => !v);
+  };
+
   return (
     <div className="mb-10">
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="text-xs uppercase tracking-[0.14em] text-muted-foreground mr-1">Share</span>
-        {links.map((l) => (
-          <a
-            key={l.label}
-            href={l.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors hover:opacity-90"
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <button
+            type="button"
+            onClick={handleShareClick}
+            className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors hover:opacity-90"
             style={{ background: "var(--secondary)", color: "var(--foreground)" }}
           >
-            {l.label}
-          </a>
-        ))}
-        <button
-          type="button"
-          onClick={copy}
-          className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors hover:opacity-90"
-          style={{ background: "var(--secondary)", color: "var(--foreground)" }}
-        >
-          {copied ? <Check className="h-3.5 w-3.5" /> : <Link2 className="h-3.5 w-3.5" />}
-          {copied ? "Copied" : "Copy link"}
-        </button>
-      </div>
-      <p className="mt-2 text-[11px] text-muted-foreground">
-        Instagram doesn't support link sharing from the web — copy the link and paste it into your story or DM.
-      </p>
+            <Share2 className="h-4 w-4" />
+            Share
+          </button>
+        </PopoverTrigger>
+        <PopoverContent align="start" className="w-56 p-2">
+          <div className="flex flex-col">
+            {links.map((l) => (
+              <a
+                key={l.label}
+                href={l.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setOpen(false)}
+                className="rounded-md px-3 py-2 text-sm transition-colors hover:bg-[var(--secondary)]"
+              >
+                {l.label}
+              </a>
+            ))}
+            <button
+              type="button"
+              onClick={copy}
+              className="flex items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-[var(--secondary)]"
+            >
+              {copied ? <Check className="h-4 w-4" /> : <Link2 className="h-4 w-4" />}
+              {copied ? "Copied" : "Copy link"}
+            </button>
+          </div>
+          <p className="mt-2 px-3 pb-1 text-[11px] text-muted-foreground">
+            For Instagram — copy the link and paste in story or DM.
+          </p>
+        </PopoverContent>
+      </Popover>
     </div>
   );
 }
+
 
