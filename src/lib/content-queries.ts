@@ -272,6 +272,41 @@ export function useLatestReels(limit = 24) {
   });
 }
 
+export type ArticleItem = {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  coverUrl: string | null;
+  publishedAt: string | null;
+};
+
+export function useLatestArticles(limit = 12) {
+  return useQuery({
+    queryKey: ["latest-articles", limit],
+    queryFn: async (): Promise<ArticleItem[]> => {
+      const { data, error } = await supabase
+        .from("articles")
+        .select("id, slug, title, excerpt, cover_url, published_at, sort_order")
+        .eq("published", true)
+        .order("sort_order", { ascending: true })
+        .order("published_at", { ascending: false, nullsFirst: false })
+        .limit(limit);
+      if (error) throw error;
+      return (data ?? []).map((a: any) => ({
+        id: a.id,
+        slug: a.slug,
+        title: a.title,
+        excerpt: a.excerpt ?? "",
+        coverUrl: a.cover_url,
+        publishedAt: a.published_at,
+      }));
+    },
+  });
+}
+
+
+
 
 export type FeaturedReview = {
   id: string;

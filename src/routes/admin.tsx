@@ -12,6 +12,7 @@ import { finalizeApprovedGuide } from "@/lib/guide-approval.functions";
 import { reindexArticle, reindexAllArticles } from "@/lib/articles-rag.functions";
 
 import { SpotlightsPanel } from "@/components/admin/SpotlightsPanel";
+import { AdminReelsPanel } from "@/components/admin/AdminReelsPanel";
 import { ToursPanel } from "@/components/admin/ToursPanel";
 import { VerificationsPanel } from "@/components/admin/VerificationsPanel";
 import { GuideInvitationsPanel } from "@/components/admin/GuideInvitationsPanel";
@@ -225,7 +226,7 @@ function AdminPage() {
   const { ta } = useAdminI18n();
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
-  const [tab, setTab] = useState<"bookings" | "applications" | "verifications" | "cities" | "guides" | "tours" | "spotlights" | "categories" | "languages" | "places" | "suggestions" | "articles" | "social" | "users" | "invitations" | "statements">("bookings");
+  const [tab, setTab] = useState<"bookings" | "applications" | "verifications" | "cities" | "guides" | "tours" | "spotlights" | "reels" | "categories" | "languages" | "places" | "suggestions" | "articles" | "social" | "users" | "invitations" | "statements">("bookings");
   const [cities, setCities] = useState<City[]>([]);
   const [guides, setGuides] = useState<Guide[]>([]);
   const [articles, setArticles] = useState<Article[]>([]);
@@ -346,6 +347,12 @@ function AdminPage() {
             {ta("tab.spotlights")}
           </button>
           <button
+            onClick={() => setTab("reels")}
+            className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "reels" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+          >
+            Reels
+          </button>
+          <button
             onClick={() => setTab("categories")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "categories" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
@@ -413,6 +420,7 @@ function AdminPage() {
         {tab === "guides" && <GuidesPanel guides={guides} cities={cities} categories={categories} guideCategories={guideCategories} languages={languages} reload={loadData} />}
         {tab === "tours" && <ToursPanel />}
         {tab === "spotlights" && <SpotlightsPanel />}
+        {tab === "reels" && <AdminReelsPanel />}
         {tab === "categories" && <CategoriesPanel categories={categories} reload={loadData} />}
         {tab === "languages" && <LanguagesPanel languages={languages} reload={loadData} />}
         {tab === "places" && <PlacesPanel places={places} cities={cities} guides={guides} placeGuides={placeGuides} reload={loadData} />}

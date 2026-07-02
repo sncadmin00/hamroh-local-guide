@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Clock, Instagram, Facebook, Youtube, Link2, Music2, ArrowUpRight, PlayCircle } from "lucide-react";
+import { Clock, Instagram, Facebook, Youtube, Link2, Music2, PlayCircle } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { GuideCard } from "@/components/GuideCard";
 import { PlaceCard } from "@/components/PlaceCard";
@@ -10,9 +10,8 @@ import {
   useGuides,
   useTours,
   usePlaces,
-  useLatestPosts,
+  useLatestArticles,
   useLatestReels,
-  useSpotlights,
   pickTourTitle,
 } from "@/lib/content-queries";
 
@@ -26,7 +25,7 @@ const platformMeta = {
   other: { label: "Post", Icon: Link2 },
 } as const;
 
-type TabKey = "guides" | "tours" | "places" | "reels" | "articles" | "spotlight";
+type TabKey = "guides" | "tours" | "places" | "reels" | "articles";
 
 export function ExploreTabs() {
   
@@ -36,16 +35,16 @@ export function ExploreTabs() {
   const { data: guides = [] } = useGuides();
   const { data: tours = [] } = useTours();
   const { data: places = [] } = usePlaces();
-  const { data: posts = [] } = useLatestPosts(12);
+  const { data: articles = [] } = useLatestArticles(12);
   const { data: reels = [] } = useLatestReels(24);
-  const { data: spotlights = [] } = useSpotlights();
 
   const featuredGuides = [...guides].sort((a, b) => b.rating - a.rating).slice(0, 12);
   const topTours = tours.slice(0, 12);
   const topPlaces = places.slice(0, 12);
-  const topPosts = posts.slice(0, 12);
+  const topArticles = articles.slice(0, 12);
   const topReels = reels.slice(0, 24);
-  const topSpotlights = spotlights.filter((s) => s.is_active).slice(0, 12);
+
+
 
 
   const itemW = "w-[240px] md:w-[260px]";
@@ -158,83 +157,42 @@ export function ExploreTabs() {
 
 
   const renderArticles = () => {
-    const list = topPosts.map((p) => {
-      const meta = platformMeta[p.platform];
-      const Icon = meta.Icon;
-      return (
-        <Link
-          key={p.id}
-          to="/guides/$guideId"
-          params={{ guideId: p.guideSlug }}
-          className="relative flex h-72 flex-col overflow-hidden rounded-2xl bg-card ring-1 ring-border/60 transition-transform hover:-translate-y-0.5"
-        >
-          {p.thumbnailUrl ? (
-            <img
-              src={p.thumbnailUrl}
-              alt={p.caption || meta.label}
-              loading="lazy"
-              className="absolute inset-0 h-full w-full object-cover"
-            />
-          ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/10 to-background" />
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-          <div className="relative mt-auto flex flex-col gap-2 p-3 text-white">
-            <span className="inline-flex w-fit items-center gap-1 rounded-full bg-white/15 px-2 py-0.5 text-[11px] font-medium backdrop-blur">
-              <Icon className="h-3 w-3" /> {meta.label}
-            </span>
-            <p className="text-xs font-medium opacity-90">{p.guideName}</p>
-            {p.caption && <p className="line-clamp-2 text-xs leading-snug opacity-80">{p.caption}</p>}
-          </div>
-        </Link>
-      );
-    });
-    return <HorizontalCarousel itemClassName="w-48">{list}</HorizontalCarousel>;
+    const list = topArticles.map((a) => (
+      <Link
+        key={a.id}
+        to="/explore/$slug"
+        params={{ slug: a.slug }}
+        className="relative flex h-72 flex-col overflow-hidden rounded-2xl bg-card ring-1 ring-border/60 transition-transform hover:-translate-y-0.5"
+      >
+        {a.coverUrl ? (
+          <img
+            src={a.coverUrl}
+            alt={a.title}
+            loading="lazy"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/10 to-background" />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+        <div className="relative mt-auto flex flex-col gap-1 p-3 text-white">
+          <h3 className="font-display text-sm font-semibold leading-tight line-clamp-2">{a.title}</h3>
+          {a.excerpt && <p className="line-clamp-2 text-xs leading-snug opacity-80">{a.excerpt}</p>}
+        </div>
+      </Link>
+    ));
+    return <HorizontalCarousel itemClassName="w-[240px] md:w-[260px]">{list}</HorizontalCarousel>;
   };
 
-  const renderSpotlight = () => {
-    const list = topSpotlights.map((s) => {
-      const title = lang === "ru" ? s.title_ru : lang === "uz" ? s.title_uz : s.title_en;
-      const desc = lang === "ru" ? s.description_ru : lang === "uz" ? s.description_uz : s.description_en;
-      return (
-        <a
-          key={s.id}
-          href={s.href}
-          className="group relative flex h-72 flex-col overflow-hidden rounded-2xl bg-card ring-1 ring-border/60 transition-transform hover:-translate-y-0.5"
-        >
-          {s.image_url ? (
-            <img src={s.image_url} alt={title} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
-          ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/10 to-background" />
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
-          <div className="relative mt-auto flex flex-col gap-2 p-4 text-white">
-            {s.badge && (
-              <span className="inline-flex w-fit items-center gap-1 rounded-full bg-amber-400 text-slate-900 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider">
-                {s.badge}
-              </span>
-            )}
-            <h3 className="font-display text-lg leading-tight line-clamp-2">{title}</h3>
-            {desc && <p className="line-clamp-2 text-xs leading-snug opacity-80">{desc}</p>}
-            <span className="inline-flex items-center gap-1 text-[11px] opacity-80">
-              <ArrowUpRight className="h-3 w-3" /> Open
-            </span>
-          </div>
-        </a>
-      );
-    });
-    return <HorizontalCarousel itemClassName="w-[260px]">{list}</HorizontalCarousel>;
-  };
-
-  // Always show all 5 tabs; each tab handles its own empty state.
+  // 5 tabs; each tab handles its own empty state.
   const tabs: { key: TabKey; count: number }[] = [
     { key: "guides", count: featuredGuides.length },
     { key: "tours", count: topTours.length },
     { key: "places", count: topPlaces.length },
     { key: "reels", count: topReels.length },
-    { key: "articles", count: topPosts.length },
-    { key: "spotlight", count: topSpotlights.length },
+    { key: "articles", count: topArticles.length },
   ];
+
 
   return (
     <section className="px-6 py-14 md:py-20 bg-secondary/40">
@@ -267,7 +225,7 @@ export function ExploreTabs() {
           <TabsContent value="places" className="mt-0">{renderPlaces()}</TabsContent>
           <TabsContent value="reels" className="mt-0">{renderReels()}</TabsContent>
           <TabsContent value="articles" className="mt-0">{renderArticles()}</TabsContent>
-          <TabsContent value="spotlight" className="mt-0">{renderSpotlight()}</TabsContent>
+          
         </Tabs>
       </div>
     </section>

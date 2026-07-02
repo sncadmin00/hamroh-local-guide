@@ -4,6 +4,8 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { EditorialHero } from "@/components/home/EditorialHero";
 import { ExploreTabs } from "@/components/home/ExploreTabs";
+import { SpotlightBanner } from "@/components/home/SpotlightBanner";
+
 import { WhyHamroh } from "@/components/home/WhyHamroh";
 import { TrustBar } from "@/components/home/TrustBar";
 import { FeaturedReviews } from "@/components/home/FeaturedReviews";
@@ -66,8 +68,14 @@ function Home() {
       <main className="flex-1">
         <EditorialHero />
         <TrustBar />
+        <section className="px-6 pt-8 md:pt-12">
+          <div className="max-w-6xl mx-auto flex justify-center">
+            <SpotlightBanner />
+          </div>
+        </section>
         <ExploreTabs />
         <WhyHamroh />
+
         <FeaturedReviews />
         <DownloadAppBanner />
 
