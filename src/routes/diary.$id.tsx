@@ -1,7 +1,9 @@
 import { createFileRoute, notFound, useRouter } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { BookOpen, MapPin, Calendar, Link2, Check } from "lucide-react";
+import { BookOpen, MapPin, Calendar, Link2, Check, Share2 } from "lucide-react";
 import { useState } from "react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+
 
 import { getPublicDiary, type PublicDiary } from "@/lib/public-diary.functions";
 import { SiteHeader } from "@/components/SiteHeader";
