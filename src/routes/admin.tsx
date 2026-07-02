@@ -12,6 +12,7 @@ import { finalizeApprovedGuide } from "@/lib/guide-approval.functions";
 import { reindexArticle, reindexAllArticles } from "@/lib/articles-rag.functions";
 
 import { SpotlightsPanel } from "@/components/admin/SpotlightsPanel";
+import { AdminReelsPanel } from "@/components/admin/AdminReelsPanel";
 import { ToursPanel } from "@/components/admin/ToursPanel";
 import { VerificationsPanel } from "@/components/admin/VerificationsPanel";
 import { GuideInvitationsPanel } from "@/components/admin/GuideInvitationsPanel";
