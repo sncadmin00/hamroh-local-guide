@@ -1,8 +1,6 @@
 import { Smartphone, Apple } from "lucide-react";
-import { useI18n } from "@/lib/i18n";
 
 export function DownloadAppBanner() {
-  const { t } = useI18n();
 
   return (
     <section className="px-6 md:px-12 py-14 md:py-[72px]">
@@ -21,18 +19,16 @@ export function DownloadAppBanner() {
               className="text-[0.72rem] font-semibold uppercase tracking-[0.14em] mb-3"
               style={{ color: "#C9A84C" }}
             >
-              {t("app.download.eyebrow") || "Hamroh app"}
+              Hamroh app
             </p>
             <h2
               className="text-[1.6rem] md:text-[2.4rem] leading-[1.15] tracking-tight"
               style={{ fontFamily: "'DM Serif Display', serif" }}
             >
-              {t("app.download.title") ||
-                "Take Hamroh with you across Uzbekistan"}
+              Take Hamroh with you across Uzbekistan
             </h2>
             <p className="mt-3 text-sm md:text-base opacity-80 max-w-xl">
-              {t("app.download.subtitle") ||
-                "Offline maps, weather, budget tracker, travel diary and chat with your guide — all in your pocket."}
+              Offline maps, weather, budget tracker, travel diary and chat with your guide — all in your pocket.
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3">
