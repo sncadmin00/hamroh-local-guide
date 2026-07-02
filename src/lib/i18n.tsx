@@ -256,8 +256,13 @@ export const translations: Dict = {
   "browse.title": { en: "Browse by interest", uz: "Qiziqish bo'yicha izlash", ru: "По интересам" },
   "browse.subtitle": { en: "Find a guide for what you love", uz: "Sevimli mavzuingiz bo'yicha hamroh toping", ru: "Найдите гида под ваши интересы" },
 
-  "explore.tabs.guides": { en: "Top guides", uz: "Top hamrohlar", ru: "Топ гиды" },
-  "explore.tabs.tours": { en: "Top tours", uz: "Top sayohatlar", ru: "Топ туры" },
+  "explore.section.title": { en: "Explore", uz: "Kashf eting", ru: "Обзор" },
+  "explore.section.subtitle": { en: "Guides, tours, places, stories and spotlight — all in one place.", uz: "Hamrohlar, sayohatlar, joylar, hikoyalar va spotlight — bir joyda.", ru: "Гиды, туры, места, истории и спотлайт — в одном месте." },
+  "explore.tabs.guides": { en: "Guides", uz: "Hamrohlar", ru: "Гиды" },
+  "explore.tabs.tours": { en: "Tours", uz: "Sayohatlar", ru: "Туры" },
+  "explore.tabs.places": { en: "Places", uz: "Joylar", ru: "Места" },
+  "explore.tabs.articles": { en: "Articles", uz: "Maqolalar", ru: "Статьи" },
+  "explore.tabs.spotlight": { en: "Spotlight", uz: "Spotlight", ru: "Спотлайт" },
   "explore.tabs.cities": { en: "Popular cities", uz: "Mashhur shaharlar", ru: "Популярные города" },
   "explore.tabs.explore": { en: "Explore", uz: "Kashf eting", ru: "Обзор" },
 
