@@ -31,6 +31,7 @@ import { useCities, useCategories } from "@/lib/content-queries";
 import { GuidePostsPanel } from "@/components/GuidePostsPanel";
 import { useGuideI18n } from "@/lib/guide-i18n";
 import { GuideOfferGate } from "@/components/guide/GuideOfferGate";
+import { signOutAndRedirect } from "@/lib/auth";
 
 const TourMapPicker = lazy(() => import("@/components/TourMapPicker"));
 
@@ -158,7 +159,7 @@ function GuidePortal() {
         <div className="mt-6 flex justify-center gap-3">
           <Link to="/" className="h-10 px-4 inline-flex items-center rounded-full bg-secondary text-sm font-medium">{tg("common.home")}</Link>
           <button
-            onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/login" }); }}
+            onClick={() => signOutAndRedirect("/login")}
             className="h-10 px-4 inline-flex items-center rounded-full bg-foreground text-background text-sm font-medium"
           >{tg("common.signOut")}</button>
         </div>
@@ -183,7 +184,7 @@ function GuidePortal() {
               <Home className="h-4 w-4" /> <span className="hidden sm:inline">{tg("common.home")}</span>
             </Link>
             <button
-              onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/login" }); }}
+              onClick={() => signOutAndRedirect("/login")}
               className="inline-flex items-center gap-2 h-9 px-3 rounded-full text-sm hover:bg-muted"
             >
               <LogOut className="h-4 w-4" /> <span className="hidden sm:inline">{tg("common.signOut")}</span>

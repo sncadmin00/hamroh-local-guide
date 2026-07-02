@@ -9,6 +9,7 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { NotificationsBell } from "@/components/home/NotificationsBell";
 import { supabase } from "@/integrations/supabase/client";
+import { signOutAndRedirect } from "@/lib/auth";
 
 function WhatsAppIcon({ className }: { className?: string }) {
   return (
@@ -74,18 +75,6 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
     });
     return () => sub.subscription.unsubscribe();
   }, []);
-  const clearStoredAuthSession = () => {
-    if (typeof window === "undefined") return;
-
-    for (const storage of [window.localStorage, window.sessionStorage]) {
-      Object.keys(storage).forEach((key) => {
-        if (key.startsWith("sb-") && key.endsWith("-auth-token")) {
-          storage.removeItem(key);
-        }
-      });
-    }
-  };
-
   const signOut = () => {
     if (signingOut) return;
     setSigningOut(true);
@@ -95,13 +84,7 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
     setAvatarUrl(null);
     setDisplayName(null);
     setMenuOpen(false);
-    clearStoredAuthSession();
-
-    void supabase.auth.signOut({ scope: "local" }).catch((e) => {
-      console.warn("signOut failed after local cleanup", e);
-    });
-
-    window.location.replace("/");
+    signOutAndRedirect("/");
   };
   const menuLinks = [
     { to: "/tours", label: t("nav.tours") },

@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import hamrohLogo from "@/assets/hamroh-logo.png";
 import { TelegramLoginButton } from "@/components/TelegramLoginButton";
 import { getMyTelegramAccount, updateMyTelegramEmail } from "@/lib/telegram.functions";
+import { signOutAndRedirect } from "@/lib/auth";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({ meta: [{ title: "Account settings — Hamroh" }] }),
@@ -131,10 +132,7 @@ function SettingsPage() {
   };
 
 
-  const signOut = async () => {
-    await supabase.auth.signOut();
-    navigate({ to: "/", replace: true });
-  };
+  const signOut = () => signOutAndRedirect("/");
 
   if (checking) {
     return <div className="min-h-screen flex items-center justify-center text-sm text-muted-foreground">Loading…</div>;
