@@ -35,6 +35,7 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [displayName, setDisplayName] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     onScroll();
@@ -84,6 +85,7 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
     setIsGuide(false);
     setAvatarUrl(null);
     setDisplayName(null);
+    setMenuOpen(false);
     navigate({ to: "/", replace: true });
   };
   const menuLinks = [
@@ -124,7 +126,7 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
           />
 
           {/* Airbnb-style avatar+menu pill */}
-          <Sheet>
+          <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
             <SheetTrigger asChild>
               <button
                 aria-label="Open menu"
