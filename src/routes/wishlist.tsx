@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { MapPin, Clock, Heart, FolderPlus, Folder, Trash2, MoreVertical, Check } from "lucide-react";
 import { toast } from "sonner";
 import { SiteHeader } from "@/components/SiteHeader";
+import { ContinueInAppBanner } from "@/components/ContinueInAppBanner";
 import { SiteFooter } from "@/components/SiteFooter";
 import { GuideCard } from "@/components/GuideCard";
 import { WishlistHeart } from "@/components/WishlistHeart";
@@ -121,6 +122,7 @@ function WishlistPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <SiteHeader />
+      <ContinueInAppBanner />
 
       <main className="flex-1 px-6 py-10 md:py-14">
         <div className="max-w-6xl mx-auto">
