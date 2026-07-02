@@ -89,7 +89,7 @@ function AiLayout() {
   };
 
   if (!ready) {
-    return <div className="min-h-screen flex items-center justify-center text-sm text-muted-foreground">Loading…</div>;
+    return <div className="min-h-screen flex items-center justify-center text-sm text-muted-foreground">{t("ai.loading")}</div>;
   }
 
   return (
