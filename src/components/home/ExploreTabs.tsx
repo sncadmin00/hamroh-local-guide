@@ -231,6 +231,7 @@ export function ExploreTabs() {
     { key: "guides", count: featuredGuides.length },
     { key: "tours", count: topTours.length },
     { key: "places", count: topPlaces.length },
+    { key: "reels", count: topReels.length },
     { key: "articles", count: topPosts.length },
     { key: "spotlight", count: topSpotlights.length },
   ];
