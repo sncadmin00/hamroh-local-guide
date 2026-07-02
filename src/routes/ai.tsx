@@ -17,6 +17,7 @@ function AiLayout() {
   const router = useRouter();
   const params = useParams({ strict: false }) as { threadId?: string };
   const qc = useQueryClient();
+  const { t } = useI18n();
   const [ready, setReady] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
 
