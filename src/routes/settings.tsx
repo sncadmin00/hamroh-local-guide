@@ -96,15 +96,40 @@ function SettingsPage() {
       return;
     }
     setSavingPassword(true);
-    const { error } = await supabase.auth.updateUser({ password });
-    setSavingPassword(false);
-    if (error) toast.error(error.message);
-    else {
-      toast.success("Password updated");
+    try {
+      if (hasPassword) {
+        if (!currentEmail) {
+          toast.error("Missing account email");
+          return;
+        }
+        if (!currentPassword) {
+          toast.error("Enter your current password");
+          return;
+        }
+        const { error: reauthError } = await supabase.auth.signInWithPassword({
+          email: currentEmail,
+          password: currentPassword,
+        });
+        if (reauthError) {
+          toast.error("Current password is incorrect");
+          return;
+        }
+      }
+      const { error } = await supabase.auth.updateUser({ password });
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      toast.success(hasPassword ? "Password updated" : "Password created");
       setPassword("");
       setConfirm("");
+      setCurrentPassword("");
+      setHasPassword(true);
+    } finally {
+      setSavingPassword(false);
     }
   };
+
 
   const signOut = async () => {
     await supabase.auth.signOut();
