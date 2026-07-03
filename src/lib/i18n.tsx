@@ -253,6 +253,10 @@ export const translations: Dict = {
   "banner.guide.points": { en: "Share your city.\nEarn money.\nMeet travelers.", uz: "Shaharingizni ulashing.\nPul toping.\nSayohatchilar bilan tanishing.", ru: "Делись своим городом.\nЗарабатывай.\nЗнакомься с путешественниками." },
   "banner.guide.button": { en: "Apply Now", uz: "Ariza topshirish", ru: "Подать заявку" },
 
+  "banner.bookTour.label": { en: "AI-powered matching", uz: "AI bilan moslashtirish", ru: "Подбор с помощью ИИ" },
+  "banner.bookTour.title": { en: "Book a tour", uz: "Tur bron qilish", ru: "Забронировать тур" },
+  "banner.bookTour.subtitle": { en: "Describe your trip and get matched with a verified local guide.", uz: "Sayohatingizni tasvirlab bering va tasdiqlangan mahalliy hamrohga ega bo'ling.", ru: "Опишите поездку — мы подберём проверенного местного гида." },
+
   "browse.title": { en: "Browse by interest", uz: "Qiziqish bo'yicha izlash", ru: "По интересам" },
   "browse.subtitle": { en: "Find a guide for what you love", uz: "Sevimli mavzuingiz bo'yicha hamroh toping", ru: "Найдите гида под ваши интересы" },
 
