@@ -283,7 +283,8 @@ export function EditorialHero() {
                     className="text-[0.65rem] uppercase truncate"
                     style={{ color: "var(--muted-foreground)", letterSpacing: "0.18em" }}
                   >
-                    Samarkand
+                    {cityName}
+
                   </p>
                   <p className="text-xl font-medium truncate" style={{ color: "var(--foreground)" }}>
                     {weather ? `${weather.temp}°C · ${weatherLabel(weather.code)}` : `— · ${t("weather.sunny")}`}
