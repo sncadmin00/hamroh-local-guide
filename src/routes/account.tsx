@@ -11,6 +11,7 @@ import { useI18n } from "@/lib/i18n";
 import { listMyBookings } from "@/lib/my-bookings.functions";
 import { useWishlist } from "@/hooks/useWishlist";
 import { SiteHeader } from "@/components/SiteHeader";
+import { ContinueInAppBanner } from "@/components/ContinueInAppBanner";
 
 export const Route = createFileRoute("/account")({
   head: () => ({
