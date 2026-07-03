@@ -155,6 +155,7 @@ function AccountPage() {
     <>
       <SiteHeader />
       <div className="min-h-screen bg-secondary/20">
+        <ContinueInAppBanner />
         <div className="mx-auto max-w-5xl px-4 py-8">
           {/* Profile header */}
           <div className="flex items-center gap-4 mb-8">
