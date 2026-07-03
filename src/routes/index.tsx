@@ -96,9 +96,6 @@ function Home() {
               <h2 className="text-[1.4rem] md:text-[2rem] leading-[1.15] tracking-tight" style={{ fontFamily: "'DM Serif Display', serif" }}>
                 {t("banner.guide.title")}
               </h2>
-              <p className="mt-2 text-sm md:text-base opacity-80">
-                {t("banner.guide.subtitle") || "Earn from your local knowledge."}
-              </p>
             </div>
             <span className="text-3xl md:text-4xl shrink-0">→</span>
           </Link>
