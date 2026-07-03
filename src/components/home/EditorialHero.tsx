@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Loader2, ArrowRight, Sun, Sparkles } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { createThread } from "@/lib/ai-threads.functions";
+import { getWeather } from "@/lib/weather.functions";
 import { supabase } from "@/integrations/supabase/client";
 
 /**
