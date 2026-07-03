@@ -48,9 +48,19 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
   }, []);
   useEffect(() => {
     const checkAdmin = async (userId: string | undefined) => {
-      if (!userId) { setIsAdmin(false); return; }
-      const { data } = await supabase.from("user_roles").select("role").eq("user_id", userId);
-      setIsAdmin((data ?? []).some((r) => r.role === "admin"));
+      if (!userId) {
+        setIsAdmin(false);
+        if (typeof window !== "undefined") window.localStorage.removeItem("hamroh:isAdmin");
+        return;
+      }
+      const { data, error } = await supabase.from("user_roles").select("role").eq("user_id", userId);
+      if (error) return; // keep cached value on transient error
+      const admin = (data ?? []).some((r) => r.role === "admin");
+      setIsAdmin(admin);
+      if (typeof window !== "undefined") {
+        if (admin) window.localStorage.setItem("hamroh:isAdmin", "1");
+        else window.localStorage.removeItem("hamroh:isAdmin");
+      }
     };
     const checkGuide = async (userId: string | undefined) => {
       if (!userId) { setIsGuide(false); return; }
