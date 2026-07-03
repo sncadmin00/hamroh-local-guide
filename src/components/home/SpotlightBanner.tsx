@@ -126,7 +126,6 @@ export function SpotlightBanner() {
                 </div>
               </div>
 
-              </div>
             </a>
           );
         })}
