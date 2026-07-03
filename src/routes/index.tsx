@@ -69,8 +69,11 @@ function Home() {
       <main className="flex-1">
         <EditorialHero />
         <TrustBar />
-        <section className="px-6 pt-8 md:pt-12">
-          <div className="max-w-6xl mx-auto flex justify-center">
+        <section className="px-6 py-10 md:py-20 bg-[#F9F7F4]">
+          <div className="max-w-6xl mx-auto flex flex-col items-center text-center">
+            <p className="text-[0.7rem] md:text-xs font-semibold uppercase tracking-[0.16em] text-slate-500 mb-6 md:mb-8">
+              {t("spot.sectionEyebrow")}
+            </p>
             <SpotlightBanner />
           </div>
         </section>
