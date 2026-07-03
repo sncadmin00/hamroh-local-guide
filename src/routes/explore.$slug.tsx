@@ -9,11 +9,11 @@ export const Route = createFileRoute("/explore/$slug")({
   loader: async ({ params }) => {
     const { data } = await supabase
       .from("articles")
-      .select("title, excerpt, cover_url")
+      .select("title, excerpt, cover_url, published_at")
       .eq("slug", params.slug)
       .eq("published", true)
       .maybeSingle();
-    return { meta: data as { title: string; excerpt: string; cover_url: string | null } | null };
+    return { meta: data as { title: string; excerpt: string; cover_url: string | null; published_at: string | null } | null };
   },
   head: ({ params, loaderData }) => {
     const m = loaderData?.meta;
@@ -33,9 +33,31 @@ export const Route = createFileRoute("/explore/$slug")({
       meta.push({ name: "twitter:card", content: "summary_large_image" });
       meta.push({ name: "twitter:image", content: m.cover_url });
     }
+    const scripts: Array<{ type: string; children: string }> = [];
+    if (m) {
+      scripts.push({
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Article",
+          headline: m.title,
+          description,
+          image: m.cover_url || undefined,
+          datePublished: m.published_at || undefined,
+          url,
+          publisher: {
+            "@type": "Organization",
+            name: "Hamroh",
+            url: "https://hamroh-local-guide.lovable.app",
+          },
+          mainEntityOfPage: url,
+        }),
+      });
+    }
     return {
       meta,
       links: [{ rel: "canonical", href: url }],
+      scripts,
     };
   },
   component: ArticlePage,
