@@ -193,7 +193,7 @@ export const translations: Dict = {
   "weather.humidity": { en: "Humidity", uz: "Namlik", ru: "Влажность" },
 
 
- "spot.whatsNew": { en: "What's new", uz: "Yangilik", ru: "Что нового" },
+ "spot.whatsNew": { en: "Spotlight", uz: "Spotlight", ru: "Spotlight" },
  "spot.newExperience.label": { en: "New experience", uz: "Yangi tajriba", ru: "Новинка" },
  "spot.newGuide.label": { en: "New experience", uz: "Yangi tajriba", ru: "Новинка" },
  "spot.newRoute.label": { en: "New experience", uz: "Yangi tajriba", ru: "Новинка" },
