@@ -67,7 +67,7 @@ export function SpotlightBanner() {
 
   return (
     <div
-      className="group relative mb-6 w-full max-w-2xl"
+      className="group relative w-full max-w-3xl"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
@@ -75,22 +75,14 @@ export function SpotlightBanner() {
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
-      {/* Header strip */}
-      <div className="mb-2 flex items-center justify-between px-1">
-        <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-          <span aria-hidden>🔥</span>
-          <span>{t("spot.whatsNew")}</span>
+      {count > 1 && (
+        <div className="absolute -top-7 right-0 text-[11px] font-medium tabular-nums text-slate-400">
+          {index + 1} / {count}
         </div>
-        {count > 1 && (
-          <div className="text-[11px] font-medium tabular-nums text-slate-400">
-            {index + 1} / {count}
-          </div>
-        )}
-      </div>
+      )}
 
-      <div className="relative overflow-hidden rounded-3xl border border-orange-200/50 bg-gradient-to-br from-amber-50 via-orange-50/60 to-[#D5A08D]/15 shadow-[0_12px_40px_-15px_rgba(234,88,12,0.18)]">
-        {/* Top accent line */}
-        <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-orange-400/60 to-transparent" />
+      <div className="relative overflow-hidden rounded-[2rem] border border-orange-200/60 bg-gradient-to-br from-amber-50 via-orange-50/70 to-[#D5A08D]/20 shadow-[0_20px_60px_-20px_rgba(180,120,60,0.25)]">
+        <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-orange-400/70 to-transparent" />
         {items.map((s, i) => {
           const active = i === index;
           const { title, desc } = pick(s);
@@ -100,17 +92,17 @@ export function SpotlightBanner() {
               href={s.href}
               aria-hidden={!active}
               tabIndex={active ? 0 : -1}
-              className={`${active ? "relative opacity-100" : "absolute inset-0 opacity-0 pointer-events-none"} flex items-center gap-4 sm:gap-5 p-4 sm:p-5 transition-opacity duration-500`}
+              className={`${active ? "relative opacity-100" : "absolute inset-0 opacity-0 pointer-events-none"} flex items-center gap-4 sm:gap-6 p-5 sm:p-7 transition-opacity duration-500`}
             >
-              <div className="relative h-44 w-44 sm:h-64 sm:w-64 shrink-0 overflow-hidden rounded-2xl ring-1 ring-white/60 shadow-md">
+              <div className="relative h-48 w-48 sm:h-72 sm:w-72 shrink-0 overflow-hidden rounded-[1.25rem] ring-1 ring-white/70 shadow-lg">
                 <img src={s.image_url || PLACEHOLDER} alt="" className="h-full w-full object-cover" loading="lazy" />
                 {s.badge && (
-                  <span className={`absolute left-2 top-2 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider shadow-sm ${BADGE_STYLE[s.badge]}`}>
+                  <span className={`absolute left-3 top-3 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider shadow-sm ${BADGE_STYLE[s.badge]}`}>
                     {t(BADGE_KEY[s.badge])}
                   </span>
                 )}
               </div>
-              <div className="min-w-0 flex-1 text-left">
+              <div className="min-w-0 flex-1 text-left pr-2">
                 <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-gold">
                   <span aria-hidden className="relative flex h-1.5 w-1.5">
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-orange-400 opacity-75" />
@@ -118,19 +110,21 @@ export function SpotlightBanner() {
                   </span>
                   {t(KIND_LABEL_KEY[s.kind])}
                 </div>
-                <div className="mt-1 line-clamp-2 text-base sm:text-xl font-semibold text-slate-800 leading-snug">
+                <div className="mt-2 line-clamp-2 text-lg sm:text-2xl font-semibold text-slate-800 leading-tight">
                   {title}
                 </div>
-                <div className="mt-1.5 line-clamp-2 text-sm sm:text-base text-slate-500 leading-relaxed">
+                <div className="mt-2 line-clamp-2 text-sm sm:text-base text-slate-500 leading-relaxed">
                   {desc}
                 </div>
+                <div className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-gold group-hover:underline underline-offset-4">
+                  {t("spot.cta.view")}
+                  <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </div>
               </div>
-
             </a>
           );
         })}
       </div>
-
 
       {count > 1 && (
         <>
@@ -138,7 +132,7 @@ export function SpotlightBanner() {
             type="button"
             onClick={prev}
             aria-label="Previous"
-            className="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 h-9 w-9 items-center justify-center rounded-full bg-white shadow-md ring-1 ring-slate-200 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-slate-50"
+            className="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 h-10 w-10 items-center justify-center rounded-full bg-white shadow-lg ring-1 ring-slate-200 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-slate-50"
           >
             <ChevronLeft className="h-5 w-5 text-slate-600" />
           </button>
@@ -146,19 +140,19 @@ export function SpotlightBanner() {
             type="button"
             onClick={next}
             aria-label="Next"
-            className="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 h-9 w-9 items-center justify-center rounded-full bg-white shadow-md ring-1 ring-slate-200 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-slate-50"
+            className="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 h-10 w-10 items-center justify-center rounded-full bg-white shadow-lg ring-1 ring-slate-200 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-slate-50"
           >
             <ChevronRight className="h-5 w-5 text-slate-600" />
           </button>
 
-          <div className="mt-2 flex items-center justify-center gap-1.5">
+          <div className="mt-3 flex items-center justify-center gap-2">
             {items.map((_, i) => (
               <button
                 key={i}
                 type="button"
                 onClick={() => goTo(i)}
                 aria-label={`Go to slide ${i + 1}`}
-                className={`h-1.5 rounded-full transition-all ${i === index ? "w-5 bg-gold" : "w-1.5 bg-slate-300 hover:bg-slate-400"}`}
+                className={`h-2 rounded-full transition-all ${i === index ? "w-6 bg-gold" : "w-2 bg-slate-300 hover:bg-slate-400"}`}
               />
             ))}
           </div>
