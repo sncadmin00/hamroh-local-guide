@@ -18,6 +18,21 @@ function pickIp(): string | null {
   return real ?? null;
 }
 
+function fromCloudflareHeaders(): { lat: number; lon: number; city: string | null } | null {
+  const latH = getRequestHeader("cf-iplatitude");
+  const lonH = getRequestHeader("cf-iplongitude");
+  const cityRaw = getRequestHeader("cf-ipcity");
+  if (!latH || !lonH) return null;
+  const lat = Number(latH);
+  const lon = Number(lonH);
+  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+  let city: string | null = null;
+  if (cityRaw) {
+    try { city = decodeURIComponent(cityRaw); } catch { city = cityRaw; }
+  }
+  return { lat, lon, city };
+}
+
 async function ipLatLon(): Promise<{ lat: number; lon: number; city: string | null } | null> {
   const ip = pickIp();
   if (!ip || ip === "127.0.0.1" || ip === "::1" || ip.startsWith("10.") || ip.startsWith("192.168.")) return null;
@@ -47,16 +62,23 @@ export const getWeather = createServerFn({ method: "GET" })
     let city: string | null = null;
 
     if (lat === undefined || lon === undefined) {
-      const geo = await ipLatLon();
-      if (geo) {
-        lat = geo.lat;
-        lon = geo.lon;
-        city = geo.city;
+      const cfGeo = fromCloudflareHeaders();
+      if (cfGeo) {
+        lat = cfGeo.lat;
+        lon = cfGeo.lon;
+        city = cfGeo.city;
       } else {
-        // Samarkand fallback
-        lat = 39.6547;
-        lon = 66.9758;
-        city = "Samarkand";
+        const geo = await ipLatLon();
+        if (geo) {
+          lat = geo.lat;
+          lon = geo.lon;
+          city = geo.city;
+        } else {
+          // Samarkand fallback
+          lat = 39.6547;
+          lon = 66.9758;
+          city = "Samarkand";
+        }
       }
     }
 
