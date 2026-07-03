@@ -13,6 +13,8 @@ import { FeaturedReviews } from "@/components/home/FeaturedReviews";
 import { DownloadAppBanner } from "@/components/home/DownloadAppBanner";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
+import { spotlightsQueryOptions } from "@/lib/content-queries";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -45,6 +47,9 @@ export const Route = createFileRoute("/")({
       },
     ],
   }),
+  loader: async ({ context }) => {
+    await context.queryClient.ensureQueryData(spotlightsQueryOptions);
+  },
   component: Home,
   errorComponent: ({ error }) => <div className="p-8 text-sm text-destructive">{error.message}</div>,
   notFoundComponent: () => <div className="p-8 text-sm">Not found.</div>,

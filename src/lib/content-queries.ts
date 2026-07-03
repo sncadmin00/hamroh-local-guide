@@ -1,8 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { getSpotlights } from "@/lib/spotlights.functions";
 import type { Guide } from "@/data/guides";
 import type { CityInfo } from "@/data/cities";
 import type { SpotlightRow, SpotlightKind } from "@/lib/spotlights";
+
 
 export type CityRow = CityInfo & { id: string; slug: string; sort_order: number };
 
@@ -405,18 +407,13 @@ export function useIsAdmin() {
 }
 
 // ============ Spotlights ============
+export const spotlightsQueryOptions = queryOptions({
+  queryKey: ["spotlights"],
+  queryFn: async (): Promise<SpotlightRow[]> => getSpotlights(),
+});
+
 export function useSpotlights() {
-  return useQuery({
-    queryKey: ["spotlights"],
-    queryFn: async (): Promise<SpotlightRow[]> => {
-      const { data, error } = await (supabase as any)
-        .from("spotlights")
-        .select("*")
-        .order("sort_order", { ascending: true });
-      if (error) throw error;
-      return (data ?? []) as SpotlightRow[];
-    },
-  });
+  return useSuspenseQuery(spotlightsQueryOptions);
 }
 
 export function useSpotlightsAdmin() {
