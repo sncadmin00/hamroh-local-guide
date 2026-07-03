@@ -100,6 +100,7 @@ function MyBookingsPage() {
 
   return (
     <div className="min-h-screen bg-secondary/20">
+      <ContinueInAppBanner />
       <div className="mx-auto max-w-3xl px-4 py-8">
         <div className="flex items-center justify-between mb-6">
           <h1 className="font-display text-2xl font-semibold">My bookings</h1>
