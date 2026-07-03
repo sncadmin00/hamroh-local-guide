@@ -257,7 +257,7 @@ export const translations: Dict = {
   "browse.subtitle": { en: "Find a guide for what you love", uz: "Sevimli mavzuingiz bo'yicha hamroh toping", ru: "Найдите гида под ваши интересы" },
 
   "explore.section.title": { en: "Explore", uz: "Kashf eting", ru: "Обзор" },
-  "explore.section.subtitle": { en: "Guides, tours, places, stories and spotlight — all in one place.", uz: "Hamrohlar, sayohatlar, joylar, hikoyalar va spotlight — bir joyda.", ru: "Гиды, туры, места, истории и спотлайт — в одном месте." },
+  "explore.section.subtitle": { en: "Everything you need — all in one place.", uz: "Sizga kerak bo'lgan hamma narsa — bir joyda.", ru: "Всё, что вам нужно — в одном месте." },
   "explore.tabs.guides": { en: "Guides", uz: "Hamrohlar", ru: "Гиды" },
   "explore.tabs.tours": { en: "Tours", uz: "Sayohatlar", ru: "Туры" },
   "explore.tabs.places": { en: "Places", uz: "Joylar", ru: "Места" },
