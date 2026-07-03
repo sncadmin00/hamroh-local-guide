@@ -30,7 +30,10 @@ function TelegramIcon({ className }: { className?: string }) {
 export function SiteHeader({ transparent = false, sticky = true }: { transparent?: boolean; sticky?: boolean } = {}) {
   const { t } = useI18n();
   const [signedIn, setSignedIn] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return window.localStorage.getItem("hamroh:isAdmin") === "1";
+  });
   const [isGuide, setIsGuide] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [displayName, setDisplayName] = useState<string | null>(null);
