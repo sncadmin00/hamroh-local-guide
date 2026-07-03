@@ -197,7 +197,7 @@ export function ExploreTabs() {
   return (
     <section className="px-6 py-14 md:py-20 bg-secondary/40">
       <div className="max-w-6xl mx-auto">
-        <div className="mb-8 md:mb-10 text-center">
+        <div className="mb-8 md:mb-10 text-center md:text-left">
           <h2 className="font-display text-2xl md:text-3xl font-semibold text-foreground">
             {t("explore.section.title")}
           </h2>
