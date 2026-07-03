@@ -407,19 +407,13 @@ export function useIsAdmin() {
 }
 
 // ============ Spotlights ============
+export const spotlightsQueryOptions = queryOptions({
+  queryKey: ["spotlights"],
+  queryFn: async (): Promise<SpotlightRow[]> => getSpotlights(),
+});
+
 export function useSpotlights() {
-  return useQuery({
-    queryKey: ["spotlights"],
-    queryFn: async (): Promise<SpotlightRow[]> => {
-      const { data, error } = await (supabase as any)
-        .from("spotlights")
-        .select("*")
-        .eq("is_active", true)
-        .order("sort_order", { ascending: true });
-      if (error) throw error;
-      return (data ?? []) as SpotlightRow[];
-    },
-  });
+  return useSuspenseQuery(spotlightsQueryOptions);
 }
 
 export function useSpotlightsAdmin() {
