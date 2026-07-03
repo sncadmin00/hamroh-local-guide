@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Loader2, ArrowRight, Sun, Sparkles } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { createThread } from "@/lib/ai-threads.functions";
+import { getWeather } from "@/lib/weather.functions";
 import { supabase } from "@/integrations/supabase/client";
 
 /**
@@ -15,6 +16,7 @@ export function EditorialHero() {
   const { t } = useI18n();
   const navigate = useNavigate();
   const create = useServerFn(createThread);
+  const fetchWeatherFn = useServerFn(getWeather);
 
   const [describe, setDescribe] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -24,41 +26,32 @@ export function EditorialHero() {
   const [cityName, setCityName] = useState<string>("Samarkand");
 
   useEffect(() => {
-    const fetchWeather = async (lat: number, lon: number) => {
-      try {
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code`;
-        const r = await fetch(url);
-        const d = await r.json();
-        const c = d?.current;
-        if (c) setWeather({ temp: Math.round(c.temperature_2m), humidity: Math.round(c.relative_humidity_2m), code: c.weather_code });
-      } catch { /* ignore */ }
-    };
-    const fetchCity = async (lat: number, lon: number) => {
-      try {
-        const r = await fetch(`https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&count=1&language=en`);
-        const d = await r.json();
-        const name = d?.results?.[0]?.name;
-        if (name) setCityName(name);
-      } catch { /* ignore */ }
+    let cancelled = false;
+    const apply = (w: { temp: number; humidity: number; code: number; city: string | null } | null) => {
+      if (cancelled || !w) return;
+      setWeather({ temp: w.temp, humidity: w.humidity, code: w.code });
+      if (w.city) setCityName(w.city);
     };
 
-    // Samarkand fallback
-    const fallbackLat = 39.6547, fallbackLon = 66.9758;
+    // Kick off IP-based weather immediately so the card fills fast.
+    fetchWeatherFn({ data: {} }).then(apply).catch(() => {});
 
+    // Try to upgrade to precise geolocation if the user allows it.
     if (typeof navigator !== "undefined" && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           const { latitude, longitude } = pos.coords;
-          fetchWeather(latitude, longitude);
-          fetchCity(latitude, longitude);
+          fetchWeatherFn({ data: { lat: latitude, lon: longitude } }).then(apply).catch(() => {});
         },
-        () => { fetchWeather(fallbackLat, fallbackLon); },
-        { timeout: 6000, maximumAge: 600000 }
+        () => { /* denied — IP fallback already applied */ },
+        { timeout: 6000, maximumAge: 600000 },
       );
-    } else {
-      fetchWeather(fallbackLat, fallbackLon);
     }
-  }, []);
+
+    return () => { cancelled = true; };
+  }, [fetchWeatherFn]);
+
+
 
 
   const weatherLabel = (code: number): string => {
