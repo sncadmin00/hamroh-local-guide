@@ -62,16 +62,23 @@ export const getWeather = createServerFn({ method: "GET" })
     let city: string | null = null;
 
     if (lat === undefined || lon === undefined) {
-      const geo = await ipLatLon();
-      if (geo) {
-        lat = geo.lat;
-        lon = geo.lon;
-        city = geo.city;
+      const cfGeo = fromCloudflareHeaders();
+      if (cfGeo) {
+        lat = cfGeo.lat;
+        lon = cfGeo.lon;
+        city = cfGeo.city;
       } else {
-        // Samarkand fallback
-        lat = 39.6547;
-        lon = 66.9758;
-        city = "Samarkand";
+        const geo = await ipLatLon();
+        if (geo) {
+          lat = geo.lat;
+          lon = geo.lon;
+          city = geo.city;
+        } else {
+          // Samarkand fallback
+          lat = 39.6547;
+          lon = 66.9758;
+          city = "Samarkand";
+        }
       }
     }
 
