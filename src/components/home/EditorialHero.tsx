@@ -16,6 +16,7 @@ export function EditorialHero() {
   const { t } = useI18n();
   const navigate = useNavigate();
   const create = useServerFn(createThread);
+  const fetchWeatherFn = useServerFn(getWeather);
 
   const [describe, setDescribe] = useState("");
   const [submitting, setSubmitting] = useState(false);
