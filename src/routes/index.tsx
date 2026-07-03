@@ -7,6 +7,7 @@ import { ExploreTabs } from "@/components/home/ExploreTabs";
 import { SpotlightBanner } from "@/components/home/SpotlightBanner";
 
 import { WhyHamroh } from "@/components/home/WhyHamroh";
+import { BookTourBanner } from "@/components/home/BookTourBanner";
 import { TrustBar } from "@/components/home/TrustBar";
 import { FeaturedReviews } from "@/components/home/FeaturedReviews";
 import { DownloadAppBanner } from "@/components/home/DownloadAppBanner";
@@ -75,6 +76,7 @@ function Home() {
         </section>
         <ExploreTabs />
         <WhyHamroh />
+        <BookTourBanner />
 
         <FeaturedReviews />
         <DownloadAppBanner />
