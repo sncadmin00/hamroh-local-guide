@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { listMessageThreads } from "@/lib/messages.functions";
 import { MessageSquare, ArrowLeft } from "lucide-react";
+import { ContinueInAppBanner } from "@/components/ContinueInAppBanner";
 
 export const Route = createFileRoute("/messages")({
   head: () => ({ meta: [{ title: "Messages — Hamroh" }] }),
