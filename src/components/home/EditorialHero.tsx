@@ -21,18 +21,45 @@ export function EditorialHero() {
   const [phraseIdx, setPhraseIdx] = useState(0);
   const [userName, setUserName] = useState<string | null>(null);
   const [weather, setWeather] = useState<{ temp: number; humidity: number; code: number } | null>(null);
+  const [cityName, setCityName] = useState<string>("Samarkand");
 
   useEffect(() => {
-    // Open-Meteo — free, no API key. Samarkand coordinates.
-    const url = "https://api.open-meteo.com/v1/forecast?latitude=39.6547&longitude=66.9758&current=temperature_2m,relative_humidity_2m,weather_code";
-    fetch(url)
-      .then((r) => r.json())
-      .then((d) => {
+    const fetchWeather = async (lat: number, lon: number) => {
+      try {
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code`;
+        const r = await fetch(url);
+        const d = await r.json();
         const c = d?.current;
         if (c) setWeather({ temp: Math.round(c.temperature_2m), humidity: Math.round(c.relative_humidity_2m), code: c.weather_code });
-      })
-      .catch(() => {});
+      } catch { /* ignore */ }
+    };
+    const fetchCity = async (lat: number, lon: number) => {
+      try {
+        const r = await fetch(`https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&count=1&language=en`);
+        const d = await r.json();
+        const name = d?.results?.[0]?.name;
+        if (name) setCityName(name);
+      } catch { /* ignore */ }
+    };
+
+    // Samarkand fallback
+    const fallbackLat = 39.6547, fallbackLon = 66.9758;
+
+    if (typeof navigator !== "undefined" && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const { latitude, longitude } = pos.coords;
+          fetchWeather(latitude, longitude);
+          fetchCity(latitude, longitude);
+        },
+        () => { fetchWeather(fallbackLat, fallbackLon); },
+        { timeout: 6000, maximumAge: 600000 }
+      );
+    } else {
+      fetchWeather(fallbackLat, fallbackLon);
+    }
   }, []);
+
 
   const weatherLabel = (code: number): string => {
     if (code === 0) return t("weather.sunny");
