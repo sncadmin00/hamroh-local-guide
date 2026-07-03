@@ -20,6 +20,30 @@ export function EditorialHero() {
   const [submitting, setSubmitting] = useState(false);
   const [phraseIdx, setPhraseIdx] = useState(0);
   const [userName, setUserName] = useState<string | null>(null);
+  const [weather, setWeather] = useState<{ temp: number; humidity: number; code: number } | null>(null);
+
+  useEffect(() => {
+    // Open-Meteo — free, no API key. Samarkand coordinates.
+    const url = "https://api.open-meteo.com/v1/forecast?latitude=39.6547&longitude=66.9758&current=temperature_2m,relative_humidity_2m,weather_code";
+    fetch(url)
+      .then((r) => r.json())
+      .then((d) => {
+        const c = d?.current;
+        if (c) setWeather({ temp: Math.round(c.temperature_2m), humidity: Math.round(c.relative_humidity_2m), code: c.weather_code });
+      })
+      .catch(() => {});
+  }, []);
+
+  const weatherLabel = (code: number): string => {
+    if (code === 0) return t("weather.sunny");
+    if (code <= 3) return t("weather.cloudy") || "Cloudy";
+    if (code >= 45 && code <= 48) return t("weather.fog") || "Fog";
+    if (code >= 51 && code <= 67) return t("weather.rain") || "Rain";
+    if (code >= 71 && code <= 77) return t("weather.snow") || "Snow";
+    if (code >= 80 && code <= 82) return t("weather.showers") || "Showers";
+    if (code >= 95) return t("weather.storm") || "Storm";
+    return t("weather.sunny");
+  };
 
   const phrases = [
     t("hero.search.placeholder1"),
@@ -235,7 +259,7 @@ export function EditorialHero() {
                     Samarkand
                   </p>
                   <p className="text-xl font-medium truncate" style={{ color: "var(--foreground)" }}>
-                    28°C · {t("weather.sunny")}
+                    {weather ? `${weather.temp}°C · ${weatherLabel(weather.code)}` : `— · ${t("weather.sunny")}`}
                   </p>
                 </div>
               </div>
@@ -244,7 +268,7 @@ export function EditorialHero() {
                   {t("weather.humidity")}
                 </p>
                 <p className="text-sm" style={{ color: "var(--foreground)" }}>
-                  22%
+                  {weather ? `${weather.humidity}%` : "—"}
                 </p>
               </div>
             </div>
