@@ -30,7 +30,10 @@ function TelegramIcon({ className }: { className?: string }) {
 export function SiteHeader({ transparent = false, sticky = true }: { transparent?: boolean; sticky?: boolean } = {}) {
   const { t } = useI18n();
   const [signedIn, setSignedIn] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return window.localStorage.getItem("hamroh:isAdmin") === "1";
+  });
   const [isGuide, setIsGuide] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [displayName, setDisplayName] = useState<string | null>(null);
@@ -45,9 +48,19 @@ export function SiteHeader({ transparent = false, sticky = true }: { transparent
   }, []);
   useEffect(() => {
     const checkAdmin = async (userId: string | undefined) => {
-      if (!userId) { setIsAdmin(false); return; }
-      const { data } = await supabase.from("user_roles").select("role").eq("user_id", userId);
-      setIsAdmin((data ?? []).some((r) => r.role === "admin"));
+      if (!userId) {
+        setIsAdmin(false);
+        if (typeof window !== "undefined") window.localStorage.removeItem("hamroh:isAdmin");
+        return;
+      }
+      const { data, error } = await supabase.from("user_roles").select("role").eq("user_id", userId);
+      if (error) return; // keep cached value on transient error
+      const admin = (data ?? []).some((r) => r.role === "admin");
+      setIsAdmin(admin);
+      if (typeof window !== "undefined") {
+        if (admin) window.localStorage.setItem("hamroh:isAdmin", "1");
+        else window.localStorage.removeItem("hamroh:isAdmin");
+      }
     };
     const checkGuide = async (userId: string | undefined) => {
       if (!userId) { setIsGuide(false); return; }
