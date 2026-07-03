@@ -412,6 +412,7 @@ export function useSpotlights() {
       const { data, error } = await (supabase as any)
         .from("spotlights")
         .select("*")
+        .eq("is_active", true)
         .order("sort_order", { ascending: true });
       if (error) throw error;
       return (data ?? []) as SpotlightRow[];
