@@ -18,10 +18,10 @@ export const Route = createFileRoute("/guides_/$guideId")({
   loader: async ({ params }) => {
     const { data } = await supabase
       .from("guides")
-      .select("name, tagline, bio, photo_url, cities(name)")
+      .select("name, tagline, bio, photo_url, languages, rating, reviews, cities(name)")
       .eq("slug", params.guideId)
       .maybeSingle();
-    return { meta: data as { name: string; tagline: string; bio: string; photo_url: string | null; cities: { name: string } | null } | null };
+    return { meta: data as { name: string; tagline: string; bio: string; photo_url: string | null; languages: string[] | null; rating: number | null; reviews: number | null; cities: { name: string } | null } | null };
   },
   head: ({ params, loaderData }) => {
     const m = loaderData?.meta;
@@ -29,6 +29,30 @@ export const Route = createFileRoute("/guides_/$guideId")({
     const description = m ? (m.tagline || m.bio || `Book ${m.name}, a verified local guide.`).slice(0, 160) : "Book a verified local guide.";
     const image = m?.photo_url || `${SITE_URL}/hamroh-og.jpg`;
     const url = `${SITE_URL}/guides/${params.guideId}`;
+    const scripts: Array<{ type: string; children: string }> = [];
+    if (m) {
+      const ld: Record<string, unknown> = {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        name: m.name,
+        description: m.tagline || m.bio || undefined,
+        image: m.photo_url || undefined,
+        url,
+        jobTitle: "Local guide",
+        knowsLanguage: m.languages || undefined,
+        address: m.cities?.name
+          ? { "@type": "PostalAddress", addressLocality: m.cities.name, addressCountry: "UZ" }
+          : undefined,
+      };
+      if (m.rating && m.reviews && m.reviews > 0) {
+        ld.aggregateRating = {
+          "@type": "AggregateRating",
+          ratingValue: m.rating,
+          reviewCount: m.reviews,
+        };
+      }
+      scripts.push({ type: "application/ld+json", children: JSON.stringify(ld) });
+    }
     return {
       meta: [
         { title },
@@ -42,6 +66,7 @@ export const Route = createFileRoute("/guides_/$guideId")({
         { name: "twitter:image", content: image },
       ],
       links: [{ rel: "canonical", href: url }],
+      scripts,
     };
   },
   component: GuidePage,

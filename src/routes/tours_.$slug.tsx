@@ -20,10 +20,10 @@ export const Route = createFileRoute("/tours_/$slug")({
   loader: async ({ params }) => {
     const { data } = await supabase
       .from("tours")
-      .select("title, title_en, short_description, short_description_en, cover_url, cities(name)")
+      .select("title, title_en, short_description, short_description_en, cover_url, price_from, duration_hours, rating, reviews_count, cities(name)")
       .eq("slug", params.slug)
       .maybeSingle();
-    return { meta: data as { title: string; title_en: string | null; short_description: string | null; short_description_en: string | null; cover_url: string | null; cities: { name: string } | null } | null };
+    return { meta: data as { title: string; title_en: string | null; short_description: string | null; short_description_en: string | null; cover_url: string | null; price_from: number | null; duration_hours: number | null; rating: number | null; reviews_count: number | null; cities: { name: string } | null } | null };
   },
   head: ({ params, loaderData }) => {
     const m = loaderData?.meta;
@@ -45,7 +45,36 @@ export const Route = createFileRoute("/tours_/$slug")({
       meta.push({ name: "twitter:card", content: "summary_large_image" });
       meta.push({ name: "twitter:image", content: m.cover_url });
     }
-    return { meta, links: [{ rel: "canonical", href: url }] };
+    const scripts: Array<{ type: string; children: string }> = [];
+    if (m) {
+      const ld: Record<string, unknown> = {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        name,
+        description,
+        url,
+        image: m.cover_url || undefined,
+        brand: { "@type": "Brand", name: "Hamroh" },
+      };
+      if (m.price_from && m.price_from > 0) {
+        ld.offers = {
+          "@type": "Offer",
+          price: m.price_from,
+          priceCurrency: "USD",
+          availability: "https://schema.org/InStock",
+          url,
+        };
+      }
+      if (m.rating && m.reviews_count && m.reviews_count > 0) {
+        ld.aggregateRating = {
+          "@type": "AggregateRating",
+          ratingValue: m.rating,
+          reviewCount: m.reviews_count,
+        };
+      }
+      scripts.push({ type: "application/ld+json", children: JSON.stringify(ld) });
+    }
+    return { meta, links: [{ rel: "canonical", href: url }], scripts };
   },
   component: TourDetailPage,
   errorComponent: ({ error }) => <div className="p-8 text-sm text-destructive">{error.message}</div>,
