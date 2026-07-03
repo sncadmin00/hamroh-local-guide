@@ -14,8 +14,39 @@ import { listTourReviews } from "@/lib/reviews.functions";
 import { supabase } from "@/integrations/supabase/client";
 
 
+const SITE_URL = "https://hamroh-local-guide.lovable.app";
+
 export const Route = createFileRoute("/tours_/$slug")({
-  head: () => ({ meta: [{ title: "Tour — Hamroh" }] }),
+  loader: async ({ params }) => {
+    const { data } = await supabase
+      .from("tours")
+      .select("title, title_en, short_description, short_description_en, cover_url, cities(name)")
+      .eq("slug", params.slug)
+      .maybeSingle();
+    return { meta: data as { title: string; title_en: string | null; short_description: string | null; short_description_en: string | null; cover_url: string | null; cities: { name: string } | null } | null };
+  },
+  head: ({ params, loaderData }) => {
+    const m = loaderData?.meta;
+    const name = m?.title_en || m?.title || "";
+    const city = m?.cities?.name;
+    const title = m ? `${name}${city ? ` in ${city}` : ""} — Hamroh` : "Tour — Hamroh";
+    const description = (m?.short_description_en || m?.short_description || `Book ${name || "this tour"} with a verified local guide on Hamroh.`).slice(0, 160);
+    const url = `${SITE_URL}/tours/${params.slug}`;
+    const meta: Array<Record<string, string>> = [
+      { title },
+      { name: "description", content: description },
+      { property: "og:title", content: title },
+      { property: "og:description", content: description },
+      { property: "og:type", content: "product" },
+      { property: "og:url", content: url },
+    ];
+    if (m?.cover_url) {
+      meta.push({ property: "og:image", content: m.cover_url });
+      meta.push({ name: "twitter:card", content: "summary_large_image" });
+      meta.push({ name: "twitter:image", content: m.cover_url });
+    }
+    return { meta, links: [{ rel: "canonical", href: url }] };
+  },
   component: TourDetailPage,
   errorComponent: ({ error }) => <div className="p-8 text-sm text-destructive">{error.message}</div>,
   notFoundComponent: () => <div className="p-8 text-sm">Tour not found.</div>,
