@@ -8,6 +8,7 @@ import { listMyBookings, cancelBookingAsClient, respondToProposal } from "@/lib/
 import { getBookingPdf } from "@/lib/booking-pdf.functions";
 import { Calendar, Users, ArrowLeft, MessageSquare, X, CalendarClock, Check, FileDown } from "lucide-react";
 import { ReviewForm } from "@/components/ReviewForm";
+import { ContinueInAppBanner } from "@/components/ContinueInAppBanner";
 
 
 export const Route = createFileRoute("/my-bookings")({
@@ -99,6 +100,7 @@ function MyBookingsPage() {
 
   return (
     <div className="min-h-screen bg-secondary/20">
+      <ContinueInAppBanner />
       <div className="mx-auto max-w-3xl px-4 py-8">
         <div className="flex items-center justify-between mb-6">
           <h1 className="font-display text-2xl font-semibold">My bookings</h1>

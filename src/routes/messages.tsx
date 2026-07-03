@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { listMessageThreads } from "@/lib/messages.functions";
 import { MessageSquare, ArrowLeft } from "lucide-react";
+import { ContinueInAppBanner } from "@/components/ContinueInAppBanner";
 
 export const Route = createFileRoute("/messages")({
   head: () => ({ meta: [{ title: "Messages — Hamroh" }] }),
@@ -42,6 +43,7 @@ function MessagesLayout() {
 
   return (
     <div className="min-h-screen bg-secondary/20">
+      <ContinueInAppBanner />
       <div className="mx-auto max-w-5xl px-4 py-6">
         <div className="flex items-center justify-between mb-4">
           <h1 className="font-display text-2xl font-semibold inline-flex items-center gap-2">

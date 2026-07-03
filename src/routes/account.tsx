@@ -11,6 +11,7 @@ import { useI18n } from "@/lib/i18n";
 import { listMyBookings } from "@/lib/my-bookings.functions";
 import { useWishlist } from "@/hooks/useWishlist";
 import { SiteHeader } from "@/components/SiteHeader";
+import { ContinueInAppBanner } from "@/components/ContinueInAppBanner";
 
 export const Route = createFileRoute("/account")({
   head: () => ({
@@ -154,6 +155,7 @@ function AccountPage() {
     <>
       <SiteHeader />
       <div className="min-h-screen bg-secondary/20">
+        <ContinueInAppBanner />
         <div className="mx-auto max-w-5xl px-4 py-8">
           {/* Profile header */}
           <div className="flex items-center gap-4 mb-8">
