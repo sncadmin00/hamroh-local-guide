@@ -259,7 +259,7 @@ export function EditorialHero() {
                     Samarkand
                   </p>
                   <p className="text-xl font-medium truncate" style={{ color: "var(--foreground)" }}>
-                    28°C · {t("weather.sunny")}
+                    {weather ? `${weather.temp}°C · ${weatherLabel(weather.code)}` : `— · ${t("weather.sunny")}`}
                   </p>
                 </div>
               </div>
@@ -268,7 +268,7 @@ export function EditorialHero() {
                   {t("weather.humidity")}
                 </p>
                 <p className="text-sm" style={{ color: "var(--foreground)" }}>
-                  22%
+                  {weather ? `${weather.humidity}%` : "—"}
                 </p>
               </div>
             </div>
