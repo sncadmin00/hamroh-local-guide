@@ -61,16 +61,33 @@ function LoginPage() {
       const pendingRedirect =
         safeRedirect(sessionStorage.getItem("authRedirect")) ?? safeRedirect(redirect);
       if (pendingRedirect) sessionStorage.removeItem("authRedirect");
-      const [{ data: guide }, { data: roles }] = await Promise.all([
-        supabase.from("guides").select("id").eq("user_id", userId).maybeSingle(),
-        supabase.from("user_roles").select("role").eq("user_id", userId),
-      ]);
-      const isAdmin = roles?.some((r) => r.role === "admin");
-      if (pendingRedirect) {
-        navigate({ href: pendingRedirect, replace: true });
-        return;
+      let target = "/";
+      try {
+        const [{ data: guide }, { data: roles }] = await Promise.all([
+          supabase.from("guides").select("id").eq("user_id", userId).maybeSingle(),
+          supabase.from("user_roles").select("role").eq("user_id", userId),
+        ]);
+        const isAdmin = roles?.some((r) => r.role === "admin");
+        target = pendingRedirect ?? (guide ? "/guide" : isAdmin ? "/admin" : "/");
+      } catch (e) {
+        console.error("resolveAndGo failed, falling back to /", e);
+        target = pendingRedirect ?? "/";
       }
-      navigate({ to: guide ? "/guide" : isAdmin ? "/admin" : "/", replace: true });
+      try {
+        if (pendingRedirect) {
+          navigate({ href: target, replace: true });
+        } else {
+          navigate({ to: target, replace: true });
+        }
+      } catch (e) {
+        console.error("navigate failed, hard redirect", e);
+      }
+      // Hard fallback: if still on /login shortly after, force a real navigation.
+      window.setTimeout(() => {
+        if (window.location.pathname.startsWith("/login")) {
+          window.location.replace(target);
+        }
+      }, 400);
     };
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
       if (session?.user) {
@@ -84,6 +101,7 @@ function LoginPage() {
     });
     return () => sub.subscription.unsubscribe();
   }, [navigate, redirect]);
+
 
   const submitEmail = async (e: React.FormEvent) => {
     e.preventDefault();
