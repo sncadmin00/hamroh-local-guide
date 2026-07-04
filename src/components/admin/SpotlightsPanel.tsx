@@ -163,6 +163,8 @@ function SpotlightEditor({
       is_active: form.is_active ?? true,
       sort_order: form.sort_order ?? 0,
       expires_at: form.expires_at || null,
+      guide_id: form.guide_id ?? null,
+      tour_id: form.tour_id ?? null,
     };
     const q = form.id
       ? (supabase as any).from("spotlights").update(payload).eq("id", form.id)
