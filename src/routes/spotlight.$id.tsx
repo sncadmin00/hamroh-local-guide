@@ -102,25 +102,14 @@ function SpotlightPage() {
 
         {s.href && (
           <div className="mt-10 border-t border-[var(--border)] pt-8">
-            {isInternal ? (
-              <Link
-                to={s.href}
-                className="inline-flex items-center gap-2 rounded-full bg-[#C9A84C] px-6 py-3 text-sm font-semibold text-[#0B1430] transition-transform hover:-translate-y-0.5"
-              >
-                {t("spot.cta.view")}
-                <ArrowUpRight className="h-4 w-4" />
-              </Link>
-            ) : (
-              <a
-                href={s.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full bg-[#C9A84C] px-6 py-3 text-sm font-semibold text-[#0B1430] transition-transform hover:-translate-y-0.5"
-              >
-                {t("spot.cta.view")}
-                <ArrowUpRight className="h-4 w-4" />
-              </a>
-            )}
+            <a
+              href={s.href}
+              {...(isInternal ? {} : { target: "_blank", rel: "noopener noreferrer" })}
+              className="inline-flex items-center gap-2 rounded-full bg-[#C9A84C] px-6 py-3 text-sm font-semibold text-[#0B1430] transition-transform hover:-translate-y-0.5"
+            >
+              {t("spot.cta.view")}
+              <ArrowUpRight className="h-4 w-4" />
+            </a>
           </div>
         )}
       </article>
