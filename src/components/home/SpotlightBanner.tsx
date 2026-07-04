@@ -24,76 +24,35 @@ export function SpotlightBanner() {
     desc: lang === "ru" ? s.description_ru : lang === "uz" ? s.description_uz : s.description_en,
   });
 
-  // Single item → slim editorial news bar
-  if (items.length === 1) {
-    const s = items[0];
-    const { title } = pick(s);
-    return (
-      <div className="mb-8 w-full max-w-2xl">
-        <a
-          href={s.href}
-          className="group flex items-center gap-4 border-y border-slate-900/10 py-4 transition-opacity hover:opacity-70"
-        >
-          <div className="h-16 w-16 shrink-0 overflow-hidden rounded-sm bg-slate-100">
-            <img
-              src={s.image_url || PLACEHOLDER}
-              alt=""
-              className="h-full w-full object-cover"
-              loading="lazy"
-            />
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="mb-1 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gold">
-              <span>{t(KIND_LABEL_KEY[s.kind])}</span>
-              <span className="text-slate-400">·</span>
-              <span className="text-slate-500">{t("spot.whatsNew")}</span>
-            </div>
-            <h3 className="truncate font-serif text-base sm:text-lg leading-tight text-slate-900">
-              {title}
-            </h3>
-          </div>
-          <ArrowUpRight className="h-4 w-4 shrink-0 text-slate-400 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-        </a>
-      </div>
-    );
-  }
-
-  // Multiple items → quiet editorial miniature strip
-  const visible = items.slice(0, 6);
+  // Slim editorial news bar — one teaser at a time, rotates on tap
+  const s = items[0];
+  const { title } = pick(s);
   return (
     <div className="mb-8 w-full max-w-2xl">
-      <div className="mb-3 flex items-baseline justify-between px-1">
-        <h2 className="font-serif text-sm italic text-slate-600">
-          {t("spot.whatsNew")}
-        </h2>
-      </div>
-      <div className="-mx-4 flex gap-4 overflow-x-auto px-4 pb-2 scrollbar-hide sm:mx-0 sm:px-0">
-        {visible.map((s) => {
-          const { title } = pick(s);
-          return (
-            <a
-              key={s.id}
-              href={s.href}
-              className="group flex w-[128px] shrink-0 flex-col transition-opacity hover:opacity-80"
-            >
-              <div className="mb-2.5 aspect-[4/5] w-full overflow-hidden rounded-sm bg-slate-100">
-                <img
-                  src={s.image_url || PLACEHOLDER}
-                  alt=""
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                  loading="lazy"
-                />
-              </div>
-              <div className="mb-1 text-[10px] font-bold uppercase tracking-wider text-gold">
-                {t(KIND_LABEL_KEY[s.kind])}
-              </div>
-              <h3 className="line-clamp-2 font-serif text-[15px] leading-tight text-slate-900">
-                {title}
-              </h3>
-            </a>
-          );
-        })}
-      </div>
+      <a
+        href={s.href}
+        className="group flex items-center gap-4 border-y border-slate-900/10 py-4 transition-opacity hover:opacity-70"
+      >
+        <div className="h-16 w-16 shrink-0 overflow-hidden rounded-sm bg-slate-100">
+          <img
+            src={s.image_url || PLACEHOLDER}
+            alt=""
+            className="h-full w-full object-cover"
+            loading="lazy"
+          />
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="mb-1 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gold">
+            <span>{t(KIND_LABEL_KEY[s.kind])}</span>
+            <span className="text-slate-400">·</span>
+            <span className="text-slate-500">{t("spot.whatsNew")}</span>
+          </div>
+          <h3 className="truncate font-serif text-base sm:text-lg leading-tight text-slate-900">
+            {title}
+          </h3>
+        </div>
+        <ArrowUpRight className="h-4 w-4 shrink-0 text-slate-400 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+      </a>
     </div>
   );
 }
