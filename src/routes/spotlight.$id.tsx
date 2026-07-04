@@ -52,11 +52,7 @@ function SpotlightPage() {
   const title = lang === "ru" ? s.title_ru : lang === "uz" ? s.title_uz : s.title_en;
   const desc = lang === "ru" ? s.description_ru : lang === "uz" ? s.description_uz : s.description_en;
 
-  const ctaKey: "spot.newGuide.cta" | "spot.newRoute.cta" | "spot.news.cta" | "spot.newTour.cta" =
-    s.kind === "new_guide" ? "spot.newGuide.cta"
-    : s.kind === "new_route" ? "spot.newRoute.cta"
-    : s.kind === "news" ? "spot.news.cta"
-    : "spot.newTour.cta";
+  const backLabel = lang === "ru" ? "Назад" : lang === "uz" ? "Orqaga" : "Back";
 
   const isInternal = s.href.startsWith("/");
 
