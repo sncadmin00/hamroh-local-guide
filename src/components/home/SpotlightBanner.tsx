@@ -1,4 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { useSpotlights } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
 import type { SpotlightKind, SpotlightRow } from "@/lib/spotlights";
@@ -29,8 +30,9 @@ export function SpotlightBanner() {
   const { title } = pick(s);
   return (
     <div className="mb-8 w-full max-w-2xl">
-      <a
-        href={s.href}
+      <Link
+        to="/spotlight/$id"
+        params={{ id: s.id }}
         className="group flex items-center gap-4 border-y border-slate-900/10 py-4 transition-opacity hover:opacity-70"
       >
         <div className="h-16 w-16 shrink-0 overflow-hidden rounded-sm bg-slate-100">
@@ -52,7 +54,7 @@ export function SpotlightBanner() {
           </h3>
         </div>
         <ArrowUpRight className="h-4 w-4 shrink-0 text-slate-400 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-      </a>
+      </Link>
     </div>
   );
 }

@@ -37,6 +37,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as MessagesIndexRouteImport } from './routes/messages.index'
 import { Route as BookIndexRouteImport } from './routes/book.index'
 import { Route as ToursSlugRouteImport } from './routes/tours_.$slug'
+import { Route as SpotlightIdRouteImport } from './routes/spotlight.$id'
 import { Route as MessagesBookingIdRouteImport } from './routes/messages.$bookingId'
 import { Route as InviteTokenRouteImport } from './routes/invite.$token'
 import { Route as GuidesGuideIdRouteImport } from './routes/guides_.$guideId'
@@ -202,6 +203,11 @@ const BookIndexRoute = BookIndexRouteImport.update({
 const ToursSlugRoute = ToursSlugRouteImport.update({
   id: '/tours_/$slug',
   path: '/tours/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SpotlightIdRoute = SpotlightIdRouteImport.update({
+  id: '/spotlight/$id',
+  path: '/spotlight/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MessagesBookingIdRoute = MessagesBookingIdRouteImport.update({
@@ -382,6 +388,7 @@ export interface FileRoutesByFullPath {
   '/guides/$guideId': typeof GuidesGuideIdRoute
   '/invite/$token': typeof InviteTokenRoute
   '/messages/$bookingId': typeof MessagesBookingIdRoute
+  '/spotlight/$id': typeof SpotlightIdRoute
   '/tours/$slug': typeof ToursSlugRoute
   '/book/': typeof BookIndexRoute
   '/messages/': typeof MessagesIndexRoute
@@ -437,6 +444,7 @@ export interface FileRoutesByTo {
   '/guides/$guideId': typeof GuidesGuideIdRoute
   '/invite/$token': typeof InviteTokenRoute
   '/messages/$bookingId': typeof MessagesBookingIdRoute
+  '/spotlight/$id': typeof SpotlightIdRoute
   '/tours/$slug': typeof ToursSlugRoute
   '/book': typeof BookIndexRoute
   '/messages': typeof MessagesIndexRoute
@@ -494,6 +502,7 @@ export interface FileRoutesById {
   '/guides_/$guideId': typeof GuidesGuideIdRoute
   '/invite/$token': typeof InviteTokenRoute
   '/messages/$bookingId': typeof MessagesBookingIdRoute
+  '/spotlight/$id': typeof SpotlightIdRoute
   '/tours_/$slug': typeof ToursSlugRoute
   '/book/': typeof BookIndexRoute
   '/messages/': typeof MessagesIndexRoute
@@ -552,6 +561,7 @@ export interface FileRouteTypes {
     | '/guides/$guideId'
     | '/invite/$token'
     | '/messages/$bookingId'
+    | '/spotlight/$id'
     | '/tours/$slug'
     | '/book/'
     | '/messages/'
@@ -607,6 +617,7 @@ export interface FileRouteTypes {
     | '/guides/$guideId'
     | '/invite/$token'
     | '/messages/$bookingId'
+    | '/spotlight/$id'
     | '/tours/$slug'
     | '/book'
     | '/messages'
@@ -663,6 +674,7 @@ export interface FileRouteTypes {
     | '/guides_/$guideId'
     | '/invite/$token'
     | '/messages/$bookingId'
+    | '/spotlight/$id'
     | '/tours_/$slug'
     | '/book/'
     | '/messages/'
@@ -717,6 +729,7 @@ export interface RootRouteChildren {
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   GuidesGuideIdRoute: typeof GuidesGuideIdRoute
   InviteTokenRoute: typeof InviteTokenRoute
+  SpotlightIdRoute: typeof SpotlightIdRoute
   ToursSlugRoute: typeof ToursSlugRoute
   BookIndexRoute: typeof BookIndexRoute
   ApiEarningsReportRoute: typeof ApiEarningsReportRoute
@@ -933,6 +946,13 @@ declare module '@tanstack/react-router' {
       path: '/tours/$slug'
       fullPath: '/tours/$slug'
       preLoaderRoute: typeof ToursSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/spotlight/$id': {
+      id: '/spotlight/$id'
+      path: '/spotlight/$id'
+      fullPath: '/spotlight/$id'
+      preLoaderRoute: typeof SpotlightIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/messages/$bookingId': {
@@ -1188,6 +1208,7 @@ const rootRouteChildren: RootRouteChildren = {
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   GuidesGuideIdRoute: GuidesGuideIdRoute,
   InviteTokenRoute: InviteTokenRoute,
+  SpotlightIdRoute: SpotlightIdRoute,
   ToursSlugRoute: ToursSlugRoute,
   BookIndexRoute: BookIndexRoute,
   ApiEarningsReportRoute: ApiEarningsReportRoute,
