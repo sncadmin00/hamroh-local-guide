@@ -65,7 +65,7 @@ function SpotlightPage() {
           className="mb-8 inline-flex items-center gap-1.5 text-sm text-[var(--muted-foreground)] transition-colors hover:text-[var(--foreground)]"
         >
           <ArrowLeft className="h-4 w-4" />
-          {t("common.back")}
+          {backLabel}
         </Link>
 
         <div className="mb-3 flex flex-wrap items-center gap-2">
@@ -107,7 +107,7 @@ function SpotlightPage() {
                 to={s.href}
                 className="inline-flex items-center gap-2 rounded-full bg-[#C9A84C] px-6 py-3 text-sm font-semibold text-[#0B1430] transition-transform hover:-translate-y-0.5"
               >
-                {t(ctaKey)}
+                {t("spot.cta.view")}
                 <ArrowUpRight className="h-4 w-4" />
               </Link>
             ) : (
@@ -117,7 +117,7 @@ function SpotlightPage() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-full bg-[#C9A84C] px-6 py-3 text-sm font-semibold text-[#0B1430] transition-transform hover:-translate-y-0.5"
               >
-                {t(ctaKey)}
+                {t("spot.cta.view")}
                 <ArrowUpRight className="h-4 w-4" />
               </a>
             )}
