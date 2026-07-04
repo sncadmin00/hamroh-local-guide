@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useSpotlightsAdmin, SPOTLIGHT_KINDS } from "@/lib/content-queries";
+import { useSpotlightsAdmin, SPOTLIGHT_KINDS, useGuides, useToursAdmin } from "@/lib/content-queries";
 import type { SpotlightBadge, SpotlightKind, SpotlightRow } from "@/lib/spotlights";
 import { toast } from "sonner";
-import { Trash2, Plus, Upload } from "lucide-react";
+import { Trash2, Plus, Upload, X } from "lucide-react";
 import { useAdminI18n } from "@/lib/admin-i18n";
 
 const EMPTY: Partial<SpotlightRow> = {
@@ -19,6 +19,8 @@ const EMPTY: Partial<SpotlightRow> = {
   href: "/",
   is_active: true,
   sort_order: 0,
+  guide_id: null,
+  tour_id: null,
 };
 
 export function SpotlightsPanel() {
@@ -129,6 +131,31 @@ function SpotlightEditor({
   const [form, setForm] = useState(initial);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [guideFilter, setGuideFilter] = useState("");
+  const [tourFilter, setTourFilter] = useState("");
+  const { data: guides = [] } = useGuides();
+  const { data: tours = [] } = useToursAdmin();
+
+  const filteredGuides = useMemo(() => {
+    const q = guideFilter.trim().toLowerCase();
+    const list = q ? guides.filter((g) => g.name.toLowerCase().includes(q)) : guides;
+    return list.slice(0, 50);
+  }, [guides, guideFilter]);
+
+  const filteredTours = useMemo(() => {
+    const q = tourFilter.trim().toLowerCase();
+    const list = q
+      ? tours.filter((t) =>
+          [t.title_en, t.title_ru, t.title_uz, t.title, t.slug]
+            .filter(Boolean)
+            .some((v) => String(v).toLowerCase().includes(q)),
+        )
+      : tours;
+    return list.slice(0, 50);
+  }, [tours, tourFilter]);
+
+  const selectedGuide = guides.find((g) => g.dbId === form.guide_id) || null;
+  const selectedTour = tours.find((t) => t.id === form.tour_id) || null;
 
   useEffect(() => { setForm(initial); }, [initial]);
 
@@ -161,6 +188,8 @@ function SpotlightEditor({
       is_active: form.is_active ?? true,
       sort_order: form.sort_order ?? 0,
       expires_at: form.expires_at || null,
+      guide_id: form.guide_id ?? null,
+      tour_id: form.tour_id ?? null,
     };
     const q = form.id
       ? (supabase as any).from("spotlights").update(payload).eq("id", form.id)
@@ -233,9 +262,98 @@ function SpotlightEditor({
         ))}
       </div>
 
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-muted-foreground">Guide (optional)</span>
+            {selectedGuide && (
+              <button
+                type="button"
+                onClick={() => set("guide_id", null)}
+                className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive"
+              >
+                <X className="h-3 w-3" /> clear
+              </button>
+            )}
+          </div>
+          {selectedGuide ? (
+            <div className="flex items-center gap-2 rounded-lg border border-border bg-background px-2 py-1.5 text-sm">
+              {selectedGuide.photo && (
+                <img src={selectedGuide.photo} alt="" className="h-6 w-6 rounded-full object-cover" />
+              )}
+              <span className="truncate">{selectedGuide.name}</span>
+              <span className="ml-auto text-xs text-muted-foreground">{selectedGuide.city}</span>
+            </div>
+          ) : (
+            <>
+              <input
+                placeholder="Search guides by name…"
+                value={guideFilter}
+                onChange={(e) => setGuideFilter(e.target.value)}
+                className="w-full h-9 rounded-lg border border-border bg-background px-2 text-sm"
+              />
+              <select
+                value=""
+                onChange={(e) => { if (e.target.value) set("guide_id", e.target.value); }}
+                className="w-full h-9 rounded-lg border border-border bg-background px-2 text-sm"
+              >
+                <option value="">— select guide —</option>
+                {filteredGuides.map((g) => (
+                  <option key={g.dbId} value={g.dbId}>{g.name} · {g.city}</option>
+                ))}
+              </select>
+            </>
+          )}
+        </div>
+
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-muted-foreground">Tour (optional)</span>
+            {selectedTour && (
+              <button
+                type="button"
+                onClick={() => set("tour_id", null)}
+                className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive"
+              >
+                <X className="h-3 w-3" /> clear
+              </button>
+            )}
+          </div>
+          {selectedTour ? (
+            <div className="flex items-center gap-2 rounded-lg border border-border bg-background px-2 py-1.5 text-sm">
+              {selectedTour.cover_url && (
+                <img src={selectedTour.cover_url} alt="" className="h-6 w-8 rounded object-cover" />
+              )}
+              <span className="truncate">{selectedTour.title_en || selectedTour.title || selectedTour.slug}</span>
+            </div>
+          ) : (
+            <>
+              <input
+                placeholder="Search tours by title/slug…"
+                value={tourFilter}
+                onChange={(e) => setTourFilter(e.target.value)}
+                className="w-full h-9 rounded-lg border border-border bg-background px-2 text-sm"
+              />
+              <select
+                value=""
+                onChange={(e) => { if (e.target.value) set("tour_id", e.target.value); }}
+                className="w-full h-9 rounded-lg border border-border bg-background px-2 text-sm"
+              >
+                <option value="">— select tour —</option>
+                {filteredTours.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {(t.title_en || t.title || t.slug)}{t.cities?.name ? ` · ${t.cities.name}` : ""}
+                  </option>
+                ))}
+              </select>
+            </>
+          )}
+        </div>
+      </div>
+
       <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
         <label className="text-sm">
-          <span className="text-muted-foreground">{ta("spotlights.field.link")}</span>
+          <span className="text-muted-foreground">{ta("spotlights.field.link")} <span className="text-xs opacity-60">(fallback / external)</span></span>
           <input
             placeholder="/guides/aziz or /tours/aral-tour"
             value={form.href ?? "/"}

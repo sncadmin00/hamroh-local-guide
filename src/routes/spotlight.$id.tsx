@@ -1,10 +1,16 @@
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
-import { ArrowLeft, ArrowUpRight } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, Star } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { useI18n } from "@/lib/i18n";
 import { getSpotlightById } from "@/lib/spotlights.functions";
-import type { SpotlightKind, SpotlightBadge, SpotlightRow } from "@/lib/spotlights";
+import type {
+  SpotlightKind,
+  SpotlightBadge,
+  SpotlightRow,
+  SpotlightGuideRef,
+  SpotlightTourRef,
+} from "@/lib/spotlights";
 
 const KIND_LABEL_KEY: Record<SpotlightKind, "spot.newGuide.label" | "spot.newRoute.label" | "spot.news.label" | "spot.newTour.label"> = {
   new_guide: "spot.newGuide.label",
@@ -22,9 +28,9 @@ const BADGE_KEY: Record<SpotlightBadge, "spot.badge.new" | "spot.badge.featured"
 
 export const Route = createFileRoute("/spotlight/$id")({
   loader: async ({ params }) => {
-    const row = await getSpotlightById({ data: { id: params.id } });
-    if (!row) throw notFound();
-    return { spotlight: row };
+    const res = await getSpotlightById({ data: { id: params.id } });
+    if (!res.spotlight) throw notFound();
+    return { spotlight: res.spotlight, guide: res.guide, tour: res.tour };
   },
   head: ({ loaderData }) => {
     const s = loaderData?.spotlight;
@@ -46,15 +52,23 @@ export const Route = createFileRoute("/spotlight/$id")({
 
 function SpotlightPage() {
   const { t, lang } = useI18n();
-  const { spotlight } = Route.useLoaderData();
-  const s = spotlight as SpotlightRow;
+  const { spotlight, guide, tour } = Route.useLoaderData() as {
+    spotlight: SpotlightRow;
+    guide: SpotlightGuideRef | null;
+    tour: SpotlightTourRef | null;
+  };
+  const s = spotlight;
 
   const title = lang === "ru" ? s.title_ru : lang === "uz" ? s.title_uz : s.title_en;
   const desc = lang === "ru" ? s.description_ru : lang === "uz" ? s.description_uz : s.description_en;
+  const tourTitle = tour ? (lang === "ru" ? tour.title_ru : lang === "uz" ? tour.title_uz : tour.title_en) : "";
 
   const backLabel = lang === "ru" ? "Назад" : lang === "uz" ? "Orqaga" : "Back";
+  const viewTourLabel = lang === "ru" ? "Открыть тур" : lang === "uz" ? "Turni ochish" : "View tour";
+  const viewGuideLabel = lang === "ru" ? "Профиль гида" : lang === "uz" ? "Gid profili" : "Guide profile";
 
   const isInternal = s.href.startsWith("/");
+  const hasCta = !!tour || !!guide || !!s.href;
 
   return (
     <div className="min-h-screen bg-[var(--background)]">
@@ -100,16 +114,60 @@ function SpotlightPage() {
           </div>
         )}
 
-        {s.href && (
-          <div className="mt-10 border-t border-[var(--border)] pt-8">
-            <a
-              href={s.href}
-              {...(isInternal ? {} : { target: "_blank", rel: "noopener noreferrer" })}
-              className="inline-flex items-center gap-2 rounded-full bg-[#C9A84C] px-6 py-3 text-sm font-semibold text-[#0B1430] transition-transform hover:-translate-y-0.5"
-            >
-              {t("spot.cta.view")}
-              <ArrowUpRight className="h-4 w-4" />
-            </a>
+        {guide && (
+          <Link
+            to="/guides/$guideId"
+            params={{ guideId: guide.slug }}
+            className="mt-10 flex items-center gap-4 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 transition-colors hover:bg-[var(--secondary)]/40"
+          >
+            {guide.photo_url ? (
+              <img
+                src={guide.photo_url}
+                alt={guide.name}
+                className="h-16 w-16 rounded-full object-cover ring-1 ring-[var(--border)]"
+              />
+            ) : (
+              <div className="h-16 w-16 rounded-full bg-[var(--secondary)]" />
+            )}
+            <div className="min-w-0 flex-1">
+              <div className="truncate font-semibold text-[var(--foreground)]">{guide.name}</div>
+              {guide.tagline && (
+                <div className="truncate text-sm text-[var(--muted-foreground)]">{guide.tagline}</div>
+              )}
+              {guide.rating != null && (
+                <div className="mt-0.5 flex items-center gap-1 text-xs text-[var(--muted-foreground)]">
+                  <Star className="h-3 w-3 fill-[#C9A84C] text-[#C9A84C]" />
+                  <span>{Number(guide.rating).toFixed(1)}</span>
+                  {guide.reviews != null && <span>· {guide.reviews}</span>}
+                </div>
+              )}
+            </div>
+            <span className="text-xs font-medium text-[#C9A84C]">{viewGuideLabel} →</span>
+          </Link>
+        )}
+
+        {hasCta && (
+          <div className="mt-10 flex flex-wrap gap-3 border-t border-[var(--border)] pt-8">
+            {tour && (
+              <Link
+                to="/tours/$slug"
+                params={{ slug: tour.slug }}
+                className="inline-flex items-center gap-2 rounded-full bg-[#C9A84C] px-6 py-3 text-sm font-semibold text-[#0B1430] transition-transform hover:-translate-y-0.5"
+              >
+                {viewTourLabel}: {tourTitle}
+                <ArrowUpRight className="h-4 w-4" />
+              </Link>
+            )}
+            {!tour && s.href && (
+              <a
+                href={s.href}
+                {...(isInternal ? {} : { target: "_blank", rel: "noopener noreferrer" })}
+                className="inline-flex items-center gap-2 rounded-full bg-[#C9A84C] px-6 py-3 text-sm font-semibold text-[#0B1430] transition-transform hover:-translate-y-0.5"
+              >
+                {t("spot.cta.view")}
+                <ArrowUpRight className="h-4 w-4" />
+              </a>
+            )}
           </div>
         )}
       </article>
