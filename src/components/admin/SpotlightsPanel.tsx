@@ -131,6 +131,31 @@ function SpotlightEditor({
   const [form, setForm] = useState(initial);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [guideFilter, setGuideFilter] = useState("");
+  const [tourFilter, setTourFilter] = useState("");
+  const { data: guides = [] } = useGuides();
+  const { data: tours = [] } = useToursAdmin();
+
+  const filteredGuides = useMemo(() => {
+    const q = guideFilter.trim().toLowerCase();
+    const list = q ? guides.filter((g) => g.name.toLowerCase().includes(q)) : guides;
+    return list.slice(0, 50);
+  }, [guides, guideFilter]);
+
+  const filteredTours = useMemo(() => {
+    const q = tourFilter.trim().toLowerCase();
+    const list = q
+      ? tours.filter((t) =>
+          [t.title_en, t.title_ru, t.title_uz, t.title, t.slug]
+            .filter(Boolean)
+            .some((v) => String(v).toLowerCase().includes(q)),
+        )
+      : tours;
+    return list.slice(0, 50);
+  }, [tours, tourFilter]);
+
+  const selectedGuide = guides.find((g) => g.dbId === form.guide_id) || null;
+  const selectedTour = tours.find((t) => t.id === form.tour_id) || null;
 
   useEffect(() => { setForm(initial); }, [initial]);
 
