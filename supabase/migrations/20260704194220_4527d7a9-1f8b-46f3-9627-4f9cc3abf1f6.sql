@@ -1,0 +1,1 @@
+update public.spotlights set href = '/guides/malika-samarkand' where id = '0d188344-1ad9-4380-a498-2ec0e4c52c1f';
