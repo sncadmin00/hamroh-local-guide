@@ -1,0 +1,1 @@
+update public.spotlights set image_url = 'https://images.unsplash.com/photo-1564507592333-c60657eea523?w=1200&q=80' where id = '0d188344-1ad9-4380-a498-2ec0e4c52c1f';
