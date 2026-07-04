@@ -2109,6 +2109,7 @@ export type Database = {
           description_ru: string
           description_uz: string
           expires_at: string | null
+          guide_id: string | null
           href: string
           id: string
           image_url: string | null
@@ -2119,6 +2120,7 @@ export type Database = {
           title_en: string
           title_ru: string
           title_uz: string
+          tour_id: string | null
           updated_at: string
         }
         Insert: {
@@ -2128,6 +2130,7 @@ export type Database = {
           description_ru?: string
           description_uz?: string
           expires_at?: string | null
+          guide_id?: string | null
           href?: string
           id?: string
           image_url?: string | null
@@ -2138,6 +2141,7 @@ export type Database = {
           title_en?: string
           title_ru?: string
           title_uz?: string
+          tour_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -2147,6 +2151,7 @@ export type Database = {
           description_ru?: string
           description_uz?: string
           expires_at?: string | null
+          guide_id?: string | null
           href?: string
           id?: string
           image_url?: string | null
@@ -2157,9 +2162,25 @@ export type Database = {
           title_en?: string
           title_ru?: string
           title_uz?: string
+          tour_id?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "spotlights_guide_id_fkey"
+            columns: ["guide_id"]
+            isOneToOne: false
+            referencedRelation: "guides"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "spotlights_tour_id_fkey"
+            columns: ["tour_id"]
+            isOneToOne: false
+            referencedRelation: "tours"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       suppressed_emails: {
         Row: {
