@@ -1,4 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { useSpotlights } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
 import type { SpotlightKind, SpotlightRow } from "@/lib/spotlights";
