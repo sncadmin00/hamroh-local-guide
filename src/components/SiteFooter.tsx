@@ -11,9 +11,9 @@ export function SiteFooter() {
     <footer className="border-t border-border/60 bg-background">
       <div className="max-w-6xl mx-auto px-6 py-10">
         <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
-          <div className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2" aria-label="Hamroh — home">
             <img src={hamrohLogo} alt="Hamroh" className="h-12 w-auto object-contain" />
-          </div>
+          </Link>
 
           <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
             <Link to="/about" className="hover:text-foreground">{t("footer.about")}</Link>
