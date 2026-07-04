@@ -20,4 +20,26 @@ export type SpotlightRow = {
   sort_order: number;
   published_at: string;
   expires_at: string | null;
+  guide_id: string | null;
+  tour_id: string | null;
+};
+
+export type SpotlightGuideRef = {
+  id: string;
+  slug: string;
+  name: string;
+  photo_url: string | null;
+  tagline: string | null;
+  rating: number | null;
+  reviews: number | null;
+};
+
+export type SpotlightTourRef = {
+  id: string;
+  slug: string;
+  title_en: string;
+  title_uz: string;
+  title_ru: string;
+  cover_url: string | null;
+  price_from: number | null;
 };
