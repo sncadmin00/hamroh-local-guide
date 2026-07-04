@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useSpotlightsAdmin, SPOTLIGHT_KINDS } from "@/lib/content-queries";
+import { useSpotlightsAdmin, SPOTLIGHT_KINDS, useGuides, useToursAdmin } from "@/lib/content-queries";
 import type { SpotlightBadge, SpotlightKind, SpotlightRow } from "@/lib/spotlights";
 import { toast } from "sonner";
-import { Trash2, Plus, Upload } from "lucide-react";
+import { Trash2, Plus, Upload, X } from "lucide-react";
 import { useAdminI18n } from "@/lib/admin-i18n";
 
 const EMPTY: Partial<SpotlightRow> = {
@@ -19,6 +19,8 @@ const EMPTY: Partial<SpotlightRow> = {
   href: "/",
   is_active: true,
   sort_order: 0,
+  guide_id: null,
+  tour_id: null,
 };
 
 export function SpotlightsPanel() {
