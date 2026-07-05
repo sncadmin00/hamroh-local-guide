@@ -2317,6 +2317,42 @@ function ApplicationsPanel({
                       <span className="text-xs text-muted-foreground">{ta("applications.about")}</span>
                       <p className="mt-1 whitespace-pre-wrap">{a.about}</p>
                     </div>
+                    {a.language_tests && a.language_tests.length > 0 && (
+                      <div className="space-y-2">
+                        <div className="text-xs text-muted-foreground">Language tests</div>
+                        <ul className="space-y-2">
+                          {a.language_tests.map((t, i) => (
+                            <li
+                              key={i}
+                              className={`rounded border p-2 text-sm ${t.skipped ? "opacity-60" : ""}`}
+                            >
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="font-medium">{t.language}</span>
+                                {t.skipped ? (
+                                  <Badge variant="secondary">Skipped</Badge>
+                                ) : (
+                                  <Badge variant={["B1","B2","C1","C2"].includes(t.level) ? "default" : "outline"}>
+                                    {t.level || "N/A"}
+                                  </Badge>
+                                )}
+                              </div>
+                              {!t.skipped && t.feedback && (
+                                <p className="mt-1 text-muted-foreground">{t.feedback}</p>
+                              )}
+                              {!t.skipped && t.transcript && (
+                                <details className="mt-1">
+                                  <summary className="cursor-pointer text-xs text-muted-foreground">
+                                    Transcript
+                                  </summary>
+                                  <p className="mt-1 whitespace-pre-wrap text-xs">{t.transcript}</p>
+                                </details>
+                              )}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
                   </div>
                 )}
               </li>
