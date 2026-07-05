@@ -1702,6 +1702,62 @@ function BookingsPanel({ bookings, reload }: { bookings: Booking[]; reload: () =
   );
 }
 
+function ProposedCitiesBlock({
+  appId,
+  proposed,
+  cities,
+  reload,
+}: {
+  appId: string;
+  proposed: string[];
+  cities: City[];
+  reload: () => Promise<void>;
+}) {
+  const createCity = useServerFn(adminCreateCityFromProposal);
+  const [busy, setBusy] = useState<string | null>(null);
+
+  const existsAlready = (name: string) =>
+    cities.some((c) => c.name.toLowerCase() === name.trim().toLowerCase());
+
+  const handleCreate = async (name: string) => {
+    setBusy(name);
+    try {
+      const res = await createCity({ data: { name: name.trim() } });
+      toast.success(res.existed ? `City "${res.city.name}" already existed` : `Created "${res.city.name}"`);
+      await reload();
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  return (
+    <div className="rounded-lg bg-amber-500/10 ring-1 ring-amber-500/30 p-3 space-y-2">
+      <p className="text-xs font-medium text-amber-900 dark:text-amber-200">Proposed new cities</p>
+      <ul className="space-y-1.5">
+        {proposed.map((name) => {
+          const already = existsAlready(name);
+          return (
+            <li key={name} className="flex items-center justify-between gap-2">
+              <span className="text-sm">{name}</span>
+              <button
+                onClick={() => handleCreate(name)}
+                disabled={busy === name || already}
+                className="inline-flex items-center gap-1 h-7 px-2.5 rounded-full text-[11px] font-medium bg-primary text-primary-foreground disabled:opacity-50"
+                title={already ? "City already exists" : "Create city (geocoded via open-meteo)"}
+              >
+                <Plus className="h-3 w-3" />
+                {already ? "Exists" : busy === name ? "Creating…" : "Create city"}
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
 function ApplicationsPanel({
   applications,
   categories,
