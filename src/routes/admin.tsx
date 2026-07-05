@@ -2223,6 +2223,14 @@ function ApplicationsPanel({
                       <span className="text-xs text-muted-foreground">{ta("applications.specialization")}</span>
                       {a.specialization}
                     </div>
+                    {a.category_ids && a.category_ids.length > 0 && (
+                      <div>
+                        <span className="text-xs text-muted-foreground">Categories: </span>
+                        {a.category_ids
+                          .map((id) => categories.find((c) => c.id === id)?.name ?? id)
+                          .join(", ")}
+                      </div>
+                    )}
                     <div>
                       <span className="text-xs text-muted-foreground">{ta("applications.languages")}</span>
                       {a.languages.join(", ")}
