@@ -1,1 +1,4 @@
 project_id = "eamltnhtlnwmmhkyxnoi"
+
+[functions.generate-guide-bio]
+verify_jwt = true
