@@ -96,6 +96,7 @@ type Booking = {
 type GuideApplication = {
   id: string;
   full_name: string;
+  category_ids: string[] | null;
   email: string;
   phone: string;
   telegram: string;
@@ -427,7 +428,7 @@ function AdminPage() {
         </div>
 
         {tab === "bookings" && <BookingsPanel bookings={bookings} reload={loadData} />}
-        {tab === "applications" && <ApplicationsPanel applications={applications} reload={loadData} />}
+        {tab === "applications" && <ApplicationsPanel applications={applications} categories={categories} reload={loadData} />}
         {tab === "cities" && <CitiesPanel cities={cities} reload={loadData} />}
         {tab === "guides" && <GuidesPanel guides={guides} cities={cities} categories={categories} guideCategories={guideCategories} languages={languages} reload={loadData} />}
         {tab === "tours" && <ToursPanel />}
@@ -1700,9 +1701,11 @@ function BookingsPanel({ bookings, reload }: { bookings: Booking[]; reload: () =
 
 function ApplicationsPanel({
   applications,
+  categories,
   reload,
 }: {
   applications: GuideApplication[];
+  categories: Category[];
   reload: () => Promise<void>;
 }) {
   const { ta } = useAdminI18n();
@@ -2220,6 +2223,14 @@ function ApplicationsPanel({
                       <span className="text-xs text-muted-foreground">{ta("applications.specialization")}</span>
                       {a.specialization}
                     </div>
+                    {a.category_ids && a.category_ids.length > 0 && (
+                      <div>
+                        <span className="text-xs text-muted-foreground">Categories: </span>
+                        {a.category_ids
+                          .map((id) => categories.find((c) => c.id === id)?.name ?? id)
+                          .join(", ")}
+                      </div>
+                    )}
                     <div>
                       <span className="text-xs text-muted-foreground">{ta("applications.languages")}</span>
                       {a.languages.join(", ")}
