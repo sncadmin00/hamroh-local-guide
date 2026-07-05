@@ -96,6 +96,7 @@ type Booking = {
 type GuideApplication = {
   id: string;
   full_name: string;
+  category_ids: string[] | null;
   email: string;
   phone: string;
   telegram: string;
