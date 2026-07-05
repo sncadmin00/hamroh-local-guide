@@ -101,6 +101,8 @@ type GuideApplication = {
   phone: string;
   telegram: string;
   city: string;
+  city_ids: string[] | null;
+  proposed_cities: string[] | null;
   languages: string[];
   specialization: string;
   experience_years: number;
