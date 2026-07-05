@@ -114,6 +114,8 @@ type GuideApplication = {
   certificate_url: string | null;
   certificate_confirmed: boolean;
   tax_id: string | null;
+  has_transport: boolean | null;
+  transport_seats: number | null;
   language_tests: Array<{ language: string; level: string; transcript?: string; feedback?: string; skipped?: boolean }> | null;
   user_id: string | null;
 };
@@ -2107,6 +2109,18 @@ function ApplicationsPanel({
                         <span className="font-mono text-sm">{a.tax_id}</span>
                       ) : (
                         <span className="text-xs text-muted-foreground">{ta("applications.taxIdMissing")}</span>
+                      )}
+                    </div>
+
+                    {/* Transport */}
+                    <div>
+                      <p className="text-xs font-medium text-muted-foreground mb-1">Transport</p>
+                      {a.has_transport ? (
+                        <span className="text-sm">
+                          Yes{a.transport_seats ? ` · ${a.transport_seats} seats` : ""}
+                        </span>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">No transport</span>
                       )}
                     </div>
 
