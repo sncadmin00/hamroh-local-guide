@@ -1700,9 +1700,11 @@ function BookingsPanel({ bookings, reload }: { bookings: Booking[]; reload: () =
 
 function ApplicationsPanel({
   applications,
+  categories,
   reload,
 }: {
   applications: GuideApplication[];
+  categories: Category[];
   reload: () => Promise<void>;
 }) {
   const { ta } = useAdminI18n();
