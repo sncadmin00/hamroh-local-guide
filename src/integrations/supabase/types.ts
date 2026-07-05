@@ -615,6 +615,7 @@ export type Database = {
       }
       cities: {
         Row: {
+          approved: boolean
           created_at: string
           id: string
           lat: number
@@ -625,6 +626,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          approved?: boolean
           created_at?: string
           id?: string
           lat: number
@@ -635,6 +637,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          approved?: boolean
           created_at?: string
           id?: string
           lat?: number
@@ -802,6 +805,7 @@ export type Database = {
           certificate_confirmed: boolean
           certificate_url: string | null
           city: string
+          city_ids: string[]
           created_at: string
           email: string
           experience_years: number
@@ -815,6 +819,7 @@ export type Database = {
           phone: string
           photo_urls: string[]
           portrait_url: string | null
+          proposed_cities: string[]
           specialization: string
           status: string
           tax_id: string | null
@@ -830,6 +835,7 @@ export type Database = {
           certificate_confirmed?: boolean
           certificate_url?: string | null
           city: string
+          city_ids?: string[]
           created_at?: string
           email: string
           experience_years?: number
@@ -843,6 +849,7 @@ export type Database = {
           phone?: string
           photo_urls?: string[]
           portrait_url?: string | null
+          proposed_cities?: string[]
           specialization?: string
           status?: string
           tax_id?: string | null
@@ -858,6 +865,7 @@ export type Database = {
           certificate_confirmed?: boolean
           certificate_url?: string | null
           city?: string
+          city_ids?: string[]
           created_at?: string
           email?: string
           experience_years?: number
@@ -871,6 +879,7 @@ export type Database = {
           phone?: string
           photo_urls?: string[]
           portrait_url?: string | null
+          proposed_cities?: string[]
           specialization?: string
           status?: string
           tax_id?: string | null
