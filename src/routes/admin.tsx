@@ -114,6 +114,8 @@ type GuideApplication = {
   certificate_url: string | null;
   certificate_confirmed: boolean;
   tax_id: string | null;
+  has_transport: boolean | null;
+  transport_seats: number | null;
   language_tests: Array<{ language: string; level: string; transcript?: string; feedback?: string; skipped?: boolean }> | null;
   user_id: string | null;
 };
