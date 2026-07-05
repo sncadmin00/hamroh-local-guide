@@ -11,6 +11,7 @@ import { notifyGuideApplicationStatus } from "@/lib/lifecycle-emails.functions";
 import { finalizeApprovedGuide } from "@/lib/guide-approval.functions";
 import { reindexArticle, reindexAllArticles } from "@/lib/articles-rag.functions";
 import { adminCreateCityFromProposal } from "@/lib/admin-cities.functions";
+import { Badge } from "@/components/ui/badge";
 
 import { SpotlightsPanel } from "@/components/admin/SpotlightsPanel";
 import { AdminReelsPanel } from "@/components/admin/AdminReelsPanel";
