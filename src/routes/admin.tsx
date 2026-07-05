@@ -1704,10 +1704,12 @@ function BookingsPanel({ bookings, reload }: { bookings: Booking[]; reload: () =
 function ApplicationsPanel({
   applications,
   categories,
+  cities,
   reload,
 }: {
   applications: GuideApplication[];
   categories: Category[];
+  cities: City[];
   reload: () => Promise<void>;
 }) {
   const { ta } = useAdminI18n();
