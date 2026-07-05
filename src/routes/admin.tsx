@@ -2236,6 +2236,22 @@ function ApplicationsPanel({
                           .join(", ")}
                       </div>
                     )}
+                    {a.city_ids && a.city_ids.length > 0 && (
+                      <div>
+                        <span className="text-xs text-muted-foreground">Cities: </span>
+                        {a.city_ids
+                          .map((id) => cities.find((c) => c.id === id)?.name ?? id)
+                          .join(", ")}
+                      </div>
+                    )}
+                    {a.proposed_cities && a.proposed_cities.length > 0 && (
+                      <ProposedCitiesBlock
+                        appId={a.id}
+                        proposed={a.proposed_cities}
+                        cities={cities}
+                        reload={reload}
+                      />
+                    )}
                     <div>
                       <span className="text-xs text-muted-foreground">{ta("applications.languages")}</span>
                       {a.languages.join(", ")}
