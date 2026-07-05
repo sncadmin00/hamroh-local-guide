@@ -2120,12 +2120,13 @@ function ApplicationsPanel({
                       <p className="text-xs font-medium text-muted-foreground mb-1">Transport</p>
                       {a.has_transport ? (
                         <span className="text-sm">
-                          Yes{a.transport_seats ? ` · ${a.transport_seats} seats` : ""}
+                          Yes · {a.transport_seats ? `${a.transport_seats} seats` : "seats not specified"}
                         </span>
                       ) : (
                         <span className="text-xs text-muted-foreground">No transport</span>
                       )}
                     </div>
+
 
 
 
