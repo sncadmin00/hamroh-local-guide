@@ -118,13 +118,23 @@ type GuideApplication = {
   user_id: string | null;
 };
 
-async function toSignedUrl(rawUrl: string | null | undefined): Promise<string | null> {
+async function toSignedUrl(rawUrl: string | null | undefined, defaultBucket?: string): Promise<string | null> {
   if (!rawUrl) return null;
+  let bucket: string | null = null;
+  let path: string | null = null;
   const m = rawUrl.match(/\/object\/(?:public|sign)\/([^/]+)\/([^?]+)/);
-  if (!m) return rawUrl;
-  const [, bucket, path] = m;
+  if (m) {
+    bucket = m[1];
+    path = decodeURIComponent(m[2]);
+  } else if (defaultBucket && !/^https?:\/\//i.test(rawUrl)) {
+    // Mobile app stores bare storage paths (e.g. "applications/xxx.jpg")
+    bucket = defaultBucket;
+    path = rawUrl.replace(/^\/+/, "");
+  } else {
+    return rawUrl;
+  }
   try {
-    const { data } = await supabase.storage.from(bucket).createSignedUrl(decodeURIComponent(path), 3600);
+    const { data } = await supabase.storage.from(bucket).createSignedUrl(path, 3600);
     return data?.signedUrl ?? rawUrl;
   } catch {
     return rawUrl;
@@ -134,11 +144,11 @@ async function toSignedUrl(rawUrl: string | null | undefined): Promise<string | 
 async function signApplicationMedia(apps: GuideApplication[]): Promise<GuideApplication[]> {
   return Promise.all(apps.map(async (a) => ({
     ...a,
-    portrait_url: await toSignedUrl(a.portrait_url),
-    video_url: await toSignedUrl(a.video_url),
-    id_document_url: await toSignedUrl(a.id_document_url),
-    certificate_url: await toSignedUrl(a.certificate_url),
-    photo_urls: a.photo_urls ? await Promise.all(a.photo_urls.map((u) => toSignedUrl(u).then((s) => s ?? u))) : a.photo_urls,
+    portrait_url: await toSignedUrl(a.portrait_url, "guide-application-photos"),
+    video_url: await toSignedUrl(a.video_url, "guide-application-videos"),
+    id_document_url: await toSignedUrl(a.id_document_url, "guide-application-photos"),
+    certificate_url: await toSignedUrl(a.certificate_url, "guide-application-photos"),
+    photo_urls: a.photo_urls ? await Promise.all(a.photo_urls.map((u) => toSignedUrl(u, "guide-application-photos").then((s) => s ?? u))) : a.photo_urls,
   })));
 }
 
