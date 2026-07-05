@@ -427,7 +427,7 @@ function AdminPage() {
         </div>
 
         {tab === "bookings" && <BookingsPanel bookings={bookings} reload={loadData} />}
-        {tab === "applications" && <ApplicationsPanel applications={applications} reload={loadData} />}
+        {tab === "applications" && <ApplicationsPanel applications={applications} categories={categories} reload={loadData} />}
         {tab === "cities" && <CitiesPanel cities={cities} reload={loadData} />}
         {tab === "guides" && <GuidesPanel guides={guides} cities={cities} categories={categories} guideCategories={guideCategories} languages={languages} reload={loadData} />}
         {tab === "tours" && <ToursPanel />}
