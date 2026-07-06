@@ -90,6 +90,19 @@ function BookPage() {
     loadTelegramContact();
   }, []);
 
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setCurrentUserId(data.user?.id ?? null));
+  }, []);
+
+  const isOwnTour = !!(currentUserId && tour?.guides?.user_id && tour.guides.user_id === currentUserId);
+  useEffect(() => {
+    if (isOwnTour) {
+      toast.error("You cannot book your own tour.");
+      navigate({ to: "/tours/$slug", params: { slug } });
+    }
+  }, [isOwnTour, navigate, slug]);
+
   if (isLoading || !tour) {
     return (
       <div className="min-h-screen">

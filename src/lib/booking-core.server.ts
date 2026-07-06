@@ -206,6 +206,18 @@ export async function createBookingCore(
   const mult = !lang || lang === baseLanguage ? 0 : Number(langMults[lang] ?? 0);
   const subtotal = Math.round(basePrice * (1 + mult / 100));
 
+  // Prevent guides from booking their own tour
+  if (authedUserId) {
+    const { data: guideOwner } = await supabaseAdmin
+      .from("guides")
+      .select("user_id")
+      .eq("id", (tour as any).guide_id)
+      .maybeSingle();
+    if (guideOwner?.user_id && guideOwner.user_id === authedUserId) {
+      throw new Error("You cannot book your own tour.");
+    }
+  }
+
   // Fetch current service fee rate from app_settings
   const { data: sfSetting } = await supabaseAdmin
     .from("app_settings")

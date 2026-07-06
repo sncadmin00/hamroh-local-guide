@@ -494,12 +494,12 @@ export type TourRow = {
   rating: number;
   reviews_count: number;
   cities?: { name: string; slug: string } | null;
-  guides?: { id: string; slug: string; name: string; photo_url: string | null; rating: number; reviews: number; languages: string[] } | null;
+  guides?: { id: string; slug: string; name: string; photo_url: string | null; rating: number; reviews: number; languages: string[]; user_id: string | null } | null;
   tour_categories?: { category_id: string; categories: { slug: string; name: string; icon: string } | null }[];
 };
 
 const TOUR_SELECT =
-  "id, slug, title, short_description, description_md, title_ru, title_uz, title_en, short_description_ru, short_description_uz, short_description_en, description_md_ru, description_md_uz, description_md_en, cover_url, city_id, duration_hours, price_from, highlights, highlights_ru, highlights_uz, highlights_en, included, included_ru, included_uz, included_en, not_included, not_included_ru, not_included_uz, not_included_en, published, sort_order, guide_id, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, children_free_under, transport_included, languages, rating, reviews_count, cities(name, slug), guides(id, slug, name, photo_url, rating, reviews, languages), tour_categories(category_id, categories(slug, name, icon))";
+  "id, slug, title, short_description, description_md, title_ru, title_uz, title_en, short_description_ru, short_description_uz, short_description_en, description_md_ru, description_md_uz, description_md_en, cover_url, city_id, duration_hours, price_from, highlights, highlights_ru, highlights_uz, highlights_en, included, included_ru, included_uz, included_en, not_included, not_included_ru, not_included_uz, not_included_en, published, sort_order, guide_id, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, children_free_under, transport_included, languages, rating, reviews_count, cities(name, slug), guides(id, slug, name, photo_url, rating, reviews, languages, user_id), tour_categories(category_id, categories(slug, name, icon))";
 
 
 function normalizeTour(row: any): TourRow {
