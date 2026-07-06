@@ -30,7 +30,7 @@ export const Route = createFileRoute('/api/public/hooks/booking-reminders')({
 
         const { data: bookings, error } = await supabase
           .from('bookings')
-          .select('id, guide_id, customer_name, customer_email, experience, date, start_time, status, locale')
+          .select('id, guide_id, user_id, customer_name, customer_email, experience, date, start_time, status, locale')
           .eq('date', tomorrow)
           .eq('status', 'confirmed')
           .limit(200)
