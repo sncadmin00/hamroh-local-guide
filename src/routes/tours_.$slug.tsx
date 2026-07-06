@@ -302,13 +302,19 @@ function TourDetailPage() {
             <div className="rounded-2xl bg-card p-5 ring-1 ring-border/60">
               <div className="text-sm text-muted-foreground">{t("tours.priceFrom")}</div>
               <div className="text-3xl font-semibold">${Math.round(Number(tour.price_from))}</div>
-              <Link
-                to="/book/$slug"
-                params={{ slug: tour.slug }}
-                className="mt-4 inline-flex h-11 w-full items-center justify-center rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90"
-              >
-                {t("tours.book")}
-              </Link>
+              {currentUserId && guide?.user_id === currentUserId ? (
+                <div className="mt-4 rounded-full bg-secondary px-4 py-3 text-center text-sm text-muted-foreground">
+                  {t("tours.ownTour") || "This is your own tour"}
+                </div>
+              ) : (
+                <Link
+                  to="/book/$slug"
+                  params={{ slug: tour.slug }}
+                  className="mt-4 inline-flex h-11 w-full items-center justify-center rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90"
+                >
+                  {t("tours.book")}
+                </Link>
+              )}
             </div>
 
             {guide && (
