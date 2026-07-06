@@ -113,6 +113,7 @@ export const Route = createFileRoute('/api/public/hooks/chat-notifications')({
             let recipientName: string | undefined
             let senderName: string | undefined
             let recipientLocale = 'ru'
+            let recipientUserId: string | null = null
 
             if (msg.sender_role === 'client') {
               // notify guide → use guide.locale
@@ -122,6 +123,7 @@ export const Route = createFileRoute('/api/public/hooks/chat-notifications')({
                 .eq('id', booking.guide_id)
                 .maybeSingle()
               if (guide?.user_id) {
+                recipientUserId = guide.user_id as string
                 const { data: userRes } = await supabase.auth.admin.getUserById(
                   guide.user_id as string,
                 )
@@ -135,6 +137,7 @@ export const Route = createFileRoute('/api/public/hooks/chat-notifications')({
               recipientEmail = booking.customer_email as string | null
               recipientName = booking.customer_name as string | undefined
               recipientLocale = (booking.locale as string) || 'ru'
+              recipientUserId = (booking.user_id as string | null) ?? null
               const { data: guide } = await supabase
                 .from('guides')
                 .select('name')
@@ -142,6 +145,31 @@ export const Route = createFileRoute('/api/public/hooks/chat-notifications')({
                 .maybeSingle()
               senderName = (guide?.name as string) || 'Your guide'
             }
+
+            // In-app notification — independent of email deliverability.
+            // entity=booking so mobile opens MyBookings by booking.id;
+            // when the dedicated chat screen ships this same tap opens it.
+            if (recipientUserId) {
+              const preview = (msg.body as string).length > 140
+                ? (msg.body as string).slice(0, 140) + '…'
+                : (msg.body as string)
+              try {
+                await supabase.from('notifications').insert({
+                  user_id: recipientUserId,
+                  type: 'chat_message',
+                  entity_id: booking.id,
+                  entity_type: 'booking',
+                  title: senderName ? `New message from ${senderName}` : 'New message',
+                  body: preview,
+                  icon: '💬',
+                  link: `/messages/${booking.id}`,
+                  category: 'bookings',
+                })
+              } catch (e) {
+                console.error('chat_message notification insert failed', e)
+              }
+            }
+
 
             if (!recipientEmail) {
               await supabase
