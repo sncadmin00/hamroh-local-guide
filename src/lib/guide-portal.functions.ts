@@ -181,7 +181,7 @@ export const updateBookingStatus = createServerFn({ method: "POST" })
 
     const { data: prior } = await supabase
       .from("bookings")
-      .select("id, status, customer_email, customer_telegram_chat_id, customer_name, experience, date, start_time, locale, guide_id")
+      .select("id, status, customer_email, customer_telegram_chat_id, customer_name, experience, date, start_time, locale, guide_id, user_id")
       .eq("id", data.id)
       .maybeSingle();
 
