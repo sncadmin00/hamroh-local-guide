@@ -60,6 +60,7 @@ import { Route as ApiPublicHooksGoogleOauthCallbackRouteImport } from './routes/
 import { Route as ApiPublicHooksGenerateStatementsRouteImport } from './routes/api/public/hooks/generate-statements'
 import { Route as ApiPublicHooksExpireBookingsRouteImport } from './routes/api/public/hooks/expire-bookings'
 import { Route as ApiPublicHooksDailyBriefRouteImport } from './routes/api/public/hooks/daily-brief'
+import { Route as ApiPublicHooksCreateBookingRouteImport } from './routes/api/public/hooks/create-booking'
 import { Route as ApiPublicHooksChatNotificationsRouteImport } from './routes/api/public/hooks/chat-notifications'
 import { Route as ApiPublicHooksBookingReviewsRouteImport } from './routes/api/public/hooks/booking-reviews'
 import { Route as ApiPublicHooksBookingRemindersRouteImport } from './routes/api/public/hooks/booking-reminders'
@@ -328,6 +329,12 @@ const ApiPublicHooksDailyBriefRoute =
     path: '/api/public/hooks/daily-brief',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksCreateBookingRoute =
+  ApiPublicHooksCreateBookingRouteImport.update({
+    id: '/api/public/hooks/create-booking',
+    path: '/api/public/hooks/create-booking',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksChatNotificationsRoute =
   ApiPublicHooksChatNotificationsRouteImport.update({
     id: '/api/public/hooks/chat-notifications',
@@ -397,6 +404,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
   '/api/public/hooks/booking-reviews': typeof ApiPublicHooksBookingReviewsRoute
   '/api/public/hooks/chat-notifications': typeof ApiPublicHooksChatNotificationsRoute
+  '/api/public/hooks/create-booking': typeof ApiPublicHooksCreateBookingRoute
   '/api/public/hooks/daily-brief': typeof ApiPublicHooksDailyBriefRoute
   '/api/public/hooks/expire-bookings': typeof ApiPublicHooksExpireBookingsRoute
   '/api/public/hooks/generate-statements': typeof ApiPublicHooksGenerateStatementsRoute
@@ -453,6 +461,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
   '/api/public/hooks/booking-reviews': typeof ApiPublicHooksBookingReviewsRoute
   '/api/public/hooks/chat-notifications': typeof ApiPublicHooksChatNotificationsRoute
+  '/api/public/hooks/create-booking': typeof ApiPublicHooksCreateBookingRoute
   '/api/public/hooks/daily-brief': typeof ApiPublicHooksDailyBriefRoute
   '/api/public/hooks/expire-bookings': typeof ApiPublicHooksExpireBookingsRoute
   '/api/public/hooks/generate-statements': typeof ApiPublicHooksGenerateStatementsRoute
@@ -511,6 +520,7 @@ export interface FileRoutesById {
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
   '/api/public/hooks/booking-reviews': typeof ApiPublicHooksBookingReviewsRoute
   '/api/public/hooks/chat-notifications': typeof ApiPublicHooksChatNotificationsRoute
+  '/api/public/hooks/create-booking': typeof ApiPublicHooksCreateBookingRoute
   '/api/public/hooks/daily-brief': typeof ApiPublicHooksDailyBriefRoute
   '/api/public/hooks/expire-bookings': typeof ApiPublicHooksExpireBookingsRoute
   '/api/public/hooks/generate-statements': typeof ApiPublicHooksGenerateStatementsRoute
@@ -570,6 +580,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/booking-reminders'
     | '/api/public/hooks/booking-reviews'
     | '/api/public/hooks/chat-notifications'
+    | '/api/public/hooks/create-booking'
     | '/api/public/hooks/daily-brief'
     | '/api/public/hooks/expire-bookings'
     | '/api/public/hooks/generate-statements'
@@ -626,6 +637,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/booking-reminders'
     | '/api/public/hooks/booking-reviews'
     | '/api/public/hooks/chat-notifications'
+    | '/api/public/hooks/create-booking'
     | '/api/public/hooks/daily-brief'
     | '/api/public/hooks/expire-bookings'
     | '/api/public/hooks/generate-statements'
@@ -683,6 +695,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/booking-reminders'
     | '/api/public/hooks/booking-reviews'
     | '/api/public/hooks/chat-notifications'
+    | '/api/public/hooks/create-booking'
     | '/api/public/hooks/daily-brief'
     | '/api/public/hooks/expire-bookings'
     | '/api/public/hooks/generate-statements'
@@ -737,6 +750,7 @@ export interface RootRouteChildren {
   ApiPublicHooksBookingRemindersRoute: typeof ApiPublicHooksBookingRemindersRoute
   ApiPublicHooksBookingReviewsRoute: typeof ApiPublicHooksBookingReviewsRoute
   ApiPublicHooksChatNotificationsRoute: typeof ApiPublicHooksChatNotificationsRoute
+  ApiPublicHooksCreateBookingRoute: typeof ApiPublicHooksCreateBookingRoute
   ApiPublicHooksDailyBriefRoute: typeof ApiPublicHooksDailyBriefRoute
   ApiPublicHooksExpireBookingsRoute: typeof ApiPublicHooksExpireBookingsRoute
   ApiPublicHooksGenerateStatementsRoute: typeof ApiPublicHooksGenerateStatementsRoute
@@ -1109,6 +1123,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksDailyBriefRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/create-booking': {
+      id: '/api/public/hooks/create-booking'
+      path: '/api/public/hooks/create-booking'
+      fullPath: '/api/public/hooks/create-booking'
+      preLoaderRoute: typeof ApiPublicHooksCreateBookingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/chat-notifications': {
       id: '/api/public/hooks/chat-notifications'
       path: '/api/public/hooks/chat-notifications'
@@ -1216,6 +1237,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksBookingRemindersRoute: ApiPublicHooksBookingRemindersRoute,
   ApiPublicHooksBookingReviewsRoute: ApiPublicHooksBookingReviewsRoute,
   ApiPublicHooksChatNotificationsRoute: ApiPublicHooksChatNotificationsRoute,
+  ApiPublicHooksCreateBookingRoute: ApiPublicHooksCreateBookingRoute,
   ApiPublicHooksDailyBriefRoute: ApiPublicHooksDailyBriefRoute,
   ApiPublicHooksExpireBookingsRoute: ApiPublicHooksExpireBookingsRoute,
   ApiPublicHooksGenerateStatementsRoute: ApiPublicHooksGenerateStatementsRoute,
