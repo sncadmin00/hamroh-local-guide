@@ -84,5 +84,22 @@ export const notifyGuideApplicationStatus = createServerFn({ method: "POST" })
     } catch (e) {
       console.error("guide-application-status email failed", e);
     }
+
+    // In-app notification for the applicant (if their account is known)
+    if (app.user_id) {
+      await createNotification(supabaseAdmin, {
+        userId: app.user_id as string,
+        type: "guide_application_status",
+        entityId: app.id,
+        entityType: "guide_application",
+        title: data.status === "approved" ? "Your guide application was approved" : "Your guide application was not approved",
+        body: data.status === "approved"
+          ? "Welcome aboard — open the guide portal to finish your profile."
+          : "Thanks for applying. See details in your account.",
+        icon: data.status === "approved" ? "🎉" : "ℹ️",
+        link: data.status === "approved" ? "/guide" : "/become-a-guide",
+      });
+    }
+
     return { ok: true };
   });
