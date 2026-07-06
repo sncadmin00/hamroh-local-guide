@@ -33,6 +33,18 @@ export const notifyAdminsOfGuideApplication = createServerFn({ method: "POST" })
     const adminUserIds = (roleRows ?? []).map((r) => r.user_id as string);
     if (adminUserIds.length === 0) return { ok: true, sent: 0 };
 
+    // In-app fan-out for all admins (independent of email deliverability)
+    await createNotifications(supabaseAdmin, adminUserIds, {
+      type: "guide_application_admin",
+      entityId: app.id,
+      entityType: "guide_application",
+      title: "New guide application",
+      body: `${app.full_name}${app.city ? ` — ${app.city}` : ""}`,
+      icon: "📝",
+      link: "/admin",
+    });
+
+
     let sent = 0;
     for (const uid of adminUserIds) {
       const { data: u } = await supabaseAdmin.auth.admin.getUserById(uid);
