@@ -50,7 +50,7 @@ export const Route = createFileRoute('/api/public/hooks/create-booking')({
           console.error('[create-booking hook]', e)
           const message = e?.message ?? 'Server error'
           // Known validation errors (thrown as Error from core) → 400
-          const isValidation = /(offer|Tour|group|price|Slot)/i.test(message)
+          const isValidation = /(offer|Tour|group|price|Slot|own tour)/i.test(message)
           return Response.json(
             { error: isValidation ? 'ValidationError' : 'ServerError', message },
             { status: isValidation ? 400 : 500 },
