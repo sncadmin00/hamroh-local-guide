@@ -301,10 +301,23 @@ export const createBooking = createServerFn({ method: "POST" })
           status,
           url: `${APP_BASE_URL}/guide`,
         }));
+
+        // In-app notification for the guide
+        await createNotification(supabaseAdmin, {
+          userId: guide.user_id,
+          type: "booking_new",
+          entityId: row.id,
+          entityType: "booking",
+          title: status === "confirmed" ? "New booking" : "New booking request",
+          body: `${data.customer_name} — ${experienceLabel}`,
+          icon: "📅",
+          link: `/guide`,
+        });
       }
     } catch (e) {
       console.error("Booking email enqueue failed", e);
     }
+
 
     // Mirror confirmed bookings to Google Calendar (best-effort)
     try {
