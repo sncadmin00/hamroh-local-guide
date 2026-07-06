@@ -55,6 +55,93 @@ const GROUP_MAX: Record<"private" | "small" | "group" | "large", number> = {
 
 export type BookingCoreResult = { id: string; status: string };
 
+export const quoteSchema = z.object({
+  tour_id: z.string().uuid(),
+  adults: z.number().int().min(1).max(50),
+  children: z.number().int().min(0).max(50).default(0),
+  group_category: z.enum(["private", "small", "group", "large"]).nullable().optional(),
+  language: z.string().min(1).max(40).nullable().optional(),
+});
+export type QuoteInput = z.infer<typeof quoteSchema>;
+
+export type PriceQuote = {
+  base_price: number;
+  language_multiplier_pct: number;
+  subtotal: number;
+  service_fee: number;
+  service_fee_rate: number;
+  total: number;
+  currency: string;
+  pricing_mode: "fixed" | "by_group";
+  group_max: typeof GROUP_MAX;
+};
+
+/**
+ * Server-authoritative price quote — the exact same math createBookingCore
+ * uses, without creating a booking. Safe to expose to clients so the mobile
+ * app / web can show the final amount before the user confirms.
+ */
+export async function quoteBookingCore(input: QuoteInput): Promise<PriceQuote> {
+  const { data: tour, error: tourErr } = await supabaseAdmin
+    .from("tours")
+    .select(
+      "id, price_from, pricing_mode, base_language, language_multipliers, group_prices, published",
+    )
+    .eq("id", input.tour_id)
+    .maybeSingle();
+  if (tourErr) throw new Error(tourErr.message);
+  if (!tour || !tour.published) throw new Error("Tour not available");
+
+  const pricingMode = (tour as any).pricing_mode === "by_group" ? "by_group" : "fixed";
+  const groupPrices = ((tour as any).group_prices ?? {}) as Record<string, number>;
+  const langMults = ((tour as any).language_multipliers ?? {}) as Record<string, number>;
+  const baseLanguage = (tour as any).base_language as string | null;
+
+  let basePrice = 0;
+  if (pricingMode === "by_group") {
+    if (!input.group_category) throw new Error("Please choose a group size.");
+    const max = GROUP_MAX[input.group_category];
+    if (input.adults > max) {
+      throw new Error("Your group is larger than this category. Please contact the guide.");
+    }
+    basePrice = Number(groupPrices[input.group_category] ?? 0);
+    if (basePrice <= 0) throw new Error("This group size is not offered for this tour.");
+  } else {
+    basePrice = Number(groupPrices.fixed ?? tour.price_from ?? 0);
+    if (basePrice <= 0) throw new Error("Tour price is not set.");
+  }
+
+  const lang = input.language ?? null;
+  const mult = !lang || lang === baseLanguage ? 0 : Number(langMults[lang] ?? 0);
+  const subtotal = Math.round(basePrice * (1 + mult / 100));
+
+  const { data: sfSetting } = await supabaseAdmin
+    .from("app_settings")
+    .select("value")
+    .eq("key", "hamroh_service_fee_rate")
+    .maybeSingle();
+  const sfRaw = (sfSetting as any)?.value;
+  const serviceFeeRate = typeof sfRaw === "number" ? sfRaw : Number(sfRaw);
+  const effectiveServiceFeeRate =
+    Number.isFinite(serviceFeeRate) && serviceFeeRate >= 0 && serviceFeeRate < 1
+      ? serviceFeeRate
+      : 0.05;
+  const fee = Math.round(subtotal * effectiveServiceFeeRate);
+  const total = subtotal + fee;
+
+  return {
+    base_price: basePrice,
+    language_multiplier_pct: mult,
+    subtotal,
+    service_fee: fee,
+    service_fee_rate: effectiveServiceFeeRate,
+    total,
+    currency: "USD",
+    pricing_mode: pricingMode,
+    group_max: GROUP_MAX,
+  };
+}
+
 /**
  * Create a booking with full server-authoritative validation, pricing,
  * and side-effects. Callers MUST pass an already-resolved user id
