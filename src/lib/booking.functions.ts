@@ -246,6 +246,21 @@ export const createBooking = createServerFn({ method: "POST" })
         url: `${APP_BASE_URL}/my-bookings`,
       }));
 
+      // In-app notification for the client (only if logged in)
+      if (authedUserId) {
+        await createNotification(supabaseAdmin, {
+          userId: authedUserId,
+          type: "booking_status",
+          entityId: row.id,
+          entityType: "booking",
+          title: status === "confirmed" ? "Booking confirmed" : "Booking request sent",
+          body: guideName ? `${experienceLabel} with ${guideName}` : experienceLabel,
+          icon: status === "confirmed" ? "✅" : "📅",
+          link: `/my-bookings`,
+        });
+      }
+
+
       if (guide?.user_id) {
         const { data: guideUser } = await supabaseAdmin.auth.admin.getUserById(guide.user_id);
         const guideEmail = guideUser?.user?.email;
