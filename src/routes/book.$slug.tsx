@@ -99,7 +99,7 @@ function BookPage() {
   useEffect(() => {
     if (isOwnTour) {
       toast.error("You cannot book your own tour.");
-      navigate({ to: "/tours_/$slug", params: { slug } });
+      navigate({ to: "/tours/$slug", params: { slug } });
     }
   }, [isOwnTour, navigate, slug]);
 
