@@ -58,7 +58,7 @@ export const notifyGuideApplicationStatus = createServerFn({ method: "POST" })
 
     const { data: app } = await supabaseAdmin
       .from("guide_applications")
-      .select("id, full_name, email")
+      .select("id, full_name, email, user_id")
       .eq("id", data.application_id)
       .maybeSingle();
     if (!app?.email) return { ok: false };
