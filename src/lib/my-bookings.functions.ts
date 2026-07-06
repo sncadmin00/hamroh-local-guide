@@ -216,7 +216,19 @@ export const respondToProposal = createServerFn({ method: "POST" })
           status: data.accept ? "confirmed" : "pending",
           url: `${APP_BASE_URL}/guide`,
         }));
+
+        await createNotification(supabaseAdmin, {
+          userId: guide.user_id,
+          type: "booking_proposal_response",
+          entityId: booking.id,
+          entityType: "booking",
+          title: data.accept ? "Client accepted proposed time" : "Client declined proposed time",
+          body: `${booking.customer_name} — ${booking.experience}`,
+          icon: data.accept ? "✅" : "❌",
+          link: `/guide`,
+        });
       }
+
     } catch (e) {
       console.error("Failed to notify guide of proposal response", e);
     }
