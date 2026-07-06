@@ -290,7 +290,7 @@ export const proposeBookingTime = createServerFn({ method: "POST" })
 
     const { data: prior, error: loadErr } = await supabase
       .from("bookings")
-      .select("id, status, customer_email, customer_telegram_chat_id, customer_name, experience, locale, guide_id")
+      .select("id, status, customer_email, customer_telegram_chat_id, customer_name, experience, locale, guide_id, user_id")
       .eq("id", data.id)
       .maybeSingle();
     if (loadErr) throw new Error(loadErr.message);
