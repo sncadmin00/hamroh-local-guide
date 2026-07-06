@@ -344,9 +344,23 @@ export const proposeBookingTime = createServerFn({ method: "POST" })
         reason: data.note,
         url: `${APP_BASE_URL}/my-bookings`,
       }));
+
+      if (prior.user_id) {
+        await createNotification(supabaseAdmin, {
+          userId: prior.user_id,
+          type: "booking_proposal",
+          entityId: prior.id,
+          entityType: "booking",
+          title: "Guide proposed a new time",
+          body: `${prior.experience} — ${data.date} ${data.time}`,
+          icon: "🕒",
+          link: `/my-bookings`,
+        });
+      }
     } catch (e) {
       console.error("Failed to notify client of proposed time", e);
     }
+
 
     return { ok: true };
   });
