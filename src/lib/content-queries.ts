@@ -494,7 +494,7 @@ export type TourRow = {
   rating: number;
   reviews_count: number;
   cities?: { name: string; slug: string } | null;
-  guides?: { id: string; slug: string; name: string; photo_url: string | null; rating: number; reviews: number; languages: string[] } | null;
+  guides?: { id: string; slug: string; name: string; photo_url: string | null; rating: number; reviews: number; languages: string[]; user_id: string | null } | null;
   tour_categories?: { category_id: string; categories: { slug: string; name: string; icon: string } | null }[];
 };
 
