@@ -91,6 +91,14 @@ function TourDetailPage() {
   const { t, lang } = useI18n();
   const { data: tour, isLoading } = useTour(slug);
   const { data: allTours } = useTours();
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    supabase.auth.getUser().then(({ data }) => {
+      if (!cancelled) setCurrentUserId(data.user?.id ?? null);
+    });
+    return () => { cancelled = true; };
+  }, []);
 
   if (isLoading) {
     return (
