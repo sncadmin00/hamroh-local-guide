@@ -606,12 +606,3 @@ Deno.serve(async (req) => {
     return json({ error: isValidation ? "ValidationError" : "ServerError", message }, isValidation ? 400 : 500);
   }
 });
-    });
-  } catch (e: any) {
-    console.error("[create-booking] upstream call failed", e);
-    return json(
-      { error: "ServerError", message: e?.message ?? "Upstream call failed" },
-      502,
-    );
-  }
-});
