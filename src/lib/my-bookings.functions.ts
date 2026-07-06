@@ -96,7 +96,19 @@ export const cancelBookingAsClient = createServerFn({ method: "POST" })
           reason: data.reason,
           url: `${APP_BASE_URL}/guide`,
         }));
+
+        await createNotification(supabaseAdmin, {
+          userId: guide.user_id,
+          type: "booking_cancelled_by_client",
+          entityId: booking.id,
+          entityType: "booking",
+          title: "Booking cancelled by client",
+          body: `${booking.customer_name} — ${booking.experience}`,
+          icon: "⚠️",
+          link: `/guide`,
+        });
       }
+
     } catch (e) {
       console.error("Failed to notify guide of client cancellation", e);
     }
