@@ -238,10 +238,31 @@ export const updateBookingStatus = createServerFn({ method: "POST" })
           reason: data.reason,
           url: `${APP_BASE_URL}/my-bookings`,
         }));
+
+        // In-app notification for the client (if they have an account)
+        if (prior.user_id) {
+          const titleMap = {
+            confirmed: "Booking confirmed",
+            declined: "Booking declined",
+            cancelled: "Booking cancelled",
+          } as const;
+          const iconMap = { confirmed: "✅", declined: "❌", cancelled: "⚠️" } as const;
+          await createNotification(supabaseAdmin, {
+            userId: prior.user_id,
+            type: "booking_status",
+            entityId: prior.id,
+            entityType: "booking",
+            title: titleMap[data.status],
+            body: guide?.name ? `${prior.experience} with ${guide.name}` : prior.experience,
+            icon: iconMap[data.status],
+            link: `/my-bookings`,
+          });
+        }
       } catch (e) {
         console.error("Failed to notify client of status change", e);
       }
     }
+
 
     // Mirror booking change to Google Calendar (best-effort)
     try {
