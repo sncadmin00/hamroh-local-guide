@@ -5,6 +5,7 @@ import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { enqueueTransactionalEmail } from "@/lib/email/enqueue.server";
 import { normalizeLocale } from "@/lib/email-templates/_i18n";
 import { bookingDetailsText, sendTelegramMessage } from "@/lib/telegram-notifications.server";
+import { createNotification } from "@/lib/notifications.server";
 import { mirrorBookingToGoogle } from "@/lib/google-calendar.server";
 import { signBookingPdfToken } from "@/lib/booking-pdf.server";
 import { translateTourFields, mapBaseLanguage } from "@/lib/translate-tour.server";
@@ -180,7 +181,7 @@ export const updateBookingStatus = createServerFn({ method: "POST" })
 
     const { data: prior } = await supabase
       .from("bookings")
-      .select("id, status, customer_email, customer_telegram_chat_id, customer_name, experience, date, start_time, locale, guide_id")
+      .select("id, status, customer_email, customer_telegram_chat_id, customer_name, experience, date, start_time, locale, guide_id, user_id")
       .eq("id", data.id)
       .maybeSingle();
 
@@ -237,10 +238,31 @@ export const updateBookingStatus = createServerFn({ method: "POST" })
           reason: data.reason,
           url: `${APP_BASE_URL}/my-bookings`,
         }));
+
+        // In-app notification for the client (if they have an account)
+        if (prior.user_id) {
+          const titleMap = {
+            confirmed: "Booking confirmed",
+            declined: "Booking declined",
+            cancelled: "Booking cancelled",
+          } as const;
+          const iconMap = { confirmed: "✅", declined: "❌", cancelled: "⚠️" } as const;
+          await createNotification(supabaseAdmin, {
+            userId: prior.user_id,
+            type: "booking_status",
+            entityId: prior.id,
+            entityType: "booking",
+            title: titleMap[data.status],
+            body: guide?.name ? `${prior.experience} with ${guide.name}` : prior.experience,
+            icon: iconMap[data.status],
+            link: `/my-bookings`,
+          });
+        }
       } catch (e) {
         console.error("Failed to notify client of status change", e);
       }
     }
+
 
     // Mirror booking change to Google Calendar (best-effort)
     try {
@@ -268,7 +290,7 @@ export const proposeBookingTime = createServerFn({ method: "POST" })
 
     const { data: prior, error: loadErr } = await supabase
       .from("bookings")
-      .select("id, status, customer_email, customer_telegram_chat_id, customer_name, experience, locale, guide_id")
+      .select("id, status, customer_email, customer_telegram_chat_id, customer_name, experience, locale, guide_id, user_id")
       .eq("id", data.id)
       .maybeSingle();
     if (loadErr) throw new Error(loadErr.message);
@@ -322,9 +344,23 @@ export const proposeBookingTime = createServerFn({ method: "POST" })
         reason: data.note,
         url: `${APP_BASE_URL}/my-bookings`,
       }));
+
+      if (prior.user_id) {
+        await createNotification(supabaseAdmin, {
+          userId: prior.user_id,
+          type: "booking_proposal",
+          entityId: prior.id,
+          entityType: "booking",
+          title: "Guide proposed a new time",
+          body: `${prior.experience} — ${data.date} ${data.time}`,
+          icon: "🕒",
+          link: `/my-bookings`,
+        });
+      }
     } catch (e) {
       console.error("Failed to notify client of proposed time", e);
     }
+
 
     return { ok: true };
   });

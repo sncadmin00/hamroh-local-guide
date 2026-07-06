@@ -4,6 +4,7 @@ import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { enqueueTransactionalEmail } from "@/lib/email/enqueue.server";
 import { normalizeLocale } from "@/lib/email-templates/_i18n";
 import { bookingDetailsText, sendTelegramMessage } from "@/lib/telegram-notifications.server";
+import { createNotification } from "@/lib/notifications.server";
 import { getOptionalUserId } from "@/lib/optional-auth.server";
 import { mirrorBookingToGoogle } from "@/lib/google-calendar.server";
 
@@ -245,6 +246,21 @@ export const createBooking = createServerFn({ method: "POST" })
         url: `${APP_BASE_URL}/my-bookings`,
       }));
 
+      // In-app notification for the client (only if logged in)
+      if (authedUserId) {
+        await createNotification(supabaseAdmin, {
+          userId: authedUserId,
+          type: "booking_status",
+          entityId: row.id,
+          entityType: "booking",
+          title: status === "confirmed" ? "Booking confirmed" : "Booking request sent",
+          body: guideName ? `${experienceLabel} with ${guideName}` : experienceLabel,
+          icon: status === "confirmed" ? "✅" : "📅",
+          link: `/my-bookings`,
+        });
+      }
+
+
       if (guide?.user_id) {
         const { data: guideUser } = await supabaseAdmin.auth.admin.getUserById(guide.user_id);
         const guideEmail = guideUser?.user?.email;
@@ -285,10 +301,23 @@ export const createBooking = createServerFn({ method: "POST" })
           status,
           url: `${APP_BASE_URL}/guide`,
         }));
+
+        // In-app notification for the guide
+        await createNotification(supabaseAdmin, {
+          userId: guide.user_id,
+          type: "booking_new",
+          entityId: row.id,
+          entityType: "booking",
+          title: status === "confirmed" ? "New booking" : "New booking request",
+          body: `${data.customer_name} — ${experienceLabel}`,
+          icon: "📅",
+          link: `/guide`,
+        });
       }
     } catch (e) {
       console.error("Booking email enqueue failed", e);
     }
+
 
     // Mirror confirmed bookings to Google Calendar (best-effort)
     try {

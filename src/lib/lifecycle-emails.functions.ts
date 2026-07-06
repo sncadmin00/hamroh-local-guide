@@ -3,6 +3,7 @@ import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { enqueueTransactionalEmail } from "@/lib/email/enqueue.server";
+import { createNotification } from "@/lib/notifications.server";
 
 const APP_BASE_URL = "https://hamrohim.com";
 
@@ -57,7 +58,7 @@ export const notifyGuideApplicationStatus = createServerFn({ method: "POST" })
 
     const { data: app } = await supabaseAdmin
       .from("guide_applications")
-      .select("id, full_name, email")
+      .select("id, full_name, email, user_id")
       .eq("id", data.application_id)
       .maybeSingle();
     if (!app?.email) return { ok: false };
@@ -83,5 +84,22 @@ export const notifyGuideApplicationStatus = createServerFn({ method: "POST" })
     } catch (e) {
       console.error("guide-application-status email failed", e);
     }
+
+    // In-app notification for the applicant (if their account is known)
+    if (app.user_id) {
+      await createNotification(supabaseAdmin, {
+        userId: app.user_id as string,
+        type: "guide_application_status",
+        entityId: app.id,
+        entityType: "guide_application",
+        title: data.status === "approved" ? "Your guide application was approved" : "Your guide application was not approved",
+        body: data.status === "approved"
+          ? "Welcome aboard — open the guide portal to finish your profile."
+          : "Thanks for applying. See details in your account.",
+        icon: data.status === "approved" ? "🎉" : "ℹ️",
+        link: data.status === "approved" ? "/guide" : "/become-a-guide",
+      });
+    }
+
     return { ok: true };
   });

@@ -30,7 +30,7 @@ export const Route = createFileRoute('/api/public/hooks/booking-reminders')({
 
         const { data: bookings, error } = await supabase
           .from('bookings')
-          .select('id, guide_id, customer_name, customer_email, experience, date, start_time, status, locale')
+          .select('id, guide_id, user_id, customer_name, customer_email, experience, date, start_time, status, locale')
           .eq('date', tomorrow)
           .eq('status', 'confirmed')
           .limit(200)
@@ -44,6 +44,36 @@ export const Route = createFileRoute('/api/public/hooks/booking-reminders')({
         let queued = 0
         for (const b of bookings) {
           try {
+            const { data: guide } = await supabase
+              .from('guides')
+              .select('name, user_id')
+              .eq('id', b.guide_id as string)
+              .maybeSingle()
+
+            // In-app notifications — client and guide (independent of email)
+            const recipients: string[] = []
+            if (b.user_id) recipients.push(b.user_id as string)
+            if (guide?.user_id) recipients.push(guide.user_id as string)
+            for (const uid of recipients) {
+              try {
+                await supabase.from('notifications').insert({
+                  user_id: uid,
+                  type: 'booking_reminder',
+                  entity_id: b.id,
+                  entity_type: 'booking',
+                  title: 'Tour tomorrow',
+                  body: guide?.name
+                    ? `${b.experience} with ${guide.name} — ${b.start_time ?? ''}`.trim()
+                    : `${b.experience} — ${b.start_time ?? ''}`.trim(),
+                  icon: '⏰',
+                  link: '/my-bookings',
+                  category: 'bookings',
+                })
+              } catch (e) {
+                console.error('reminder notification insert failed', b.id, e)
+              }
+            }
+
             if (!b.customer_email) continue
             const idem = `booking-reminder-${b.id}`
             const { data: already } = await supabase
@@ -54,12 +84,6 @@ export const Route = createFileRoute('/api/public/hooks/booking-reminders')({
               .limit(1)
               .maybeSingle()
             if (already) continue
-
-            const { data: guide } = await supabase
-              .from('guides')
-              .select('name')
-              .eq('id', b.guide_id as string)
-              .maybeSingle()
 
             const ok = await enqueueTransactionalEmail({
               supabase,

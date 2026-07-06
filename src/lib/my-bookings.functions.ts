@@ -5,6 +5,7 @@ import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { enqueueTransactionalEmail } from "@/lib/email/enqueue.server";
 import { normalizeLocale } from "@/lib/email-templates/_i18n";
 import { bookingDetailsText, sendTelegramMessage } from "@/lib/telegram-notifications.server";
+import { createNotification } from "@/lib/notifications.server";
 
 const APP_BASE_URL = "https://hamrohim.com";
 
@@ -95,7 +96,19 @@ export const cancelBookingAsClient = createServerFn({ method: "POST" })
           reason: data.reason,
           url: `${APP_BASE_URL}/guide`,
         }));
+
+        await createNotification(supabaseAdmin, {
+          userId: guide.user_id,
+          type: "booking_cancelled_by_client",
+          entityId: booking.id,
+          entityType: "booking",
+          title: "Booking cancelled by client",
+          body: `${booking.customer_name} — ${booking.experience}`,
+          icon: "⚠️",
+          link: `/guide`,
+        });
       }
+
     } catch (e) {
       console.error("Failed to notify guide of client cancellation", e);
     }
@@ -203,7 +216,19 @@ export const respondToProposal = createServerFn({ method: "POST" })
           status: data.accept ? "confirmed" : "pending",
           url: `${APP_BASE_URL}/guide`,
         }));
+
+        await createNotification(supabaseAdmin, {
+          userId: guide.user_id,
+          type: "booking_proposal_response",
+          entityId: booking.id,
+          entityType: "booking",
+          title: data.accept ? "Client accepted proposed time" : "Client declined proposed time",
+          body: `${booking.customer_name} — ${booking.experience}`,
+          icon: data.accept ? "✅" : "❌",
+          link: `/guide`,
+        });
       }
+
     } catch (e) {
       console.error("Failed to notify guide of proposal response", e);
     }

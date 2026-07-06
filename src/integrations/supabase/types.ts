@@ -1592,33 +1592,45 @@ export type Database = {
           body: string | null
           category: string | null
           created_at: string
+          entity_id: string | null
+          entity_type: string | null
           icon: string | null
           id: string
           link: string | null
           read: boolean
+          read_at: string | null
           title: string
+          type: string | null
           user_id: string
         }
         Insert: {
           body?: string | null
           category?: string | null
           created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
           icon?: string | null
           id?: string
           link?: string | null
           read?: boolean
+          read_at?: string | null
           title: string
+          type?: string | null
           user_id: string
         }
         Update: {
           body?: string | null
           category?: string | null
           created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
           icon?: string | null
           id?: string
           link?: string | null
           read?: boolean
+          read_at?: string | null
           title?: string
+          type?: string | null
           user_id?: string
         }
         Relationships: []
