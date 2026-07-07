@@ -8,7 +8,7 @@ import { listMyBookings, cancelBookingAsClient, respondToProposal } from "@/lib/
 import { getBookingPdf } from "@/lib/booking-pdf.functions";
 import { Calendar, Users, ArrowLeft, MessageSquare, X, CalendarClock, Check, FileDown } from "lucide-react";
 import { ReviewForm } from "@/components/ReviewForm";
-import { ContinueInAppBanner } from "@/components/ContinueInAppBanner";
+import { SiteHeader } from "@/components/SiteHeader";
 
 
 export const Route = createFileRoute("/my-bookings")({
