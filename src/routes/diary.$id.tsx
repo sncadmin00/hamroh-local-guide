@@ -32,6 +32,7 @@ export const Route = createFileRoute("/diary/$id")({
     const meta: { title?: string; name?: string; property?: string; content?: string }[] = [
       { title },
       { name: "description", content: desc },
+      { name: "robots", content: "noindex, nofollow" },
       { property: "og:title", content: title },
       { property: "og:description", content: desc },
       { property: "og:type", content: "article" },
