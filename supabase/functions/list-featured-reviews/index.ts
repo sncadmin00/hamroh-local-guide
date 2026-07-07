@@ -11,10 +11,10 @@ const CORS = {
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
 };
 
-const SIGN_TTL = 60 * 60 * 24 * 7; // 7 days
 const LIMIT = 12;
 const MIN_RATING = 4;
 const MIN_COMMENT_LEN = 40;
+
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
