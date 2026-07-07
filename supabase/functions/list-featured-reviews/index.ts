@@ -40,12 +40,13 @@ Deno.serve(async (req) => {
     const { data: rows, error } = await admin
       .from("reviews")
       .select(
-        "id, rating, comment, created_at, photos, user_id, tour:tours!inner(title), guide:guides!inner(name)",
+        "id, rating, comment, created_at, user_id, tour:tours!inner(title)",
       )
       .gte("rating", MIN_RATING)
       .not("comment", "is", null)
       .order("created_at", { ascending: false })
       .limit(LIMIT * 4);
+
 
     if (error) {
       return json({ error: "ServerError", message: error.message }, 500);
