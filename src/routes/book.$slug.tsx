@@ -174,7 +174,7 @@ function BookPage() {
       await createBookingFn({
         data: {
           tour_id: tour.id,
-          slot_id: chosenSlot?.id ?? null,
+          slot_id: null,
           language: currentLanguage || undefined,
           date: chosenSlot?.date ?? form.date,
           start_time: chosenSlot?.start_time,
