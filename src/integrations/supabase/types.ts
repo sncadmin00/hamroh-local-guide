@@ -1244,6 +1244,7 @@ export type Database = {
           licensed_at: string | null
           locale: string
           name: string
+          notification_email: string | null
           photo_url: string | null
           price_per_day: number
           rating: number
@@ -1287,6 +1288,7 @@ export type Database = {
           licensed_at?: string | null
           locale?: string
           name: string
+          notification_email?: string | null
           photo_url?: string | null
           price_per_day?: number
           rating?: number
@@ -1330,6 +1332,7 @@ export type Database = {
           licensed_at?: string | null
           locale?: string
           name?: string
+          notification_email?: string | null
           photo_url?: string | null
           price_per_day?: number
           rating?: number
