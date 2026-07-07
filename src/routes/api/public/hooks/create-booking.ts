@@ -49,6 +49,12 @@ export const Route = createFileRoute('/api/public/hooks/create-booking')({
         } catch (e: any) {
           console.error('[create-booking hook]', e)
           const message = e?.message ?? 'Server error'
+          if (e?.code === 'TIME_CONFLICT' || /TIME_CONFLICT/i.test(message)) {
+            return Response.json(
+              { error: 'TimeConflict', message: 'This time is already booked. Please choose another time.' },
+              { status: 409 },
+            )
+          }
           // Known validation errors (thrown as Error from core) → 400
           const isValidation = /(offer|Tour|group|price|Slot|own tour)/i.test(message)
           return Response.json(
