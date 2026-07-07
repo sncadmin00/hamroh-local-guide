@@ -294,7 +294,7 @@ export async function createBookingCore(
   try {
     const { data: guide } = await supabaseAdmin
       .from("guides")
-      .select("name, user_id, locale")
+      .select("name, user_id, locale, notification_email")
       .eq("id", tour.guide_id)
       .maybeSingle();
 
