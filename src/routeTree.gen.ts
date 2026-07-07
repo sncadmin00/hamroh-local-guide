@@ -19,6 +19,7 @@ import { Route as SearchRouteImport } from './routes/search'
 import { Route as RefundPolicyRouteImport } from './routes/refund-policy'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as OfferRouteImport } from './routes/offer'
+import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as MyBookingsRouteImport } from './routes/my-bookings'
 import { Route as MessagesRouteImport } from './routes/messages'
 import { Route as LoginRouteImport } from './routes/login'
@@ -117,6 +118,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const OfferRoute = OfferRouteImport.update({
   id: '/offer',
   path: '/offer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MyBookingsRoute = MyBookingsRouteImport.update({
@@ -396,6 +402,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/messages': typeof MessagesRouteWithChildren
   '/my-bookings': typeof MyBookingsRoute
+  '/notifications': typeof NotificationsRoute
   '/offer': typeof OfferRoute
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
@@ -456,6 +463,7 @@ export interface FileRoutesByTo {
   '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
   '/my-bookings': typeof MyBookingsRoute
+  '/notifications': typeof NotificationsRoute
   '/offer': typeof OfferRoute
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
@@ -518,6 +526,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/messages': typeof MessagesRouteWithChildren
   '/my-bookings': typeof MyBookingsRoute
+  '/notifications': typeof NotificationsRoute
   '/offer': typeof OfferRoute
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
@@ -581,6 +590,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/messages'
     | '/my-bookings'
+    | '/notifications'
     | '/offer'
     | '/privacy'
     | '/refund-policy'
@@ -641,6 +651,7 @@ export interface FileRouteTypes {
     | '/how-it-works'
     | '/login'
     | '/my-bookings'
+    | '/notifications'
     | '/offer'
     | '/privacy'
     | '/refund-policy'
@@ -702,6 +713,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/messages'
     | '/my-bookings'
+    | '/notifications'
     | '/offer'
     | '/privacy'
     | '/refund-policy'
@@ -764,6 +776,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   MessagesRoute: typeof MessagesRouteWithChildren
   MyBookingsRoute: typeof MyBookingsRoute
+  NotificationsRoute: typeof NotificationsRoute
   OfferRoute: typeof OfferRoute
   PrivacyRoute: typeof PrivacyRoute
   RefundPolicyRoute: typeof RefundPolicyRoute
@@ -876,6 +889,13 @@ declare module '@tanstack/react-router' {
       path: '/offer'
       fullPath: '/offer'
       preLoaderRoute: typeof OfferRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/my-bookings': {
@@ -1275,6 +1295,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   MessagesRoute: MessagesRouteWithChildren,
   MyBookingsRoute: MyBookingsRoute,
+  NotificationsRoute: NotificationsRoute,
   OfferRoute: OfferRoute,
   PrivacyRoute: PrivacyRoute,
   RefundPolicyRoute: RefundPolicyRoute,

@@ -24,7 +24,7 @@ export function NotificationsBell({ transparent = false }: { transparent?: boole
   }, []);
   return (
     <Link
-      to="/account"
+      to="/notifications"
       aria-label="Notifications"
       className={`relative inline-flex items-center justify-center h-10 w-10 rounded-full ring-1 transition-shadow hover:shadow-md ${
         transparent
