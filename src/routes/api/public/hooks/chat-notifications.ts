@@ -119,15 +119,20 @@ export const Route = createFileRoute('/api/public/hooks/chat-notifications')({
               // notify guide → use guide.locale
               const { data: guide } = await supabase
                 .from('guides')
-                .select('user_id, name, locale')
+                .select('user_id, name, locale, notification_email')
                 .eq('id', booking.guide_id)
                 .maybeSingle()
               if (guide?.user_id) {
                 recipientUserId = guide.user_id as string
-                const { data: userRes } = await supabase.auth.admin.getUserById(
-                  guide.user_id as string,
-                )
-                recipientEmail = userRes?.user?.email ?? null
+                const customEmail = (guide as any).notification_email as string | null
+                if (customEmail) {
+                  recipientEmail = customEmail
+                } else {
+                  const { data: userRes } = await supabase.auth.admin.getUserById(
+                    guide.user_id as string,
+                  )
+                  recipientEmail = userRes?.user?.email ?? null
+                }
                 recipientName = (guide.name as string) || undefined
                 recipientLocale = (guide.locale as string) || 'ru'
               }
