@@ -65,6 +65,7 @@ import { Route as ApiPublicHooksCreateBookingRouteImport } from './routes/api/pu
 import { Route as ApiPublicHooksChatNotificationsRouteImport } from './routes/api/public/hooks/chat-notifications'
 import { Route as ApiPublicHooksBookingReviewsRouteImport } from './routes/api/public/hooks/booking-reviews'
 import { Route as ApiPublicHooksBookingRemindersRouteImport } from './routes/api/public/hooks/booking-reminders'
+import { Route as ApiPublicGuidesGuideIdBusyRouteImport } from './routes/api/public/guides/$guideId/busy'
 import { Route as ApiPublicBookingsIdPdfRouteImport } from './routes/api/public/bookings/$id/pdf'
 
 const WishlistRoute = WishlistRouteImport.update({
@@ -360,6 +361,12 @@ const ApiPublicHooksBookingRemindersRoute =
     path: '/api/public/hooks/booking-reminders',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicGuidesGuideIdBusyRoute =
+  ApiPublicGuidesGuideIdBusyRouteImport.update({
+    id: '/api/public/guides/$guideId/busy',
+    path: '/api/public/guides/$guideId/busy',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicBookingsIdPdfRoute = ApiPublicBookingsIdPdfRouteImport.update({
   id: '/api/public/bookings/$id/pdf',
   path: '/api/public/bookings/$id/pdf',
@@ -424,6 +431,7 @@ export interface FileRoutesByFullPath {
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/api/public/bookings/$id/pdf': typeof ApiPublicBookingsIdPdfRoute
+  '/api/public/guides/$guideId/busy': typeof ApiPublicGuidesGuideIdBusyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -482,6 +490,7 @@ export interface FileRoutesByTo {
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/api/public/bookings/$id/pdf': typeof ApiPublicBookingsIdPdfRoute
+  '/api/public/guides/$guideId/busy': typeof ApiPublicGuidesGuideIdBusyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -542,6 +551,7 @@ export interface FileRoutesById {
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/api/public/bookings/$id/pdf': typeof ApiPublicBookingsIdPdfRoute
+  '/api/public/guides/$guideId/busy': typeof ApiPublicGuidesGuideIdBusyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -603,6 +613,7 @@ export interface FileRouteTypes {
     | '/lovable/email/transactional/preview'
     | '/lovable/email/transactional/send'
     | '/api/public/bookings/$id/pdf'
+    | '/api/public/guides/$guideId/busy'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -661,6 +672,7 @@ export interface FileRouteTypes {
     | '/lovable/email/transactional/preview'
     | '/lovable/email/transactional/send'
     | '/api/public/bookings/$id/pdf'
+    | '/api/public/guides/$guideId/busy'
   id:
     | '__root__'
     | '/'
@@ -720,6 +732,7 @@ export interface FileRouteTypes {
     | '/lovable/email/transactional/preview'
     | '/lovable/email/transactional/send'
     | '/api/public/bookings/$id/pdf'
+    | '/api/public/guides/$guideId/busy'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -776,6 +789,7 @@ export interface RootRouteChildren {
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
   LovableEmailTransactionalSendRoute: typeof LovableEmailTransactionalSendRoute
   ApiPublicBookingsIdPdfRoute: typeof ApiPublicBookingsIdPdfRoute
+  ApiPublicGuidesGuideIdBusyRoute: typeof ApiPublicGuidesGuideIdBusyRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1172,6 +1186,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksBookingRemindersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/guides/$guideId/busy': {
+      id: '/api/public/guides/$guideId/busy'
+      path: '/api/public/guides/$guideId/busy'
+      fullPath: '/api/public/guides/$guideId/busy'
+      preLoaderRoute: typeof ApiPublicGuidesGuideIdBusyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/bookings/$id/pdf': {
       id: '/api/public/bookings/$id/pdf'
       path: '/api/public/bookings/$id/pdf'
@@ -1272,6 +1293,7 @@ const rootRouteChildren: RootRouteChildren = {
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
   LovableEmailTransactionalSendRoute: LovableEmailTransactionalSendRoute,
   ApiPublicBookingsIdPdfRoute: ApiPublicBookingsIdPdfRoute,
+  ApiPublicGuidesGuideIdBusyRoute: ApiPublicGuidesGuideIdBusyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

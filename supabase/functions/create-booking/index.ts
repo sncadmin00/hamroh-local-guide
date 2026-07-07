@@ -481,7 +481,15 @@ Deno.serve(async (req) => {
       })
       .select("id, status")
       .single();
-    if (insertErr) throw insertErr;
+    if (insertErr) {
+      if (insertErr.message?.includes("TIME_CONFLICT")) {
+        return json(
+          { error: "TimeConflict", message: "This time is already booked. Please choose another time." },
+          409,
+        );
+      }
+      throw insertErr;
+    }
 
     try {
       const { data: guide } = await admin

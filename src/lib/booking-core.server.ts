@@ -288,7 +288,15 @@ export async function createBookingCore(
     .insert(insertPayload)
     .select("id, status")
     .single();
-  if (error) throw new Error(error.message);
+  if (error) {
+    // Trigger bookings_prevent_time_conflict raises with "TIME_CONFLICT:" prefix
+    if (error.message?.includes("TIME_CONFLICT")) {
+      const err = new Error("This time is already booked. Please choose another time.");
+      (err as any).code = "TIME_CONFLICT";
+      throw err;
+    }
+    throw new Error(error.message);
+  }
 
   // Fire-and-forget transactional emails / telegram notifications
   try {
