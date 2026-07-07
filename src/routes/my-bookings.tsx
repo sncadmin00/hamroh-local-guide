@@ -8,7 +8,7 @@ import { listMyBookings, cancelBookingAsClient, respondToProposal } from "@/lib/
 import { getBookingPdf } from "@/lib/booking-pdf.functions";
 import { Calendar, Users, ArrowLeft, MessageSquare, X, CalendarClock, Check, FileDown } from "lucide-react";
 import { ReviewForm } from "@/components/ReviewForm";
-import { ContinueInAppBanner } from "@/components/ContinueInAppBanner";
+import { SiteHeader } from "@/components/SiteHeader";
 
 
 export const Route = createFileRoute("/my-bookings")({
@@ -100,13 +100,20 @@ function MyBookingsPage() {
 
   return (
     <div className="min-h-screen bg-secondary/20">
-      <ContinueInAppBanner />
+      <SiteHeader />
       <div className="mx-auto max-w-3xl px-4 py-8">
         <div className="flex items-center justify-between mb-6">
           <h1 className="font-display text-2xl font-semibold">My bookings</h1>
-          <Link to="/ai" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
-            <ArrowLeft className="h-4 w-4" /> Back to Hamroh AI
-          </Link>
+          <button
+            type="button"
+            onClick={() => {
+              if (typeof window !== "undefined" && window.history.length > 1) window.history.back();
+              else navigate({ to: "/account" });
+            }}
+            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+          >
+            <ArrowLeft className="h-4 w-4" /> Back
+          </button>
         </div>
 
         {q.isLoading && <p className="text-sm text-muted-foreground">Loading bookings…</p>}
