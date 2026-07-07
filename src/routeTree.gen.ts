@@ -65,6 +65,7 @@ import { Route as ApiPublicHooksCreateBookingRouteImport } from './routes/api/pu
 import { Route as ApiPublicHooksChatNotificationsRouteImport } from './routes/api/public/hooks/chat-notifications'
 import { Route as ApiPublicHooksBookingReviewsRouteImport } from './routes/api/public/hooks/booking-reviews'
 import { Route as ApiPublicHooksBookingRemindersRouteImport } from './routes/api/public/hooks/booking-reminders'
+import { Route as ApiPublicGuidesGuideIdSlotsRouteImport } from './routes/api/public/guides/$guideId/slots'
 import { Route as ApiPublicGuidesGuideIdBusyRouteImport } from './routes/api/public/guides/$guideId/busy'
 import { Route as ApiPublicBookingsIdPdfRouteImport } from './routes/api/public/bookings/$id/pdf'
 
@@ -361,6 +362,12 @@ const ApiPublicHooksBookingRemindersRoute =
     path: '/api/public/hooks/booking-reminders',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicGuidesGuideIdSlotsRoute =
+  ApiPublicGuidesGuideIdSlotsRouteImport.update({
+    id: '/api/public/guides/$guideId/slots',
+    path: '/api/public/guides/$guideId/slots',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicGuidesGuideIdBusyRoute =
   ApiPublicGuidesGuideIdBusyRouteImport.update({
     id: '/api/public/guides/$guideId/busy',
@@ -432,6 +439,7 @@ export interface FileRoutesByFullPath {
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/api/public/bookings/$id/pdf': typeof ApiPublicBookingsIdPdfRoute
   '/api/public/guides/$guideId/busy': typeof ApiPublicGuidesGuideIdBusyRoute
+  '/api/public/guides/$guideId/slots': typeof ApiPublicGuidesGuideIdSlotsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -491,6 +499,7 @@ export interface FileRoutesByTo {
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/api/public/bookings/$id/pdf': typeof ApiPublicBookingsIdPdfRoute
   '/api/public/guides/$guideId/busy': typeof ApiPublicGuidesGuideIdBusyRoute
+  '/api/public/guides/$guideId/slots': typeof ApiPublicGuidesGuideIdSlotsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -552,6 +561,7 @@ export interface FileRoutesById {
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/api/public/bookings/$id/pdf': typeof ApiPublicBookingsIdPdfRoute
   '/api/public/guides/$guideId/busy': typeof ApiPublicGuidesGuideIdBusyRoute
+  '/api/public/guides/$guideId/slots': typeof ApiPublicGuidesGuideIdSlotsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -614,6 +624,7 @@ export interface FileRouteTypes {
     | '/lovable/email/transactional/send'
     | '/api/public/bookings/$id/pdf'
     | '/api/public/guides/$guideId/busy'
+    | '/api/public/guides/$guideId/slots'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -673,6 +684,7 @@ export interface FileRouteTypes {
     | '/lovable/email/transactional/send'
     | '/api/public/bookings/$id/pdf'
     | '/api/public/guides/$guideId/busy'
+    | '/api/public/guides/$guideId/slots'
   id:
     | '__root__'
     | '/'
@@ -733,6 +745,7 @@ export interface FileRouteTypes {
     | '/lovable/email/transactional/send'
     | '/api/public/bookings/$id/pdf'
     | '/api/public/guides/$guideId/busy'
+    | '/api/public/guides/$guideId/slots'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -790,6 +803,7 @@ export interface RootRouteChildren {
   LovableEmailTransactionalSendRoute: typeof LovableEmailTransactionalSendRoute
   ApiPublicBookingsIdPdfRoute: typeof ApiPublicBookingsIdPdfRoute
   ApiPublicGuidesGuideIdBusyRoute: typeof ApiPublicGuidesGuideIdBusyRoute
+  ApiPublicGuidesGuideIdSlotsRoute: typeof ApiPublicGuidesGuideIdSlotsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1186,6 +1200,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksBookingRemindersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/guides/$guideId/slots': {
+      id: '/api/public/guides/$guideId/slots'
+      path: '/api/public/guides/$guideId/slots'
+      fullPath: '/api/public/guides/$guideId/slots'
+      preLoaderRoute: typeof ApiPublicGuidesGuideIdSlotsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/guides/$guideId/busy': {
       id: '/api/public/guides/$guideId/busy'
       path: '/api/public/guides/$guideId/busy'
@@ -1294,6 +1315,7 @@ const rootRouteChildren: RootRouteChildren = {
   LovableEmailTransactionalSendRoute: LovableEmailTransactionalSendRoute,
   ApiPublicBookingsIdPdfRoute: ApiPublicBookingsIdPdfRoute,
   ApiPublicGuidesGuideIdBusyRoute: ApiPublicGuidesGuideIdBusyRoute,
+  ApiPublicGuidesGuideIdSlotsRoute: ApiPublicGuidesGuideIdSlotsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
