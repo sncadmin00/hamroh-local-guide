@@ -369,8 +369,11 @@ export async function createBookingCore(
     }
 
     if (guide?.user_id) {
-      const { data: guideUser } = await supabaseAdmin.auth.admin.getUserById(guide.user_id);
-      const guideEmail = guideUser?.user?.email;
+      let guideEmail: string | null | undefined = (guide as any).notification_email;
+      if (!guideEmail) {
+        const { data: guideUser } = await supabaseAdmin.auth.admin.getUserById(guide.user_id);
+        guideEmail = guideUser?.user?.email ?? null;
+      }
       if (guideEmail) {
         await enqueueTransactionalEmail({
           supabase: supabaseAdmin,
