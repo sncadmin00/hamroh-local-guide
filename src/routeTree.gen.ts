@@ -66,6 +66,7 @@ import { Route as ApiPublicHooksCreateBookingRouteImport } from './routes/api/pu
 import { Route as ApiPublicHooksChatNotificationsRouteImport } from './routes/api/public/hooks/chat-notifications'
 import { Route as ApiPublicHooksBookingReviewsRouteImport } from './routes/api/public/hooks/booking-reviews'
 import { Route as ApiPublicHooksBookingRemindersRouteImport } from './routes/api/public/hooks/booking-reminders'
+import { Route as ApiPublicToursTourIdSlotsRouteImport } from './routes/api/public/tours/$tourId/slots'
 import { Route as ApiPublicGuidesGuideIdSlotsRouteImport } from './routes/api/public/guides/$guideId/slots'
 import { Route as ApiPublicGuidesGuideIdBusyRouteImport } from './routes/api/public/guides/$guideId/busy'
 import { Route as ApiPublicBookingsIdPdfRouteImport } from './routes/api/public/bookings/$id/pdf'
@@ -368,6 +369,12 @@ const ApiPublicHooksBookingRemindersRoute =
     path: '/api/public/hooks/booking-reminders',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicToursTourIdSlotsRoute =
+  ApiPublicToursTourIdSlotsRouteImport.update({
+    id: '/api/public/tours/$tourId/slots',
+    path: '/api/public/tours/$tourId/slots',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicGuidesGuideIdSlotsRoute =
   ApiPublicGuidesGuideIdSlotsRouteImport.update({
     id: '/api/public/guides/$guideId/slots',
@@ -447,6 +454,7 @@ export interface FileRoutesByFullPath {
   '/api/public/bookings/$id/pdf': typeof ApiPublicBookingsIdPdfRoute
   '/api/public/guides/$guideId/busy': typeof ApiPublicGuidesGuideIdBusyRoute
   '/api/public/guides/$guideId/slots': typeof ApiPublicGuidesGuideIdSlotsRoute
+  '/api/public/tours/$tourId/slots': typeof ApiPublicToursTourIdSlotsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -508,6 +516,7 @@ export interface FileRoutesByTo {
   '/api/public/bookings/$id/pdf': typeof ApiPublicBookingsIdPdfRoute
   '/api/public/guides/$guideId/busy': typeof ApiPublicGuidesGuideIdBusyRoute
   '/api/public/guides/$guideId/slots': typeof ApiPublicGuidesGuideIdSlotsRoute
+  '/api/public/tours/$tourId/slots': typeof ApiPublicToursTourIdSlotsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -571,6 +580,7 @@ export interface FileRoutesById {
   '/api/public/bookings/$id/pdf': typeof ApiPublicBookingsIdPdfRoute
   '/api/public/guides/$guideId/busy': typeof ApiPublicGuidesGuideIdBusyRoute
   '/api/public/guides/$guideId/slots': typeof ApiPublicGuidesGuideIdSlotsRoute
+  '/api/public/tours/$tourId/slots': typeof ApiPublicToursTourIdSlotsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -635,6 +645,7 @@ export interface FileRouteTypes {
     | '/api/public/bookings/$id/pdf'
     | '/api/public/guides/$guideId/busy'
     | '/api/public/guides/$guideId/slots'
+    | '/api/public/tours/$tourId/slots'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -696,6 +707,7 @@ export interface FileRouteTypes {
     | '/api/public/bookings/$id/pdf'
     | '/api/public/guides/$guideId/busy'
     | '/api/public/guides/$guideId/slots'
+    | '/api/public/tours/$tourId/slots'
   id:
     | '__root__'
     | '/'
@@ -758,6 +770,7 @@ export interface FileRouteTypes {
     | '/api/public/bookings/$id/pdf'
     | '/api/public/guides/$guideId/busy'
     | '/api/public/guides/$guideId/slots'
+    | '/api/public/tours/$tourId/slots'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -817,6 +830,7 @@ export interface RootRouteChildren {
   ApiPublicBookingsIdPdfRoute: typeof ApiPublicBookingsIdPdfRoute
   ApiPublicGuidesGuideIdBusyRoute: typeof ApiPublicGuidesGuideIdBusyRoute
   ApiPublicGuidesGuideIdSlotsRoute: typeof ApiPublicGuidesGuideIdSlotsRoute
+  ApiPublicToursTourIdSlotsRoute: typeof ApiPublicToursTourIdSlotsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1220,6 +1234,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksBookingRemindersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/tours/$tourId/slots': {
+      id: '/api/public/tours/$tourId/slots'
+      path: '/api/public/tours/$tourId/slots'
+      fullPath: '/api/public/tours/$tourId/slots'
+      preLoaderRoute: typeof ApiPublicToursTourIdSlotsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/guides/$guideId/slots': {
       id: '/api/public/guides/$guideId/slots'
       path: '/api/public/guides/$guideId/slots'
@@ -1337,6 +1358,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicBookingsIdPdfRoute: ApiPublicBookingsIdPdfRoute,
   ApiPublicGuidesGuideIdBusyRoute: ApiPublicGuidesGuideIdBusyRoute,
   ApiPublicGuidesGuideIdSlotsRoute: ApiPublicGuidesGuideIdSlotsRoute,
+  ApiPublicToursTourIdSlotsRoute: ApiPublicToursTourIdSlotsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
