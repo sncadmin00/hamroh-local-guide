@@ -47,7 +47,7 @@ function BookPage() {
     notes: "",
   });
 
-  const fetchSlots = useServerFn(getGuideSlots);
+  // slots are fetched from public HTTP endpoint (see effect below)
   const createBookingFn = useServerFn(createBooking);
   const fetchTelegram = useServerFn(getMyTelegramAccount);
   const fetchOffer = useServerFn(getCurrentOffer);
