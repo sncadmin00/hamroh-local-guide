@@ -9,7 +9,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { PaymentMethods } from "@/components/PaymentMethods";
 import { useTour, computeTourPrice, offeredCategories, GROUP_CATEGORY_MAX, GROUP_CATEGORY_LABEL, type GroupCategory } from "@/lib/content-queries";
 import { getBookingSource } from "@/hooks/useTrackSource";
-import { getGuideSlots, createBooking } from "@/lib/booking.functions";
+import { createBooking } from "@/lib/booking.functions";
 import { getCurrentOffer } from "@/lib/legal-offer.functions";
 import { getPublicServiceFeeRate } from "@/lib/earnings.functions";
 import { useI18n } from "@/lib/i18n";
