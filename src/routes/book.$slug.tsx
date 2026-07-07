@@ -67,10 +67,25 @@ function BookPage() {
 
   useEffect(() => {
     if (!tour) return;
-    fetchSlots({ data: { guide_id: tour.guide_id } })
-      .then((rows) => setSlots(rows as typeof slots))
-      .catch(() => setSlots([]));
-  }, [tour, fetchSlots]);
+    let cancelled = false;
+    fetch(`/api/public/tours/${tour.id}/slots`)
+      .then((r) => (r.ok ? r.json() : Promise.reject(r)))
+      .then((json: { slots: Array<{ date: string; start_time: string; duration_minutes: number }> }) => {
+        if (cancelled) return;
+        setSlots(
+          (json.slots ?? []).map((s) => ({
+            id: `${s.date}|${s.start_time}`,
+            date: s.date,
+            start_time: s.start_time,
+            duration_minutes: s.duration_minutes,
+          })),
+        );
+      })
+      .catch(() => !cancelled && setSlots([]));
+    return () => {
+      cancelled = true;
+    };
+  }, [tour]);
 
   const loadTelegramContact = async () => {
     const { data: userData } = await supabase.auth.getUser();
