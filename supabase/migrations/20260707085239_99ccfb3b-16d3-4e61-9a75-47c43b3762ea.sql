@@ -1,0 +1,1 @@
+GRANT SELECT (notification_email), UPDATE (notification_email) ON public.guides TO authenticated;
