@@ -95,43 +95,21 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Batch-sign photos in traveler-media
-    const allPaths = Array.from(
-      new Set(
-        filtered.flatMap((r: any) =>
-          Array.isArray(r.photos) ? (r.photos as string[]) : [],
-        ),
-      ),
-    ).filter(Boolean);
-    const signedMap = new Map<string, string>();
-    if (allPaths.length > 0) {
-      const { data: signed } = await admin.storage
-        .from("traveler-media")
-        .createSignedUrls(allPaths, SIGN_TTL);
-      for (const s of signed ?? []) {
-        if (s.path && s.signedUrl) signedMap.set(s.path, s.signedUrl);
-      }
-    }
-
     const reviews = filtered.map((r: any) => {
       const author = profileMap.get(r.user_id) ?? { full_name: null, avatar_url: null };
-      const photos = (Array.isArray(r.photos) ? r.photos : [])
-        .map((p: string) => signedMap.get(p) || "")
-        .filter(Boolean);
       return {
         id: r.id as string,
         rating: r.rating as number,
         comment: r.comment as string,
         created_at: r.created_at as string,
         tour: { title: (r.tour?.title as string | undefined) ?? null },
-        guide: { name: (r.guide?.name as string | undefined) ?? null },
         author: {
           full_name: author.full_name,
           avatar_url: author.avatar_url,
         },
-        photos,
       };
     });
+
 
     return json({ reviews });
   } catch (e) {
