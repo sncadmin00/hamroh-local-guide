@@ -1217,10 +1217,55 @@ export type Database = {
           },
         ]
       }
+      guide_time_blocks: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          ends_at: string
+          guide_id: string
+          id: string
+          reason: string | null
+          source: string
+          starts_at: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          ends_at: string
+          guide_id: string
+          id?: string
+          reason?: string | null
+          source?: string
+          starts_at: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          ends_at?: string
+          guide_id?: string
+          id?: string
+          reason?: string | null
+          source?: string
+          starts_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guide_time_blocks_guide_id_fkey"
+            columns: ["guide_id"]
+            isOneToOne: false
+            referencedRelation: "guides"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       guides: {
         Row: {
           avg_response_minutes: number | null
           bio: string
+          buffer_minutes: number
           city_id: string
           completed_tours_count: number
           cover_url: string | null
@@ -1265,6 +1310,7 @@ export type Database = {
         Insert: {
           avg_response_minutes?: number | null
           bio?: string
+          buffer_minutes?: number
           city_id: string
           completed_tours_count?: number
           cover_url?: string | null
@@ -1309,6 +1355,7 @@ export type Database = {
         Update: {
           avg_response_minutes?: number | null
           bio?: string
+          buffer_minutes?: number
           city_id?: string
           completed_tours_count?: number
           cover_url?: string | null
@@ -2298,6 +2345,44 @@ export type Database = {
           },
           {
             foreignKeyName: "tour_categories_tour_id_fkey"
+            columns: ["tour_id"]
+            isOneToOne: false
+            referencedRelation: "tours"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tour_schedules: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          start_time: string
+          tour_id: string
+          updated_at: string
+          weekday: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          start_time: string
+          tour_id: string
+          updated_at?: string
+          weekday: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          start_time?: string
+          tour_id?: string
+          updated_at?: string
+          weekday?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tour_schedules_tour_id_fkey"
             columns: ["tour_id"]
             isOneToOne: false
             referencedRelation: "tours"
