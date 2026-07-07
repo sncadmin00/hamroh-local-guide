@@ -11,10 +11,10 @@ const CORS = {
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
 };
 
-const SIGN_TTL = 60 * 60 * 24 * 7; // 7 days
 const LIMIT = 12;
 const MIN_RATING = 4;
 const MIN_COMMENT_LEN = 40;
+
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -40,12 +40,13 @@ Deno.serve(async (req) => {
     const { data: rows, error } = await admin
       .from("reviews")
       .select(
-        "id, rating, comment, created_at, photos, user_id, tour:tours!inner(title), guide:guides!inner(name)",
+        "id, rating, comment, created_at, user_id, tour:tours!inner(title)",
       )
       .gte("rating", MIN_RATING)
       .not("comment", "is", null)
       .order("created_at", { ascending: false })
       .limit(LIMIT * 4);
+
 
     if (error) {
       return json({ error: "ServerError", message: error.message }, 500);
@@ -94,43 +95,21 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Batch-sign photos in traveler-media
-    const allPaths = Array.from(
-      new Set(
-        filtered.flatMap((r: any) =>
-          Array.isArray(r.photos) ? (r.photos as string[]) : [],
-        ),
-      ),
-    ).filter(Boolean);
-    const signedMap = new Map<string, string>();
-    if (allPaths.length > 0) {
-      const { data: signed } = await admin.storage
-        .from("traveler-media")
-        .createSignedUrls(allPaths, SIGN_TTL);
-      for (const s of signed ?? []) {
-        if (s.path && s.signedUrl) signedMap.set(s.path, s.signedUrl);
-      }
-    }
-
     const reviews = filtered.map((r: any) => {
       const author = profileMap.get(r.user_id) ?? { full_name: null, avatar_url: null };
-      const photos = (Array.isArray(r.photos) ? r.photos : [])
-        .map((p: string) => signedMap.get(p) || "")
-        .filter(Boolean);
       return {
         id: r.id as string,
         rating: r.rating as number,
         comment: r.comment as string,
         created_at: r.created_at as string,
         tour: { title: (r.tour?.title as string | undefined) ?? null },
-        guide: { name: (r.guide?.name as string | undefined) ?? null },
         author: {
           full_name: author.full_name,
           avatar_url: author.avatar_url,
         },
-        photos,
       };
     });
+
 
     return json({ reviews });
   } catch (e) {
