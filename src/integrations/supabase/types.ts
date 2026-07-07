@@ -2569,6 +2569,39 @@ export type Database = {
         }
         Relationships: []
       }
+      trip_wallets: {
+        Row: {
+          created_at: string
+          currency: string
+          end_date: string
+          id: string
+          start_date: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          currency?: string
+          end_date: string
+          id?: string
+          start_date: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          currency?: string
+          end_date?: string
+          id?: string
+          start_date?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -2589,6 +2622,47 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      wallet_expenses: {
+        Row: {
+          amount: number
+          category: Database["public"]["Enums"]["wallet_expense_category"]
+          created_at: string
+          id: string
+          note: string | null
+          spent_on: string
+          user_id: string
+          wallet_id: string
+        }
+        Insert: {
+          amount: number
+          category: Database["public"]["Enums"]["wallet_expense_category"]
+          created_at?: string
+          id?: string
+          note?: string | null
+          spent_on: string
+          user_id: string
+          wallet_id: string
+        }
+        Update: {
+          amount?: number
+          category?: Database["public"]["Enums"]["wallet_expense_category"]
+          created_at?: string
+          id?: string
+          note?: string | null
+          spent_on?: string
+          user_id?: string
+          wallet_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wallet_expenses_wallet_id_fkey"
+            columns: ["wallet_id"]
+            isOneToOne: false
+            referencedRelation: "trip_wallets"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       wishlist_collections: {
         Row: {
@@ -2664,6 +2738,7 @@ export type Database = {
         Returns: number
       }
       generate_guide_referral_code: { Args: { _base: string }; Returns: string }
+      get_wallet_summary: { Args: { _wallet_id: string }; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -2719,6 +2794,12 @@ export type Database = {
     Enums: {
       app_role: "admin"
       post_media_type: "reel" | "article"
+      wallet_expense_category:
+        | "accommodation"
+        | "food"
+        | "transport"
+        | "souvenirs"
+        | "other"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2848,6 +2929,13 @@ export const Constants = {
     Enums: {
       app_role: ["admin"],
       post_media_type: ["reel", "article"],
+      wallet_expense_category: [
+        "accommodation",
+        "food",
+        "transport",
+        "souvenirs",
+        "other",
+      ],
     },
   },
 } as const
