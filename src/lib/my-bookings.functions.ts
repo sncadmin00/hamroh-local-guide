@@ -57,12 +57,15 @@ export const cancelBookingAsClient = createServerFn({ method: "POST" })
     try {
       const { data: guide } = await supabaseAdmin
         .from("guides")
-        .select("name, user_id, locale")
+        .select("name, user_id, locale, notification_email")
         .eq("id", booking.guide_id)
         .maybeSingle();
       if (guide?.user_id) {
-        const { data: guideUser } = await supabaseAdmin.auth.admin.getUserById(guide.user_id);
-        const guideEmail = guideUser?.user?.email;
+        let guideEmail: string | null | undefined = (guide as any).notification_email;
+        if (!guideEmail) {
+          const { data: guideUser } = await supabaseAdmin.auth.admin.getUserById(guide.user_id);
+          guideEmail = guideUser?.user?.email ?? null;
+        }
           if (guideEmail) {
           await enqueueTransactionalEmail({
             supabase: supabaseAdmin,
