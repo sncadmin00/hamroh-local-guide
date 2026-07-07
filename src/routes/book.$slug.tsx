@@ -9,7 +9,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { PaymentMethods } from "@/components/PaymentMethods";
 import { useTour, computeTourPrice, offeredCategories, GROUP_CATEGORY_MAX, GROUP_CATEGORY_LABEL, type GroupCategory } from "@/lib/content-queries";
 import { getBookingSource } from "@/hooks/useTrackSource";
-import { getGuideSlots, createBooking } from "@/lib/booking.functions";
+import { createBooking } from "@/lib/booking.functions";
 import { getCurrentOffer } from "@/lib/legal-offer.functions";
 import { getPublicServiceFeeRate } from "@/lib/earnings.functions";
 import { useI18n } from "@/lib/i18n";
@@ -47,7 +47,7 @@ function BookPage() {
     notes: "",
   });
 
-  const fetchSlots = useServerFn(getGuideSlots);
+  // slots are fetched from public HTTP endpoint (see effect below)
   const createBookingFn = useServerFn(createBooking);
   const fetchTelegram = useServerFn(getMyTelegramAccount);
   const fetchOffer = useServerFn(getCurrentOffer);
@@ -67,10 +67,25 @@ function BookPage() {
 
   useEffect(() => {
     if (!tour) return;
-    fetchSlots({ data: { guide_id: tour.guide_id } })
-      .then((rows) => setSlots(rows as typeof slots))
-      .catch(() => setSlots([]));
-  }, [tour, fetchSlots]);
+    let cancelled = false;
+    fetch(`/api/public/tours/${tour.id}/slots`)
+      .then((r) => (r.ok ? r.json() : Promise.reject(r)))
+      .then((json: { slots: Array<{ date: string; start_time: string; duration_minutes: number }> }) => {
+        if (cancelled) return;
+        setSlots(
+          (json.slots ?? []).map((s) => ({
+            id: `${s.date}|${s.start_time}`,
+            date: s.date,
+            start_time: s.start_time,
+            duration_minutes: s.duration_minutes,
+          })),
+        );
+      })
+      .catch(() => !cancelled && setSlots([]));
+    return () => {
+      cancelled = true;
+    };
+  }, [tour]);
 
   const loadTelegramContact = async () => {
     const { data: userData } = await supabase.auth.getUser();
@@ -159,7 +174,7 @@ function BookPage() {
       await createBookingFn({
         data: {
           tour_id: tour.id,
-          slot_id: chosenSlot?.id ?? null,
+          slot_id: null,
           language: currentLanguage || undefined,
           date: chosenSlot?.date ?? form.date,
           start_time: chosenSlot?.start_time,
