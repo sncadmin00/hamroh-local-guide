@@ -26,6 +26,7 @@ import {
   updateMyLanguages,
   recordMyLanguageTest,
 } from "@/lib/guide-portal.functions";
+import { listGuideBlocks, blockTime, unblockTime, type GuideBlock } from "@/lib/guide-blocks.functions";
 import { assessLanguageTest } from "@/lib/language-test.functions";
 import { useCities, useCategories } from "@/lib/content-queries";
 import { GuidePostsPanel } from "@/components/GuidePostsPanel";
@@ -93,22 +94,32 @@ function GuidePortal() {
   const [guide, setGuide] = useState<MyGuide | null>(null);
   const [slots, setSlots] = useState<Slot[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
+  const [timeBlocks, setTimeBlocks] = useState<GuideBlock[]>([]);
   const [tab, setTab] = useState<"calendar" | "ai" | "availability" | "bookings" | "tours" | "cities" | "languages" | "posts" | "places" | "referral" | "verification" | "profile" | "earnings">("calendar");
 
   const fetchGuide = useServerFn(getMyGuide);
   const fetchSlots = useServerFn(listMySlots);
   const fetchBookings = useServerFn(listMyBookings);
+  const fetchBlocks = useServerFn(listGuideBlocks);
   const addSlotFn = useServerFn(addSlot);
   const deleteSlotFn = useServerFn(deleteSlot);
+  const addBlockFn = useServerFn(blockTime);
+  const removeBlockFn = useServerFn(unblockTime);
   const updateStatusFn = useServerFn(updateBookingStatus);
   const proposeTimeFn = useServerFn(proposeBookingTime);
 
   const load = useCallback(async () => {
-    const [g, s, b] = await Promise.all([fetchGuide(), fetchSlots(), fetchBookings()]);
+    const [g, s, b, tb] = await Promise.all([
+      fetchGuide(),
+      fetchSlots(),
+      fetchBookings(),
+      fetchBlocks({ data: {} }).catch(() => [] as GuideBlock[]),
+    ]);
     setGuide(g as MyGuide | null);
     setSlots(s as Slot[]);
     setBookings(b as Booking[]);
-  }, [fetchGuide, fetchSlots, fetchBookings]);
+    setTimeBlocks(tb as GuideBlock[]);
+  }, [fetchGuide, fetchSlots, fetchBookings, fetchBlocks]);
 
   useEffect(() => {
     let mounted = true;
