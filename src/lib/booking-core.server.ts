@@ -240,7 +240,9 @@ export async function createBookingCore(
   // Compute response deadline based on how soon the tour starts
   let expiresAt: string | null = null;
   if (!isInstant) {
-    const tourStart = new Date(`${data.date}T${data.start_time ?? "12:00"}:00`);
+    const rawTime = data.start_time ?? "12:00";
+    const normalizedTime = rawTime.length >= 8 ? rawTime.slice(0, 8) : `${rawTime}:00`;
+    const tourStart = new Date(`${data.date}T${normalizedTime}`);
     const hoursUntilTour = (tourStart.getTime() - Date.now()) / 3600000;
     let responseHours = 24;
     if (hoursUntilTour < 24) responseHours = 2;
