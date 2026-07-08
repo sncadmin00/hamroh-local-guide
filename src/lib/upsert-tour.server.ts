@@ -329,7 +329,7 @@ export async function upsertTourCore(input: UpsertTourInput, userId: string) {
   // 8. Translation of texts + localized columns
   if (shouldTranslate) {
     const sourceLang = mapBaseLanguage(eff.base_language);
-    const translations = await translateTourFields({
+    const result = await translateTourFields({
       sourceLang,
       title: eff.title,
       short_description: eff.short_description,
@@ -338,14 +338,53 @@ export async function upsertTourCore(input: UpsertTourInput, userId: string) {
       included: eff.included,
       not_included: eff.not_included,
     });
+    if (!result.ok || result.error) {
+      console.error(
+        `[upsertTourCore] translation ${result.ok ? "partial" : "failed"} ` +
+          `(tourId=${current?.id ?? "new"}, sourceLang=${sourceLang}, base_language=${eff.base_language}, ` +
+          `attempts=${result.attempts}): ${result.error}`,
+      );
+    }
     for (const lng of ["ru", "en", "uz"] as const) {
-      const t = lng === sourceLang ? null : translations[lng];
-      payload[`title_${lng}`] = t?.title || eff.title;
-      payload[`short_description_${lng}`] = t?.short_description ?? eff.short_description;
-      payload[`description_md_${lng}`] = t?.description_md ?? "";
-      payload[`highlights_${lng}`] = t?.highlights?.length ? t.highlights : eff.highlights;
-      payload[`included_${lng}`] = t?.included?.length ? t.included : eff.included;
-      payload[`not_included_${lng}`] = t?.not_included?.length ? t.not_included : eff.not_included;
+      if (lng === sourceLang) {
+        // Source language: always mirror the current source text.
+        payload[`title_${lng}`] = eff.title;
+        payload[`short_description_${lng}`] = eff.short_description;
+        payload[`description_md_${lng}`] = "";
+        payload[`highlights_${lng}`] = eff.highlights;
+        payload[`included_${lng}`] = eff.included;
+        payload[`not_included_${lng}`] = eff.not_included;
+        continue;
+      }
+      const t = result.translations[lng];
+      if (t) {
+        // Fresh translation succeeded — use it (empty string for a text field is
+        // acceptable only when the source is also empty; otherwise treat as miss).
+        payload[`title_${lng}`] = t.title || (isCreate ? eff.title : (current?.[`title_${lng}`] ?? eff.title));
+        payload[`short_description_${lng}`] = t.short_description !== undefined && t.short_description !== ""
+          ? t.short_description
+          : (isCreate ? eff.short_description : (current?.[`short_description_${lng}`] ?? eff.short_description));
+        payload[`description_md_${lng}`] = t.description_md ?? (isCreate ? "" : (current?.[`description_md_${lng}`] ?? ""));
+        payload[`highlights_${lng}`] = t.highlights?.length
+          ? t.highlights
+          : (isCreate ? eff.highlights : (current?.[`highlights_${lng}`] ?? eff.highlights));
+        payload[`included_${lng}`] = t.included?.length
+          ? t.included
+          : (isCreate ? eff.included : (current?.[`included_${lng}`] ?? eff.included));
+        payload[`not_included_${lng}`] = t.not_included?.length
+          ? t.not_included
+          : (isCreate ? eff.not_included : (current?.[`not_included_${lng}`] ?? eff.not_included));
+      } else if (isCreate) {
+        // No prior value + no translation → fall back to source so the row is not empty.
+        payload[`title_${lng}`] = eff.title;
+        payload[`short_description_${lng}`] = eff.short_description;
+        payload[`description_md_${lng}`] = "";
+        payload[`highlights_${lng}`] = eff.highlights;
+        payload[`included_${lng}`] = eff.included;
+        payload[`not_included_${lng}`] = eff.not_included;
+      }
+      // Update + no translation for this lang → do NOT write those columns,
+      // leaving the previously-saved translation intact.
     }
   }
 
