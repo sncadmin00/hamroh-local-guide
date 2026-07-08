@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { PaymentMethods } from "@/components/PaymentMethods";
-import { useTour, computeTourPrice, offeredCategories, GROUP_CATEGORY_MAX, GROUP_CATEGORY_LABEL, type GroupCategory } from "@/lib/content-queries";
+import { useTour, readTourPricingClient, computeBasePriceClient, type PricingMode } from "@/lib/content-queries";
 import { getBookingSource } from "@/hooks/useTrackSource";
 import { createBooking } from "@/lib/booking.functions";
 import { getCurrentOffer } from "@/lib/legal-offer.functions";
