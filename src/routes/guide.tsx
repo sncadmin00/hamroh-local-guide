@@ -978,6 +978,7 @@ function TourEditor({
     published: boolean;
     sort_order: number;
     category_ids: string[];
+    schedule: Array<{ weekday: number; start_time: string }>;
   }) => void;
 }) {
   const { tg } = useGuideI18n();
