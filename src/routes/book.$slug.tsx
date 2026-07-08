@@ -108,7 +108,18 @@ function BookPage() {
 
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setCurrentUserId(data.user?.id ?? null));
+    supabase.auth.getUser().then(({ data }) => {
+      const u = data.user;
+      setCurrentUserId(u?.id ?? null);
+      if (!u) return;
+      const meta = (u.user_metadata ?? {}) as Record<string, any>;
+      const name = meta.full_name || meta.name || [meta.first_name, meta.last_name].filter(Boolean).join(" ") || "";
+      setForm((f) => ({
+        ...f,
+        name: f.name || name,
+        email: f.email || u.email || "",
+      }));
+    });
   }, []);
 
   const isOwnTour = !!(currentUserId && tour?.guides?.user_id && tour.guides.user_id === currentUserId);
