@@ -1676,16 +1676,9 @@ function TourEditor({
               <p className="mt-2 text-xs text-muted-foreground">{tg("editor.noProfileLanguages")}</p>
             ) : (
               <>
-                <div className="mt-3 flex items-center gap-2 text-sm">
-                  <span className="text-xs text-muted-foreground">{tg("editor.baseLanguage")}</span>
-                  <select
-                    value={baseLanguage}
-                    onChange={(e) => setBaseLanguage(e.target.value)}
-                    className="h-9 rounded-lg border border-input bg-background px-2 text-sm"
-                  >
-                    {languages.map((l) => <option key={l} value={l}>{l}</option>)}
-                  </select>
-                </div>
+                <p className="mt-2 text-[11px] text-muted-foreground">
+                  Base language for pricing multipliers: <span className="font-medium">{baseLanguage}</span> (from source language).
+                </p>
                 <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {languages.map((lng) => {
                     const enabled = tourLangs.includes(lng);
