@@ -296,7 +296,6 @@ export const translations: Dict = {
   "tours.upTo": { en: "up to {n}", uz: "{n} kishigacha", ru: "до {n}" },
   "tours.wholeTour": { en: "Whole tour", uz: "Butun sayohat", ru: "Весь тур" },
   "tours.perPerson": { en: "per adult", uz: "har bir katta uchun", ru: "за взрослого" },
-  "tours.person": { en: "person", uz: "kishi", ru: "человек" },
   "tours.people": { en: "people", uz: "kishi", ru: "человек" },
   "tours.upToGuests": { en: "Up to {n} guests", uz: "{n} mehmongacha", ru: "До {n} гостей" },
   "tours.languageSurcharge": { en: "+{p}% for {lang}", uz: "{lang} uchun +{p}%", ru: "+{p}% за {lang}" },
