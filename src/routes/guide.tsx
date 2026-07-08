@@ -1912,6 +1912,7 @@ function TourEditor({
                 not_included_ru: textToArr(notIncludedByLc.ru),
                 not_included_en: textToArr(notIncludedByLc.en),
                 not_included_uz: textToArr(notIncludedByLc.uz),
+                meeting_point: meetingPoint.trim(),
                 end_point: endSameAsMeeting ? meetingPoint.trim() : endPoint.trim(),
                 meeting_lat: meetingCoords?.lat ?? null,
                 meeting_lng: meetingCoords?.lng ?? null,
