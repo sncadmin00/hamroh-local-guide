@@ -2406,7 +2406,9 @@ export type Database = {
           end_lng: number | null
           end_point: string
           end_same_as_meeting: boolean
+          fixed_price: number | null
           group_prices: Json
+          group_tiers: Json | null
           guide_id: string
           highlights: string[]
           highlights_en: string[]
@@ -2419,6 +2421,7 @@ export type Database = {
           included_uz: string[]
           language_multipliers: Json
           languages: string[]
+          max_guests: number | null
           meeting_lat: number | null
           meeting_lng: number | null
           meeting_point: string
@@ -2426,9 +2429,11 @@ export type Database = {
           not_included_en: string[]
           not_included_ru: string[]
           not_included_uz: string[]
+          per_person_price: number | null
           price_by_language: Json
           price_from: number
           pricing_mode: string
+          pricing_modes: string[]
           published: boolean
           rating: number
           reviews_count: number
@@ -2460,7 +2465,9 @@ export type Database = {
           end_lng?: number | null
           end_point?: string
           end_same_as_meeting?: boolean
+          fixed_price?: number | null
           group_prices?: Json
+          group_tiers?: Json | null
           guide_id: string
           highlights?: string[]
           highlights_en?: string[]
@@ -2473,6 +2480,7 @@ export type Database = {
           included_uz?: string[]
           language_multipliers?: Json
           languages?: string[]
+          max_guests?: number | null
           meeting_lat?: number | null
           meeting_lng?: number | null
           meeting_point?: string
@@ -2480,9 +2488,11 @@ export type Database = {
           not_included_en?: string[]
           not_included_ru?: string[]
           not_included_uz?: string[]
+          per_person_price?: number | null
           price_by_language?: Json
           price_from?: number
           pricing_mode?: string
+          pricing_modes?: string[]
           published?: boolean
           rating?: number
           reviews_count?: number
@@ -2514,7 +2524,9 @@ export type Database = {
           end_lng?: number | null
           end_point?: string
           end_same_as_meeting?: boolean
+          fixed_price?: number | null
           group_prices?: Json
+          group_tiers?: Json | null
           guide_id?: string
           highlights?: string[]
           highlights_en?: string[]
@@ -2527,6 +2539,7 @@ export type Database = {
           included_uz?: string[]
           language_multipliers?: Json
           languages?: string[]
+          max_guests?: number | null
           meeting_lat?: number | null
           meeting_lng?: number | null
           meeting_point?: string
@@ -2534,9 +2547,11 @@ export type Database = {
           not_included_en?: string[]
           not_included_ru?: string[]
           not_included_uz?: string[]
+          per_person_price?: number | null
           price_by_language?: Json
           price_from?: number
           pricing_mode?: string
+          pricing_modes?: string[]
           published?: boolean
           rating?: number
           reviews_count?: number
@@ -2878,6 +2893,7 @@ export type Database = {
         Returns: undefined
       }
       recompute_tour_rating: { Args: { _tour_id: string }; Returns: undefined }
+      validate_group_tiers: { Args: { _tiers: Json }; Returns: boolean }
     }
     Enums: {
       app_role: "admin"
