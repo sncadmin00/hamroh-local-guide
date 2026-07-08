@@ -1,7 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { Star, BadgeCheck, Zap, ArrowLeft, Check, Car, Clock, MapPin } from "lucide-react";
+import { Star, BadgeCheck, Zap, ArrowLeft, Check, Car, Clock, MapPin, CalendarIcon } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/SiteHeader";
