@@ -223,25 +223,41 @@ function TourDetailPage() {
             {localizedShort && <p className="mt-2 text-lg text-muted-foreground">{localizedShort}</p>}
 
 
-            {groupPriceItems.length > 0 && (
+            {(priceItems.length > 0 || tierItems.length > 0) && (
               <section className="mt-6">
                 <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
                   {t("tours.priceForGroup")}
                 </h2>
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {groupPriceItems.map((item) => (
+                  {priceItems.map((item) => (
                     <span
                       key={item.key}
                       className="inline-flex items-center gap-2 rounded-xl bg-card ring-1 ring-border/60 px-3 py-2 text-sm"
                     >
                       <Users className="h-4 w-4 text-muted-foreground" />
                       <span className="font-medium">{item.label}</span>
-                      <span className="font-display text-lg font-semibold tabular-nums">
-                        ${Math.round(item.price)}
-                      </span>
+                      <span className="font-display text-lg font-semibold tabular-nums">{item.price}</span>
                     </span>
                   ))}
                 </div>
+                {tierItems.length > 0 && (
+                  <div className="mt-3 rounded-xl bg-card ring-1 ring-border/60 divide-y divide-border/60">
+                    {tierItems.map((it) => (
+                      <div key={it.key} className="flex items-center justify-between px-4 py-2.5 text-sm">
+                        <span className="inline-flex items-center gap-2">
+                          <Users className="h-4 w-4 text-muted-foreground" />
+                          {it.label}
+                        </span>
+                        <span className="font-display text-lg font-semibold tabular-nums">{it.price}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {pricing.max_guests != null && (
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    {t("tours.upToGuests").replace("{n}", String(pricing.max_guests))}
+                  </p>
+                )}
                 {surcharges.length > 0 && (
                   <p className="mt-2 text-xs text-muted-foreground">
                     {surcharges
@@ -253,6 +269,7 @@ function TourDetailPage() {
                 )}
               </section>
             )}
+
 
             {localizedHighlights.length > 0 && (
               <section className="mt-8">
