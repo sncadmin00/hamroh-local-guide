@@ -17,10 +17,9 @@ export const Route = createFileRoute('/api/public/hooks/create-booking')({
         const auth =
           request.headers.get('authorization') ?? request.headers.get('apikey') ?? ''
         const token = auth.startsWith('Bearer ') ? auth.slice(7).trim() : auth.trim()
-        const expected = process.env.SUPABASE_SERVICE_ROLE_KEY
-        let authorized = !!token && !!expected && token === expected
-        // Fallback: accept any valid service_role JWT (handles key-format mismatch
-        // between the Deno edge runtime and the Worker SSR runtime).
+        const internal = process.env.INTERNAL_HOOK_SECRET
+        const svc = process.env.SUPABASE_SERVICE_ROLE_KEY
+        let authorized = !!token && ((!!internal && token === internal) || (!!svc && token === svc))
         if (!authorized && token) {
           try {
             const parts = token.split('.')
@@ -30,17 +29,9 @@ export const Route = createFileRoute('/api/public/hooks/create-booking')({
               )
               if (payload?.role === 'service_role') authorized = true
             }
-          } catch {
-            // ignore
-          }
+          } catch {}
         }
         if (!authorized) {
-          console.error('[create-booking hook] auth failed', {
-            hasToken: !!token,
-            tokenLen: token?.length ?? 0,
-            hasExpected: !!expected,
-            expectedLen: expected?.length ?? 0,
-          })
           return Response.json({ error: 'Forbidden' }, { status: 403 })
         }
 
