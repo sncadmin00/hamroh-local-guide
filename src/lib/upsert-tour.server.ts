@@ -25,6 +25,9 @@ const groupTierSchema = z.object({
   price: z.number().min(0).max(100000),
 });
 
+const localeStr = z.string().trim().max(2000).optional();
+const localeArr = z.array(z.string().trim().min(1).max(1000)).max(30).optional();
+
 export const upsertTourInputSchema = z.object({
   id: z.string().uuid().optional(),
   title: z.string().trim().min(1).max(200).optional(),
@@ -58,7 +61,20 @@ export const upsertTourInputSchema = z.object({
   published: z.boolean().optional(),
   sort_order: z.number().int().min(0).max(1000).optional(),
   category_ids: z.array(z.string().uuid()).max(20).optional(),
+
+  // Manual per-locale overrides. When provided, they take priority over
+  // AI translation for that locale and are written verbatim.
+  title_ru: localeStr, title_en: localeStr, title_uz: localeStr,
+  short_description_ru: localeStr, short_description_en: localeStr, short_description_uz: localeStr,
+  highlights_ru: localeArr, highlights_en: localeArr, highlights_uz: localeArr,
+  included_ru: localeArr, included_en: localeArr, included_uz: localeArr,
+  not_included_ru: localeArr, not_included_en: localeArr, not_included_uz: localeArr,
+
+  // When true, do NOT run auto-translation on this save. Manual overrides
+  // (title_<lng> etc.) are still written; other locales are left untouched.
+  skip_translate: z.boolean().optional(),
 });
+
 
 export type UpsertTourInput = z.infer<typeof upsertTourInputSchema>;
 
@@ -327,7 +343,43 @@ export async function upsertTourCore(input: UpsertTourInput, userId: string) {
   }
 
   // 8. Translation of texts + localized columns
-  if (shouldTranslate) {
+  //
+  // Manual per-locale overrides (title_<lng>, short_description_<lng>, ...)
+  // always win over auto-translation for the locales they cover. When
+  // `skip_translate=true`, we do NOT call the AI at all — only manual
+  // overrides are written; other locales stay untouched (on update) or
+  // are seeded from source (on create).
+  const LOCALE_FIELDS = ["title", "short_description", "highlights", "included", "not_included"] as const;
+  type LocaleField = typeof LOCALE_FIELDS[number];
+
+  const manualOverride = (lng: "ru" | "en" | "uz", field: LocaleField) => {
+    const key = `${field}_${lng}` as keyof UpsertTourInput;
+    return (input as any)[key] as string | string[] | undefined;
+  };
+  const hasAnyManual = (["ru", "en", "uz"] as const).some((lng) =>
+    LOCALE_FIELDS.some((f) => manualOverride(lng, f) !== undefined),
+  );
+
+  const skipTranslate = input.skip_translate === true;
+  const runTranslate = shouldTranslate && !skipTranslate;
+
+  const writeLocaleFromSource = (lng: "ru" | "en" | "uz") => {
+    payload[`title_${lng}`] = eff.title;
+    payload[`short_description_${lng}`] = eff.short_description;
+    payload[`description_md_${lng}`] = "";
+    payload[`highlights_${lng}`] = eff.highlights;
+    payload[`included_${lng}`] = eff.included;
+    payload[`not_included_${lng}`] = eff.not_included;
+  };
+
+  const applyManualOverride = (lng: "ru" | "en" | "uz") => {
+    for (const f of LOCALE_FIELDS) {
+      const v = manualOverride(lng, f);
+      if (v !== undefined) payload[`${f}_${lng}`] = v;
+    }
+  };
+
+  if (runTranslate) {
     const sourceLang = mapBaseLanguage(eff.base_language);
     const result = await translateTourFields({
       sourceLang,
@@ -347,19 +399,11 @@ export async function upsertTourCore(input: UpsertTourInput, userId: string) {
     }
     for (const lng of ["ru", "en", "uz"] as const) {
       if (lng === sourceLang) {
-        // Source language: always mirror the current source text.
-        payload[`title_${lng}`] = eff.title;
-        payload[`short_description_${lng}`] = eff.short_description;
-        payload[`description_md_${lng}`] = "";
-        payload[`highlights_${lng}`] = eff.highlights;
-        payload[`included_${lng}`] = eff.included;
-        payload[`not_included_${lng}`] = eff.not_included;
+        writeLocaleFromSource(lng);
         continue;
       }
       const t = result.translations[lng];
       if (t) {
-        // Fresh translation succeeded — use it (empty string for a text field is
-        // acceptable only when the source is also empty; otherwise treat as miss).
         payload[`title_${lng}`] = t.title || (isCreate ? eff.title : (current?.[`title_${lng}`] ?? eff.title));
         payload[`short_description_${lng}`] = t.short_description !== undefined && t.short_description !== ""
           ? t.short_description
@@ -375,18 +419,23 @@ export async function upsertTourCore(input: UpsertTourInput, userId: string) {
           ? t.not_included
           : (isCreate ? eff.not_included : (current?.[`not_included_${lng}`] ?? eff.not_included));
       } else if (isCreate) {
-        // No prior value + no translation → fall back to source so the row is not empty.
-        payload[`title_${lng}`] = eff.title;
-        payload[`short_description_${lng}`] = eff.short_description;
-        payload[`description_md_${lng}`] = "";
-        payload[`highlights_${lng}`] = eff.highlights;
-        payload[`included_${lng}`] = eff.included;
-        payload[`not_included_${lng}`] = eff.not_included;
+        writeLocaleFromSource(lng);
       }
-      // Update + no translation for this lang → do NOT write those columns,
-      // leaving the previously-saved translation intact.
+      // Update + no translation for this lang → leave previously-saved translation intact.
     }
+    // Manual overrides win over anything translation just wrote.
+    for (const lng of ["ru", "en", "uz"] as const) applyManualOverride(lng);
+  } else if (isCreate) {
+    // Create with skip_translate or no text: seed every locale from source,
+    // then let manual overrides win.
+    for (const lng of ["ru", "en", "uz"] as const) writeLocaleFromSource(lng);
+    for (const lng of ["ru", "en", "uz"] as const) applyManualOverride(lng);
+  } else if (hasAnyManual) {
+    // Pure manual edit on an existing tour: write only the overridden columns,
+    // leave other locales untouched.
+    for (const lng of ["ru", "en", "uz"] as const) applyManualOverride(lng);
   }
+
 
   // 9. Persist
   let tourId: string;
