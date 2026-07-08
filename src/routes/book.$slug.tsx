@@ -245,28 +245,50 @@ function BookPage() {
 
         <div className="mt-10 grid gap-8 lg:grid-cols-[1.4fr_1fr]">
           <form onSubmit={handleSubmit} className="space-y-6 rounded-3xl bg-card p-6 ring-1 ring-border/60 md:p-8">
-            {hasInstantSlots ? (
-              <div>
-                <label className="text-sm font-medium inline-flex items-center gap-1.5">
-                  <Zap className="h-4 w-4 text-accent" /> Pick an available slot (instant booking)
-                </label>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {slots.map((s) => {
-                    const on = selectedSlot === s.id;
-                    return (
-                      <button
-                        key={s.id}
-                        type="button"
-                        onClick={() => setSelectedSlot(s.id)}
-                        className={`px-3 h-10 rounded-full text-sm ring-1 transition ${on ? "bg-accent text-accent-foreground ring-accent" : "bg-background ring-border hover:bg-muted"}`}
-                      >
-                        {s.date} · {s.start_time.slice(0, 5)} · {s.duration_minutes}m
-                      </button>
-                    );
-                  })}
+            {hasInstantSlots ? (() => {
+              const localeMap: Record<string, string> = { en: "en-US", ru: "ru-RU", uz: "uz-UZ" };
+              const locale = localeMap[lang] ?? "en-US";
+              const uniqueDates = Array.from(new Set(slots.map((s) => s.date))).sort();
+              const activeDate = selectedDate || uniqueDates[0] || "";
+              const daySlots = slots.filter((s) => s.date === activeDate);
+              const fmt = (iso: string) => {
+                const [y, m, d] = iso.split("-").map(Number);
+                return new Date(Date.UTC(y, m - 1, d)).toLocaleDateString(locale, {
+                  month: "long", day: "numeric", year: "numeric", timeZone: "UTC",
+                });
+              };
+              return (
+                <div>
+                  <label className="text-sm font-medium inline-flex items-center gap-1.5">
+                    <Zap className="h-4 w-4 text-accent" /> Pick an available slot (instant booking)
+                  </label>
+                  <select
+                    value={activeDate}
+                    onChange={(e) => { setSelectedDate(e.target.value); setSelectedSlot(null); }}
+                    className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring"
+                  >
+                    {uniqueDates.map((d) => (
+                      <option key={d} value={d}>{fmt(d)}</option>
+                    ))}
+                  </select>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {daySlots.map((s) => {
+                      const on = selectedSlot === s.id;
+                      return (
+                        <button
+                          key={s.id}
+                          type="button"
+                          onClick={() => setSelectedSlot(s.id)}
+                          className={`px-3 h-10 rounded-full text-sm ring-1 transition ${on ? "bg-accent text-accent-foreground ring-accent" : "bg-background ring-border hover:bg-muted"}`}
+                        >
+                          {s.start_time.slice(0, 5)} · {s.duration_minutes}m
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            ) : (
+              );
+            })() : (
               <div>
                 <label className="text-sm font-medium">Date</label>
                 <input type="date" required value={form.date} onChange={handleFieldChange} name="date" className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring" />
