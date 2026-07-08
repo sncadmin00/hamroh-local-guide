@@ -443,7 +443,9 @@ function TimeOffPanel({
 
   return (
     <div className="space-y-6">
+      <BufferPanel />
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border">
+
         <h2 className="font-display text-lg font-semibold">{tg("timeoff.title")}</h2>
         <p className="text-sm text-muted-foreground mt-1">{tg("timeoff.text")}</p>
 
