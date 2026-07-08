@@ -1862,6 +1862,14 @@ function TourEditor({
               }
               const baseTitle = titleByLc[baseLc].trim();
               const baseShort = shortByLc[baseLc].trim();
+              // Only forward per-locale overrides when the field has content
+              // (and it's not just the source language mirroring itself).
+              const strOverride = (lc: Lc, v: string) => (v.trim() !== "" && lc !== baseLc ? v.trim() : undefined);
+              const arrOverride = (lc: Lc, v: string) => {
+                if (lc === baseLc) return undefined;
+                const arr = textToArr(v);
+                return arr.length > 0 ? arr : undefined;
+              };
               onSave({
                 id: initial?.id,
                 title: baseTitle,
