@@ -1197,9 +1197,21 @@ function TourEditor({
   const [childrenFreeUnder, setChildrenFreeUnder] = useState<number>(initial?.children_free_under ?? 16);
   const [transportIncluded, setTransportIncluded] = useState<boolean>(initial?.transport_included ?? false);
   const [tourLangs, setTourLangs] = useState<string[]>(initial?.languages ?? languages);
-  const [highlights, setHighlights] = useState(arrToText(initial?.highlights ?? []));
-  const [included, setIncluded] = useState(arrToText(initial?.included ?? []));
-  const [notIncluded, setNotIncluded] = useState(arrToText(initial?.not_included ?? []));
+  const [highlightsByLc, setHighlightsByLc] = useState<Record<Lc, string>>({
+    ru: seedLocaleArr("ru", "highlights"),
+    en: seedLocaleArr("en", "highlights"),
+    uz: seedLocaleArr("uz", "highlights"),
+  });
+  const [includedByLc, setIncludedByLc] = useState<Record<Lc, string>>({
+    ru: seedLocaleArr("ru", "included"),
+    en: seedLocaleArr("en", "included"),
+    uz: seedLocaleArr("uz", "included"),
+  });
+  const [notIncludedByLc, setNotIncludedByLc] = useState<Record<Lc, string>>({
+    ru: seedLocaleArr("ru", "not_included"),
+    en: seedLocaleArr("en", "not_included"),
+    uz: seedLocaleArr("uz", "not_included"),
+  });
   const [meetingPoint, setMeetingPoint] = useState(initial?.meeting_point ?? "");
   const [endPoint, setEndPoint] = useState(initial?.end_point ?? "");
   const [meetingCoords, setMeetingCoords] = useState<{ lat: number; lng: number } | null>(
