@@ -1720,21 +1720,6 @@ function TourEditor({
           </div>
 
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <label className="block text-sm">
-              <span className="text-xs text-muted-foreground">{tg("editor.highlights")}</span>
-              <textarea value={highlights} onChange={(e) => setHighlights(e.target.value)} rows={4} className="mt-1 w-full rounded-xl border border-input bg-background p-2 text-sm" />
-            </label>
-            <label className="block text-sm">
-              <span className="text-xs text-muted-foreground">{tg("editor.included")}</span>
-              <textarea value={included} onChange={(e) => setIncluded(e.target.value)} rows={4} className="mt-1 w-full rounded-xl border border-input bg-background p-2 text-sm" />
-            </label>
-            <label className="block text-sm">
-              <span className="text-xs text-muted-foreground">{tg("editor.notIncluded")}</span>
-              <textarea value={notIncluded} onChange={(e) => setNotIncluded(e.target.value)} rows={4} className="mt-1 w-full rounded-xl border border-input bg-background p-2 text-sm" />
-            </label>
-          </div>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <label className="block text-sm">
               <span className="text-xs text-muted-foreground">{tg("editor.meetingPoint")}</span>
