@@ -154,10 +154,10 @@ function BookPage() {
   const setChildren = (n: number) => setForm((f) => ({ ...f, children: Math.min(50, Math.max(0, n)) }));
 
   const categories = offeredCategories(tour);
-  // Auto-pick category if not set
-  const selectedCategory: GroupCategory | null = form.category
-    ?? categories.find((c) => GROUP_CATEGORY_MAX[c] >= form.adults)
-    ?? null;
+  // Auto-pick smallest category that fits the adult count
+  const categoriesBySize = [...categories].sort((a, b) => GROUP_CATEGORY_MAX[a] - GROUP_CATEGORY_MAX[b]);
+  const selectedCategory: GroupCategory | null =
+    categoriesBySize.find((c) => GROUP_CATEGORY_MAX[c] >= form.adults) ?? null;
   const adultsExceedAll = tour.pricing_mode === "by_group"
     && categories.length > 0
     && categories.every((c) => GROUP_CATEGORY_MAX[c] < form.adults);
