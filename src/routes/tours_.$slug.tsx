@@ -130,21 +130,24 @@ function TourDetailPage() {
   const localizedHighlights = pickTourHighlights(tour, lang);
   const localizedIncluded = pickTourIncluded(tour, lang);
   const localizedNotIncluded = pickTourNotIncluded(tour, lang);
-  const groupCats = offeredCategories(tour);
-  const groupPriceItems: { key: string; label: string; max: number | null; price: number }[] =
-    tour.pricing_mode === "by_group"
-      ? groupCats.map((c) => ({
-          key: c,
-          label: t("tours.upTo").replace("{n}", String(GROUP_CATEGORY_MAX[c])),
-          max: GROUP_CATEGORY_MAX[c],
-          price: Number(tour.group_prices[c] ?? 0),
-        }))
-      : (() => {
-          const fixed = Number(tour.group_prices.fixed ?? tour.price_from ?? 0);
-          return fixed > 0
-            ? [{ key: "fixed", label: t("tours.wholeTour"), max: null, price: fixed }]
-            : [];
-        })();
+  const pricing = readTourPricingClient(tour);
+  type PriceItem = { key: string; label: string; sublabel?: string; price: string };
+  const priceItems: PriceItem[] = [];
+  if (pricing.available_modes.includes("fixed") && pricing.fixed_price && pricing.fixed_price > 0) {
+    priceItems.push({ key: "fixed", label: t("tours.wholeTour"), price: `$${Math.round(pricing.fixed_price)}` });
+  }
+  if (pricing.available_modes.includes("per_person") && pricing.per_person_price && pricing.per_person_price > 0) {
+    priceItems.push({ key: "per_person", label: t("tours.perPerson"), price: `$${Math.round(pricing.per_person_price)}` });
+  }
+  const tierItems: Array<{ key: string; label: string; price: string }> = pricing.available_modes.includes("by_group")
+    ? pricing.group_tiers.map((tr) => ({
+        key: `${tr.min}-${tr.max}`,
+        label: tr.min === tr.max
+          ? `${tr.min} ${tr.min === 1 ? t("tours.person") : t("tours.people")}`
+          : `${tr.min}–${tr.max} ${t("tours.people")}`,
+        price: `$${Math.round(tr.price)}`,
+      }))
+    : [];
   const surcharges = Object.entries(tour.language_multipliers ?? {})
     .map(([lng, p]) => ({ lng, p: Number(p) }))
     .filter((x) => Number.isFinite(x.p) && x.p > 0);
