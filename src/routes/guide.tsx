@@ -378,7 +378,59 @@ function TabBtn({ active, onClick, children }: { active: boolean; onClick: () =>
   );
 }
 
+function BufferPanel() {
+  const { tg } = useGuideI18n();
+  const getFn = useServerFn(getGuideBuffer);
+  const setFn = useServerFn(setGuideBuffer);
+  const [minutes, setMinutes] = useState<30 | 60 | 90>(60);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { minutes: m } = await getFn();
+        if (m === 30 || m === 60 || m === 90) setMinutes(m);
+      } catch {}
+      setLoaded(true);
+    })();
+  }, [getFn]);
+
+  const pick = async (m: 30 | 60 | 90) => {
+    const prev = minutes;
+    setMinutes(m);
+    try {
+      await setFn({ data: { minutes: m } });
+      toast.success(tg("buffer.saved"));
+    } catch (e) {
+      setMinutes(prev);
+      toast.error((e as Error).message);
+    }
+  };
+
+  return (
+    <div className="rounded-3xl bg-card p-6 ring-1 ring-border">
+      <h2 className="font-display text-lg font-semibold">{tg("buffer.title")}</h2>
+      <p className="text-sm text-muted-foreground mt-1">{tg("buffer.text")}</p>
+      <div className="mt-4 flex gap-2">
+        {([30, 60, 90] as const).map((m) => (
+          <button
+            key={m}
+            onClick={() => pick(m)}
+            disabled={!loaded}
+            className={`h-10 px-4 rounded-full text-sm font-medium ring-1 transition ${
+              minutes === m ? "bg-foreground text-background ring-foreground" : "bg-background text-foreground ring-border hover:bg-secondary"
+            } disabled:opacity-50`}
+          >
+            {m} {tg("common.minutes")}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function TimeOffPanel({
+
   blocks, onAdd, onDelete,
 }: {
   blocks: GuideBlock[];
