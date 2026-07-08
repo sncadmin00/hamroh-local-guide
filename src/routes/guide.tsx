@@ -1822,7 +1822,7 @@ function TourEditor({
         <div className="mt-6 flex justify-end gap-2">
           <button onClick={onClose} className="h-10 px-4 rounded-full bg-muted text-sm font-medium">{tg("common.cancel")}</button>
           <button
-            disabled={!title.trim() || !cityId}
+            disabled={!titleByLc[baseLc].trim() || !cityId}
             onClick={() => {
               const modes: ("fixed" | "per_person" | "by_group")[] = [];
               if (modeFixed) modes.push("fixed");
