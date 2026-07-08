@@ -214,18 +214,24 @@ export async function createBookingCore(
   const baseLanguage = (tour as any).base_language as string | null;
 
   let basePrice = 0;
+  let resolvedCategory: GroupCat | null = null;
   if (pricingMode === "by_group") {
-    if (!data.group_category) throw new Error("Please choose a group size.");
-    const max = GROUP_MAX[data.group_category];
+    resolvedCategory =
+      data.group_category ?? autoPickCategory(groupPrices, data.adults);
+    if (!resolvedCategory) {
+      throw new Error("Your group is larger than this tour offers. Please contact the guide.");
+    }
+    const max = GROUP_MAX[resolvedCategory];
     if (data.adults > max) {
       throw new Error("Your group is larger than this category. Please contact the guide.");
     }
-    basePrice = Number(groupPrices[data.group_category] ?? 0);
+    basePrice = Number(groupPrices[resolvedCategory] ?? 0);
     if (basePrice <= 0) throw new Error("This group size is not offered for this tour.");
   } else {
     basePrice = Number(groupPrices.fixed ?? tour.price_from ?? 0);
     if (basePrice <= 0) throw new Error("Tour price is not set.");
   }
+
 
   const lang = data.language ?? null;
   const mult = !lang || lang === baseLanguage ? 0 : Number(langMults[lang] ?? 0);
