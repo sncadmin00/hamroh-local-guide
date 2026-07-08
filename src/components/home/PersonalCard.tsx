@@ -41,19 +41,45 @@ export function PersonalCard() {
     try { return JSON.parse(localStorage.getItem("tripPrefs") || "{}"); } catch { return {}; }
   });
   const [aiTip, setAiTip] = useState<string | null>(null);
+  const [upcoming, setUpcoming] = useState<UpcomingBooking[]>([]);
+  const [upIdx, setUpIdx] = useState(0);
 
   useEffect(() => {
-    const applyUser = (user: { user_metadata?: Record<string, unknown>; email?: string | null } | null | undefined) => {
-      if (!user) { setSignedIn(false); setName(null); return; }
+    const loadUpcoming = async (userId: string | undefined) => {
+      if (!userId) { setUpcoming([]); return; }
+      const today = new Date().toISOString().slice(0, 10);
+      const { data } = await supabase
+        .from("bookings")
+        .select("id, experience, date, start_time, status")
+        .eq("user_id", userId)
+        .gte("date", today)
+        .in("status", ["pending", "confirmed"])
+        .order("date", { ascending: true })
+        .limit(5);
+      setUpcoming((data ?? []) as UpcomingBooking[]);
+    };
+    const applyUser = (user: { id?: string; user_metadata?: Record<string, unknown>; email?: string | null } | null | undefined) => {
+      if (!user) { setSignedIn(false); setName(null); setUpcoming([]); return; }
       setSignedIn(true);
       const meta = (user.user_metadata ?? {}) as Record<string, unknown>;
       const full = (meta.full_name as string) || (meta.name as string) || user.email || "";
       setName(full.split(" ")[0] || null);
+      loadUpcoming(user.id);
     };
     supabase.auth.getSession().then(({ data }) => applyUser(data.session?.user));
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => applyUser(s?.user));
     return () => sub.subscription.unsubscribe();
   }, []);
+
+  // Rotate upcoming bookings vertically every 4s
+  useEffect(() => {
+    if (upcoming.length < 2) return;
+    const id = setInterval(() => setUpIdx((i) => (i + 1) % upcoming.length), 4000);
+    return () => clearInterval(id);
+  }, [upcoming.length]);
+
+  const currentUp = useMemo(() => upcoming[upIdx % Math.max(upcoming.length, 1)], [upcoming, upIdx]);
+
 
   useEffect(() => {
     (async () => {
