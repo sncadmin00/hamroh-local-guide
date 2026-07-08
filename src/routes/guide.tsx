@@ -1860,16 +1860,6 @@ function TourEditor({
                 const n = Number(v);
                 if (Number.isFinite(n) && v !== "") mults[k] = n;
               }
-              const perLc = <T,>(fn: (v: string) => T) => ({
-                ru: fn(""), en: fn(""), uz: fn(""),
-              });
-              // Which locales have any manual content (title/short/highlights/included/not_included)
-              const nonEmpty = (lc: Lc) =>
-                titleByLc[lc].trim() !== "" ||
-                shortByLc[lc].trim() !== "" ||
-                highlightsByLc[lc].trim() !== "" ||
-                includedByLc[lc].trim() !== "" ||
-                notIncludedByLc[lc].trim() !== "";
               const baseTitle = titleByLc[baseLc].trim();
               const baseShort = shortByLc[baseLc].trim();
               onSave({
