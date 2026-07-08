@@ -43,12 +43,12 @@ function BookPage() {
     date: "",
     adults: 2,
     children: 0,
-    category: null as GroupCategory | null,
     language: "",
     name: "",
     email: "",
     notes: "",
   });
+  const [selectedMode, setSelectedMode] = useState<PricingMode | null>(null);
 
   // slots are fetched from public HTTP endpoint (see effect below)
   const createBookingFn = useServerFn(createBooking);
