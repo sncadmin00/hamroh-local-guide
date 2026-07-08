@@ -154,10 +154,10 @@ function BookPage() {
   const setChildren = (n: number) => setForm((f) => ({ ...f, children: Math.min(50, Math.max(0, n)) }));
 
   const categories = offeredCategories(tour);
-  // Auto-pick category if not set
-  const selectedCategory: GroupCategory | null = form.category
-    ?? categories.find((c) => GROUP_CATEGORY_MAX[c] >= form.adults)
-    ?? null;
+  // Auto-pick smallest category that fits the adult count
+  const categoriesBySize = [...categories].sort((a, b) => GROUP_CATEGORY_MAX[a] - GROUP_CATEGORY_MAX[b]);
+  const selectedCategory: GroupCategory | null =
+    categoriesBySize.find((c) => GROUP_CATEGORY_MAX[c] >= form.adults) ?? null;
   const adultsExceedAll = tour.pricing_mode === "by_group"
     && categories.length > 0
     && categories.every((c) => GROUP_CATEGORY_MAX[c] < form.adults);
@@ -329,24 +329,13 @@ function BookPage() {
             {tour.pricing_mode === "by_group" && categories.length > 0 && (
               <div>
                 <label className="text-sm font-medium">Group size</label>
-                <div className="mt-2 flex flex-wrap gap-1.5">
-                  {categories.map((c) => {
-                    const active = selectedCategory === c;
-                    const tooSmall = GROUP_CATEGORY_MAX[c] < form.adults;
-                    return (
-                      <button
-                        key={c}
-                        type="button"
-                        disabled={tooSmall}
-                        onClick={() => setForm({ ...form, category: c })}
-                        className={`inline-flex items-center gap-1.5 h-9 px-3 rounded-full text-sm ring-1 transition ${active ? "bg-foreground text-background ring-foreground" : "bg-background ring-border hover:bg-muted"} ${tooSmall ? "opacity-40 cursor-not-allowed" : ""}`}
-                      >
-                        <span>{GROUP_CATEGORY_LABEL[c]}</span>
-                        <span className={`tabular-nums ${active ? "text-background/80" : "text-muted-foreground"}`}>${tour.group_prices[c]}</span>
-                      </button>
-                    );
-                  })}
-                </div>
+                {selectedCategory ? (
+                  <div className="mt-2 inline-flex items-center gap-2 rounded-xl bg-secondary/60 px-4 py-3 text-sm">
+                    <span className="font-medium">{GROUP_CATEGORY_LABEL[selectedCategory]}</span>
+                    <span className="tabular-nums text-muted-foreground">${tour.group_prices[selectedCategory]}</span>
+                    <span className="text-xs text-muted-foreground">— auto-selected from {form.adults} {form.adults === 1 ? "adult" : "adults"}</span>
+                  </div>
+                ) : null}
                 {adultsExceedAll && (
                   <p className="mt-2 text-sm text-amber-700 bg-amber-500/10 rounded-xl p-3">
                     Your group is larger than the offered sizes. Please contact the guide to arrange a custom booking.
