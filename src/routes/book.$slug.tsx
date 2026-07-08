@@ -155,18 +155,38 @@ function BookPage() {
   const setAdults = (n: number) => setForm((f) => ({ ...f, adults: Math.min(50, Math.max(1, n)) }));
   const setChildren = (n: number) => setForm((f) => ({ ...f, children: Math.min(50, Math.max(0, n)) }));
 
-  const categories = offeredCategories(tour);
-  // Auto-pick smallest category that fits the adult count
-  const categoriesBySize = [...categories].sort((a, b) => GROUP_CATEGORY_MAX[a] - GROUP_CATEGORY_MAX[b]);
-  const selectedCategory: GroupCategory | null =
-    categoriesBySize.find((c) => GROUP_CATEGORY_MAX[c] >= form.adults) ?? null;
-  const adultsExceedAll = tour.pricing_mode === "by_group"
-    && categories.length > 0
-    && categories.every((c) => GROUP_CATEGORY_MAX[c] < form.adults);
+  const pricing = readTourPricingClient(tour);
+  const availableModes = pricing.available_modes;
+  const exceedsCapacity = pricing.max_guests != null && form.adults > pricing.max_guests;
 
-  const computedPrice = computeTourPrice(tour, { category: selectedCategory, language: currentLanguage || null });
-  const total = computedPrice ?? 0;
+  // Auto-select the single mode if only one is offered; otherwise wait for the user
+  const effectiveMode: PricingMode | null =
+    availableModes.length === 1
+      ? availableModes[0]
+      : selectedMode && availableModes.includes(selectedMode)
+        ? selectedMode
+        : null;
+
+  // Compute a base price for each available mode at the current adult count.
+  const modePreview: Array<{ mode: PricingMode; price: number | null }> = availableModes.map((m) => ({
+    mode: m,
+    price: exceedsCapacity ? null : computeBasePriceClient(pricing, m, form.adults),
+  }));
+
+  const rawBase = effectiveMode ? computeBasePriceClient(pricing, effectiveMode, form.adults) : null;
+  // Apply language multiplier client-side just for preview
+  const langMult = !currentLanguage || currentLanguage === tour.base_language
+    ? 0
+    : Number(tour.language_multipliers[currentLanguage] ?? 0);
+  const total = rawBase != null ? Math.round(rawBase * (1 + langMult / 100)) : 0;
   const fee = Math.round(total * serviceFeeRate);
+
+  const modeLabel = (m: PricingMode) => {
+    if (m === "fixed") return lang === "ru" ? "Фиксированная" : lang === "uz" ? "Qat'iy" : "Fixed";
+    if (m === "per_person") return lang === "ru" ? "За человека" : lang === "uz" ? "Har kishi" : "Per person";
+    return lang === "ru" ? "По группе" : lang === "uz" ? "Guruh bo'yicha" : "By group";
+  };
+
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
