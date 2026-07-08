@@ -50,6 +50,25 @@ const guideTranslations = {
   "timeoff.conflictTitle": { en: "You have an active booking in this period", uz: "Bu davrda faol bron bor", ru: "В этот период есть активная бронь" },
   "timeoff.conflictText": { en: "Cancel or reschedule the booking first, then mark the time off.", uz: "Avval bronni bekor qiling yoki qayta rejalashtiring, keyin dam olishni belgilang.", ru: "Сначала отмените или перенесите бронь, затем отметьте отгул." },
 
+  "buffer.title": { en: "Buffer between tours", uz: "Turlar orasidagi tanaffus", ru: "Перерыв между турами" },
+  "buffer.text": { en: "Time you need between back-to-back tours. Slots that don't fit this buffer around an existing booking are hidden.", uz: "Ketma-ket turlar orasida sizga kerak bo'lgan vaqt. Bu tanaffusga sig'maydigan slotlar yashiriladi.", ru: "Сколько времени вам нужно между турами подряд. Слоты, которые не влезают с учётом перерыва вокруг существующей брони, скрываются." },
+  "buffer.saved": { en: "Buffer updated", uz: "Tanaffus yangilandi", ru: "Перерыв обновлён" },
+
+  "schedule.title": { en: "Weekly schedule", uz: "Haftalik jadval", ru: "Недельное расписание" },
+  "schedule.text": { en: "Pick the days and times this tour runs. Travellers can book any of these times — booked slots are hidden automatically.", uz: "Tur qaysi kunlar va vaqtlarda o'tishini tanlang. Sayohatchilar shu vaqtlarni band qila oladi — band qilingan slotlar avtomatik yashiriladi.", ru: "Выберите дни и время, когда идёт этот тур. Клиенты смогут бронировать любое из этих окон — занятые автоматически скрываются." },
+  "schedule.addTime": { en: "Add time", uz: "Vaqt qo'shish", ru: "Добавить время" },
+  "schedule.noTimes": { en: "Not running this day", uz: "Bu kuni yo'q", ru: "В этот день не работает" },
+  "schedule.empty": { en: "No schedule set — this tour will not be bookable until you pick at least one day and time.", uz: "Jadval belgilanmagan — kamida bir kun va vaqt tanlamaguncha bu turni band qilib bo'lmaydi.", ru: "Расписание не задано — тур будет недоступен для брони, пока вы не выберете хотя бы один день и время." },
+  "weekday.0": { en: "Sun", uz: "Yak", ru: "Вс" },
+  "weekday.1": { en: "Mon", uz: "Du", ru: "Пн" },
+  "weekday.2": { en: "Tue", uz: "Se", ru: "Вт" },
+  "weekday.3": { en: "Wed", uz: "Chr", ru: "Ср" },
+  "weekday.4": { en: "Thu", uz: "Pay", ru: "Чт" },
+  "weekday.5": { en: "Fri", uz: "Ju", ru: "Пт" },
+  "weekday.6": { en: "Sat", uz: "Sha", ru: "Сб" },
+
+
+
   "bookings.empty": { en: "No bookings yet.", uz: "Hozircha bronlar yo'q.", ru: "Бронирований пока нет." },
   "bookings.guestOne": { en: "guest", uz: "mehmon", ru: "гость" },
   "bookings.guestMany": { en: "guests", uz: "mehmon", ru: "гостей" },
