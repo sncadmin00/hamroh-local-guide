@@ -700,7 +700,7 @@ function ToursPanel() {
                       const modes = it.pricing_modes.length > 0
                         ? it.pricing_modes
                         : (it.pricing_mode === "by_group" ? ["by_group" as const] : ["fixed" as const]);
-                      const chips: React.ReactNode[] = [];
+                      const chips: any[] = [];
                       if (modes.includes("fixed") && (it.fixed_price ?? it.group_prices?.fixed ?? it.price_from)) {
                         chips.push(
                           <span key="fixed" className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs bg-primary/10 text-primary ring-1 ring-primary/20">
