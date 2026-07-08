@@ -800,9 +800,11 @@ function TourEditor({
     cover_url: string | null;
     city_id: string;
     duration_hours: number;
-    pricing_mode: "fixed" | "by_group";
-    fixed_price: number;
-    group_prices: Partial<Record<(typeof GROUP_KEYS)[number], number>>;
+    pricing_modes: ("fixed" | "per_person" | "by_group")[];
+    fixed_price: number | null;
+    per_person_price: number | null;
+    group_tiers: Array<{ min: number; max: number; price: number }>;
+    max_guests: number | null;
     base_language: string;
     language_multipliers: Record<string, number>;
     children_free_under: number;
