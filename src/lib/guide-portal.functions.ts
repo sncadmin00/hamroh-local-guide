@@ -397,7 +397,7 @@ export const listMyTours = createServerFn({ method: "GET" })
       supabase.from("cities").select("id, name, lat, lng").in("id", cityIds),
       supabase
         .from("tours")
-        .select("id, slug, title, short_description, cover_url, city_id, duration_hours, price_from, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, pricing_modes, fixed_price, per_person_price, group_tiers, max_guests, children_free_under, transport_included, languages, highlights, highlights_ru, highlights_en, highlights_uz, included, included_ru, included_en, included_uz, not_included, not_included_ru, not_included_en, not_included_uz, meeting_point, end_point, meeting_lat, meeting_lng, end_lat, end_lng, end_same_as_meeting, published, sort_order, tour_categories(category_id)")
+        .select("id, slug, title, short_description, cover_url, city_id, duration_hours, price_from, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, pricing_modes, fixed_price, fixed_max_guests, per_person_price, group_tiers, max_guests, children_free_under, transport_included, languages, highlights, highlights_ru, highlights_en, highlights_uz, included, included_ru, included_en, included_uz, not_included, not_included_ru, not_included_en, not_included_uz, meeting_point, end_point, meeting_lat, meeting_lng, end_lat, end_lng, end_same_as_meeting, published, sort_order, tour_categories(category_id)")
         .eq("guide_id", guide.id)
         .order("sort_order", { ascending: true }),
     ]);
@@ -431,6 +431,7 @@ const upsertTourSchema = z.object({
   // NEW flexible pricing model
   pricing_modes: z.array(z.enum(["fixed", "per_person", "by_group"])).min(1).max(3),
   fixed_price: z.number().min(0).max(100000).nullable().default(null),
+  fixed_max_guests: z.number().int().min(1).max(500).nullable().default(null),
   per_person_price: z.number().min(0).max(100000).nullable().default(null),
   group_tiers: z.array(groupTierSchema).max(20).default([]),
   max_guests: z.number().int().min(1).max(500).nullable().default(null),
@@ -585,6 +586,7 @@ export const upsertTour = createServerFn({ method: "POST" })
       // NEW pricing model (authoritative)
       pricing_modes: modes,
       fixed_price: modes.includes("fixed") ? data.fixed_price : null,
+      fixed_max_guests: modes.includes("fixed") ? data.fixed_max_guests : null,
       per_person_price: modes.includes("per_person") ? data.per_person_price : null,
       group_tiers: modes.includes("by_group") ? normalizedTiers : [],
       max_guests: maxGuests,

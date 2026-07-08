@@ -114,6 +114,12 @@ const guideTranslations = {
     uz: "Guruh hajmidan qat'i nazar butun tur uchun bitta narx.",
     ru: "Одна цена за весь тур, независимо от размера группы.",
   },
+  "editor.fixedMaxGuests": { en: "Max guests for fixed price", uz: "Qat'iy narx uchun maksimal mehmonlar", ru: "Максимум гостей на фикс. цену" },
+  "editor.fixedMaxGuestsHelp": {
+    en: "Optional. Cap how many guests are allowed under this flat price. Larger groups will have to pick a different pricing option.",
+    uz: "Ixtiyoriy. Ushbu qat'iy narxda ruxsat etilgan mehmonlar soni. Kattaroq guruhlar boshqa narx variantini tanlashi kerak.",
+    ru: "Опционально. Ограничение на количество гостей по этой фиксированной цене. Более крупным группам придётся выбрать другой вариант оплаты.",
+  },
   "editor.perPerson": { en: "Per person", uz: "Har bir kishi uchun", ru: "За человека" },
   "editor.perPersonHelp": {
     en: "Price per adult. Total = price × adults.",

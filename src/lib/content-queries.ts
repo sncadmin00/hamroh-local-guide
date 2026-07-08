@@ -653,7 +653,11 @@ export function computeBasePriceClient(
   mode: PricingMode,
   adults: number,
 ): number | null {
-  if (mode === "fixed") return pricing.fixed_price && pricing.fixed_price > 0 ? pricing.fixed_price : null;
+  if (mode === "fixed") {
+    if (!pricing.fixed_price || pricing.fixed_price <= 0) return null;
+    if (pricing.fixed_max_guests != null && adults > pricing.fixed_max_guests) return null;
+    return pricing.fixed_price;
+  }
   if (mode === "per_person") {
     if (!pricing.per_person_price || pricing.per_person_price <= 0) return null;
     return Math.round(pricing.per_person_price * adults);
