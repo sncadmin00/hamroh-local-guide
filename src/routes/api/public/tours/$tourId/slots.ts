@@ -62,15 +62,15 @@ export const Route = createFileRoute('/api/public/tours/$tourId/slots')({
         const url = new URL(request.url)
         const today = new Date().toISOString().slice(0, 10)
         const from = url.searchParams.get('from') ?? today
-        let to = url.searchParams.get('to') ?? addDays(from, 60)
+        let to = url.searchParams.get('to') ?? addDays(from, 180)
         if (!DATE_RE.test(from) || !DATE_RE.test(to)) {
           return Response.json({ error: 'Invalid date (expected YYYY-MM-DD)' }, { status: 400 })
         }
         if (from > to) {
           return Response.json({ error: 'from must be <= to' }, { status: 400 })
         }
-        // Cap range at 90 days
-        if (daysBetween(from, to) > 90) to = addDays(from, 90)
+        // Cap range at 180 days (~6 months)
+        if (daysBetween(from, to) > 180) to = addDays(from, 180)
 
         const { supabaseAdmin } = await import('@/integrations/supabase/client.server')
 
@@ -216,7 +216,7 @@ export const Route = createFileRoute('/api/public/tours/$tourId/slots')({
           .sort((a, b) =>
             a.date === b.date ? a.start_time.localeCompare(b.start_time) : a.date.localeCompare(b.date),
           )
-          .slice(0, 400)
+          .slice(0, 1500)
           .map((c) => ({
             date: c.date,
             start_time: c.start_time,
