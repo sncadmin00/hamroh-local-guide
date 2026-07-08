@@ -13,17 +13,15 @@
  *   - duration_minutes: integer (from tours.duration_hours * 60)
  *   - source:           'schedule' | 'manual'
  *
- * Slots come from two sources unioned by (date, start_time):
- *   1. tour_schedules — recurring weekday+time, expanded into concrete dates.
- *   2. guide_availability_slots — one-off manual slots the guide added,
- *      filtered by matching duration for this tour.
+ * Slots come from tour_schedules — recurring weekday+time, expanded into
+ * concrete dates.
  *
  * Excluded:
  *   - slots overlapping any active (pending/confirmed) booking for this guide,
  *     inflated by guide.buffer_minutes on both sides (matches trigger logic).
- *   - slots overlapping any guide_time_blocks interval.
+ *   - slots overlapping any guide_time_blocks interval (guide is not working).
  *
- * Sorted by (date asc, start_time asc). Max 400 rows.
+ * Sorted by (date asc, start_time asc). Max 1500 rows.
  */
 import { createFileRoute } from '@tanstack/react-router'
 
@@ -94,19 +92,12 @@ export const Route = createFileRoute('/api/public/tours/$tourId/slots')({
         const buffer = Math.max(0, Number(guide?.buffer_minutes ?? 60))
 
         // 2. Parallel fetches
-        const [schedRes, manualRes, busyRes, blocksRes] = await Promise.all([
+        const [schedRes, busyRes, blocksRes] = await Promise.all([
           supabaseAdmin
             .from('tour_schedules')
             .select('weekday, start_time')
             .eq('tour_id', tour.id)
             .eq('is_active', true),
-          supabaseAdmin
-            .from('guide_availability_slots')
-            .select('date, start_time, duration_minutes')
-            .eq('guide_id', tour.guide_id)
-            .eq('is_booked', false)
-            .gte('date', from)
-            .lte('date', to),
           supabaseAdmin
             .from('bookings')
             .select('date, start_time, duration_minutes')
@@ -124,7 +115,6 @@ export const Route = createFileRoute('/api/public/tours/$tourId/slots')({
         ])
 
         if (schedRes.error) return Response.json({ error: schedRes.error.message }, { status: 500 })
-        if (manualRes.error) return Response.json({ error: manualRes.error.message }, { status: 500 })
         if (busyRes.error) return Response.json({ error: busyRes.error.message }, { status: 500 })
         if (blocksRes.error) return Response.json({ error: blocksRes.error.message }, { status: 500 })
 
@@ -144,7 +134,6 @@ export const Route = createFileRoute('/api/public/tours/$tourId/slots')({
         for (const bk of blocksRes.data ?? []) {
           const start = new Date(bk.starts_at as string)
           const end = new Date(bk.ends_at as string)
-          // Iterate days from start's UTC date to end's UTC date
           const cursor = new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate()))
           const stop = new Date(Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate()))
           while (cursor.getTime() <= stop.getTime()) {
@@ -167,7 +156,7 @@ export const Route = createFileRoute('/api/public/tours/$tourId/slots')({
         }
 
         // 5. Expand tour_schedules into concrete dates
-        type Cand = { date: string; start_time: string; source: 'schedule' | 'manual' }
+        type Cand = { date: string; start_time: string; source: 'schedule' }
         const scheduleByWeekday = new Map<number, Set<string>>()
         for (const row of schedRes.data ?? []) {
           const wd = Number(row.weekday)
@@ -184,20 +173,6 @@ export const Route = createFileRoute('/api/public/tours/$tourId/slots')({
           const times = scheduleByWeekday.get(wd)
           if (!times) continue
           for (const t of times) candidates.push({ date: dateISO, start_time: t, source: 'schedule' })
-        }
-
-        // 6. Manual slots (only ones matching this tour's duration)
-        const seen = new Set(candidates.map((c) => `${c.date}|${c.start_time}`))
-        for (const m of manualRes.data ?? []) {
-          if ((m.duration_minutes ?? 120) !== duration) continue
-          const key = `${m.date}|${hhmmss(m.start_time as string)}`
-          if (seen.has(key)) continue
-          seen.add(key)
-          candidates.push({
-            date: m.date as string,
-            start_time: hhmmss(m.start_time as string),
-            source: 'manual',
-          })
         }
 
         // 7. Filter out overlaps with busy+blocks
