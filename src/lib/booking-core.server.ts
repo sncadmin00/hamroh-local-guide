@@ -302,37 +302,19 @@ export async function createBookingCore(
   const { data: tour, error: tourErr } = await supabaseAdmin
     .from("tours")
     .select(
-      "id, guide_id, title, price_from, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, children_free_under, duration_hours, published",
+      "id, guide_id, title, price_from, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, pricing_modes, fixed_price, per_person_price, group_tiers, max_guests, children_free_under, duration_hours, published",
     )
     .eq("id", data.tour_id)
     .maybeSingle();
   if (tourErr) throw new Error(tourErr.message);
   if (!tour || !tour.published) throw new Error("Tour not available");
 
-  const pricingMode = (tour as any).pricing_mode === "by_group" ? "by_group" : "fixed";
-  const groupPrices = ((tour as any).group_prices ?? {}) as Record<string, number>;
   const langMults = ((tour as any).language_multipliers ?? {}) as Record<string, number>;
   const baseLanguage = (tour as any).base_language as string | null;
 
-  let basePrice = 0;
-  let resolvedCategory: GroupCat | null = null;
-  if (pricingMode === "by_group") {
-    resolvedCategory =
-      data.group_category ?? autoPickCategory(groupPrices, data.adults);
-    if (!resolvedCategory) {
-      throw new Error("Your group is larger than this tour offers. Please contact the guide.");
-    }
-    const max = GROUP_MAX[resolvedCategory];
-    if (data.adults > max) {
-      throw new Error("Your group is larger than this category. Please contact the guide.");
-    }
-    basePrice = Number(groupPrices[resolvedCategory] ?? 0);
-    if (basePrice <= 0) throw new Error("This group size is not offered for this tour.");
-  } else {
-    basePrice = Number(groupPrices.fixed ?? tour.price_from ?? 0);
-    if (basePrice <= 0) throw new Error("Tour price is not set.");
-  }
-
+  const pricing = readTourPricing(tour as any);
+  const { base_price: basePrice, pricing_mode: resolvedMode, resolved_tier: resolvedTier } =
+    computeBasePrice(pricing, data.adults, data.pricing_mode);
 
   const lang = data.language ?? null;
   const mult = !lang || lang === baseLanguage ? 0 : Number(langMults[lang] ?? 0);
