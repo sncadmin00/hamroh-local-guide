@@ -298,7 +298,7 @@ export async function createBookingCore(
     guests: totalGuests,
     adults: data.adults,
     children: data.children,
-    group_category: data.group_category ?? null,
+    group_category: resolvedCategory ?? data.group_category ?? null,
     customer_name: data.customer_name,
     customer_email: data.customer_email || null,
     customer_telegram_user_id: data.customer_telegram_user_id ?? null,
