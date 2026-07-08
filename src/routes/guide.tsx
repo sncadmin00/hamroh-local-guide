@@ -1194,6 +1194,80 @@ function TourEditor({
           <button onClick={onClose} className="h-9 w-9 grid place-items-center rounded-full hover:bg-muted"><X className="h-4 w-4" /></button>
         </div>
         <div className="mt-4 space-y-4">
+          <div className="rounded-2xl bg-primary/5 ring-1 ring-primary/20 p-3">
+            {!aiOpen ? (
+              <button
+                type="button"
+                onClick={() => setAiOpen(true)}
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:opacity-80"
+              >
+                <Sparkles className="h-4 w-4" /> {tg("editor.ai.button")}
+              </button>
+            ) : (
+              <div className="space-y-2">
+                <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+                  <Sparkles className="h-3.5 w-3.5 text-primary" /> {tg("editor.ai.hint")}
+                </p>
+                <textarea
+                  value={aiSeed}
+                  onChange={(e) => setAiSeed(e.target.value)}
+                  rows={3}
+                  placeholder={tg("editor.ai.placeholder")}
+                  className="w-full rounded-xl border border-input bg-background p-2 text-sm"
+                />
+                <div className="flex items-center gap-2 justify-end">
+                  <button
+                    type="button"
+                    onClick={() => { setAiOpen(false); setAiSeed(""); }}
+                    disabled={aiBusy}
+                    className="h-9 px-3 rounded-full text-sm text-muted-foreground hover:bg-muted disabled:opacity-50"
+                  >
+                    {tg("editor.ai.cancel")}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={aiBusy || !aiSeed.trim()}
+                    onClick={async () => {
+                      if (!aiSeed.trim()) return;
+                      setAiBusy(true);
+                      try {
+                        const cityName = cities.find((c) => c.id === cityId)?.name ?? "";
+                        const catNames = categories
+                          .filter((c) => selectedCats.includes(c.id))
+                          .map((c) => (c as { name?: string }).name ?? "")
+                          .filter(Boolean);
+                        const res = await genDraftFn({
+                          data: {
+                            seed: aiSeed.trim(),
+                            city: cityName,
+                            categories: catNames,
+                            duration_hours: durationHours,
+                            transport_included: transportIncluded,
+                            language_hint: (lang === "ru" || lang === "uz" || lang === "en") ? lang : "auto",
+                          },
+                        });
+                        if (res.title) setTitle(res.title);
+                        if (res.short_description) setShortDesc(res.short_description);
+                        if (res.highlights?.length) setHighlights(res.highlights.join("\n"));
+                        toast.success(tg("editor.ai.done"));
+                        setAiOpen(false);
+                        setAiSeed("");
+                      } catch (e) {
+                        toast.error((e as Error)?.message || tg("editor.ai.error"));
+                      } finally {
+                        setAiBusy(false);
+                      }
+                    }}
+                    className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 disabled:opacity-50"
+                  >
+                    {aiBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                    {aiBusy ? tg("editor.ai.generating") : tg("editor.ai.generate")}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
           <label className="block text-sm">
             <span className="text-xs text-muted-foreground">{tg("editor.title")}</span>
             <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={tg("editor.titlePh")} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
