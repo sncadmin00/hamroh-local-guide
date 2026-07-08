@@ -548,25 +548,6 @@ export const upsertTour = createServerFn({ method: "POST" })
       legacyGroupPrices.fixed = priceFrom;
     }
 
-
-    // Clean language multipliers (drop base language and zero/empty)
-    const cleanedMults: Record<string, number> = {};
-    for (const [k, v] of Object.entries(data.language_multipliers)) {
-      if (k === data.base_language) continue;
-      if (Number.isFinite(v)) cleanedMults[k] = v;
-    }
-
-    // price_from = minimum offered base price
-    const priceFrom = Math.min(...Object.values(groupPrices));
-
-    // Compute price_by_language from base price + multipliers
-    const basePrice = data.pricing_mode === "by_group" ? priceFrom : data.fixed_price;
-    const priceByLanguage: Record<string, number> = {};
-    for (const lng of data.languages) {
-      const mult = lng === data.base_language ? 0 : Number(cleanedMults[lng] ?? 0);
-      priceByLanguage[lng] = Math.round(basePrice * (1 + mult / 100) * 100) / 100;
-    }
-
     // Auto-translate title + short_description into the other two site languages
     const sourceLang = mapBaseLanguage(data.base_language);
     const translations = await translateTourFields({
@@ -601,10 +582,17 @@ export const upsertTour = createServerFn({ method: "POST" })
       duration_hours: data.duration_hours,
       price_from: priceFrom,
       price_by_language: priceByLanguage,
-      pricing_mode: data.pricing_mode,
+      // NEW pricing model (authoritative)
+      pricing_modes: modes,
+      fixed_price: modes.includes("fixed") ? data.fixed_price : null,
+      per_person_price: modes.includes("per_person") ? data.per_person_price : null,
+      group_tiers: modes.includes("by_group") ? normalizedTiers : [],
+      max_guests: maxGuests,
+      // Legacy columns kept for backward compatibility with unmigrated readers
+      pricing_mode: legacyPricingMode,
+      group_prices: legacyGroupPrices,
       base_language: data.base_language,
       language_multipliers: cleanedMults,
-      group_prices: groupPrices,
       children_free_under: data.children_free_under,
       languages: data.languages,
       transport_included: data.transport_included,
@@ -621,6 +609,7 @@ export const upsertTour = createServerFn({ method: "POST" })
       published: data.published,
       sort_order: data.sort_order,
     };
+
 
 
 
