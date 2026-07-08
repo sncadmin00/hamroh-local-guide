@@ -959,45 +959,131 @@ function TourEditor({
           </div>
 
           {/* Pricing */}
-          <div className="rounded-2xl border border-border bg-card/40 p-4 space-y-3">
-            <div className="flex items-center gap-2">
+          <div className="rounded-2xl border border-border bg-card/40 p-4 space-y-4">
+            <div>
               <p className="text-sm font-medium">{tg("editor.pricing")}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{tg("editor.pricingHelp")}</p>
             </div>
-            <div className="flex flex-wrap gap-2">
-              <label className={`inline-flex items-center gap-2 rounded-full px-3 h-9 text-sm cursor-pointer ${pricingMode === "fixed" ? "bg-foreground text-background" : "bg-secondary"}`}>
-                <input type="radio" name="pmode" className="hidden" checked={pricingMode === "fixed"} onChange={() => setPricingMode("fixed")} />
-                {tg("editor.fixedPrice")}
+
+            {/* Mode: Fixed */}
+            <div className="rounded-xl border border-input bg-background p-3 space-y-2">
+              <label className="inline-flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked={modeFixed} onChange={(e) => setModeFixed(e.target.checked)} className="h-4 w-4" />
+                <span className="text-sm font-medium">{tg("editor.fixedPrice")}</span>
               </label>
-              <label className={`inline-flex items-center gap-2 rounded-full px-3 h-9 text-sm cursor-pointer ${pricingMode === "by_group" ? "bg-foreground text-background" : "bg-secondary"}`}>
-                <input type="radio" name="pmode" className="hidden" checked={pricingMode === "by_group"} onChange={() => setPricingMode("by_group")} />
-                {tg("editor.priceByGroup")}
-              </label>
+              <p className="text-xs text-muted-foreground">{tg("editor.fixedPriceHelp")}</p>
+              {modeFixed && (
+                <div className="flex items-center gap-2 max-w-xs">
+                  <span className="text-muted-foreground text-sm">$</span>
+                  <input
+                    type="number" min={0}
+                    value={fixedPriceText}
+                    onChange={(e) => setFixedPriceText(e.target.value)}
+                    placeholder="0"
+                    className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm tabular-nums"
+                  />
+                </div>
+              )}
             </div>
-            {pricingMode === "fixed" ? (
-              <label className="block text-sm max-w-xs">
-                <span className="text-xs text-muted-foreground">{tg("editor.priceBase")}</span>
-                <input type="number" min={0} value={fixedPrice || ""} onChange={(e) => setFixedPrice(Number(e.target.value) || 0)} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
+
+            {/* Mode: Per person */}
+            <div className="rounded-xl border border-input bg-background p-3 space-y-2">
+              <label className="inline-flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked={modePerPerson} onChange={(e) => setModePerPerson(e.target.checked)} className="h-4 w-4" />
+                <span className="text-sm font-medium">{tg("editor.perPerson")}</span>
               </label>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {GROUP_KEYS.map((k) => (
-                  <div key={k} className="flex items-center gap-2 rounded-xl border border-input bg-background px-3 h-11 text-sm">
-                    <span className="flex-1 font-medium">{tg(`group.${k}` as Parameters<typeof tg>[0])}</span>
-                    <span className="text-muted-foreground">$</span>
-                    <input
-                      type="number"
-                      min={0}
-                      value={groupPricesText[k] ?? ""}
-                      onChange={(e) => setGroupPricesText({ ...groupPricesText, [k]: e.target.value })}
-                      placeholder="—"
-                      className="w-24 h-9 bg-transparent outline-none text-sm tabular-nums"
-                    />
-                  </div>
-                ))}
-                <p className="col-span-full text-xs text-muted-foreground">{tg("editor.skipGroup")}</p>
-              </div>
-            )}
+              <p className="text-xs text-muted-foreground">{tg("editor.perPersonHelp")}</p>
+              {modePerPerson && (
+                <div className="flex items-center gap-2 max-w-xs">
+                  <span className="text-muted-foreground text-sm">$</span>
+                  <input
+                    type="number" min={0}
+                    value={perPersonPriceText}
+                    onChange={(e) => setPerPersonPriceText(e.target.value)}
+                    placeholder="0"
+                    className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm tabular-nums"
+                  />
+                  <span className="text-xs text-muted-foreground">/ adult</span>
+                </div>
+              )}
+            </div>
+
+            {/* Mode: By group */}
+            <div className="rounded-xl border border-input bg-background p-3 space-y-2">
+              <label className="inline-flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked={modeByGroup} onChange={(e) => setModeByGroup(e.target.checked)} className="h-4 w-4" />
+                <span className="text-sm font-medium">{tg("editor.priceByGroup")}</span>
+              </label>
+              <p className="text-xs text-muted-foreground">{tg("editor.byGroupHelp")}</p>
+              {modeByGroup && (
+                <div className="space-y-2">
+                  {groupTiers.map((tier, idx) => (
+                    <div key={idx} className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2 items-center">
+                      <label className="text-xs">
+                        <span className="text-muted-foreground">{tg("editor.tier.min")}</span>
+                        <input
+                          type="number" min={1}
+                          value={tier.min}
+                          onChange={(e) => setGroupTiers((rows) => rows.map((r, i) => i === idx ? { ...r, min: e.target.value } : r))}
+                          className="mt-1 h-9 w-full rounded-lg border border-input bg-background px-2 text-sm tabular-nums"
+                        />
+                      </label>
+                      <label className="text-xs">
+                        <span className="text-muted-foreground">{tg("editor.tier.max")}</span>
+                        <input
+                          type="number" min={1}
+                          value={tier.max}
+                          onChange={(e) => setGroupTiers((rows) => rows.map((r, i) => i === idx ? { ...r, max: e.target.value } : r))}
+                          className="mt-1 h-9 w-full rounded-lg border border-input bg-background px-2 text-sm tabular-nums"
+                        />
+                      </label>
+                      <label className="text-xs">
+                        <span className="text-muted-foreground">{tg("editor.tier.price")}</span>
+                        <input
+                          type="number" min={0}
+                          value={tier.price}
+                          onChange={(e) => setGroupTiers((rows) => rows.map((r, i) => i === idx ? { ...r, price: e.target.value } : r))}
+                          className="mt-1 h-9 w-full rounded-lg border border-input bg-background px-2 text-sm tabular-nums"
+                        />
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => setGroupTiers((rows) => rows.filter((_, i) => i !== idx))}
+                        className="h-9 w-9 grid place-items-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive mt-4"
+                        aria-label={tg("editor.tier.remove")}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setGroupTiers((rows) => {
+                      const lastMax = rows.length > 0 ? Number(rows[rows.length - 1].max) || 0 : 0;
+                      return [...rows, { min: String(lastMax + 1), max: String(lastMax + 2), price: "" }];
+                    })}
+                    className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full bg-secondary text-xs font-medium hover:bg-secondary/80"
+                  >
+                    <Plus className="h-3.5 w-3.5" /> {tg("editor.tier.add")}
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Max guests */}
+            <label className="block text-sm max-w-xs">
+              <span className="text-xs text-muted-foreground">{tg("editor.maxGuests")}</span>
+              <input
+                type="number" min={1}
+                value={maxGuestsText}
+                onChange={(e) => setMaxGuestsText(e.target.value)}
+                placeholder="—"
+                className="mt-1 h-10 w-full rounded-lg border border-input bg-background px-3 text-sm tabular-nums"
+              />
+              <span className="mt-1 block text-[11px] text-muted-foreground">{tg("editor.maxGuestsHelp")}</span>
+            </label>
           </div>
+
 
           <div className="space-y-2">
             <p className="text-sm font-medium">{tg("editor.cover")}</p>
