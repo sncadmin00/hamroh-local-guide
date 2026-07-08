@@ -1,11 +1,36 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { MapPin, Calendar, Sparkles, ArrowRight } from "lucide-react";
+import { MapPin, Calendar, Sparkles, ArrowRight, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 import { CityPicker } from "@/components/CityPicker";
 
 type Prefs = { city?: string; startDate?: string; endDate?: string };
+
+type UpcomingBooking = {
+  id: string;
+  experience: string;
+  date: string;
+  start_time: string | null;
+  status: string;
+};
+
+function formatWhen(date: string, time: string | null) {
+  try {
+    const d = new Date(`${date}T${(time ?? "12:00").slice(0, 8)}`);
+    const dateStr = d.toLocaleDateString("en-US", { month: "long", day: "numeric" });
+    const timeStr = time ? d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "";
+    return timeStr ? `${dateStr} · ${timeStr}` : dateStr;
+  } catch {
+    return date;
+  }
+}
+
+function daysUntil(date: string) {
+  const now = new Date(); now.setHours(0, 0, 0, 0);
+  const target = new Date(`${date}T00:00:00`);
+  return Math.round((target.getTime() - now.getTime()) / 86400000);
+}
 
 export function PersonalCard() {
   const { t } = useI18n();
@@ -16,19 +41,45 @@ export function PersonalCard() {
     try { return JSON.parse(localStorage.getItem("tripPrefs") || "{}"); } catch { return {}; }
   });
   const [aiTip, setAiTip] = useState<string | null>(null);
+  const [upcoming, setUpcoming] = useState<UpcomingBooking[]>([]);
+  const [upIdx, setUpIdx] = useState(0);
 
   useEffect(() => {
-    const applyUser = (user: { user_metadata?: Record<string, unknown>; email?: string | null } | null | undefined) => {
-      if (!user) { setSignedIn(false); setName(null); return; }
+    const loadUpcoming = async (userId: string | undefined) => {
+      if (!userId) { setUpcoming([]); return; }
+      const today = new Date().toISOString().slice(0, 10);
+      const { data } = await supabase
+        .from("bookings")
+        .select("id, experience, date, start_time, status")
+        .eq("user_id", userId)
+        .gte("date", today)
+        .in("status", ["pending", "confirmed"])
+        .order("date", { ascending: true })
+        .limit(5);
+      setUpcoming((data ?? []) as UpcomingBooking[]);
+    };
+    const applyUser = (user: { id?: string; user_metadata?: Record<string, unknown>; email?: string | null } | null | undefined) => {
+      if (!user) { setSignedIn(false); setName(null); setUpcoming([]); return; }
       setSignedIn(true);
       const meta = (user.user_metadata ?? {}) as Record<string, unknown>;
       const full = (meta.full_name as string) || (meta.name as string) || user.email || "";
       setName(full.split(" ")[0] || null);
+      loadUpcoming(user.id);
     };
     supabase.auth.getSession().then(({ data }) => applyUser(data.session?.user));
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => applyUser(s?.user));
     return () => sub.subscription.unsubscribe();
   }, []);
+
+  // Rotate upcoming bookings vertically every 4s
+  useEffect(() => {
+    if (upcoming.length < 2) return;
+    const id = setInterval(() => setUpIdx((i) => (i + 1) % upcoming.length), 4000);
+    return () => clearInterval(id);
+  }, [upcoming.length]);
+
+  const currentUp = useMemo(() => upcoming[upIdx % Math.max(upcoming.length, 1)], [upcoming, upIdx]);
+
 
   useEffect(() => {
     (async () => {
@@ -83,6 +134,65 @@ export function PersonalCard() {
             </h1>
           </div>
         </div>
+
+        {/* Upcoming tours vertical carousel */}
+        {upcoming.length > 0 && currentUp && (
+          <Link
+            to="/my-bookings"
+            className="block rounded-2xl p-3 mb-2 transition-transform hover:-translate-y-0.5"
+            style={{
+              background: "color-mix(in srgb, #1F9BB4 10%, transparent)",
+              border: "1px solid color-mix(in srgb, #1F9BB4 25%, transparent)",
+            }}
+          >
+            <div className="flex items-center gap-3">
+              <div
+                className="h-9 w-9 rounded-full flex items-center justify-center shrink-0"
+                style={{ background: "#1F9BB4" }}
+              >
+                <Clock className="h-4 w-4" style={{ color: "#fff" }} />
+              </div>
+              <div className="flex-1 min-w-0 overflow-hidden" style={{ height: 40 }}>
+                <div
+                  className="transition-transform duration-500 ease-out"
+                  style={{ transform: `translateY(-${upIdx * 40}px)` }}
+                >
+                  {upcoming.map((b) => {
+                    const d = daysUntil(b.date);
+                    const when = d === 0 ? "Today" : d === 1 ? "Tomorrow" : `in ${d} days`;
+                    return (
+                      <div key={b.id} className="flex flex-col justify-center" style={{ height: 40 }}>
+                        <p className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "#1F9BB4" }}>
+                          Upcoming tour · {when}
+                        </p>
+                        <p className="text-sm font-semibold truncate" style={{ color: "var(--foreground)" }}>
+                          <span className="truncate">{b.experience}</span>
+                          <span className="font-normal" style={{ color: "var(--muted-foreground)" }}> · {formatWhen(b.date, b.start_time)}</span>
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+              <ArrowRight className="h-4 w-4 shrink-0" style={{ color: "#1F9BB4" }} />
+            </div>
+            {upcoming.length > 1 && (
+              <div className="flex justify-center gap-1 mt-2">
+                {upcoming.map((_, i) => (
+                  <span
+                    key={i}
+                    className="h-1 rounded-full transition-all"
+                    style={{
+                      width: i === upIdx ? 12 : 4,
+                      background: i === upIdx ? "#1F9BB4" : "color-mix(in srgb, #1F9BB4 30%, transparent)",
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+          </Link>
+        )}
+
 
         {/* City row */}
         <div
