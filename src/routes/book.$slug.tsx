@@ -532,7 +532,7 @@ function BookPage() {
               </span>
             </label>
 
-            <button type="submit" disabled={submitting || adultsExceedAll || total === 0 || !offerAccepted || !offerVersion} className="inline-flex h-12 w-full items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.01] disabled:opacity-60">
+            <button type="submit" disabled={submitting || exceedsCapacity || !effectiveMode || total === 0 || !offerAccepted || !offerVersion} className="inline-flex h-12 w-full items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.01] disabled:opacity-60">
               {submitting ? "Sending…" : isInstantMode ? `Confirm & book — $${total + fee}` : `Request booking — $${total + fee}`}
             </button>
             <p className="text-center text-xs text-muted-foreground">{isInstantMode ? "Your slot is locked in instantly." : "Your guide will review and confirm this request."}</p>
