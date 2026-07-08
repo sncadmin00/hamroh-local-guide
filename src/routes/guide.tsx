@@ -1860,10 +1860,22 @@ function TourEditor({
                 const n = Number(v);
                 if (Number.isFinite(n) && v !== "") mults[k] = n;
               }
+              const perLc = <T,>(fn: (v: string) => T) => ({
+                ru: fn(""), en: fn(""), uz: fn(""),
+              });
+              // Which locales have any manual content (title/short/highlights/included/not_included)
+              const nonEmpty = (lc: Lc) =>
+                titleByLc[lc].trim() !== "" ||
+                shortByLc[lc].trim() !== "" ||
+                highlightsByLc[lc].trim() !== "" ||
+                includedByLc[lc].trim() !== "" ||
+                notIncludedByLc[lc].trim() !== "";
+              const baseTitle = titleByLc[baseLc].trim();
+              const baseShort = shortByLc[baseLc].trim();
               onSave({
                 id: initial?.id,
-                title: title.trim(),
-                short_description: shortDesc.trim(),
+                title: baseTitle,
+                short_description: baseShort,
                 cover_url: coverUrl.trim() || null,
                 city_id: cityId,
                 duration_hours: durationHours,
@@ -1882,10 +1894,24 @@ function TourEditor({
                 children_free_under: childrenFreeUnder,
                 languages: tourLangs,
                 transport_included: transportIncluded,
-                highlights: textToArr(highlights),
-                included: textToArr(included),
-                not_included: textToArr(notIncluded),
-                meeting_point: meetingPoint.trim(),
+                highlights: textToArr(highlightsByLc[baseLc]),
+                included: textToArr(includedByLc[baseLc]),
+                not_included: textToArr(notIncludedByLc[baseLc]),
+                title_ru: titleByLc.ru.trim(),
+                title_en: titleByLc.en.trim(),
+                title_uz: titleByLc.uz.trim(),
+                short_description_ru: shortByLc.ru.trim(),
+                short_description_en: shortByLc.en.trim(),
+                short_description_uz: shortByLc.uz.trim(),
+                highlights_ru: textToArr(highlightsByLc.ru),
+                highlights_en: textToArr(highlightsByLc.en),
+                highlights_uz: textToArr(highlightsByLc.uz),
+                included_ru: textToArr(includedByLc.ru),
+                included_en: textToArr(includedByLc.en),
+                included_uz: textToArr(includedByLc.uz),
+                not_included_ru: textToArr(notIncludedByLc.ru),
+                not_included_en: textToArr(notIncludedByLc.en),
+                not_included_uz: textToArr(notIncludedByLc.uz),
                 end_point: endSameAsMeeting ? meetingPoint.trim() : endPoint.trim(),
                 meeting_lat: meetingCoords?.lat ?? null,
                 meeting_lng: meetingCoords?.lng ?? null,
