@@ -572,10 +572,15 @@ type Tour = {
   duration_hours: number;
   price_from: number;
   price_by_language: Record<string, number>;
-  pricing_mode: "fixed" | "by_group";
+  pricing_mode: "fixed" | "by_group"; // legacy
   base_language: string;
   language_multipliers: Record<string, number>;
-  group_prices: Record<string, number>;
+  group_prices: Record<string, number>; // legacy
+  pricing_modes: ("fixed" | "per_person" | "by_group")[];
+  fixed_price: number | null;
+  per_person_price: number | null;
+  group_tiers: Array<{ min: number; max: number; price: number }>;
+  max_guests: number | null;
   children_free_under: number;
   languages: string[];
   transport_included: boolean;
