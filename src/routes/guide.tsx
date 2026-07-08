@@ -923,7 +923,9 @@ function ToursPanel() {
           onClose={() => { setEditing(null); setCreating(false); }}
           onSave={async (payload) => {
             try {
-              await upsertFn({ data: payload });
+              const { schedule, ...tourPayload } = payload;
+              const res = await upsertFn({ data: tourPayload });
+              await upsertScheduleFn({ data: { tourId: res.id, rows: schedule } });
               toast.success(tg("common.saved"));
               setEditing(null);
               setCreating(false);
