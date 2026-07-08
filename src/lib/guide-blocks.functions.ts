@@ -79,6 +79,35 @@ export const blockTime = createServerFn({ method: 'POST' })
     const { supabase, userId } = context
     const guideId = await resolveGuideId(supabase, userId)
 
+    // Reject when the requested window overlaps an active booking of this guide.
+    // We check pending + confirmed; cancelled/declined/completed don't block time off.
+    const startDate = data.starts_at.slice(0, 10)
+    const endDate = data.ends_at.slice(0, 10)
+    const { data: candidates, error: bkErr } = await supabase
+      .from('bookings')
+      .select('id, date, start_time, duration_minutes, customer_name, experience, status')
+      .eq('guide_id', guideId)
+      .in('status', ['pending', 'confirmed'])
+      .gte('date', startDate)
+      .lte('date', endDate)
+      .not('start_time', 'is', null)
+      .limit(50)
+    if (bkErr) throw new Error(bkErr.message)
+
+    const blockStart = new Date(data.starts_at).getTime()
+    const blockEnd = new Date(data.ends_at).getTime()
+    const conflicts = (candidates ?? []).filter((b: any) => {
+      const bs = new Date(`${b.date}T${b.start_time}Z`).getTime()
+      const be = bs + ((b.duration_minutes ?? 120) as number) * 60000
+      return bs < blockEnd && be > blockStart
+    })
+    if (conflicts.length > 0) {
+      const first = conflicts[0] as any
+      const label = `${first.date} ${String(first.start_time).slice(0, 5)} · ${first.customer_name ?? ''}${first.experience ? ` (${first.experience})` : ''}`.trim()
+      const extra = conflicts.length > 1 ? ` +${conflicts.length - 1}` : ''
+      throw new Error(`BOOKING_CONFLICT: ${label}${extra}`)
+    }
+
     const { data: row, error } = await supabase
       .from('guide_time_blocks')
       .insert({
