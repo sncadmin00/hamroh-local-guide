@@ -1060,7 +1060,26 @@ function TourEditor({
   const [published, setPublished] = useState(initial?.published ?? true);
   const [selectedCats, setSelectedCats] = useState<string[]>(initial?.category_ids ?? []);
   const [uploading, setUploading] = useState(false);
+  // Weekly schedule: map weekday (0=Sun..6=Sat) -> array of "HH:MM" strings
+  const [schedule, setSchedule] = useState<Record<number, string[]>>({ 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] });
+  const listScheduleFn = useServerFn(listTourSchedule);
+  useEffect(() => {
+    if (!initial?.id) return;
+    (async () => {
+      try {
+        const rows = await listScheduleFn({ data: { tourId: initial.id } });
+        const next: Record<number, string[]> = { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+        for (const r of rows) {
+          const hhmm = r.start_time.slice(0, 5);
+          if (!next[r.weekday].includes(hhmm)) next[r.weekday].push(hhmm);
+        }
+        for (const k of Object.keys(next)) next[Number(k)].sort();
+        setSchedule(next);
+      } catch {}
+    })();
+  }, [initial?.id, listScheduleFn]);
   const toggleCat = (id: string) => setSelectedCats((s) => s.includes(id) ? s.filter((x) => x !== id) : [...s, id]);
+
 
   const toggleLang = (lng: string) => {
     setTourLangs((cur) => cur.includes(lng) ? cur.filter((x) => x !== lng) : [...cur, lng]);
