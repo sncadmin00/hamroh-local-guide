@@ -31,10 +31,6 @@ export const Route = createFileRoute('/api/public/hooks/create-booking')({
             }
           } catch {}
         }
-        if (!authorized) {
-          return Response.json({ error: 'Forbidden' }, { status: 403 })
-        }
-
         let body: any
         try {
           body = await request.json()
@@ -42,10 +38,16 @@ export const Route = createFileRoute('/api/public/hooks/create-booking')({
           return Response.json({ error: 'Invalid JSON' }, { status: 400 })
         }
 
+        // Guest bookings are allowed. The hook may be reached either through
+        // the mobile edge proxy (trusted token) or directly as a public guest
+        // endpoint. Never trust a forwarded user_id unless the proxy token was
+        // accepted; otherwise create the booking as a guest.
         const userId: string | null =
-          typeof body?.user_id === 'string' && body.user_id.length > 0 ? body.user_id : null
+          authorized && typeof body?.user_id === 'string' && body.user_id.length > 0
+            ? body.user_id
+            : null
 
-        const parsed = bookingSchema.safeParse(body?.input)
+        const parsed = bookingSchema.safeParse(body?.input ?? body)
         if (!parsed.success) {
           return Response.json(
             {
