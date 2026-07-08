@@ -1,0 +1,2 @@
+ALTER TABLE public.tours ADD COLUMN IF NOT EXISTS fixed_max_guests INTEGER NULL;
+COMMENT ON COLUMN public.tours.fixed_max_guests IS 'Optional cap on guest count when booking under Fixed pricing mode. NULL = no per-mode cap (only overall max_guests applies).';
