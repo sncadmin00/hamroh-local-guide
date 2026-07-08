@@ -1185,7 +1185,7 @@ function TourEditor({
   const [maxGuestsText, setMaxGuestsText] = useState<string>(
     initial?.max_guests != null ? String(initial.max_guests) : "",
   );
-  const [baseLanguage, setBaseLanguage] = useState<string>(initial?.base_language ?? languages[0] ?? "Russian");
+  const baseLanguage = LC_NAME[baseLc];
   const [langMultsText, setLangMultsText] = useState<Record<string, string>>(() => {
     const out: Record<string, string> = {};
     languages.forEach((l) => {
