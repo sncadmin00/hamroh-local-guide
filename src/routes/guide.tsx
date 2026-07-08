@@ -604,7 +604,7 @@ function BookingsPanel({
               <p className="text-xs text-muted-foreground">{tg("bookings.suggestText")}</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <label className="text-xs font-medium">
-                  {tg("availability.date")}
+                  {tg("timeoff.startDate")}
                   <input type="date" value={pDate} onChange={(e) => setPDate(e.target.value)}
                     className="mt-1 h-10 w-full rounded-lg border border-input bg-background px-3 text-sm" />
                 </label>
