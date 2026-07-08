@@ -938,6 +938,87 @@ function ToursPanel() {
   );
 }
 
+function ScheduleEditor({
+  schedule,
+  setSchedule,
+}: {
+  schedule: Record<number, string[]>;
+  setSchedule: React.Dispatch<React.SetStateAction<Record<number, string[]>>>;
+}) {
+  const { tg } = useGuideI18n();
+  const [activeDay, setActiveDay] = useState<number>(1);
+  const days = [1, 2, 3, 4, 5, 6, 0];
+  const hours = Array.from({ length: 24 }, (_, h) => `${String(h).padStart(2, "0")}:00`);
+  const daySlots = schedule[activeDay] ?? [];
+  const isSelected = (t: string) => daySlots.includes(t);
+  const toggleHour = (t: string) => {
+    setSchedule((s) => {
+      const cur = s[activeDay] ?? [];
+      const next = cur.includes(t) ? cur.filter((x) => x !== t) : [...cur, t].sort();
+      return { ...s, [activeDay]: next };
+    });
+  };
+  const totalSelected = Object.values(schedule).reduce((a, b) => a + b.length, 0);
+
+  return (
+    <div className="rounded-2xl border border-border bg-card/40 p-4 space-y-3">
+      <div>
+        <p className="text-sm font-medium">{tg("schedule.title")}</p>
+        <p className="text-xs text-muted-foreground mt-0.5">{tg("schedule.text")}</p>
+      </div>
+      {totalSelected === 0 && (
+        <p className="text-xs text-amber-600 dark:text-amber-400">{tg("schedule.empty")}</p>
+      )}
+      <div className="flex flex-wrap gap-1.5">
+        {days.map((d) => {
+          const count = (schedule[d] ?? []).length;
+          const active = d === activeDay;
+          return (
+            <button
+              key={d}
+              type="button"
+              onClick={() => setActiveDay(d)}
+              className={`h-10 min-w-[52px] px-3 rounded-full text-sm font-medium transition ring-1 ${
+                active
+                  ? "bg-foreground text-background ring-foreground"
+                  : count > 0
+                  ? "bg-foreground/10 text-foreground ring-transparent"
+                  : "bg-background text-foreground ring-border"
+              }`}
+            >
+              {tg(`weekday.${d}` as Parameters<typeof tg>[0])}
+              {count > 0 && (
+                <span className={`ml-1 text-[10px] ${active ? "opacity-80" : "text-muted-foreground"}`}>
+                  {count}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+      <div className="grid grid-cols-4 sm:grid-cols-6 gap-1.5">
+        {hours.map((t) => {
+          const on = isSelected(t);
+          return (
+            <button
+              key={t}
+              type="button"
+              onClick={() => toggleHour(t)}
+              className={`h-10 rounded-lg text-sm font-medium tabular-nums transition ring-1 ${
+                on
+                  ? "bg-foreground text-background ring-foreground"
+                  : "bg-background text-foreground ring-border hover:bg-secondary"
+              }`}
+            >
+              {t}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function arrToText(a: string[]) { return a.join("\n"); }
 function textToArr(s: string) { return s.split("\n").map((x) => x.trim()).filter(Boolean); }
 
