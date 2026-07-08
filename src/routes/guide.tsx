@@ -830,18 +830,44 @@ function TourEditor({
   const [coverUrl, setCoverUrl] = useState(initial?.cover_url ?? "");
   const [cityId, setCityId] = useState(initial?.city_id ?? defaultCityId);
   const [durationHours, setDurationHours] = useState<number>(initial?.duration_hours ?? 2);
-  const [pricingMode, setPricingMode] = useState<"fixed" | "by_group">(initial?.pricing_mode ?? "fixed");
-  const [fixedPrice, setFixedPrice] = useState<number>(
-    initial?.pricing_mode === "by_group" ? 0 : Number(initial?.group_prices?.fixed ?? initial?.price_from ?? 0),
-  );
-  const [groupPricesText, setGroupPricesText] = useState<Record<string, string>>(() => {
-    const out: Record<string, string> = {};
-    GROUP_KEYS.forEach((k) => {
-      const v = initial?.group_prices?.[k];
-      out[k] = v ? String(v) : "";
-    });
-    return out;
+  // NEW pricing model state.
+  // Derive initial modes from the tour: prefer new pricing_modes, fall back to legacy columns.
+  const legacyInitialModes: ("fixed" | "per_person" | "by_group")[] =
+    initial?.pricing_mode === "by_group" ? ["by_group"] : initial?.price_from ? ["fixed"] : [];
+  const initialModes = initial?.pricing_modes && initial.pricing_modes.length > 0
+    ? initial.pricing_modes
+    : legacyInitialModes;
+  const [modeFixed, setModeFixed] = useState<boolean>(initialModes.includes("fixed"));
+  const [modePerPerson, setModePerPerson] = useState<boolean>(initialModes.includes("per_person"));
+  const [modeByGroup, setModeByGroup] = useState<boolean>(initialModes.includes("by_group"));
+  const [fixedPriceText, setFixedPriceText] = useState<string>(() => {
+    const v = initial?.fixed_price ?? initial?.group_prices?.fixed ?? (initial?.pricing_mode !== "by_group" ? initial?.price_from : null);
+    return v ? String(v) : "";
   });
+  const [perPersonPriceText, setPerPersonPriceText] = useState<string>(
+    initial?.per_person_price ? String(initial.per_person_price) : "",
+  );
+  const [groupTiers, setGroupTiers] = useState<Array<{ min: string; max: string; price: string }>>(() => {
+    if (initial?.group_tiers && initial.group_tiers.length > 0) {
+      return initial.group_tiers.map((t) => ({ min: String(t.min), max: String(t.max), price: String(t.price) }));
+    }
+    // Migrate legacy group_prices to tiers for editing convenience
+    const gp = initial?.group_prices ?? {};
+    const CAT_MAX: Record<string, number> = { private: 2, small: 6, group: 12, large: 25 };
+    const rows: Array<{ min: string; max: string; price: string }> = [];
+    let prev = 0;
+    for (const cat of GROUP_KEYS) {
+      const p = Number(gp[cat] ?? 0);
+      if (p > 0) {
+        rows.push({ min: String(prev + 1), max: String(CAT_MAX[cat]), price: String(p) });
+        prev = CAT_MAX[cat];
+      }
+    }
+    return rows;
+  });
+  const [maxGuestsText, setMaxGuestsText] = useState<string>(
+    initial?.max_guests != null ? String(initial.max_guests) : "",
+  );
   const [baseLanguage, setBaseLanguage] = useState<string>(initial?.base_language ?? languages[0] ?? "Russian");
   const [langMultsText, setLangMultsText] = useState<Record<string, string>>(() => {
     const out: Record<string, string> = {};
