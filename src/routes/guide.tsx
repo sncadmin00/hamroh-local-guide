@@ -572,10 +572,15 @@ type Tour = {
   duration_hours: number;
   price_from: number;
   price_by_language: Record<string, number>;
-  pricing_mode: "fixed" | "by_group";
+  pricing_mode: "fixed" | "by_group"; // legacy
   base_language: string;
   language_multipliers: Record<string, number>;
-  group_prices: Record<string, number>;
+  group_prices: Record<string, number>; // legacy
+  pricing_modes: ("fixed" | "per_person" | "by_group")[];
+  fixed_price: number | null;
+  per_person_price: number | null;
+  group_tiers: Array<{ min: number; max: number; price: number }>;
+  max_guests: number | null;
   children_free_under: number;
   languages: string[];
   transport_included: boolean;
@@ -626,6 +631,15 @@ function ToursPanel() {
         base_language: t.base_language ?? (res.guide?.languages?.[0] ?? "Russian"),
         language_multipliers: (t.language_multipliers ?? {}) as Record<string, number>,
         group_prices: (t.group_prices ?? {}) as Record<string, number>,
+        pricing_modes: Array.isArray((t as any).pricing_modes)
+          ? ((t as any).pricing_modes.filter((m: any) => m === "fixed" || m === "per_person" || m === "by_group") as ("fixed" | "per_person" | "by_group")[])
+          : [],
+        fixed_price: (t as any).fixed_price != null ? Number((t as any).fixed_price) : null,
+        per_person_price: (t as any).per_person_price != null ? Number((t as any).per_person_price) : null,
+        group_tiers: Array.isArray((t as any).group_tiers)
+          ? (t as any).group_tiers.map((x: any) => ({ min: Number(x.min), max: Number(x.max), price: Number(x.price) }))
+          : [],
+        max_guests: (t as any).max_guests != null ? Number((t as any).max_guests) : null,
         children_free_under: Number(t.children_free_under ?? 16),
         languages: t.languages ?? [],
         highlights: t.highlights ?? [],
@@ -680,26 +694,48 @@ function ToursPanel() {
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <p className="font-medium">{it.title} {!it.published && <span className="text-[10px] uppercase text-muted-foreground ml-1">{tg("tours.draft")}</span>}</p>
-                  <p className="text-xs text-muted-foreground">{Number(it.duration_hours)}{tg("common.hoursShort")} · {it.pricing_mode === "by_group" ? tg("tours.byGroup") : `$${it.price_from}`} {it.transport_included && `· ${tg("tours.transport")}`}</p>
+                  <p className="text-xs text-muted-foreground">{Number(it.duration_hours)}{tg("common.hoursShort")} · ${it.price_from} {it.transport_included && `· ${tg("tours.transport")}`}</p>
                   <div className="mt-3 flex flex-wrap gap-1.5">
-                    {it.pricing_mode === "by_group"
-                      ? GROUP_KEYS.filter((k) => (it.group_prices[k] ?? 0) > 0).map((k) => (
-                          <span key={k} className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs bg-primary/10 text-primary ring-1 ring-primary/20">
-                            <span className="font-medium">{tg(`group.${k}` as Parameters<typeof tg>[0])}</span>
-                            <span className="tabular-nums">${it.group_prices[k]}</span>
-                          </span>
-                        ))
-                      : it.languages.map((lng) => {
-                          const mult = it.language_multipliers[lng];
-                          const isBase = lng === it.base_language;
-                          return (
-                            <span key={lng} className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs bg-primary/10 text-primary ring-1 ring-primary/20">
-                              <span className="font-medium">{lng}</span>
-                              <span className="tabular-nums">{isBase ? tg("tours.base") : (mult ? `+${mult}%` : "+0%")}</span>
-                            </span>
+                    {(() => {
+                      const modes = it.pricing_modes.length > 0
+                        ? it.pricing_modes
+                        : (it.pricing_mode === "by_group" ? ["by_group" as const] : ["fixed" as const]);
+                      const chips: any[] = [];
+                      if (modes.includes("fixed") && (it.fixed_price ?? it.group_prices?.fixed ?? it.price_from)) {
+                        chips.push(
+                          <span key="fixed" className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs bg-primary/10 text-primary ring-1 ring-primary/20">
+                            <span className="font-medium">{tg("editor.fixedPrice")}</span>
+                            <span className="tabular-nums">${it.fixed_price ?? it.group_prices?.fixed ?? it.price_from}</span>
+                          </span>,
+                        );
+                      }
+                      if (modes.includes("per_person") && it.per_person_price) {
+                        chips.push(
+                          <span key="per" className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs bg-primary/10 text-primary ring-1 ring-primary/20">
+                            <span className="font-medium">{tg("editor.perPerson")}</span>
+                            <span className="tabular-nums">${it.per_person_price}</span>
+                          </span>,
+                        );
+                      }
+                      if (modes.includes("by_group")) {
+                        const tiers = it.group_tiers.length > 0
+                          ? it.group_tiers
+                          : GROUP_KEYS.filter((k) => (it.group_prices?.[k] ?? 0) > 0).map((k) => ({
+                              min: 1, max: ({ private: 2, small: 6, group: 12, large: 25 } as any)[k], price: it.group_prices?.[k] ?? 0,
+                            }));
+                        tiers.forEach((tier, i) => {
+                          chips.push(
+                            <span key={`t${i}`} className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs bg-primary/10 text-primary ring-1 ring-primary/20">
+                              <span className="font-medium">{tier.min === tier.max ? `${tier.min}` : `${tier.min}–${tier.max}`}</span>
+                              <span className="tabular-nums">${tier.price}</span>
+                            </span>,
                           );
-                        })}
+                        });
+                      }
+                      return chips;
+                    })()}
                   </div>
+
                 </div>
                 <div className="flex gap-1 shrink-0">
                   <button onClick={() => setEditing(it)} className="h-9 w-9 grid place-items-center rounded-full text-muted-foreground hover:bg-muted">
@@ -764,9 +800,11 @@ function TourEditor({
     cover_url: string | null;
     city_id: string;
     duration_hours: number;
-    pricing_mode: "fixed" | "by_group";
-    fixed_price: number;
-    group_prices: Partial<Record<(typeof GROUP_KEYS)[number], number>>;
+    pricing_modes: ("fixed" | "per_person" | "by_group")[];
+    fixed_price: number | null;
+    per_person_price: number | null;
+    group_tiers: Array<{ min: number; max: number; price: number }>;
+    max_guests: number | null;
     base_language: string;
     language_multipliers: Record<string, number>;
     children_free_under: number;
@@ -794,18 +832,44 @@ function TourEditor({
   const [coverUrl, setCoverUrl] = useState(initial?.cover_url ?? "");
   const [cityId, setCityId] = useState(initial?.city_id ?? defaultCityId);
   const [durationHours, setDurationHours] = useState<number>(initial?.duration_hours ?? 2);
-  const [pricingMode, setPricingMode] = useState<"fixed" | "by_group">(initial?.pricing_mode ?? "fixed");
-  const [fixedPrice, setFixedPrice] = useState<number>(
-    initial?.pricing_mode === "by_group" ? 0 : Number(initial?.group_prices?.fixed ?? initial?.price_from ?? 0),
-  );
-  const [groupPricesText, setGroupPricesText] = useState<Record<string, string>>(() => {
-    const out: Record<string, string> = {};
-    GROUP_KEYS.forEach((k) => {
-      const v = initial?.group_prices?.[k];
-      out[k] = v ? String(v) : "";
-    });
-    return out;
+  // NEW pricing model state.
+  // Derive initial modes from the tour: prefer new pricing_modes, fall back to legacy columns.
+  const legacyInitialModes: ("fixed" | "per_person" | "by_group")[] =
+    initial?.pricing_mode === "by_group" ? ["by_group"] : initial?.price_from ? ["fixed"] : [];
+  const initialModes = initial?.pricing_modes && initial.pricing_modes.length > 0
+    ? initial.pricing_modes
+    : legacyInitialModes;
+  const [modeFixed, setModeFixed] = useState<boolean>(initialModes.includes("fixed"));
+  const [modePerPerson, setModePerPerson] = useState<boolean>(initialModes.includes("per_person"));
+  const [modeByGroup, setModeByGroup] = useState<boolean>(initialModes.includes("by_group"));
+  const [fixedPriceText, setFixedPriceText] = useState<string>(() => {
+    const v = initial?.fixed_price ?? initial?.group_prices?.fixed ?? (initial?.pricing_mode !== "by_group" ? initial?.price_from : null);
+    return v ? String(v) : "";
   });
+  const [perPersonPriceText, setPerPersonPriceText] = useState<string>(
+    initial?.per_person_price ? String(initial.per_person_price) : "",
+  );
+  const [groupTiers, setGroupTiers] = useState<Array<{ min: string; max: string; price: string }>>(() => {
+    if (initial?.group_tiers && initial.group_tiers.length > 0) {
+      return initial.group_tiers.map((t) => ({ min: String(t.min), max: String(t.max), price: String(t.price) }));
+    }
+    // Migrate legacy group_prices to tiers for editing convenience
+    const gp = initial?.group_prices ?? {};
+    const CAT_MAX: Record<string, number> = { private: 2, small: 6, group: 12, large: 25 };
+    const rows: Array<{ min: string; max: string; price: string }> = [];
+    let prev = 0;
+    for (const cat of GROUP_KEYS) {
+      const p = Number(gp[cat] ?? 0);
+      if (p > 0) {
+        rows.push({ min: String(prev + 1), max: String(CAT_MAX[cat]), price: String(p) });
+        prev = CAT_MAX[cat];
+      }
+    }
+    return rows;
+  });
+  const [maxGuestsText, setMaxGuestsText] = useState<string>(
+    initial?.max_guests != null ? String(initial.max_guests) : "",
+  );
   const [baseLanguage, setBaseLanguage] = useState<string>(initial?.base_language ?? languages[0] ?? "Russian");
   const [langMultsText, setLangMultsText] = useState<Record<string, string>>(() => {
     const out: Record<string, string> = {};
@@ -897,45 +961,131 @@ function TourEditor({
           </div>
 
           {/* Pricing */}
-          <div className="rounded-2xl border border-border bg-card/40 p-4 space-y-3">
-            <div className="flex items-center gap-2">
+          <div className="rounded-2xl border border-border bg-card/40 p-4 space-y-4">
+            <div>
               <p className="text-sm font-medium">{tg("editor.pricing")}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{tg("editor.pricingHelp")}</p>
             </div>
-            <div className="flex flex-wrap gap-2">
-              <label className={`inline-flex items-center gap-2 rounded-full px-3 h-9 text-sm cursor-pointer ${pricingMode === "fixed" ? "bg-foreground text-background" : "bg-secondary"}`}>
-                <input type="radio" name="pmode" className="hidden" checked={pricingMode === "fixed"} onChange={() => setPricingMode("fixed")} />
-                {tg("editor.fixedPrice")}
+
+            {/* Mode: Fixed */}
+            <div className="rounded-xl border border-input bg-background p-3 space-y-2">
+              <label className="inline-flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked={modeFixed} onChange={(e) => setModeFixed(e.target.checked)} className="h-4 w-4" />
+                <span className="text-sm font-medium">{tg("editor.fixedPrice")}</span>
               </label>
-              <label className={`inline-flex items-center gap-2 rounded-full px-3 h-9 text-sm cursor-pointer ${pricingMode === "by_group" ? "bg-foreground text-background" : "bg-secondary"}`}>
-                <input type="radio" name="pmode" className="hidden" checked={pricingMode === "by_group"} onChange={() => setPricingMode("by_group")} />
-                {tg("editor.priceByGroup")}
-              </label>
+              <p className="text-xs text-muted-foreground">{tg("editor.fixedPriceHelp")}</p>
+              {modeFixed && (
+                <div className="flex items-center gap-2 max-w-xs">
+                  <span className="text-muted-foreground text-sm">$</span>
+                  <input
+                    type="number" min={0}
+                    value={fixedPriceText}
+                    onChange={(e) => setFixedPriceText(e.target.value)}
+                    placeholder="0"
+                    className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm tabular-nums"
+                  />
+                </div>
+              )}
             </div>
-            {pricingMode === "fixed" ? (
-              <label className="block text-sm max-w-xs">
-                <span className="text-xs text-muted-foreground">{tg("editor.priceBase")}</span>
-                <input type="number" min={0} value={fixedPrice || ""} onChange={(e) => setFixedPrice(Number(e.target.value) || 0)} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
+
+            {/* Mode: Per person */}
+            <div className="rounded-xl border border-input bg-background p-3 space-y-2">
+              <label className="inline-flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked={modePerPerson} onChange={(e) => setModePerPerson(e.target.checked)} className="h-4 w-4" />
+                <span className="text-sm font-medium">{tg("editor.perPerson")}</span>
               </label>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {GROUP_KEYS.map((k) => (
-                  <div key={k} className="flex items-center gap-2 rounded-xl border border-input bg-background px-3 h-11 text-sm">
-                    <span className="flex-1 font-medium">{tg(`group.${k}` as Parameters<typeof tg>[0])}</span>
-                    <span className="text-muted-foreground">$</span>
-                    <input
-                      type="number"
-                      min={0}
-                      value={groupPricesText[k] ?? ""}
-                      onChange={(e) => setGroupPricesText({ ...groupPricesText, [k]: e.target.value })}
-                      placeholder="—"
-                      className="w-24 h-9 bg-transparent outline-none text-sm tabular-nums"
-                    />
-                  </div>
-                ))}
-                <p className="col-span-full text-xs text-muted-foreground">{tg("editor.skipGroup")}</p>
-              </div>
-            )}
+              <p className="text-xs text-muted-foreground">{tg("editor.perPersonHelp")}</p>
+              {modePerPerson && (
+                <div className="flex items-center gap-2 max-w-xs">
+                  <span className="text-muted-foreground text-sm">$</span>
+                  <input
+                    type="number" min={0}
+                    value={perPersonPriceText}
+                    onChange={(e) => setPerPersonPriceText(e.target.value)}
+                    placeholder="0"
+                    className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm tabular-nums"
+                  />
+                  <span className="text-xs text-muted-foreground">/ adult</span>
+                </div>
+              )}
+            </div>
+
+            {/* Mode: By group */}
+            <div className="rounded-xl border border-input bg-background p-3 space-y-2">
+              <label className="inline-flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked={modeByGroup} onChange={(e) => setModeByGroup(e.target.checked)} className="h-4 w-4" />
+                <span className="text-sm font-medium">{tg("editor.priceByGroup")}</span>
+              </label>
+              <p className="text-xs text-muted-foreground">{tg("editor.byGroupHelp")}</p>
+              {modeByGroup && (
+                <div className="space-y-2">
+                  {groupTiers.map((tier, idx) => (
+                    <div key={idx} className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2 items-center">
+                      <label className="text-xs">
+                        <span className="text-muted-foreground">{tg("editor.tier.min")}</span>
+                        <input
+                          type="number" min={1}
+                          value={tier.min}
+                          onChange={(e) => setGroupTiers((rows) => rows.map((r, i) => i === idx ? { ...r, min: e.target.value } : r))}
+                          className="mt-1 h-9 w-full rounded-lg border border-input bg-background px-2 text-sm tabular-nums"
+                        />
+                      </label>
+                      <label className="text-xs">
+                        <span className="text-muted-foreground">{tg("editor.tier.max")}</span>
+                        <input
+                          type="number" min={1}
+                          value={tier.max}
+                          onChange={(e) => setGroupTiers((rows) => rows.map((r, i) => i === idx ? { ...r, max: e.target.value } : r))}
+                          className="mt-1 h-9 w-full rounded-lg border border-input bg-background px-2 text-sm tabular-nums"
+                        />
+                      </label>
+                      <label className="text-xs">
+                        <span className="text-muted-foreground">{tg("editor.tier.price")}</span>
+                        <input
+                          type="number" min={0}
+                          value={tier.price}
+                          onChange={(e) => setGroupTiers((rows) => rows.map((r, i) => i === idx ? { ...r, price: e.target.value } : r))}
+                          className="mt-1 h-9 w-full rounded-lg border border-input bg-background px-2 text-sm tabular-nums"
+                        />
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => setGroupTiers((rows) => rows.filter((_, i) => i !== idx))}
+                        className="h-9 w-9 grid place-items-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive mt-4"
+                        aria-label={tg("editor.tier.remove")}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setGroupTiers((rows) => {
+                      const lastMax = rows.length > 0 ? Number(rows[rows.length - 1].max) || 0 : 0;
+                      return [...rows, { min: String(lastMax + 1), max: String(lastMax + 2), price: "" }];
+                    })}
+                    className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full bg-secondary text-xs font-medium hover:bg-secondary/80"
+                  >
+                    <Plus className="h-3.5 w-3.5" /> {tg("editor.tier.add")}
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Max guests */}
+            <label className="block text-sm max-w-xs">
+              <span className="text-xs text-muted-foreground">{tg("editor.maxGuests")}</span>
+              <input
+                type="number" min={1}
+                value={maxGuestsText}
+                onChange={(e) => setMaxGuestsText(e.target.value)}
+                placeholder="—"
+                className="mt-1 h-10 w-full rounded-lg border border-input bg-background px-3 text-sm tabular-nums"
+              />
+              <span className="mt-1 block text-[11px] text-muted-foreground">{tg("editor.maxGuestsHelp")}</span>
+            </label>
           </div>
+
 
           <div className="space-y-2">
             <p className="text-sm font-medium">{tg("editor.cover")}</p>
@@ -1128,11 +1278,36 @@ function TourEditor({
           <button
             disabled={!title.trim() || !cityId}
             onClick={() => {
-              const gp: Partial<Record<(typeof GROUP_KEYS)[number], number>> = {};
-              for (const k of GROUP_KEYS) {
-                const n = Number(groupPricesText[k] ?? "");
-                if (Number.isFinite(n) && n > 0) gp[k] = n;
+              const modes: ("fixed" | "per_person" | "by_group")[] = [];
+              if (modeFixed) modes.push("fixed");
+              if (modePerPerson) modes.push("per_person");
+              if (modeByGroup) modes.push("by_group");
+              if (modes.length === 0) {
+                toast.error(tg("editor.priceModeRequired"));
+                return;
               }
+              const fixedPriceNum = Number(fixedPriceText);
+              const perPersonNum = Number(perPersonPriceText);
+              const parsedTiers = groupTiers
+                .map((t) => ({ min: Number(t.min), max: Number(t.max), price: Number(t.price) }))
+                .filter((t) => Number.isFinite(t.min) && Number.isFinite(t.max) && Number.isFinite(t.price));
+              if (modeByGroup) {
+                if (parsedTiers.length === 0) {
+                  toast.error(tg("editor.byGroupHelp"));
+                  return;
+                }
+                // Validate no overlap
+                const sorted = [...parsedTiers].sort((a, b) => a.min - b.min);
+                let prev = 0;
+                for (const t of sorted) {
+                  if (t.min > t.max || t.min <= prev || t.price <= 0) {
+                    toast.error(tg("editor.byGroupHelp"));
+                    return;
+                  }
+                  prev = t.max;
+                }
+              }
+              const maxGuestsNum = maxGuestsText.trim() ? Number(maxGuestsText) : NaN;
               const mults: Record<string, number> = {};
               for (const [k, v] of Object.entries(langMultsText)) {
                 if (k === baseLanguage) continue;
@@ -1146,9 +1321,11 @@ function TourEditor({
                 cover_url: coverUrl.trim() || null,
                 city_id: cityId,
                 duration_hours: durationHours,
-                pricing_mode: pricingMode,
-                fixed_price: fixedPrice,
-                group_prices: gp,
+                pricing_modes: modes,
+                fixed_price: modeFixed && Number.isFinite(fixedPriceNum) && fixedPriceNum > 0 ? fixedPriceNum : null,
+                per_person_price: modePerPerson && Number.isFinite(perPersonNum) && perPersonNum > 0 ? perPersonNum : null,
+                group_tiers: modeByGroup ? parsedTiers.sort((a, b) => a.min - b.min) : [],
+                max_guests: Number.isFinite(maxGuestsNum) && maxGuestsNum > 0 ? maxGuestsNum : null,
                 base_language: baseLanguage,
                 language_multipliers: mults,
                 children_free_under: childrenFreeUnder,

@@ -432,8 +432,9 @@ export function useSpotlightsAdmin() {
 }
 
 // ============ Tours ============
-export type PricingMode = "fixed" | "by_group";
-export type GroupCategory = "private" | "small" | "group" | "large";
+export type PricingMode = "fixed" | "per_person" | "by_group";
+export type GroupCategory = "private" | "small" | "group" | "large"; // legacy
+export type GroupTier = { min: number; max: number; price: number };
 
 export const GROUP_CATEGORY_MAX: Record<GroupCategory, number> = {
   private: 2,
@@ -484,10 +485,16 @@ export type TourRow = {
   sort_order: number;
   guide_id: string;
   price_by_language: Record<string, number>;
-  pricing_mode: PricingMode;
+  pricing_mode: "fixed" | "by_group"; // legacy column
   base_language: string;
   language_multipliers: Record<string, number>;
-  group_prices: Partial<Record<GroupCategory | "fixed", number>>;
+  group_prices: Partial<Record<GroupCategory | "fixed", number>>; // legacy column
+  // New flexible pricing model
+  pricing_modes: PricingMode[];
+  fixed_price: number | null;
+  per_person_price: number | null;
+  group_tiers: GroupTier[];
+  max_guests: number | null;
   children_free_under: number;
   transport_included: boolean;
   languages: string[];
@@ -499,7 +506,8 @@ export type TourRow = {
 };
 
 const TOUR_SELECT =
-  "id, slug, title, short_description, description_md, title_ru, title_uz, title_en, short_description_ru, short_description_uz, short_description_en, description_md_ru, description_md_uz, description_md_en, cover_url, city_id, duration_hours, price_from, highlights, highlights_ru, highlights_uz, highlights_en, included, included_ru, included_uz, included_en, not_included, not_included_ru, not_included_uz, not_included_en, published, sort_order, guide_id, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, children_free_under, transport_included, languages, rating, reviews_count, cities(name, slug), guides(id, slug, name, photo_url, rating, reviews, languages, user_id), tour_categories(category_id, categories(slug, name, icon))";
+  "id, slug, title, short_description, description_md, title_ru, title_uz, title_en, short_description_ru, short_description_uz, short_description_en, description_md_ru, description_md_uz, description_md_en, cover_url, city_id, duration_hours, price_from, highlights, highlights_ru, highlights_uz, highlights_en, included, included_ru, included_uz, included_en, not_included, not_included_ru, not_included_uz, not_included_en, published, sort_order, guide_id, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, pricing_modes, fixed_price, per_person_price, group_tiers, max_guests, children_free_under, transport_included, languages, rating, reviews_count, cities(name, slug), guides(id, slug, name, photo_url, rating, reviews, languages, user_id), tour_categories(category_id, categories(slug, name, icon))";
+
 
 
 function normalizeTour(row: any): TourRow {
@@ -524,13 +532,32 @@ function normalizeTour(row: any): TourRow {
     return Array.isArray(fallback) ? fallback : [];
   };
 
+  // Parse new pricing columns
+  const declaredModes = Array.isArray(row.pricing_modes) ? row.pricing_modes : [];
+  const pricingModes: PricingMode[] = declaredModes.filter(
+    (m: any): m is PricingMode => m === "fixed" || m === "per_person" || m === "by_group",
+  );
+  const rawTiers = Array.isArray(row.group_tiers) ? row.group_tiers : [];
+  const groupTiers: GroupTier[] = rawTiers
+    .map((t: any) => ({
+      min: Number(t?.min),
+      max: Number(t?.max),
+      price: Number(t?.price),
+    }))
+    .filter((t: GroupTier) => Number.isFinite(t.min) && Number.isFinite(t.max) && Number.isFinite(t.price));
+
   return {
     ...row,
     price_by_language: pbl,
-    pricing_mode: (row.pricing_mode === "by_group" ? "by_group" : "fixed") as PricingMode,
+    pricing_mode: (row.pricing_mode === "by_group" ? "by_group" : "fixed") as "fixed" | "by_group",
     base_language: row.base_language ?? "Russian",
     language_multipliers: mults,
     group_prices: gp as TourRow["group_prices"],
+    pricing_modes: pricingModes,
+    fixed_price: row.fixed_price != null ? Number(row.fixed_price) : null,
+    per_person_price: row.per_person_price != null ? Number(row.per_person_price) : null,
+    group_tiers: groupTiers,
+    max_guests: row.max_guests != null ? Number(row.max_guests) : null,
     children_free_under: Number(row.children_free_under ?? 16),
     languages: row.languages ?? [],
     transport_included: !!row.transport_included,
@@ -551,29 +578,85 @@ function normalizeTour(row: any): TourRow {
   };
 }
 
-export function computeTourPrice(
-  tour: Pick<TourRow, "pricing_mode" | "group_prices" | "language_multipliers" | "base_language" | "price_from">,
-  opts: { category?: GroupCategory | null; language?: string | null },
-): number | null {
-  let base: number | undefined;
-  if (tour.pricing_mode === "by_group") {
-    if (!opts.category) return null;
-    base = tour.group_prices[opts.category];
-  } else {
-    base = tour.group_prices.fixed ?? tour.price_from;
+const LEGACY_GROUP_MAX: Record<string, number> = {
+  private: 2, small: 6, group: 12, large: 25,
+};
+
+/**
+ * Client-side mirror of readTourPricing (server). Applies legacy backfill so
+ * tours that haven't been re-saved still surface a usable pricing model.
+ */
+export function readTourPricingClient(tour: Pick<TourRow,
+  "pricing_modes" | "fixed_price" | "per_person_price" | "group_tiers" | "max_guests"
+  | "pricing_mode" | "group_prices" | "price_from"
+>): {
+  available_modes: PricingMode[];
+  fixed_price: number | null;
+  per_person_price: number | null;
+  group_tiers: GroupTier[];
+  max_guests: number | null;
+} {
+  const modes = [...(tour.pricing_modes ?? [])];
+  let fixedPrice = tour.fixed_price;
+  const perPerson = tour.per_person_price;
+  let tiers: GroupTier[] = [...(tour.group_tiers ?? [])];
+  let maxGuests = tour.max_guests;
+
+  if (modes.length === 0) {
+    const gp = (tour.group_prices ?? {}) as Record<string, number>;
+    if (tour.pricing_mode === "by_group") {
+      let prev = 0;
+      for (const cat of ["private", "small", "group", "large"] as const) {
+        const price = Number(gp[cat] ?? 0);
+        if (price > 0) {
+          tiers.push({ min: prev + 1, max: LEGACY_GROUP_MAX[cat], price });
+          prev = LEGACY_GROUP_MAX[cat];
+        }
+      }
+      if (tiers.length > 0) {
+        modes.push("by_group");
+        if (maxGuests == null) maxGuests = prev;
+      }
+    } else {
+      const price = Number(gp.fixed ?? tour.price_from ?? 0);
+      if (price > 0) {
+        modes.push("fixed");
+        fixedPrice = price;
+      }
+    }
   }
-  if (!base || base <= 0) return null;
-  const lang = opts.language;
-  const mult = !lang || lang === tour.base_language ? 0 : Number(tour.language_multipliers[lang] ?? 0);
-  return Math.round(base * (1 + mult / 100));
+
+  return {
+    available_modes: modes,
+    fixed_price: fixedPrice,
+    per_person_price: perPerson,
+    group_tiers: tiers,
+    max_guests: maxGuests,
+  };
 }
 
-export function offeredCategories(tour: Pick<TourRow, "pricing_mode" | "group_prices">): GroupCategory[] {
-  if (tour.pricing_mode !== "by_group") return [];
-  return (Object.keys(tour.group_prices) as GroupCategory[]).filter(
-    (k) => k in GROUP_CATEGORY_MAX && (tour.group_prices[k] ?? 0) > 0,
-  );
+export function findTier(tiers: GroupTier[], adults: number): GroupTier | null {
+  return tiers.find((t) => adults >= t.min && adults <= t.max) ?? null;
 }
+
+/**
+ * Compute the base price for a given pricing mode and adult count (no language
+ * surcharge, no service fee). Returns null if no price can be resolved.
+ */
+export function computeBasePriceClient(
+  pricing: ReturnType<typeof readTourPricingClient>,
+  mode: PricingMode,
+  adults: number,
+): number | null {
+  if (mode === "fixed") return pricing.fixed_price && pricing.fixed_price > 0 ? pricing.fixed_price : null;
+  if (mode === "per_person") {
+    if (!pricing.per_person_price || pricing.per_person_price <= 0) return null;
+    return Math.round(pricing.per_person_price * adults);
+  }
+  const tier = findTier(pricing.group_tiers, adults);
+  return tier ? tier.price : null;
+}
+
 
 type LocalizableTour = Pick<TourRow, "title" | "title_ru" | "title_uz" | "title_en" | "short_description" | "short_description_ru" | "short_description_uz" | "short_description_en" | "description_md" | "description_md_ru" | "description_md_uz" | "description_md_en">;
 type LocalizableTourListKey = "highlights" | "included" | "not_included";

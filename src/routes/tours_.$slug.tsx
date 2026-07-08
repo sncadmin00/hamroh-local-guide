@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { useTour, useTours, pickTourTitle, pickTourShortDescription, pickTourDescriptionMd, pickTourHighlights, pickTourIncluded, pickTourNotIncluded, offeredCategories, GROUP_CATEGORY_MAX, type GroupCategory } from "@/lib/content-queries";
+import { useTour, useTours, pickTourTitle, pickTourShortDescription, pickTourDescriptionMd, pickTourHighlights, pickTourIncluded, pickTourNotIncluded, readTourPricingClient } from "@/lib/content-queries";
 import { useI18n } from "@/lib/i18n";
 import { Clock, MapPin, Check, X, Car, Star, Users } from "lucide-react";
 import { CategoryIcon } from "@/components/CategoryIcon";
@@ -130,21 +130,24 @@ function TourDetailPage() {
   const localizedHighlights = pickTourHighlights(tour, lang);
   const localizedIncluded = pickTourIncluded(tour, lang);
   const localizedNotIncluded = pickTourNotIncluded(tour, lang);
-  const groupCats = offeredCategories(tour);
-  const groupPriceItems: { key: string; label: string; max: number | null; price: number }[] =
-    tour.pricing_mode === "by_group"
-      ? groupCats.map((c) => ({
-          key: c,
-          label: t("tours.upTo").replace("{n}", String(GROUP_CATEGORY_MAX[c])),
-          max: GROUP_CATEGORY_MAX[c],
-          price: Number(tour.group_prices[c] ?? 0),
-        }))
-      : (() => {
-          const fixed = Number(tour.group_prices.fixed ?? tour.price_from ?? 0);
-          return fixed > 0
-            ? [{ key: "fixed", label: t("tours.wholeTour"), max: null, price: fixed }]
-            : [];
-        })();
+  const pricing = readTourPricingClient(tour);
+  type PriceItem = { key: string; label: string; sublabel?: string; price: string };
+  const priceItems: PriceItem[] = [];
+  if (pricing.available_modes.includes("fixed") && pricing.fixed_price && pricing.fixed_price > 0) {
+    priceItems.push({ key: "fixed", label: t("tours.wholeTour"), price: `$${Math.round(pricing.fixed_price)}` });
+  }
+  if (pricing.available_modes.includes("per_person") && pricing.per_person_price && pricing.per_person_price > 0) {
+    priceItems.push({ key: "per_person", label: t("tours.perPerson"), price: `$${Math.round(pricing.per_person_price)}` });
+  }
+  const tierItems: Array<{ key: string; label: string; price: string }> = pricing.available_modes.includes("by_group")
+    ? pricing.group_tiers.map((tr) => ({
+        key: `${tr.min}-${tr.max}`,
+        label: tr.min === tr.max
+          ? `${tr.min} ${tr.min === 1 ? t("tours.person") : t("tours.people")}`
+          : `${tr.min}–${tr.max} ${t("tours.people")}`,
+        price: `$${Math.round(tr.price)}`,
+      }))
+    : [];
   const surcharges = Object.entries(tour.language_multipliers ?? {})
     .map(([lng, p]) => ({ lng, p: Number(p) }))
     .filter((x) => Number.isFinite(x.p) && x.p > 0);
@@ -220,25 +223,41 @@ function TourDetailPage() {
             {localizedShort && <p className="mt-2 text-lg text-muted-foreground">{localizedShort}</p>}
 
 
-            {groupPriceItems.length > 0 && (
+            {(priceItems.length > 0 || tierItems.length > 0) && (
               <section className="mt-6">
                 <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
                   {t("tours.priceForGroup")}
                 </h2>
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {groupPriceItems.map((item) => (
+                  {priceItems.map((item) => (
                     <span
                       key={item.key}
                       className="inline-flex items-center gap-2 rounded-xl bg-card ring-1 ring-border/60 px-3 py-2 text-sm"
                     >
                       <Users className="h-4 w-4 text-muted-foreground" />
                       <span className="font-medium">{item.label}</span>
-                      <span className="font-display text-lg font-semibold tabular-nums">
-                        ${Math.round(item.price)}
-                      </span>
+                      <span className="font-display text-lg font-semibold tabular-nums">{item.price}</span>
                     </span>
                   ))}
                 </div>
+                {tierItems.length > 0 && (
+                  <div className="mt-3 rounded-xl bg-card ring-1 ring-border/60 divide-y divide-border/60">
+                    {tierItems.map((it) => (
+                      <div key={it.key} className="flex items-center justify-between px-4 py-2.5 text-sm">
+                        <span className="inline-flex items-center gap-2">
+                          <Users className="h-4 w-4 text-muted-foreground" />
+                          {it.label}
+                        </span>
+                        <span className="font-display text-lg font-semibold tabular-nums">{it.price}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {pricing.max_guests != null && (
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    {t("tours.upToGuests").replace("{n}", String(pricing.max_guests))}
+                  </p>
+                )}
                 {surcharges.length > 0 && (
                   <p className="mt-2 text-xs text-muted-foreground">
                     {surcharges
@@ -250,6 +269,7 @@ function TourDetailPage() {
                 )}
               </section>
             )}
+
 
             {localizedHighlights.length > 0 && (
               <section className="mt-8">

@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { PaymentMethods } from "@/components/PaymentMethods";
-import { useTour, computeTourPrice, offeredCategories, GROUP_CATEGORY_MAX, GROUP_CATEGORY_LABEL, type GroupCategory } from "@/lib/content-queries";
+import { useTour, readTourPricingClient, computeBasePriceClient, type PricingMode } from "@/lib/content-queries";
 import { getBookingSource } from "@/hooks/useTrackSource";
 import { createBooking } from "@/lib/booking.functions";
 import { getCurrentOffer } from "@/lib/legal-offer.functions";
@@ -43,12 +43,12 @@ function BookPage() {
     date: "",
     adults: 2,
     children: 0,
-    category: null as GroupCategory | null,
     language: "",
     name: "",
     email: "",
     notes: "",
   });
+  const [selectedMode, setSelectedMode] = useState<PricingMode | null>(null);
 
   // slots are fetched from public HTTP endpoint (see effect below)
   const createBookingFn = useServerFn(createBooking);
@@ -155,18 +155,38 @@ function BookPage() {
   const setAdults = (n: number) => setForm((f) => ({ ...f, adults: Math.min(50, Math.max(1, n)) }));
   const setChildren = (n: number) => setForm((f) => ({ ...f, children: Math.min(50, Math.max(0, n)) }));
 
-  const categories = offeredCategories(tour);
-  // Auto-pick smallest category that fits the adult count
-  const categoriesBySize = [...categories].sort((a, b) => GROUP_CATEGORY_MAX[a] - GROUP_CATEGORY_MAX[b]);
-  const selectedCategory: GroupCategory | null =
-    categoriesBySize.find((c) => GROUP_CATEGORY_MAX[c] >= form.adults) ?? null;
-  const adultsExceedAll = tour.pricing_mode === "by_group"
-    && categories.length > 0
-    && categories.every((c) => GROUP_CATEGORY_MAX[c] < form.adults);
+  const pricing = readTourPricingClient(tour);
+  const availableModes = pricing.available_modes;
+  const exceedsCapacity = pricing.max_guests != null && form.adults > pricing.max_guests;
 
-  const computedPrice = computeTourPrice(tour, { category: selectedCategory, language: currentLanguage || null });
-  const total = computedPrice ?? 0;
+  // Auto-select the single mode if only one is offered; otherwise wait for the user
+  const effectiveMode: PricingMode | null =
+    availableModes.length === 1
+      ? availableModes[0]
+      : selectedMode && availableModes.includes(selectedMode)
+        ? selectedMode
+        : null;
+
+  // Compute a base price for each available mode at the current adult count.
+  const modePreview: Array<{ mode: PricingMode; price: number | null }> = availableModes.map((m) => ({
+    mode: m,
+    price: exceedsCapacity ? null : computeBasePriceClient(pricing, m, form.adults),
+  }));
+
+  const rawBase = effectiveMode ? computeBasePriceClient(pricing, effectiveMode, form.adults) : null;
+  // Apply language multiplier client-side just for preview
+  const langMult = !currentLanguage || currentLanguage === tour.base_language
+    ? 0
+    : Number(tour.language_multipliers[currentLanguage] ?? 0);
+  const total = rawBase != null ? Math.round(rawBase * (1 + langMult / 100)) : 0;
   const fee = Math.round(total * serviceFeeRate);
+
+  const modeLabel = (m: PricingMode) => {
+    if (m === "fixed") return lang === "ru" ? "Фиксированная" : lang === "uz" ? "Qat'iy" : "Fixed";
+    if (m === "per_person") return lang === "ru" ? "За человека" : lang === "uz" ? "Har kishi" : "Per person";
+    return lang === "ru" ? "По группе" : lang === "uz" ? "Guruh bo'yicha" : "By group";
+  };
+
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -195,7 +215,8 @@ function BookPage() {
           duration_minutes: chosenSlot?.duration_minutes,
           adults: form.adults,
           children: form.children,
-          group_category: tour.pricing_mode === "by_group" ? selectedCategory : null,
+          pricing_mode: effectiveMode ?? undefined,
+          group_category: null,
           customer_name: form.name,
           customer_email: form.email,
           customer_telegram_user_id: telegramContact?.telegram_user_id,
@@ -354,23 +375,59 @@ function BookPage() {
               </div>
             </div>
 
-            {tour.pricing_mode === "by_group" && categories.length > 0 && (
+            {exceedsCapacity && (
+              <p className="text-sm text-amber-700 bg-amber-500/10 rounded-xl p-3">
+                {lang === "ru"
+                  ? `Максимум ${pricing.max_guests} гостей. Уменьшите количество взрослых или свяжитесь с гидом.`
+                  : lang === "uz"
+                    ? `Maksimum ${pricing.max_guests} mehmon. Kattalar sonini kamaytiring yoki hamroh bilan bog'laning.`
+                    : `This tour accepts up to ${pricing.max_guests} guests. Reduce adults or contact the guide.`}
+              </p>
+            )}
+
+            {availableModes.length > 1 && !exceedsCapacity && (
               <div>
-                <label className="text-sm font-medium">Group size</label>
-                {selectedCategory ? (
-                  <div className="mt-2 inline-flex items-center gap-2 rounded-xl bg-secondary/60 px-4 py-3 text-sm">
-                    <span className="font-medium">{GROUP_CATEGORY_LABEL[selectedCategory]}</span>
-                    <span className="tabular-nums text-muted-foreground">${tour.group_prices[selectedCategory]}</span>
-                    <span className="text-xs text-muted-foreground">— auto-selected from {form.adults} {form.adults === 1 ? "adult" : "adults"}</span>
-                  </div>
-                ) : null}
-                {adultsExceedAll && (
-                  <p className="mt-2 text-sm text-amber-700 bg-amber-500/10 rounded-xl p-3">
-                    Your group is larger than the offered sizes. Please contact the guide to arrange a custom booking.
-                  </p>
-                )}
+                <label className="text-sm font-medium">
+                  {lang === "ru" ? "Как оплатить" : lang === "uz" ? "To'lash usuli" : "Choose how to pay"}
+                </label>
+                <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                  {modePreview.map(({ mode, price }) => {
+                    const on = effectiveMode === mode;
+                    const disabled = price == null;
+                    return (
+                      <button
+                        key={mode}
+                        type="button"
+                        disabled={disabled}
+                        onClick={() => setSelectedMode(mode)}
+                        className={`rounded-2xl border p-4 text-left transition ${
+                          on
+                            ? "border-primary bg-primary/5 ring-2 ring-primary"
+                            : "border-input bg-background hover:bg-muted"
+                        } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="font-medium text-sm">{modeLabel(mode)}</span>
+                          <span className="font-display text-lg font-semibold tabular-nums">
+                            {price != null ? `$${price}` : "—"}
+                          </span>
+                        </div>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          {mode === "fixed"
+                            ? (lang === "ru" ? "Одна цена за весь тур" : lang === "uz" ? "Butun tur uchun bitta narx" : "One flat price for the whole tour")
+                            : mode === "per_person"
+                              ? (lang === "ru" ? `$${pricing.per_person_price} × ${form.adults} взрослых` : lang === "uz" ? `$${pricing.per_person_price} × ${form.adults} katta` : `$${pricing.per_person_price} × ${form.adults} adults`)
+                              : (price == null
+                                  ? (lang === "ru" ? "Нет тарифа для этой группы" : lang === "uz" ? "Bu guruh uchun tarif yo'q" : "No tier for this group size")
+                                  : (lang === "ru" ? "Пакет на группу" : lang === "uz" ? "Guruh paketi" : "Group package"))}
+                        </p>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             )}
+
 
             {availableLanguages.length > 0 && (
               <div>
@@ -475,7 +532,7 @@ function BookPage() {
               </span>
             </label>
 
-            <button type="submit" disabled={submitting || adultsExceedAll || total === 0 || !offerAccepted || !offerVersion} className="inline-flex h-12 w-full items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.01] disabled:opacity-60">
+            <button type="submit" disabled={submitting || exceedsCapacity || !effectiveMode || total === 0 || !offerAccepted || !offerVersion} className="inline-flex h-12 w-full items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.01] disabled:opacity-60">
               {submitting ? "Sending…" : isInstantMode ? `Confirm & book — $${total + fee}` : `Request booking — $${total + fee}`}
             </button>
             <p className="text-center text-xs text-muted-foreground">{isInstantMode ? "Your slot is locked in instantly." : "Your guide will review and confirm this request."}</p>
@@ -510,8 +567,8 @@ function BookPage() {
                   <span className="text-muted-foreground">
                     {tour.title}
                     {currentLanguage && <span className="text-foreground/70"> · {currentLanguage}</span>}
-                    {tour.pricing_mode === "by_group" && selectedCategory && (
-                      <span className="text-foreground/70"> · {GROUP_CATEGORY_LABEL[selectedCategory]}</span>
+                    {effectiveMode && availableModes.length > 1 && (
+                      <span className="text-foreground/70"> · {modeLabel(effectiveMode)}</span>
                     )}
                   </span>
                   <span className="tabular-nums">${total}</span>
