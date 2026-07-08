@@ -382,8 +382,6 @@ export async function createBookingCore(
     adults: data.adults,
     children: data.children,
     group_category: data.group_category ?? null,
-    pricing_mode: resolvedMode,
-    pricing_tier: resolvedTier,
     customer_name: data.customer_name,
     customer_email: data.customer_email || null,
     customer_telegram_user_id: data.customer_telegram_user_id ?? null,
