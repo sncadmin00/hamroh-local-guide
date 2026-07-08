@@ -53,6 +53,26 @@ const GROUP_MAX: Record<"private" | "small" | "group" | "large", number> = {
   large: 25,
 };
 
+type GroupCat = "private" | "small" | "group" | "large";
+
+/**
+ * Auto-pick the smallest offered group category that fits the adult count.
+ * Mirrors the web client logic in `src/routes/book.$slug.tsx` so the mobile
+ * app (and any other caller) can omit `group_category` and let the server
+ * resolve it from `adults` + tour's offered categories.
+ */
+function autoPickCategory(
+  groupPrices: Record<string, number>,
+  adults: number,
+): GroupCat | null {
+  const offered = (Object.keys(GROUP_MAX) as GroupCat[]).filter(
+    (c) => Number(groupPrices[c] ?? 0) > 0,
+  );
+  const sorted = offered.sort((a, b) => GROUP_MAX[a] - GROUP_MAX[b]);
+  return sorted.find((c) => GROUP_MAX[c] >= adults) ?? null;
+}
+
+
 export type BookingCoreResult = { id: string; status: string };
 
 export const quoteSchema = z.object({
