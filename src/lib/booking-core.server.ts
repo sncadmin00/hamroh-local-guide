@@ -228,7 +228,7 @@ export async function quoteBookingCore(input: QuoteInput): Promise<PriceQuote> {
   const { data: tour, error: tourErr } = await supabaseAdmin
     .from("tours")
     .select(
-      "id, price_from, pricing_mode, base_language, language_multipliers, group_prices, pricing_modes, fixed_price, per_person_price, group_tiers, max_guests, published",
+      "id, price_from, pricing_mode, base_language, language_multipliers, group_prices, pricing_modes, fixed_price, fixed_max_guests, per_person_price, group_tiers, max_guests, published",
     )
     .eq("id", input.tour_id)
     .maybeSingle();
@@ -311,7 +311,7 @@ export async function createBookingCore(
   const { data: tour, error: tourErr } = await supabaseAdmin
     .from("tours")
     .select(
-      "id, guide_id, title, price_from, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, pricing_modes, fixed_price, per_person_price, group_tiers, max_guests, children_free_under, duration_hours, published",
+      "id, guide_id, title, price_from, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, pricing_modes, fixed_price, fixed_max_guests, per_person_price, group_tiers, max_guests, children_free_under, duration_hours, published",
     )
     .eq("id", data.tour_id)
     .maybeSingle();
