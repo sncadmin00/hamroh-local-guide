@@ -6,6 +6,7 @@ import { useI18n } from "@/lib/i18n";
 import { createThread } from "@/lib/ai-threads.functions";
 import { getWeather } from "@/lib/weather.functions";
 import { supabase } from "@/integrations/supabase/client";
+import { UpcomingBookingsCard } from "@/components/home/UpcomingBookingsCard";
 
 /**
  * Desktop editorial hero based on selected "Editorial glass grid" direction.
