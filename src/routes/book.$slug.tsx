@@ -567,8 +567,8 @@ function BookPage() {
                   <span className="text-muted-foreground">
                     {tour.title}
                     {currentLanguage && <span className="text-foreground/70"> · {currentLanguage}</span>}
-                    {tour.pricing_mode === "by_group" && selectedCategory && (
-                      <span className="text-foreground/70"> · {GROUP_CATEGORY_LABEL[selectedCategory]}</span>
+                    {effectiveMode && availableModes.length > 1 && (
+                      <span className="text-foreground/70"> · {modeLabel(effectiveMode)}</span>
                     )}
                   </span>
                   <span className="tabular-nums">${total}</span>
