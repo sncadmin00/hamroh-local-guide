@@ -377,63 +377,140 @@ function TabBtn({ active, onClick, children }: { active: boolean; onClick: () =>
   );
 }
 
-function AvailabilityPanel({
-  slots, onAdd, onDelete,
+function TimeOffPanel({
+  blocks, onAdd, onDelete,
 }: {
-  slots: Slot[];
-  onAdd: (p: { date: string; start_time: string; duration_minutes: number }) => void;
+  blocks: GuideBlock[];
+  onAdd: (p: { starts_at: string; ends_at: string; reason: string | null }) => void;
   onDelete: (id: string) => void;
 }) {
   const { tg } = useGuideI18n();
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("10:00");
-  const [duration, setDuration] = useState(120);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [allDay, setAllDay] = useState(true);
+  const [startTime, setStartTime] = useState("09:00");
+  const [endTime, setEndTime] = useState("18:00");
+  const [reason, setReason] = useState("");
+
+  const canSubmit = Boolean(startDate) && (allDay || (startTime && endTime && startTime < endTime));
+
+  const submit = () => {
+    if (!canSubmit) return;
+    const effectiveEndDate = endDate && endDate >= startDate ? endDate : startDate;
+    let starts: Date;
+    let ends: Date;
+    if (allDay) {
+      // Full days: from startDate 00:00 local → the day AFTER endDate 00:00 local.
+      starts = new Date(`${startDate}T00:00:00`);
+      const nextDay = new Date(`${effectiveEndDate}T00:00:00`);
+      nextDay.setDate(nextDay.getDate() + 1);
+      ends = nextDay;
+    } else {
+      starts = new Date(`${startDate}T${startTime}:00`);
+      ends = new Date(`${effectiveEndDate}T${endTime}:00`);
+    }
+    onAdd({
+      starts_at: starts.toISOString(),
+      ends_at: ends.toISOString(),
+      reason: reason.trim() || null,
+    });
+    setStartDate("");
+    setEndDate("");
+    setReason("");
+  };
+
+  const fmtRange = (b: GuideBlock) => {
+    const s = new Date(b.starts_at);
+    const e = new Date(b.ends_at);
+    const dOpt: Intl.DateTimeFormatOptions = { year: "numeric", month: "short", day: "numeric" };
+    const tOpt: Intl.DateTimeFormatOptions = { hour: "2-digit", minute: "2-digit" };
+    const sameDay = s.toDateString() === new Date(e.getTime() - 1).toDateString();
+    // Detect "all day" pattern: local midnight to next-day local midnight
+    const isMidnight = (d: Date) => d.getHours() === 0 && d.getMinutes() === 0;
+    if (isMidnight(s) && isMidnight(e)) {
+      const lastDay = new Date(e.getTime() - 86400000);
+      if (s.toDateString() === lastDay.toDateString()) {
+        return s.toLocaleDateString(undefined, dOpt);
+      }
+      return `${s.toLocaleDateString(undefined, dOpt)} — ${lastDay.toLocaleDateString(undefined, dOpt)}`;
+    }
+    if (sameDay) {
+      return `${s.toLocaleDateString(undefined, dOpt)} · ${s.toLocaleTimeString(undefined, tOpt)} – ${e.toLocaleTimeString(undefined, tOpt)}`;
+    }
+    return `${s.toLocaleDateString(undefined, dOpt)} ${s.toLocaleTimeString(undefined, tOpt)} — ${e.toLocaleDateString(undefined, dOpt)} ${e.toLocaleTimeString(undefined, tOpt)}`;
+  };
 
   return (
     <div className="space-y-6">
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border">
-        <h2 className="font-display text-lg font-semibold">{tg("availability.addTitle")}</h2>
-        <p className="text-sm text-muted-foreground mt-1">{tg("availability.addText")}</p>
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-4 gap-3">
+        <h2 className="font-display text-lg font-semibold">{tg("timeoff.title")}</h2>
+        <p className="text-sm text-muted-foreground mt-1">{tg("timeoff.text")}</p>
+
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
           <label className="text-sm">
-            <span className="text-xs text-muted-foreground">{tg("availability.date")}</span>
-            <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
+            <span className="text-xs text-muted-foreground">{tg("timeoff.startDate")}</span>
+            <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
           </label>
           <label className="text-sm">
-            <span className="text-xs text-muted-foreground">{tg("availability.startTime")}</span>
-            <input type="time" value={time} onChange={(e) => setTime(e.target.value)} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
+            <span className="text-xs text-muted-foreground">{tg("timeoff.endDate")}</span>
+            <input type="date" value={endDate} min={startDate || undefined} onChange={(e) => setEndDate(e.target.value)} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
           </label>
-          <label className="text-sm">
-            <span className="text-xs text-muted-foreground">{tg("availability.duration")}</span>
-            <input type="number" min={30} max={720} step={30} value={duration} onChange={(e) => setDuration(Number(e.target.value) || 120)} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
-          </label>
-          <button
-            disabled={!date || !time}
-            onClick={() => onAdd({ date, start_time: time, duration_minutes: duration })}
-            className="h-11 mt-[18px] rounded-xl bg-foreground text-background text-sm font-medium inline-flex items-center justify-center gap-2 disabled:opacity-50"
-          >
-            <Plus className="h-4 w-4" /> {tg("availability.addSlot")}
-          </button>
         </div>
+
+        <label className="mt-4 flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={allDay} onChange={(e) => setAllDay(e.target.checked)} className="h-4 w-4" />
+          <span>{tg("timeoff.allDay")}</span>
+        </label>
+
+        {!allDay && (
+          <div className="mt-3 grid grid-cols-2 gap-3">
+            <label className="text-sm">
+              <span className="text-xs text-muted-foreground">{tg("timeoff.startTime")}</span>
+              <input type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
+            </label>
+            <label className="text-sm">
+              <span className="text-xs text-muted-foreground">{tg("timeoff.endTime")}</span>
+              <input type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
+            </label>
+          </div>
+        )}
+
+        <label className="mt-4 block text-sm">
+          <span className="text-xs text-muted-foreground">{tg("timeoff.reason")}</span>
+          <input
+            type="text"
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            placeholder={tg("timeoff.reasonPh")}
+            maxLength={200}
+            className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm"
+          />
+        </label>
+
+        <button
+          disabled={!canSubmit}
+          onClick={submit}
+          className="mt-4 h-11 px-4 rounded-xl bg-foreground text-background text-sm font-medium inline-flex items-center justify-center gap-2 disabled:opacity-50"
+        >
+          <Plus className="h-4 w-4" /> {tg("timeoff.add")}
+        </button>
       </div>
 
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border">
-        <h2 className="font-display text-lg font-semibold">{tg("availability.upcoming")}</h2>
-        {slots.length === 0 ? (
-          <p className="mt-3 text-sm text-muted-foreground">{tg("availability.empty")}</p>
+        <h2 className="font-display text-lg font-semibold">{tg("timeoff.list")}</h2>
+        {blocks.length === 0 ? (
+          <p className="mt-3 text-sm text-muted-foreground">{tg("timeoff.empty")}</p>
         ) : (
           <ul className="mt-3 divide-y divide-border">
-            {slots.map((s) => (
-              <li key={s.id} className="py-3 flex items-center justify-between gap-3">
-                <div>
-                  <p className="font-medium">{s.date} · {s.start_time.slice(0, 5)} · {s.duration_minutes} {tg("common.minutes")}</p>
-                  <p className="text-xs text-muted-foreground">{s.is_booked ? tg("availability.booked") : tg("availability.available")}</p>
+            {blocks.map((b) => (
+              <li key={b.id} className="py-3 flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="font-medium">{fmtRange(b)}</p>
+                  {b.reason && <p className="text-xs text-muted-foreground truncate">{b.reason}</p>}
                 </div>
-                {!s.is_booked && (
-                  <button onClick={() => onDelete(s.id)} className="h-9 w-9 grid place-items-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive">
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                )}
+                <button onClick={() => onDelete(b.id)} className="h-9 w-9 shrink-0 grid place-items-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive">
+                  <Trash2 className="h-4 w-4" />
+                </button>
               </li>
             ))}
           </ul>
