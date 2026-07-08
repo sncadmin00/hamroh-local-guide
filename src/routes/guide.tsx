@@ -767,6 +767,7 @@ function ToursPanel() {
 
   const fetchList = useServerFn(listMyTours);
   const upsertFn = useServerFn(upsertTour);
+  const upsertScheduleFn = useServerFn(upsertTourSchedule);
   const deleteFn = useServerFn(deleteTour);
 
   const load = useCallback(async () => {
