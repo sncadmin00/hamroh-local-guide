@@ -2406,6 +2406,7 @@ export type Database = {
           end_lng: number | null
           end_point: string
           end_same_as_meeting: boolean
+          fixed_max_guests: number | null
           fixed_price: number | null
           group_prices: Json
           group_tiers: Json | null
@@ -2465,6 +2466,7 @@ export type Database = {
           end_lng?: number | null
           end_point?: string
           end_same_as_meeting?: boolean
+          fixed_max_guests?: number | null
           fixed_price?: number | null
           group_prices?: Json
           group_tiers?: Json | null
@@ -2524,6 +2526,7 @@ export type Database = {
           end_lng?: number | null
           end_point?: string
           end_same_as_meeting?: boolean
+          fixed_max_guests?: number | null
           fixed_price?: number | null
           group_prices?: Json
           group_tiers?: Json | null

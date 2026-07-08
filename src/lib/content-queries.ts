@@ -492,6 +492,7 @@ export type TourRow = {
   // New flexible pricing model
   pricing_modes: PricingMode[];
   fixed_price: number | null;
+  fixed_max_guests: number | null;
   per_person_price: number | null;
   group_tiers: GroupTier[];
   max_guests: number | null;
@@ -506,7 +507,7 @@ export type TourRow = {
 };
 
 const TOUR_SELECT =
-  "id, slug, title, short_description, description_md, title_ru, title_uz, title_en, short_description_ru, short_description_uz, short_description_en, description_md_ru, description_md_uz, description_md_en, cover_url, city_id, duration_hours, price_from, highlights, highlights_ru, highlights_uz, highlights_en, included, included_ru, included_uz, included_en, not_included, not_included_ru, not_included_uz, not_included_en, published, sort_order, guide_id, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, pricing_modes, fixed_price, per_person_price, group_tiers, max_guests, children_free_under, transport_included, languages, rating, reviews_count, cities(name, slug), guides(id, slug, name, photo_url, rating, reviews, languages, user_id), tour_categories(category_id, categories(slug, name, icon))";
+  "id, slug, title, short_description, description_md, title_ru, title_uz, title_en, short_description_ru, short_description_uz, short_description_en, description_md_ru, description_md_uz, description_md_en, cover_url, city_id, duration_hours, price_from, highlights, highlights_ru, highlights_uz, highlights_en, included, included_ru, included_uz, included_en, not_included, not_included_ru, not_included_uz, not_included_en, published, sort_order, guide_id, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, pricing_modes, fixed_price, fixed_max_guests, per_person_price, group_tiers, max_guests, children_free_under, transport_included, languages, rating, reviews_count, cities(name, slug), guides(id, slug, name, photo_url, rating, reviews, languages, user_id), tour_categories(category_id, categories(slug, name, icon))";
 
 
 
@@ -555,6 +556,7 @@ function normalizeTour(row: any): TourRow {
     group_prices: gp as TourRow["group_prices"],
     pricing_modes: pricingModes,
     fixed_price: row.fixed_price != null ? Number(row.fixed_price) : null,
+    fixed_max_guests: row.fixed_max_guests != null ? Number(row.fixed_max_guests) : null,
     per_person_price: row.per_person_price != null ? Number(row.per_person_price) : null,
     group_tiers: groupTiers,
     max_guests: row.max_guests != null ? Number(row.max_guests) : null,
@@ -587,17 +589,19 @@ const LEGACY_GROUP_MAX: Record<string, number> = {
  * tours that haven't been re-saved still surface a usable pricing model.
  */
 export function readTourPricingClient(tour: Pick<TourRow,
-  "pricing_modes" | "fixed_price" | "per_person_price" | "group_tiers" | "max_guests"
+  "pricing_modes" | "fixed_price" | "fixed_max_guests" | "per_person_price" | "group_tiers" | "max_guests"
   | "pricing_mode" | "group_prices" | "price_from"
 >): {
   available_modes: PricingMode[];
   fixed_price: number | null;
+  fixed_max_guests: number | null;
   per_person_price: number | null;
   group_tiers: GroupTier[];
   max_guests: number | null;
 } {
   const modes = [...(tour.pricing_modes ?? [])];
   let fixedPrice = tour.fixed_price;
+  const fixedMaxGuests = tour.fixed_max_guests;
   const perPerson = tour.per_person_price;
   let tiers: GroupTier[] = [...(tour.group_tiers ?? [])];
   let maxGuests = tour.max_guests;
@@ -629,6 +633,7 @@ export function readTourPricingClient(tour: Pick<TourRow,
   return {
     available_modes: modes,
     fixed_price: fixedPrice,
+    fixed_max_guests: fixedMaxGuests,
     per_person_price: perPerson,
     group_tiers: tiers,
     max_guests: maxGuests,
@@ -648,7 +653,11 @@ export function computeBasePriceClient(
   mode: PricingMode,
   adults: number,
 ): number | null {
-  if (mode === "fixed") return pricing.fixed_price && pricing.fixed_price > 0 ? pricing.fixed_price : null;
+  if (mode === "fixed") {
+    if (!pricing.fixed_price || pricing.fixed_price <= 0) return null;
+    if (pricing.fixed_max_guests != null && adults > pricing.fixed_max_guests) return null;
+    return pricing.fixed_price;
+  }
   if (mode === "per_person") {
     if (!pricing.per_person_price || pricing.per_person_price <= 0) return null;
     return Math.round(pricing.per_person_price * adults);

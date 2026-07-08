@@ -56,6 +56,7 @@ export type GroupTier = { min: number; max: number; price: number };
 type TourPricingFields = {
   pricing_modes: string[] | null;
   fixed_price: number | null;
+  fixed_max_guests: number | null;
   per_person_price: number | null;
   group_tiers: GroupTier[] | null;
   max_guests: number | null;
@@ -76,6 +77,7 @@ const LEGACY_GROUP_MAX: Record<string, number> = {
 export function readTourPricing(tour: TourPricingFields): {
   available_modes: PricingMode[];
   fixed_price: number | null;
+  fixed_max_guests: number | null;
   per_person_price: number | null;
   group_tiers: GroupTier[];
   max_guests: number | null;
@@ -86,6 +88,7 @@ export function readTourPricing(tour: TourPricingFields): {
   );
 
   let fixedPrice = tour.fixed_price != null ? Number(tour.fixed_price) : null;
+  const fixedMaxGuests = tour.fixed_max_guests != null ? Number(tour.fixed_max_guests) : null;
   let perPerson = tour.per_person_price != null ? Number(tour.per_person_price) : null;
   let tiers: GroupTier[] = Array.isArray(tour.group_tiers)
     ? tour.group_tiers.map((t) => ({
@@ -122,6 +125,7 @@ export function readTourPricing(tour: TourPricingFields): {
   return {
     available_modes: modes,
     fixed_price: fixedPrice,
+    fixed_max_guests: fixedMaxGuests,
     per_person_price: perPerson,
     group_tiers: tiers,
     max_guests: maxGuests,
@@ -165,6 +169,11 @@ export function computeBasePrice(
   if (mode === "fixed") {
     if (!pricing.fixed_price || pricing.fixed_price <= 0) {
       throw new Error("Tour price is not set.");
+    }
+    if (pricing.fixed_max_guests != null && adults > pricing.fixed_max_guests) {
+      throw new Error(
+        `Fixed price is available for up to ${pricing.fixed_max_guests} guests. For a larger group, choose another pricing option.`,
+      );
     }
     return { base_price: pricing.fixed_price, pricing_mode: mode, resolved_tier: null };
   }
@@ -219,7 +228,7 @@ export async function quoteBookingCore(input: QuoteInput): Promise<PriceQuote> {
   const { data: tour, error: tourErr } = await supabaseAdmin
     .from("tours")
     .select(
-      "id, price_from, pricing_mode, base_language, language_multipliers, group_prices, pricing_modes, fixed_price, per_person_price, group_tiers, max_guests, published",
+      "id, price_from, pricing_mode, base_language, language_multipliers, group_prices, pricing_modes, fixed_price, fixed_max_guests, per_person_price, group_tiers, max_guests, published",
     )
     .eq("id", input.tour_id)
     .maybeSingle();
@@ -302,7 +311,7 @@ export async function createBookingCore(
   const { data: tour, error: tourErr } = await supabaseAdmin
     .from("tours")
     .select(
-      "id, guide_id, title, price_from, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, pricing_modes, fixed_price, per_person_price, group_tiers, max_guests, children_free_under, duration_hours, published",
+      "id, guide_id, title, price_from, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, pricing_modes, fixed_price, fixed_max_guests, per_person_price, group_tiers, max_guests, children_free_under, duration_hours, published",
     )
     .eq("id", data.tour_id)
     .maybeSingle();

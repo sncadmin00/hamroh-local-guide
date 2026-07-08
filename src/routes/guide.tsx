@@ -578,6 +578,7 @@ type Tour = {
   group_prices: Record<string, number>; // legacy
   pricing_modes: ("fixed" | "per_person" | "by_group")[];
   fixed_price: number | null;
+  fixed_max_guests: number | null;
   per_person_price: number | null;
   group_tiers: Array<{ min: number; max: number; price: number }>;
   max_guests: number | null;
@@ -635,6 +636,7 @@ function ToursPanel() {
           ? ((t as any).pricing_modes.filter((m: any) => m === "fixed" || m === "per_person" || m === "by_group") as ("fixed" | "per_person" | "by_group")[])
           : [],
         fixed_price: (t as any).fixed_price != null ? Number((t as any).fixed_price) : null,
+        fixed_max_guests: (t as any).fixed_max_guests != null ? Number((t as any).fixed_max_guests) : null,
         per_person_price: (t as any).per_person_price != null ? Number((t as any).per_person_price) : null,
         group_tiers: Array.isArray((t as any).group_tiers)
           ? (t as any).group_tiers.map((x: any) => ({ min: Number(x.min), max: Number(x.max), price: Number(x.price) }))
@@ -802,6 +804,7 @@ function TourEditor({
     duration_hours: number;
     pricing_modes: ("fixed" | "per_person" | "by_group")[];
     fixed_price: number | null;
+    fixed_max_guests: number | null;
     per_person_price: number | null;
     group_tiers: Array<{ min: number; max: number; price: number }>;
     max_guests: number | null;
@@ -846,6 +849,9 @@ function TourEditor({
     const v = initial?.fixed_price ?? initial?.group_prices?.fixed ?? (initial?.pricing_mode !== "by_group" ? initial?.price_from : null);
     return v ? String(v) : "";
   });
+  const [fixedMaxGuestsText, setFixedMaxGuestsText] = useState<string>(
+    initial?.fixed_max_guests != null ? String(initial.fixed_max_guests) : "",
+  );
   const [perPersonPriceText, setPerPersonPriceText] = useState<string>(
     initial?.per_person_price ? String(initial.per_person_price) : "",
   );
@@ -975,15 +981,28 @@ function TourEditor({
               </label>
               <p className="text-xs text-muted-foreground">{tg("editor.fixedPriceHelp")}</p>
               {modeFixed && (
-                <div className="flex items-center gap-2 max-w-xs">
-                  <span className="text-muted-foreground text-sm">$</span>
-                  <input
-                    type="number" min={0}
-                    value={fixedPriceText}
-                    onChange={(e) => setFixedPriceText(e.target.value)}
-                    placeholder="0"
-                    className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm tabular-nums"
-                  />
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 max-w-xs">
+                    <span className="text-muted-foreground text-sm">$</span>
+                    <input
+                      type="number" min={0}
+                      value={fixedPriceText}
+                      onChange={(e) => setFixedPriceText(e.target.value)}
+                      placeholder="0"
+                      className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm tabular-nums"
+                    />
+                  </div>
+                  <label className="block text-xs max-w-xs">
+                    <span className="text-muted-foreground">{tg("editor.fixedMaxGuests")}</span>
+                    <input
+                      type="number" min={1}
+                      value={fixedMaxGuestsText}
+                      onChange={(e) => setFixedMaxGuestsText(e.target.value)}
+                      placeholder="—"
+                      className="mt-1 h-9 w-full rounded-lg border border-input bg-background px-2 text-sm tabular-nums"
+                    />
+                    <span className="mt-1 block text-[11px] text-muted-foreground">{tg("editor.fixedMaxGuestsHelp")}</span>
+                  </label>
                 </div>
               )}
             </div>
@@ -1323,6 +1342,11 @@ function TourEditor({
                 duration_hours: durationHours,
                 pricing_modes: modes,
                 fixed_price: modeFixed && Number.isFinite(fixedPriceNum) && fixedPriceNum > 0 ? fixedPriceNum : null,
+                fixed_max_guests: (() => {
+                  if (!modeFixed) return null;
+                  const n = fixedMaxGuestsText.trim() ? Number(fixedMaxGuestsText) : NaN;
+                  return Number.isFinite(n) && n > 0 ? Math.floor(n) : null;
+                })(),
                 per_person_price: modePerPerson && Number.isFinite(perPersonNum) && perPersonNum > 0 ? perPersonNum : null,
                 group_tiers: modeByGroup ? parsedTiers.sort((a, b) => a.min - b.min) : [],
                 max_guests: Number.isFinite(maxGuestsNum) && maxGuestsNum > 0 ? maxGuestsNum : null,
