@@ -1342,6 +1342,11 @@ function TourEditor({
                 duration_hours: durationHours,
                 pricing_modes: modes,
                 fixed_price: modeFixed && Number.isFinite(fixedPriceNum) && fixedPriceNum > 0 ? fixedPriceNum : null,
+                fixed_max_guests: (() => {
+                  if (!modeFixed) return null;
+                  const n = fixedMaxGuestsText.trim() ? Number(fixedMaxGuestsText) : NaN;
+                  return Number.isFinite(n) && n > 0 ? Math.floor(n) : null;
+                })(),
                 per_person_price: modePerPerson && Number.isFinite(perPersonNum) && perPersonNum > 0 ? perPersonNum : null,
                 group_tiers: modeByGroup ? parsedTiers.sort((a, b) => a.min - b.min) : [],
                 max_guests: Number.isFinite(maxGuestsNum) && maxGuestsNum > 0 ? maxGuestsNum : null,
