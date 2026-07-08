@@ -631,6 +631,15 @@ function ToursPanel() {
         base_language: t.base_language ?? (res.guide?.languages?.[0] ?? "Russian"),
         language_multipliers: (t.language_multipliers ?? {}) as Record<string, number>,
         group_prices: (t.group_prices ?? {}) as Record<string, number>,
+        pricing_modes: Array.isArray((t as any).pricing_modes)
+          ? ((t as any).pricing_modes.filter((m: any) => m === "fixed" || m === "per_person" || m === "by_group") as ("fixed" | "per_person" | "by_group")[])
+          : [],
+        fixed_price: (t as any).fixed_price != null ? Number((t as any).fixed_price) : null,
+        per_person_price: (t as any).per_person_price != null ? Number((t as any).per_person_price) : null,
+        group_tiers: Array.isArray((t as any).group_tiers)
+          ? (t as any).group_tiers.map((x: any) => ({ min: Number(x.min), max: Number(x.max), price: Number(x.price) }))
+          : [],
+        max_guests: (t as any).max_guests != null ? Number((t as any).max_guests) : null,
         children_free_under: Number(t.children_free_under ?? 16),
         languages: t.languages ?? [],
         highlights: t.highlights ?? [],
