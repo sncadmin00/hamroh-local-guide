@@ -413,7 +413,13 @@ export const listMyTours = createServerFn({ method: "GET" })
     };
   });
 
-const GROUP_KEYS = ["private", "small", "group", "large"] as const;
+const GROUP_KEYS = ["private", "small", "group", "large"] as const; // legacy
+
+const groupTierSchema = z.object({
+  min: z.number().int().min(1).max(500),
+  max: z.number().int().min(1).max(500),
+  price: z.number().min(0).max(100000),
+});
 
 const upsertTourSchema = z.object({
   id: z.string().uuid().optional(),
@@ -422,11 +428,12 @@ const upsertTourSchema = z.object({
   cover_url: z.string().trim().max(2000).optional().nullable(),
   city_id: z.string().uuid(),
   duration_hours: z.number().min(0.5).max(72),
-  pricing_mode: z.enum(["fixed", "by_group"]).default("fixed"),
-  fixed_price: z.number().min(0).max(100000).default(0),
-  group_prices: z
-    .record(z.enum(GROUP_KEYS), z.number().min(0).max(100000))
-    .default(() => ({}) as Record<(typeof GROUP_KEYS)[number], number>),
+  // NEW flexible pricing model
+  pricing_modes: z.array(z.enum(["fixed", "per_person", "by_group"])).min(1).max(3),
+  fixed_price: z.number().min(0).max(100000).nullable().default(null),
+  per_person_price: z.number().min(0).max(100000).nullable().default(null),
+  group_tiers: z.array(groupTierSchema).max(20).default([]),
+  max_guests: z.number().int().min(1).max(500).nullable().default(null),
   base_language: z.string().trim().min(1).max(40).default("Russian"),
   language_multipliers: z
     .record(z.string().min(1).max(40), z.number().min(-50).max(500))
@@ -458,20 +465,89 @@ export const upsertTour = createServerFn({ method: "POST" })
       .from("guides").select("id, slug").eq("user_id", userId).maybeSingle();
     if (!guide) throw new Error("You are not linked to a guide profile yet.");
 
-    // Build group_prices jsonb depending on mode
-    const groupPrices: Record<string, number> = {};
-    if (data.pricing_mode === "by_group") {
-      for (const k of GROUP_KEYS) {
-        const v = Number(data.group_prices[k] ?? 0);
-        if (v > 0) groupPrices[k] = v;
+    // Validate & normalize pricing per selected modes
+    const modes = data.pricing_modes;
+    const candidatePrices: number[] = [];
+
+    if (modes.includes("fixed")) {
+      if (data.fixed_price == null || data.fixed_price <= 0) {
+        throw new Error("Set a fixed price or turn off the fixed pricing mode.");
       }
-      if (Object.keys(groupPrices).length === 0) {
-        throw new Error("Add at least one group price.");
-      }
-    } else {
-      if (data.fixed_price <= 0) throw new Error("Set a price.");
-      groupPrices.fixed = data.fixed_price;
+      candidatePrices.push(data.fixed_price);
     }
+    if (modes.includes("per_person")) {
+      if (data.per_person_price == null || data.per_person_price <= 0) {
+        throw new Error("Set a per-person price or turn off the per-person pricing mode.");
+      }
+      candidatePrices.push(data.per_person_price);
+    }
+    let normalizedTiers: Array<{ min: number; max: number; price: number }> = [];
+    if (modes.includes("by_group")) {
+      if (data.group_tiers.length === 0) {
+        throw new Error("Add at least one group tier or turn off the group pricing mode.");
+      }
+      const sorted = [...data.group_tiers].sort((a, b) => a.min - b.min);
+      let prevMax = 0;
+      for (const t of sorted) {
+        if (t.min > t.max) throw new Error(`Invalid tier: min (${t.min}) is greater than max (${t.max}).`);
+        if (t.price <= 0) throw new Error("Every group tier needs a price above zero.");
+        if (t.min <= prevMax) throw new Error("Group tiers must not overlap.");
+        prevMax = t.max;
+        candidatePrices.push(t.price);
+      }
+      normalizedTiers = sorted;
+    }
+
+    // Derive max_guests when not provided
+    let maxGuests = data.max_guests;
+    if (maxGuests == null && modes.includes("by_group") && normalizedTiers.length > 0) {
+      maxGuests = normalizedTiers[normalizedTiers.length - 1].max;
+    }
+    if (maxGuests != null && modes.includes("by_group") && normalizedTiers.length > 0) {
+      const tierMax = normalizedTiers[normalizedTiers.length - 1].max;
+      if (maxGuests < tierMax) {
+        throw new Error("Max guests must be at least as large as the biggest group tier.");
+      }
+    }
+
+    // Clean language multipliers (drop base language and zero/empty)
+    const cleanedMults: Record<string, number> = {};
+    for (const [k, v] of Object.entries(data.language_multipliers)) {
+      if (k === data.base_language) continue;
+      if (Number.isFinite(v)) cleanedMults[k] = v;
+    }
+
+    // price_from = minimum starting price across all offered modes (used for
+    // card display and legacy readers)
+    const priceFrom = candidatePrices.length > 0 ? Math.min(...candidatePrices) : 0;
+
+    // Compute price_by_language from the starting price + multipliers
+    const priceByLanguage: Record<string, number> = {};
+    for (const lng of data.languages) {
+      const mult = lng === data.base_language ? 0 : Number(cleanedMults[lng] ?? 0);
+      priceByLanguage[lng] = Math.round(priceFrom * (1 + mult / 100) * 100) / 100;
+    }
+
+    // Legacy columns — filled best-effort so old readers still show something.
+    // Not the source of truth going forward.
+    const legacyPricingMode: "fixed" | "by_group" = modes.includes("by_group") ? "by_group" : "fixed";
+    const legacyGroupPrices: Record<string, number> = {};
+    if (legacyPricingMode === "by_group") {
+      // Map first N tiers onto private/small/group/large by size
+      const CAT_MAX: Record<string, number> = { private: 2, small: 6, group: 12, large: 25 };
+      for (const cat of GROUP_KEYS) {
+        const t = normalizedTiers.find((tr) => tr.max <= CAT_MAX[cat]);
+        if (t) legacyGroupPrices[cat] = t.price;
+      }
+      if (Object.keys(legacyGroupPrices).length === 0 && normalizedTiers[0]) {
+        legacyGroupPrices.large = normalizedTiers[0].price;
+      }
+    } else if (data.fixed_price != null) {
+      legacyGroupPrices.fixed = data.fixed_price;
+    } else if (priceFrom > 0) {
+      legacyGroupPrices.fixed = priceFrom;
+    }
+
 
     // Clean language multipliers (drop base language and zero/empty)
     const cleanedMults: Record<string, number> = {};
