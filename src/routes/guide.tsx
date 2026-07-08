@@ -694,26 +694,48 @@ function ToursPanel() {
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <p className="font-medium">{it.title} {!it.published && <span className="text-[10px] uppercase text-muted-foreground ml-1">{tg("tours.draft")}</span>}</p>
-                  <p className="text-xs text-muted-foreground">{Number(it.duration_hours)}{tg("common.hoursShort")} · {it.pricing_mode === "by_group" ? tg("tours.byGroup") : `$${it.price_from}`} {it.transport_included && `· ${tg("tours.transport")}`}</p>
+                  <p className="text-xs text-muted-foreground">{Number(it.duration_hours)}{tg("common.hoursShort")} · ${it.price_from} {it.transport_included && `· ${tg("tours.transport")}`}</p>
                   <div className="mt-3 flex flex-wrap gap-1.5">
-                    {it.pricing_mode === "by_group"
-                      ? GROUP_KEYS.filter((k) => (it.group_prices[k] ?? 0) > 0).map((k) => (
-                          <span key={k} className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs bg-primary/10 text-primary ring-1 ring-primary/20">
-                            <span className="font-medium">{tg(`group.${k}` as Parameters<typeof tg>[0])}</span>
-                            <span className="tabular-nums">${it.group_prices[k]}</span>
-                          </span>
-                        ))
-                      : it.languages.map((lng) => {
-                          const mult = it.language_multipliers[lng];
-                          const isBase = lng === it.base_language;
-                          return (
-                            <span key={lng} className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs bg-primary/10 text-primary ring-1 ring-primary/20">
-                              <span className="font-medium">{lng}</span>
-                              <span className="tabular-nums">{isBase ? tg("tours.base") : (mult ? `+${mult}%` : "+0%")}</span>
-                            </span>
+                    {(() => {
+                      const modes = it.pricing_modes.length > 0
+                        ? it.pricing_modes
+                        : (it.pricing_mode === "by_group" ? ["by_group" as const] : ["fixed" as const]);
+                      const chips: React.ReactNode[] = [];
+                      if (modes.includes("fixed") && (it.fixed_price ?? it.group_prices?.fixed ?? it.price_from)) {
+                        chips.push(
+                          <span key="fixed" className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs bg-primary/10 text-primary ring-1 ring-primary/20">
+                            <span className="font-medium">{tg("editor.fixedPrice")}</span>
+                            <span className="tabular-nums">${it.fixed_price ?? it.group_prices?.fixed ?? it.price_from}</span>
+                          </span>,
+                        );
+                      }
+                      if (modes.includes("per_person") && it.per_person_price) {
+                        chips.push(
+                          <span key="per" className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs bg-primary/10 text-primary ring-1 ring-primary/20">
+                            <span className="font-medium">{tg("editor.perPerson")}</span>
+                            <span className="tabular-nums">${it.per_person_price}</span>
+                          </span>,
+                        );
+                      }
+                      if (modes.includes("by_group")) {
+                        const tiers = it.group_tiers.length > 0
+                          ? it.group_tiers
+                          : GROUP_KEYS.filter((k) => (it.group_prices?.[k] ?? 0) > 0).map((k) => ({
+                              min: 1, max: ({ private: 2, small: 6, group: 12, large: 25 } as any)[k], price: it.group_prices?.[k] ?? 0,
+                            }));
+                        tiers.forEach((tier, i) => {
+                          chips.push(
+                            <span key={`t${i}`} className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs bg-primary/10 text-primary ring-1 ring-primary/20">
+                              <span className="font-medium">{tier.min === tier.max ? `${tier.min}` : `${tier.min}–${tier.max}`}</span>
+                              <span className="tabular-nums">${tier.price}</span>
+                            </span>,
                           );
-                        })}
+                        });
+                      }
+                      return chips;
+                    })()}
                   </div>
+
                 </div>
                 <div className="flex gap-1 shrink-0">
                   <button onClick={() => setEditing(it)} className="h-9 w-9 grid place-items-center rounded-full text-muted-foreground hover:bg-muted">
