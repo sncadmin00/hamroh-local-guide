@@ -27,6 +27,7 @@ import {
   recordMyLanguageTest,
 } from "@/lib/guide-portal.functions";
 import { listGuideBlocks, blockTime, unblockTime, type GuideBlock } from "@/lib/guide-blocks.functions";
+import { listTourSchedule, upsertTourSchedule, getGuideBuffer, setGuideBuffer } from "@/lib/tour-schedule.functions";
 import { assessLanguageTest } from "@/lib/language-test.functions";
 import { useCities, useCategories } from "@/lib/content-queries";
 import { GuidePostsPanel } from "@/components/GuidePostsPanel";
@@ -377,7 +378,59 @@ function TabBtn({ active, onClick, children }: { active: boolean; onClick: () =>
   );
 }
 
+function BufferPanel() {
+  const { tg } = useGuideI18n();
+  const getFn = useServerFn(getGuideBuffer);
+  const setFn = useServerFn(setGuideBuffer);
+  const [minutes, setMinutes] = useState<30 | 60 | 90>(60);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { minutes: m } = await getFn();
+        if (m === 30 || m === 60 || m === 90) setMinutes(m);
+      } catch {}
+      setLoaded(true);
+    })();
+  }, [getFn]);
+
+  const pick = async (m: 30 | 60 | 90) => {
+    const prev = minutes;
+    setMinutes(m);
+    try {
+      await setFn({ data: { minutes: m } });
+      toast.success(tg("buffer.saved"));
+    } catch (e) {
+      setMinutes(prev);
+      toast.error((e as Error).message);
+    }
+  };
+
+  return (
+    <div className="rounded-3xl bg-card p-6 ring-1 ring-border">
+      <h2 className="font-display text-lg font-semibold">{tg("buffer.title")}</h2>
+      <p className="text-sm text-muted-foreground mt-1">{tg("buffer.text")}</p>
+      <div className="mt-4 flex gap-2">
+        {([30, 60, 90] as const).map((m) => (
+          <button
+            key={m}
+            onClick={() => pick(m)}
+            disabled={!loaded}
+            className={`h-10 px-4 rounded-full text-sm font-medium ring-1 transition ${
+              minutes === m ? "bg-foreground text-background ring-foreground" : "bg-background text-foreground ring-border hover:bg-secondary"
+            } disabled:opacity-50`}
+          >
+            {m} {tg("common.minutes")}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function TimeOffPanel({
+
   blocks, onAdd, onDelete,
 }: {
   blocks: GuideBlock[];
@@ -442,7 +495,9 @@ function TimeOffPanel({
 
   return (
     <div className="space-y-6">
+      <BufferPanel />
       <div className="rounded-3xl bg-card p-6 ring-1 ring-border">
+
         <h2 className="font-display text-lg font-semibold">{tg("timeoff.title")}</h2>
         <p className="text-sm text-muted-foreground mt-1">{tg("timeoff.text")}</p>
 
@@ -712,6 +767,7 @@ function ToursPanel() {
 
   const fetchList = useServerFn(listMyTours);
   const upsertFn = useServerFn(upsertTour);
+  const upsertScheduleFn = useServerFn(upsertTourSchedule);
   const deleteFn = useServerFn(deleteTour);
 
   const load = useCallback(async () => {
@@ -867,7 +923,9 @@ function ToursPanel() {
           onClose={() => { setEditing(null); setCreating(false); }}
           onSave={async (payload) => {
             try {
-              await upsertFn({ data: payload });
+              const { schedule, ...tourPayload } = payload;
+              const res = await upsertFn({ data: tourPayload });
+              await upsertScheduleFn({ data: { tourId: res.id, rows: schedule } });
               toast.success(tg("common.saved"));
               setEditing(null);
               setCreating(false);
@@ -923,6 +981,7 @@ function TourEditor({
     published: boolean;
     sort_order: number;
     category_ids: string[];
+    schedule: Array<{ weekday: number; start_time: string }>;
   }) => void;
 }) {
   const { tg } = useGuideI18n();
@@ -1004,7 +1063,26 @@ function TourEditor({
   const [published, setPublished] = useState(initial?.published ?? true);
   const [selectedCats, setSelectedCats] = useState<string[]>(initial?.category_ids ?? []);
   const [uploading, setUploading] = useState(false);
+  // Weekly schedule: map weekday (0=Sun..6=Sat) -> array of "HH:MM" strings
+  const [schedule, setSchedule] = useState<Record<number, string[]>>({ 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] });
+  const listScheduleFn = useServerFn(listTourSchedule);
+  useEffect(() => {
+    if (!initial?.id) return;
+    (async () => {
+      try {
+        const rows = await listScheduleFn({ data: { tourId: initial.id } });
+        const next: Record<number, string[]> = { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+        for (const r of rows) {
+          const hhmm = r.start_time.slice(0, 5);
+          if (!next[r.weekday].includes(hhmm)) next[r.weekday].push(hhmm);
+        }
+        for (const k of Object.keys(next)) next[Number(k)].sort();
+        setSchedule(next);
+      } catch {}
+    })();
+  }, [initial?.id, listScheduleFn]);
   const toggleCat = (id: string) => setSelectedCats((s) => s.includes(id) ? s.filter((x) => x !== id) : [...s, id]);
+
 
   const toggleLang = (lng: string) => {
     setTourLangs((cur) => cur.includes(lng) ? cur.filter((x) => x !== lng) : [...cur, lng]);
@@ -1063,7 +1141,77 @@ function TourEditor({
             </label>
           </div>
 
+          {/* Weekly schedule */}
+          <div className="rounded-2xl border border-border bg-card/40 p-4 space-y-3">
+            <div>
+              <p className="text-sm font-medium">{tg("schedule.title")}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{tg("schedule.text")}</p>
+            </div>
+            {Object.values(schedule).every((a) => a.length === 0) && (
+              <p className="text-xs text-amber-600 dark:text-amber-400">{tg("schedule.empty")}</p>
+            )}
+            <div className="space-y-2">
+              {[1, 2, 3, 4, 5, 6, 0].map((d) => {
+                const times = schedule[d] ?? [];
+                return (
+                  <div key={d} className="flex items-start gap-3 rounded-xl border border-input bg-background px-3 py-2">
+                    <div className="w-10 shrink-0 pt-1.5 text-xs font-medium text-muted-foreground">
+                      {tg(`weekday.${d}` as Parameters<typeof tg>[0])}
+                    </div>
+                    <div className="flex-1 flex flex-wrap gap-2 items-center">
+                      {times.length === 0 && (
+                        <span className="text-xs text-muted-foreground">{tg("schedule.noTimes")}</span>
+                      )}
+                      {times.map((t, i) => (
+                        <div key={i} className="flex items-center gap-1 rounded-full bg-secondary px-2 h-8">
+                          <input
+                            type="time"
+                            value={t}
+                            onChange={(e) => {
+                              const nv = e.target.value;
+                              setSchedule((s) => {
+                                const arr = [...(s[d] ?? [])];
+                                arr[i] = nv;
+                                return { ...s, [d]: arr };
+                              });
+                            }}
+                            className="bg-transparent text-sm tabular-nums outline-none w-[68px]"
+                          />
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setSchedule((s) => ({ ...s, [d]: (s[d] ?? []).filter((_, j) => j !== i) }))
+                            }
+                            className="text-muted-foreground hover:text-destructive"
+                            aria-label="remove"
+                          >
+                            <X className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setSchedule((s) => {
+                            const arr = [...(s[d] ?? [])];
+                            const last = arr[arr.length - 1];
+                            arr.push(last ?? "09:00");
+                            return { ...s, [d]: arr };
+                          })
+                        }
+                        className="inline-flex items-center gap-1 h-8 px-3 rounded-full bg-foreground/10 hover:bg-foreground/20 text-xs font-medium"
+                      >
+                        <Plus className="h-3.5 w-3.5" /> {tg("schedule.addTime")}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Pricing */}
+
           <div className="rounded-2xl border border-border bg-card/40 p-4 space-y-4">
             <div>
               <p className="text-sm font-medium">{tg("editor.pricing")}</p>
@@ -1469,6 +1617,15 @@ function TourEditor({
                 published,
                 sort_order: initial?.sort_order ?? 0,
                 category_ids: selectedCats,
+                schedule: (() => {
+                  const rows: Array<{ weekday: number; start_time: string }> = [];
+                  for (let d = 0; d < 7; d++) {
+                    for (const t of schedule[d] ?? []) {
+                      if (/^\d{2}:\d{2}$/.test(t)) rows.push({ weekday: d, start_time: `${t}:00` });
+                    }
+                  }
+                  return rows;
+                })(),
               });
             }}
             className="h-10 px-5 rounded-full bg-foreground text-background text-sm font-medium disabled:opacity-50"
