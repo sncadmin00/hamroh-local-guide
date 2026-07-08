@@ -1066,8 +1066,12 @@ function TourEditor({
     schedule: Array<{ weekday: number; start_time: string }>;
   }) => void;
 }) {
-  const { tg } = useGuideI18n();
+  const { lang, tg } = useGuideI18n();
   const { data: categories = [] } = useCategories();
+  const genDraftFn = useServerFn(generateTourDraft);
+  const [aiOpen, setAiOpen] = useState(false);
+  const [aiSeed, setAiSeed] = useState("");
+  const [aiBusy, setAiBusy] = useState(false);
   const [title, setTitle] = useState(initial?.title ?? "");
   const [shortDesc, setShortDesc] = useState(initial?.short_description ?? "");
   const [coverUrl, setCoverUrl] = useState(initial?.cover_url ?? "");
