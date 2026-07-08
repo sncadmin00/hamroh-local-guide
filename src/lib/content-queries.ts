@@ -432,8 +432,9 @@ export function useSpotlightsAdmin() {
 }
 
 // ============ Tours ============
-export type PricingMode = "fixed" | "by_group";
-export type GroupCategory = "private" | "small" | "group" | "large";
+export type PricingMode = "fixed" | "per_person" | "by_group";
+export type GroupCategory = "private" | "small" | "group" | "large"; // legacy
+export type GroupTier = { min: number; max: number; price: number };
 
 export const GROUP_CATEGORY_MAX: Record<GroupCategory, number> = {
   private: 2,
@@ -484,10 +485,16 @@ export type TourRow = {
   sort_order: number;
   guide_id: string;
   price_by_language: Record<string, number>;
-  pricing_mode: PricingMode;
+  pricing_mode: "fixed" | "by_group"; // legacy column
   base_language: string;
   language_multipliers: Record<string, number>;
-  group_prices: Partial<Record<GroupCategory | "fixed", number>>;
+  group_prices: Partial<Record<GroupCategory | "fixed", number>>; // legacy column
+  // New flexible pricing model
+  pricing_modes: PricingMode[];
+  fixed_price: number | null;
+  per_person_price: number | null;
+  group_tiers: GroupTier[];
+  max_guests: number | null;
   children_free_under: number;
   transport_included: boolean;
   languages: string[];
@@ -499,7 +506,8 @@ export type TourRow = {
 };
 
 const TOUR_SELECT =
-  "id, slug, title, short_description, description_md, title_ru, title_uz, title_en, short_description_ru, short_description_uz, short_description_en, description_md_ru, description_md_uz, description_md_en, cover_url, city_id, duration_hours, price_from, highlights, highlights_ru, highlights_uz, highlights_en, included, included_ru, included_uz, included_en, not_included, not_included_ru, not_included_uz, not_included_en, published, sort_order, guide_id, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, children_free_under, transport_included, languages, rating, reviews_count, cities(name, slug), guides(id, slug, name, photo_url, rating, reviews, languages, user_id), tour_categories(category_id, categories(slug, name, icon))";
+  "id, slug, title, short_description, description_md, title_ru, title_uz, title_en, short_description_ru, short_description_uz, short_description_en, description_md_ru, description_md_uz, description_md_en, cover_url, city_id, duration_hours, price_from, highlights, highlights_ru, highlights_uz, highlights_en, included, included_ru, included_uz, included_en, not_included, not_included_ru, not_included_uz, not_included_en, published, sort_order, guide_id, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, pricing_modes, fixed_price, per_person_price, group_tiers, max_guests, children_free_under, transport_included, languages, rating, reviews_count, cities(name, slug), guides(id, slug, name, photo_url, rating, reviews, languages, user_id), tour_categories(category_id, categories(slug, name, icon))";
+
 
 
 function normalizeTour(row: any): TourRow {
