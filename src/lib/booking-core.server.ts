@@ -26,6 +26,10 @@ export const bookingSchema = z
     duration_minutes: z.number().int().min(30).max(720).optional(),
     adults: z.number().int().min(1).max(50),
     children: z.number().int().min(0).max(50).default(0),
+    // Client-chosen pricing mode. Optional — if the tour has exactly one mode
+    // enabled, server picks it automatically.
+    pricing_mode: z.enum(["fixed", "per_person", "by_group"]).optional(),
+    // Legacy field, ignored by the new pricing engine.
     group_category: z.enum(["private", "small", "group", "large"]).nullable().optional(),
     language: z.string().min(1).max(40).optional(),
     customer_name: z.string().min(1).max(200),
@@ -46,32 +50,141 @@ export const bookingSchema = z
 
 export type BookingInput = z.infer<typeof bookingSchema>;
 
-const GROUP_MAX: Record<"private" | "small" | "group" | "large", number> = {
-  private: 2,
-  small: 6,
-  group: 12,
-  large: 25,
+export type PricingMode = "fixed" | "per_person" | "by_group";
+export type GroupTier = { min: number; max: number; price: number };
+
+type TourPricingFields = {
+  pricing_modes: string[] | null;
+  fixed_price: number | null;
+  per_person_price: number | null;
+  group_tiers: GroupTier[] | null;
+  max_guests: number | null;
+  // Legacy fallback
+  pricing_mode?: string | null;
+  group_prices?: Record<string, number> | null;
+  price_from?: number | null;
 };
 
-type GroupCat = "private" | "small" | "group" | "large";
+const LEGACY_GROUP_MAX: Record<string, number> = {
+  private: 2, small: 6, group: 12, large: 25,
+};
 
 /**
- * Auto-pick the smallest offered group category that fits the adult count.
- * Mirrors the web client logic in `src/routes/book.$slug.tsx` so the mobile
- * app (and any other caller) can omit `group_category` and let the server
- * resolve it from `adults` + tour's offered categories.
+ * Normalize a tour's pricing configuration, applying legacy backfill so tours
+ * that haven't been re-saved still work.
  */
-function autoPickCategory(
-  groupPrices: Record<string, number>,
-  adults: number,
-): GroupCat | null {
-  const offered = (Object.keys(GROUP_MAX) as GroupCat[]).filter(
-    (c) => Number(groupPrices[c] ?? 0) > 0,
+export function readTourPricing(tour: TourPricingFields): {
+  available_modes: PricingMode[];
+  fixed_price: number | null;
+  per_person_price: number | null;
+  group_tiers: GroupTier[];
+  max_guests: number | null;
+} {
+  const declared = Array.isArray(tour.pricing_modes) ? tour.pricing_modes : [];
+  const modes = declared.filter((m): m is PricingMode =>
+    m === "fixed" || m === "per_person" || m === "by_group",
   );
-  const sorted = offered.sort((a, b) => GROUP_MAX[a] - GROUP_MAX[b]);
-  return sorted.find((c) => GROUP_MAX[c] >= adults) ?? null;
+
+  let fixedPrice = tour.fixed_price != null ? Number(tour.fixed_price) : null;
+  let perPerson = tour.per_person_price != null ? Number(tour.per_person_price) : null;
+  let tiers: GroupTier[] = Array.isArray(tour.group_tiers)
+    ? tour.group_tiers.map((t) => ({
+        min: Number(t.min), max: Number(t.max), price: Number(t.price),
+      }))
+    : [];
+  let maxGuests = tour.max_guests != null ? Number(tour.max_guests) : null;
+
+  // Legacy fallback: if no modes declared, derive from old columns
+  if (modes.length === 0) {
+    const gp = (tour.group_prices ?? {}) as Record<string, number>;
+    if (tour.pricing_mode === "by_group") {
+      let prev = 0;
+      for (const cat of ["private", "small", "group", "large"]) {
+        const price = Number(gp[cat] ?? 0);
+        if (price > 0) {
+          tiers.push({ min: prev + 1, max: LEGACY_GROUP_MAX[cat], price });
+          prev = LEGACY_GROUP_MAX[cat];
+        }
+      }
+      if (tiers.length > 0) {
+        modes.push("by_group");
+        if (maxGuests == null) maxGuests = prev;
+      }
+    } else {
+      const price = Number(gp.fixed ?? tour.price_from ?? 0);
+      if (price > 0) {
+        modes.push("fixed");
+        fixedPrice = price;
+      }
+    }
+  }
+
+  return {
+    available_modes: modes,
+    fixed_price: fixedPrice,
+    per_person_price: perPerson,
+    group_tiers: tiers,
+    max_guests: maxGuests,
+  };
 }
 
+/** Find the tier whose range contains `adults`. Returns null if none matches. */
+export function findTier(tiers: GroupTier[], adults: number): GroupTier | null {
+  return tiers.find((t) => adults >= t.min && adults <= t.max) ?? null;
+}
+
+/**
+ * Compute the base price for a booking given the chosen mode. Throws with a
+ * human-readable message on any pricing error. Also returns the resolved mode
+ * (useful when caller omitted it and only one was available).
+ */
+export function computeBasePrice(
+  pricing: ReturnType<typeof readTourPricing>,
+  adults: number,
+  chosenMode: PricingMode | undefined,
+): { base_price: number; pricing_mode: PricingMode; resolved_tier: GroupTier | null } {
+  if (pricing.available_modes.length === 0) {
+    throw new Error("Tour price is not set.");
+  }
+  if (pricing.max_guests != null && adults > pricing.max_guests) {
+    throw new Error(`This tour accepts up to ${pricing.max_guests} guests.`);
+  }
+
+  let mode: PricingMode;
+  if (chosenMode) {
+    if (!pricing.available_modes.includes(chosenMode)) {
+      throw new Error("Selected pricing option is not available for this tour.");
+    }
+    mode = chosenMode;
+  } else if (pricing.available_modes.length === 1) {
+    mode = pricing.available_modes[0];
+  } else {
+    throw new Error("Please choose a pricing option.");
+  }
+
+  if (mode === "fixed") {
+    if (!pricing.fixed_price || pricing.fixed_price <= 0) {
+      throw new Error("Tour price is not set.");
+    }
+    return { base_price: pricing.fixed_price, pricing_mode: mode, resolved_tier: null };
+  }
+  if (mode === "per_person") {
+    if (!pricing.per_person_price || pricing.per_person_price <= 0) {
+      throw new Error("Tour price is not set.");
+    }
+    return {
+      base_price: Math.round(pricing.per_person_price * adults),
+      pricing_mode: mode,
+      resolved_tier: null,
+    };
+  }
+  // by_group
+  const tier = findTier(pricing.group_tiers, adults);
+  if (!tier) {
+    throw new Error("This group size is not offered for this tour.");
+  }
+  return { base_price: tier.price, pricing_mode: mode, resolved_tier: tier };
+}
 
 export type BookingCoreResult = { id: string; status: string };
 
@@ -79,7 +192,7 @@ export const quoteSchema = z.object({
   tour_id: z.string().uuid(),
   adults: z.number().int().min(1).max(50),
   children: z.number().int().min(0).max(50).default(0),
-  group_category: z.enum(["private", "small", "group", "large"]).nullable().optional(),
+  pricing_mode: z.enum(["fixed", "per_person", "by_group"]).optional(),
   language: z.string().min(1).max(40).nullable().optional(),
 });
 export type QuoteInput = z.infer<typeof quoteSchema>;
@@ -92,53 +205,39 @@ export type PriceQuote = {
   service_fee_rate: number;
   total: number;
   currency: string;
-  pricing_mode: "fixed" | "by_group";
-  group_max: typeof GROUP_MAX;
+  pricing_mode: PricingMode;
+  available_modes: PricingMode[];
+  resolved_tier: GroupTier | null;
+  max_guests: number | null;
 };
 
 /**
  * Server-authoritative price quote — the exact same math createBookingCore
- * uses, without creating a booking. Safe to expose to clients so the mobile
- * app / web can show the final amount before the user confirms.
+ * uses, without creating a booking.
  */
 export async function quoteBookingCore(input: QuoteInput): Promise<PriceQuote> {
   const { data: tour, error: tourErr } = await supabaseAdmin
     .from("tours")
     .select(
-      "id, price_from, pricing_mode, base_language, language_multipliers, group_prices, published",
+      "id, price_from, pricing_mode, base_language, language_multipliers, group_prices, pricing_modes, fixed_price, per_person_price, group_tiers, max_guests, published",
     )
     .eq("id", input.tour_id)
     .maybeSingle();
   if (tourErr) throw new Error(tourErr.message);
-  if (!tour || !tour.published) throw new Error("Tour not available");
+  if (!tour || !(tour as any).published) throw new Error("Tour not available");
 
-  const pricingMode = (tour as any).pricing_mode === "by_group" ? "by_group" : "fixed";
-  const groupPrices = ((tour as any).group_prices ?? {}) as Record<string, number>;
+  const pricing = readTourPricing(tour as any);
+  const { base_price, pricing_mode, resolved_tier } = computeBasePrice(
+    pricing,
+    input.adults,
+    input.pricing_mode,
+  );
+
   const langMults = ((tour as any).language_multipliers ?? {}) as Record<string, number>;
   const baseLanguage = (tour as any).base_language as string | null;
-
-  let basePrice = 0;
-  if (pricingMode === "by_group") {
-    const cat =
-      input.group_category ?? autoPickCategory(groupPrices, input.adults);
-    if (!cat) {
-      throw new Error("Your group is larger than this tour offers. Please contact the guide.");
-    }
-    const max = GROUP_MAX[cat];
-    if (input.adults > max) {
-      throw new Error("Your group is larger than this category. Please contact the guide.");
-    }
-    basePrice = Number(groupPrices[cat] ?? 0);
-    if (basePrice <= 0) throw new Error("This group size is not offered for this tour.");
-  } else {
-
-    basePrice = Number(groupPrices.fixed ?? tour.price_from ?? 0);
-    if (basePrice <= 0) throw new Error("Tour price is not set.");
-  }
-
   const lang = input.language ?? null;
   const mult = !lang || lang === baseLanguage ? 0 : Number(langMults[lang] ?? 0);
-  const subtotal = Math.round(basePrice * (1 + mult / 100));
+  const subtotal = Math.round(base_price * (1 + mult / 100));
 
   const { data: sfSetting } = await supabaseAdmin
     .from("app_settings")
@@ -155,15 +254,17 @@ export async function quoteBookingCore(input: QuoteInput): Promise<PriceQuote> {
   const total = subtotal + fee;
 
   return {
-    base_price: basePrice,
+    base_price,
     language_multiplier_pct: mult,
     subtotal,
     service_fee: fee,
     service_fee_rate: effectiveServiceFeeRate,
     total,
     currency: "USD",
-    pricing_mode: pricingMode,
-    group_max: GROUP_MAX,
+    pricing_mode,
+    available_modes: pricing.available_modes,
+    resolved_tier,
+    max_guests: pricing.max_guests,
   };
 }
 
