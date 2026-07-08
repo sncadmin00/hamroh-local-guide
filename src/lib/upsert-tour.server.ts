@@ -352,7 +352,7 @@ export async function upsertTourCore(input: UpsertTourInput, userId: string) {
   // 9. Persist
   let tourId: string;
   if (current) {
-    const { error } = await supabaseAdmin
+    const { error } = await (supabaseAdmin as any)
       .from("tours")
       .update(payload)
       .eq("id", current.id)
@@ -368,13 +368,13 @@ export async function upsertTourCore(input: UpsertTourInput, userId: string) {
       if (!existing) break;
       slug = `${base}-${Math.random().toString(36).slice(2, 6)}`;
     }
-    const { data: inserted, error } = await supabaseAdmin
+    const { data: inserted, error } = await (supabaseAdmin as any)
       .from("tours")
       .insert({ ...payload, slug, guide_id: guide.id })
       .select("id")
       .single();
     if (error) throw new Error(error.message);
-    tourId = inserted.id as string;
+    tourId = (inserted as { id: string }).id;
   }
 
   // 10. Sync tour_categories only when caller sent category_ids
