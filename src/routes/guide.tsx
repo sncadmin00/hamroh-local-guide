@@ -1347,14 +1347,140 @@ function TourEditor({
             )}
           </div>
 
-          <label className="block text-sm">
-            <span className="text-xs text-muted-foreground">{tg("editor.title")}</span>
-            <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={tg("editor.titlePh")} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
-          </label>
-          <label className="block text-sm">
-            <span className="text-xs text-muted-foreground">{tg("editor.shortDesc")}</span>
-            <input value={shortDesc} onChange={(e) => setShortDesc(e.target.value)} placeholder={tg("editor.shortDescPh")} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
-          </label>
+          <div className="rounded-2xl border border-border bg-card/40 p-3 space-y-3">
+            <div className="flex items-center gap-2 text-xs">
+              <span className="text-muted-foreground uppercase tracking-wide">Source language</span>
+              <select
+                value={baseLc}
+                onChange={(e) => {
+                  const next = e.target.value as Lc;
+                  setBaseLc(next);
+                  setActiveLc(next);
+                }}
+                className="h-8 rounded-lg border border-input bg-background px-2 text-xs font-medium"
+              >
+                {LC_ORDER.map((lc) => (
+                  <option key={lc} value={lc}>{LC_NAME[lc]}</option>
+                ))}
+              </select>
+              <button
+                type="button"
+                disabled={translating || !titleByLc[baseLc].trim()}
+                onClick={async () => {
+                  setTranslating(true);
+                  try {
+                    const out = await translateFn({
+                      data: {
+                        sourceLang: baseLc,
+                        title: titleByLc[baseLc],
+                        short_description: shortByLc[baseLc],
+                        description_md: "",
+                      },
+                    });
+                    setTitleByLc((s) => {
+                      const n = { ...s };
+                      for (const lc of LC_ORDER) if (lc !== baseLc && out[lc]?.title) n[lc] = out[lc].title;
+                      return n;
+                    });
+                    setShortByLc((s) => {
+                      const n = { ...s };
+                      for (const lc of LC_ORDER) if (lc !== baseLc && out[lc]?.short_description) n[lc] = out[lc].short_description;
+                      return n;
+                    });
+                    toast.success("Translated");
+                  } catch (e) {
+                    toast.error((e as Error).message);
+                  } finally {
+                    setTranslating(false);
+                  }
+                }}
+                className="ml-auto inline-flex items-center gap-1.5 h-8 px-3 rounded-full bg-primary/10 text-primary text-xs font-medium disabled:opacity-50"
+              >
+                {translating ? <Loader2 className="h-3 w-3 animate-spin" /> : <LanguagesIcon className="h-3 w-3" />}
+                Auto-translate
+              </button>
+            </div>
+
+            <div className="flex gap-1.5">
+              {LC_ORDER.map((lc) => {
+                const isActive = lc === activeLc;
+                const isBase = lc === baseLc;
+                return (
+                  <button
+                    key={lc}
+                    type="button"
+                    onClick={() => setActiveLc(lc)}
+                    className={`flex-1 h-9 rounded-full text-xs font-medium uppercase transition ${
+                      isActive
+                        ? "bg-foreground text-background"
+                        : "bg-background ring-1 ring-border text-foreground hover:bg-secondary"
+                    }`}
+                  >
+                    {lc}
+                    {isBase && <span className="ml-1 text-[9px] opacity-70">src</span>}
+                  </button>
+                );
+              })}
+            </div>
+
+            <label className="block text-sm">
+              <span className="text-xs text-muted-foreground">
+                {tg("editor.title")}
+                {activeLc !== baseLc && <span className="ml-1 text-[10px] uppercase">· auto</span>}
+              </span>
+              <input
+                value={titleByLc[activeLc]}
+                onChange={(e) => setTitleByLc((s) => ({ ...s, [activeLc]: e.target.value }))}
+                placeholder={tg("editor.titlePh")}
+                className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm"
+              />
+            </label>
+            <label className="block text-sm">
+              <span className="text-xs text-muted-foreground">
+                {tg("editor.shortDesc")}
+                {activeLc !== baseLc && <span className="ml-1 text-[10px] uppercase">· auto</span>}
+              </span>
+              <input
+                value={shortByLc[activeLc]}
+                onChange={(e) => setShortByLc((s) => ({ ...s, [activeLc]: e.target.value }))}
+                placeholder={tg("editor.shortDescPh")}
+                className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm"
+              />
+            </label>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <label className="block text-sm">
+                <span className="text-xs text-muted-foreground">{tg("editor.highlights")}</span>
+                <textarea
+                  value={highlightsByLc[activeLc]}
+                  onChange={(e) => setHighlightsByLc((s) => ({ ...s, [activeLc]: e.target.value }))}
+                  rows={4}
+                  className="mt-1 w-full rounded-xl border border-input bg-background p-2 text-sm"
+                />
+              </label>
+              <label className="block text-sm">
+                <span className="text-xs text-muted-foreground">{tg("editor.included")}</span>
+                <textarea
+                  value={includedByLc[activeLc]}
+                  onChange={(e) => setIncludedByLc((s) => ({ ...s, [activeLc]: e.target.value }))}
+                  rows={4}
+                  className="mt-1 w-full rounded-xl border border-input bg-background p-2 text-sm"
+                />
+              </label>
+              <label className="block text-sm">
+                <span className="text-xs text-muted-foreground">{tg("editor.notIncluded")}</span>
+                <textarea
+                  value={notIncludedByLc[activeLc]}
+                  onChange={(e) => setNotIncludedByLc((s) => ({ ...s, [activeLc]: e.target.value }))}
+                  rows={4}
+                  className="mt-1 w-full rounded-xl border border-input bg-background p-2 text-sm"
+                />
+              </label>
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              Write on the source language; other tabs auto-fill on save or via Auto-translate. Manual edits on non-source tabs are preserved.
+            </p>
+          </div>
+
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <label className="block text-sm">
