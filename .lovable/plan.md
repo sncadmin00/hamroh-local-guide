@@ -1,112 +1,80 @@
+# Web: гибкая ценовая модель — форма тура и страница бронирования
 
-# Web = витрина + рабочее место. Мобилка = для туриста.
+Серверная часть уже готова (миграция, `readTourPricing`/`computeBasePrice`, `price-quote`/`create-booking`). Осталось привести веб к тем же полям и контракту.
 
-Цель: перестать копировать мобильный домашний экран на web. Web получает две чёткие роли — публичная маркетинг-витрина (SEO, шеринг, привлечение) и приватное рабочее место для гида и админа. Мобильные-по-природе фичи убираем с web.
+## Что делаем
 
-## 1. Публичная витрина (переработка главной и информационных страниц)
+### 1. Форма тура гида (`src/routes/guide.tsx` + `guide-portal.functions.ts`)
 
-**Главная (`src/routes/index.tsx`)** — переверстать из «клона мобилки» в лендинг Uzbekistan:
-- Hero + AI-поиск (оставляем, работает как воронка).
-- Popular categories (возвращаем — на витрине это ключевой SEO-блок).
-- Featured guides (карусель, ссылки на профили).
-- Spotlight tours (карусель с ценами).
-- «Why Hamroh» / TrustBar (доверие).
-- Featured reviews (соц.доказательство).
-- Latest articles (SEO-контент).
-- **Download the app** — крупный баннер с QR + сторами (главный CTA внизу).
-- Footer.
+Заменить блок «Pricing» новой моделью.
 
-**Убрать с главной web-версии:**
-- `PersonalCard` с погодой/геолокацией — это утренний экран туриста *в поездке*, не витрина.
-- `ReelsRow` / Watch — вертикальные видео на десктопе смотрятся плохо, они для мобилки.
-- `TravelDiary` — приватный дневник, ему не место на публичной главной.
-- `BudgetCalculator` — тревел-утилита «в поле».
-- `NotificationBanner` / `NotificationsBell` в шапке главной для гостей — оставляем только для залогиненных.
-- `ExploreCarousel` (смешанная лента) — заменяется отдельными кураторскими каруселями Guides / Tours / Articles.
-- `MobileTabBar` — убираем с web совсем (это мобильный паттерн).
+- Три чекбокса: **Fixed price** / **Per person** / **By group** — гид включает любые (минимум один обязателен).
+- Под каждым — свои поля, показываются только когда режим включён:
+  - Fixed → одна цена за тур.
+  - Per person → цена × взрослых.
+  - By group → редактор диапазонов (`min` / `max` / `price`, кнопки «Add tier» / «Remove»). Клиентская валидация: без пересечений, отсортированы, `min≤max`, `price>0`.
+- Поле **Max guests** (число или пусто) — жёсткий потолок вместимости (транспорт на 4 и т.д.).
+- Подпись рядом с «Children»: «Не считаются в цене и вместимости. Старше 13 — добавляйте во взрослых».
 
-**Публичные разделы (уже есть, полируем SEO):**
-- `/tours`, `/guides`, `/explore`, `/articles` — витринные списки с фильтрами.
-- `/tours/$slug`, `/guides/$guideId`, `/explore/$slug` — детальные страницы, каждая со своим `head()`: title, description, og:title, og:description, og:image (из данных лоадера — фото тура/гида/места).
-- `/about`, `/how-it-works`, `/become-a-guide`, `/contact`, `/faq` — маркетинг.
-- Проверить sitemap.xml, robots.txt, canonical на каждой публичной странице.
+Список туров (карточки в кабинете гида): показывать все включённые режимы кратко (`Fixed $50 · Per person $30 · By group 1–2 $50 / 3–4 $120`).
 
-## 2. Приватная зона туриста (лёгкая, а не полный кабинет)
+Сервер (`saveGuideTour` в `guide-portal.functions.ts`): принимает новые поля, валидирует, пишет в новые колонки `pricing_modes`, `fixed_price`, `per_person_price`, `group_tiers`, `max_guests`. Старые колонки (`pricing_mode`, `group_prices`, `price_from`) — заполняем «best-effort» для совместимости старых читателей, но не считаем их источником правды.
 
-Оставить на web то, что реально удобнее с большого экрана:
-- `/my-bookings` — просмотр броней, скачивание PDF-ваучера.
-- `/wishlist` — коллекции, планирование поездки.
-- `/messages` — переписка с гидом (широкий чат удобнее клавиатуры).
-- `/account` — профиль, настройки, язык, тема.
+### 2. Страница бронирования (`src/routes/book.$slug.tsx`)
 
-Убрать/скрыть на web:
-- Travel Diary, Budget Calculator, Reels-лента, Watch — эти сущности остаются только в мобилке. В БД таблицы (`travel_diaries`, `trip_budgets`) сохраняем — мобилка ими пользуется, — но web-компоненты и роуты не показываем.
-- На страницах туриста добавить мягкий баннер «Continue in the app» с deep-link.
+- Убираем UI-выбор категорий (`private/small/group/large`).
+- Показываем инпут **Adults** (ограничен `max_guests` если задан) и **Children (0–13)** (отдельно, не в цене).
+- Если у тура включено больше одного режима — блок «Choose how to pay» с превью цены для каждого способа при текущем `adults`. Клиент выбирает.
+- Если включён один — используется молча.
+- Расчёт финальной цены — через `price-quote` (не считаем на клиенте, только предпросмотр).
+- В `createBooking` шлём `pricing_mode` — тот, который выбрал клиент.
+- Ошибки от сервера показываем как есть (`"This tour accepts up to N guests"`, `"Please choose a pricing option"` и т.д.).
 
-## 3. Приватная зона гида и админа (усилить)
+### 3. Страница тура (`src/routes/tours_.$slug.tsx`)
 
-Кабинет гида (`/guide`) и админка (`/admin`) — основная ценность web для команды. Ничего радикально не меняем, только:
-- Убеждаемся, что все табы (Calendar, Bookings, Earnings, Posts, Places, Profile, AI) работают на десктопе широкоформатно (двухколоночные раскладки где имеет смысл).
-- В шапке гида/админа — быстрый переключатель «Web workspace» вместо туристических блоков.
-- Кнопка «Get the app» для гидов — опциональна, приложение им нужно меньше.
-
-## 4. Шапка и навигация
-
-`SiteHeader.tsx`:
-- Для гостей и туристов: Home / Guides / Tours / Explore / Articles / About + «Download app» кнопка справа.
-- Для залогиненного гида: добавить пункт «Guide cabinet».
-- Для админа: «Admin».
-- Убрать `MobileTabBar` с web (нижний таббар — мобильный паттерн, на web дублирует шапку).
-
-## 5. SEO-полировка (за одно)
-
-- Уникальные `head()` на каждом публичном роуте (сейчас часть страниц наследует общие мета).
-- `og:image` на leaf-роутах туров/гидов/статей из данных лоадера.
-- JSON-LD: `TouristTrip` для туров, `Person` для гидов, `Article` для статей.
-- Прогнать SEO-сканер после и починить findings.
-
-## Файлы, которые правим
+Блок «Pricing» показывает все включённые режимы:
 
 ```text
-src/routes/index.tsx                        — переверстать в лендинг-витрину
-src/components/SiteHeader.tsx               — новая навигация, «Download app»
-src/components/home/DownloadAppBanner.tsx   — НОВЫЙ (QR + сторы)
-src/components/home/PopularCategoriesCarousel.tsx — вернуть на главную
-src/components/home/FeaturedGuides.tsx      — вернуть
-src/components/home/SpotlightTourCarousel.tsx — вернуть
-src/components/home/FeaturedReviews.tsx     — вернуть
-src/components/home/LatestPosts.tsx         — вернуть (Latest articles)
-src/components/home/WhyHamroh.tsx / TrustBar.tsx — вернуть
-
-# Удалить с главной (компоненты оставляем в репо — мобилка/будущее)
-src/components/home/PersonalCard.tsx        — снять с index.tsx
-src/components/home/ReelsRow.tsx            — снять
-src/components/home/TravelDiary.tsx         — снять
-src/components/home/BudgetCalculator.tsx    — снять
-src/components/home/ExploreCarousel.tsx     — снять
-src/components/home/MobileTabBar.tsx        — снять с layout web
-
-# Мягкие «continue in app» баннеры
-src/components/ContinueInAppBanner.tsx      — НОВЫЙ (для /my-bookings, /wishlist, /messages)
-
-# SEO
-src/routes/tours_.$slug.tsx, guides_.$guideId.tsx, explore.$slug.tsx
-                                            — уточнить head() + og:image из loader
+Fixed price:      $50
+Per person:       $30 / adult
+By group:
+  1 person       $50
+  2 people       $80
+  3–4 people     $120
+  5–8 people     $180
+Up to 8 guests
 ```
 
-## Что НЕ трогаем
+Убираем прежний рендер `private/small/group/large`.
 
-- Схема БД — без изменений.
-- Мобильное приложение — вне рамок этой правки.
-- Кабинеты гида и админа — только косметика шапки, логика бизнеса не меняется.
-- i18n — переводы новых строк добавим по ходу.
+### 4. Админ-панель туров (`src/components/admin/ToursPanel.tsx`)
 
-## Критерии приёмки
+Тот же редактор, что у гида (переиспользуем один компонент). Админ может править любые туры.
 
-1. Главная web выглядит как маркетинг-лендинг, а не как копия мобильного экрана. Reels, Diary, Budget, PersonalCard оттуда убраны.
-2. Каждая публичная страница имеет уникальные title/description/og.
-3. В шапке видна кнопка «Download the app», ведёт на баннер/сторы (пока placeholder-ссылки, если сторов ещё нет).
-4. Кабинет гида и админка остаются полностью функциональны.
-5. Кабинет туриста на web урезан до Bookings/Wishlist/Messages/Account с мягким «continue in app».
+### 5. Общие утилиты (`src/lib/content-queries.ts`)
 
-После аппрува начинаю с главной и шапки, потом SEO leaf-роутов, потом «continue in app» баннеры.
+- Тип `TourRow` расширить новыми полями.
+- Функция `resolveTourPrice` — переписать под новую модель или убрать (не используется после правок выше).
+- Функция `offeredCategories` — удалить (больше не нужна).
+
+## Порядок работ (одним заходом)
+
+1. Общий компонент `PricingModeEditor` (форма) + `PricingModeDisplay` (отображение) в `src/components/tours/`.
+2. `content-queries.ts`: типы + чтение новых полей.
+3. Форма гида (`guide.tsx`) + `saveGuideTour` (`guide-portal.functions.ts`) — использовать компонент.
+4. Админ-панель — тот же компонент.
+5. `tours_.$slug.tsx` — новый блок Pricing.
+6. `book.$slug.tsx` — выбор режима, интеграция с `price-quote`.
+
+## Технические детали
+
+- Ключевые серверные функции уже есть: `quoteBookingCore`, `createBookingCore`, `readTourPricing`, `computeBasePrice`, endpoints `/api/public/hooks/price-quote`, `/api/public/hooks/create-booking`.
+- Старые колонки БД остаются на переходный период — читатели, которые ещё не обновлены, продолжают видеть цены благодаря legacy-fallback в `readTourPricing`.
+- Валидация тиров зеркалится в БД (`validate_group_tiers`), в клиенте (форма) и в `computeBasePrice`.
+- i18n подписи — RU/EN/UZ через существующий `useI18n()`.
+
+## Что НЕ делаем в этой итерации
+
+- Не удаляем старые колонки (`pricing_mode`, `group_prices`, `price_from`) — снесём отдельной миграцией, когда все туры пересохранят.
+- Не трогаем мобильное приложение — контракт уже отправлен, они интегрируются параллельно.
+- Не добавляем «клиент видит все режимы, а сервер выбирает самый дешёвый» — оставляем ручной выбор клиента, как договорились.
