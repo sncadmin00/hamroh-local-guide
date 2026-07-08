@@ -9,6 +9,7 @@ import { createNotification } from "@/lib/notifications.server";
 import { mirrorBookingToGoogle } from "@/lib/google-calendar.server";
 import { signBookingPdfToken } from "@/lib/booking-pdf.server";
 import { translateTourFields, mapBaseLanguage } from "@/lib/translate-tour.server";
+import { upsertTourCore, upsertTourInputSchema } from "@/lib/upsert-tour.server";
 
 const APP_BASE_URL = "https://hamrohim.com";
 
