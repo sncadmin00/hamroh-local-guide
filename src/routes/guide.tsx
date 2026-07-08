@@ -1257,6 +1257,10 @@ function TourEditor({
                   endSet: tg("editor.mapEndEmpty"),
                   clear: tg("editor.mapClear"),
                   hint: tg("editor.mapHint"),
+                  searchPh: tg("editor.mapSearchPh"),
+                  searchBtn: tg("editor.mapSearchBtn"),
+                  searching: tg("editor.mapSearching"),
+                  noResults: tg("editor.mapNoResults"),
                 }}
               />
             </Suspense>

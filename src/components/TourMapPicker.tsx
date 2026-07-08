@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -6,6 +6,12 @@ import "leaflet/dist/leaflet.css";
 export type LatLng = { lat: number; lng: number } | null;
 
 type Mode = "meeting" | "end";
+
+type SearchResult = {
+  lat: number;
+  lng: number;
+  label: string;
+};
 
 function makeIcon(color: string, label: string) {
   return L.divIcon({
@@ -37,11 +43,11 @@ function ClickHandler({ onClick }: { onClick: (lat: number, lng: number) => void
   return null;
 }
 
-function Recenter({ center }: { center: [number, number] }) {
+function Recenter({ center, zoom }: { center: [number, number]; zoom?: number }) {
   const map = useMap();
   useEffect(() => {
-    map.setView(center, map.getZoom());
-  }, [center[0], center[1]]); // eslint-disable-line react-hooks/exhaustive-deps
+    map.setView(center, zoom ?? map.getZoom());
+  }, [center[0], center[1], zoom]); // eslint-disable-line react-hooks/exhaustive-deps
   return null;
 }
 
@@ -58,6 +64,10 @@ export default function TourMapPicker(props: {
     endSet: string;
     clear: string;
     hint: string;
+    searchPh?: string;
+    searchBtn?: string;
+    searching?: string;
+    noResults?: string;
   };
 }) {
   const { center, meeting, end, endSameAsMeeting, onChange, labels } = props;
@@ -68,6 +78,14 @@ export default function TourMapPicker(props: {
     if (end) return [end.lat, end.lng];
     return [center.lat, center.lng];
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const [mapCenter, setMapCenter] = useState<[number, number]>(initialCenter);
+  const [mapZoom, setMapZoom] = useState<number | undefined>(undefined);
+
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<SearchResult[] | null>(null);
+  const [loading, setLoading] = useState(false);
+  const abortRef = useRef<AbortController | null>(null);
 
   const handleClick = (lat: number, lng: number) => {
     if (endSameAsMeeting) {
@@ -88,8 +106,100 @@ export default function TourMapPicker(props: {
     setMode(which);
   };
 
+  const runSearch = async () => {
+    const q = query.trim();
+    if (!q) return;
+    abortRef.current?.abort();
+    const ctrl = new AbortController();
+    abortRef.current = ctrl;
+    setLoading(true);
+    setResults(null);
+    try {
+      // Bias results near current map center
+      const viewboxSize = 0.5; // ~50km bounding hint
+      const vb = [
+        center.lng - viewboxSize,
+        center.lat + viewboxSize,
+        center.lng + viewboxSize,
+        center.lat - viewboxSize,
+      ].join(",");
+      const url =
+        `https://nominatim.openstreetmap.org/search?format=json&limit=6&addressdetails=0` +
+        `&q=${encodeURIComponent(q)}&viewbox=${vb}&bounded=0`;
+      const res = await fetch(url, {
+        signal: ctrl.signal,
+        headers: { Accept: "application/json" },
+      });
+      const data: Array<{ lat: string; lon: string; display_name: string }> = await res.json();
+      const parsed: SearchResult[] = data.map((d) => ({
+        lat: parseFloat(d.lat),
+        lng: parseFloat(d.lon),
+        label: d.display_name,
+      }));
+      setResults(parsed);
+    } catch (e) {
+      if ((e as { name?: string })?.name !== "AbortError") {
+        setResults([]);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const pickResult = (r: SearchResult) => {
+    setMapCenter([r.lat, r.lng]);
+    setMapZoom(16);
+    // Auto-place the active pin at the found location; user can then tap to fine-tune.
+    handleClick(r.lat, r.lng);
+    setResults(null);
+  };
+
   return (
     <div className="space-y-2">
+      <div className="flex gap-2">
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              runSearch();
+            }
+          }}
+          placeholder={labels.searchPh ?? "Search a place or address…"}
+          className="flex-1 h-9 px-3 rounded-lg border border-input bg-background text-sm"
+        />
+        <button
+          type="button"
+          onClick={runSearch}
+          disabled={loading || !query.trim()}
+          className="h-9 px-3 rounded-lg bg-foreground text-background text-sm disabled:opacity-50"
+        >
+          {loading ? (labels.searching ?? "Searching…") : (labels.searchBtn ?? "Find")}
+        </button>
+      </div>
+      {results !== null && (
+        <div className="rounded-lg border border-input bg-background max-h-48 overflow-y-auto text-sm">
+          {results.length === 0 ? (
+            <div className="px-3 py-2 text-muted-foreground text-xs">
+              {labels.noResults ?? "Nothing found"}
+            </div>
+          ) : (
+            results.map((r, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => pickResult(r)}
+                className="w-full text-left px-3 py-2 hover:bg-muted border-b border-input last:border-0"
+              >
+                {r.label}
+              </button>
+            ))
+          )}
+        </div>
+      )}
+
       <div className="flex flex-wrap items-center gap-2 text-xs">
         <button
           type="button"
@@ -132,7 +242,7 @@ export default function TourMapPicker(props: {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <Recenter center={[center.lat, center.lng]} />
+          <Recenter center={mapCenter} zoom={mapZoom} />
           <ClickHandler onClick={handleClick} />
           {meeting && <Marker position={[meeting.lat, meeting.lng]} icon={meetingIcon} />}
           {end && <Marker position={[end.lat, end.lng]} icon={endIcon} />}
