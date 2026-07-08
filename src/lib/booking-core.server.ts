@@ -119,14 +119,19 @@ export async function quoteBookingCore(input: QuoteInput): Promise<PriceQuote> {
 
   let basePrice = 0;
   if (pricingMode === "by_group") {
-    if (!input.group_category) throw new Error("Please choose a group size.");
-    const max = GROUP_MAX[input.group_category];
+    const cat =
+      input.group_category ?? autoPickCategory(groupPrices, input.adults);
+    if (!cat) {
+      throw new Error("Your group is larger than this tour offers. Please contact the guide.");
+    }
+    const max = GROUP_MAX[cat];
     if (input.adults > max) {
       throw new Error("Your group is larger than this category. Please contact the guide.");
     }
-    basePrice = Number(groupPrices[input.group_category] ?? 0);
+    basePrice = Number(groupPrices[cat] ?? 0);
     if (basePrice <= 0) throw new Error("This group size is not offered for this tour.");
   } else {
+
     basePrice = Number(groupPrices.fixed ?? tour.price_from ?? 0);
     if (basePrice <= 0) throw new Error("Tour price is not set.");
   }
