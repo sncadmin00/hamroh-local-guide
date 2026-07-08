@@ -216,7 +216,7 @@ export const Route = createFileRoute('/api/public/tours/$tourId/slots')({
           .sort((a, b) =>
             a.date === b.date ? a.start_time.localeCompare(b.start_time) : a.date.localeCompare(b.date),
           )
-          .slice(0, 400)
+          .slice(0, 1500)
           .map((c) => ({
             date: c.date,
             start_time: c.start_time,
