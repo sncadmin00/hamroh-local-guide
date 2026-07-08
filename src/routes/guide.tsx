@@ -28,6 +28,7 @@ import {
 } from "@/lib/guide-portal.functions";
 import { listGuideBlocks, blockTime, unblockTime, type GuideBlock } from "@/lib/guide-blocks.functions";
 import { listTourSchedule, upsertTourSchedule, getGuideBuffer, setGuideBuffer } from "@/lib/tour-schedule.functions";
+import { generateTourDraft } from "@/lib/tour-ai.functions";
 import { assessLanguageTest } from "@/lib/language-test.functions";
 import { useCities, useCategories } from "@/lib/content-queries";
 import { GuidePostsPanel } from "@/components/GuidePostsPanel";
