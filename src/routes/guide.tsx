@@ -1278,11 +1278,36 @@ function TourEditor({
           <button
             disabled={!title.trim() || !cityId}
             onClick={() => {
-              const gp: Partial<Record<(typeof GROUP_KEYS)[number], number>> = {};
-              for (const k of GROUP_KEYS) {
-                const n = Number(groupPricesText[k] ?? "");
-                if (Number.isFinite(n) && n > 0) gp[k] = n;
+              const modes: ("fixed" | "per_person" | "by_group")[] = [];
+              if (modeFixed) modes.push("fixed");
+              if (modePerPerson) modes.push("per_person");
+              if (modeByGroup) modes.push("by_group");
+              if (modes.length === 0) {
+                toast.error(tg("editor.priceModeRequired"));
+                return;
               }
+              const fixedPriceNum = Number(fixedPriceText);
+              const perPersonNum = Number(perPersonPriceText);
+              const parsedTiers = groupTiers
+                .map((t) => ({ min: Number(t.min), max: Number(t.max), price: Number(t.price) }))
+                .filter((t) => Number.isFinite(t.min) && Number.isFinite(t.max) && Number.isFinite(t.price));
+              if (modeByGroup) {
+                if (parsedTiers.length === 0) {
+                  toast.error(tg("editor.byGroupHelp"));
+                  return;
+                }
+                // Validate no overlap
+                const sorted = [...parsedTiers].sort((a, b) => a.min - b.min);
+                let prev = 0;
+                for (const t of sorted) {
+                  if (t.min > t.max || t.min <= prev || t.price <= 0) {
+                    toast.error(tg("editor.byGroupHelp"));
+                    return;
+                  }
+                  prev = t.max;
+                }
+              }
+              const maxGuestsNum = maxGuestsText.trim() ? Number(maxGuestsText) : NaN;
               const mults: Record<string, number> = {};
               for (const [k, v] of Object.entries(langMultsText)) {
                 if (k === baseLanguage) continue;
@@ -1296,9 +1321,11 @@ function TourEditor({
                 cover_url: coverUrl.trim() || null,
                 city_id: cityId,
                 duration_hours: durationHours,
-                pricing_mode: pricingMode,
-                fixed_price: fixedPrice,
-                group_prices: gp,
+                pricing_modes: modes,
+                fixed_price: modeFixed && Number.isFinite(fixedPriceNum) && fixedPriceNum > 0 ? fixedPriceNum : null,
+                per_person_price: modePerPerson && Number.isFinite(perPersonNum) && perPersonNum > 0 ? perPersonNum : null,
+                group_tiers: modeByGroup ? parsedTiers.sort((a, b) => a.min - b.min) : [],
+                max_guests: Number.isFinite(maxGuestsNum) && maxGuestsNum > 0 ? maxGuestsNum : null,
                 base_language: baseLanguage,
                 language_multipliers: mults,
                 children_free_under: childrenFreeUnder,
