@@ -1104,8 +1104,43 @@ function TourEditor({
   const [aiOpen, setAiOpen] = useState(false);
   const [aiSeed, setAiSeed] = useState("");
   const [aiBusy, setAiBusy] = useState(false);
-  const [title, setTitle] = useState(initial?.title ?? "");
-  const [shortDesc, setShortDesc] = useState(initial?.short_description ?? "");
+  // Per-locale text state. Each locale (ru/en/uz) has its own title, short
+  // description, and three arrays (as newline-separated text).
+  type Lc = "ru" | "en" | "uz";
+  const LC_ORDER: Lc[] = ["ru", "en", "uz"];
+  const LC_NAME: Record<Lc, string> = { ru: "Russian", en: "English", uz: "Uzbek" };
+  const NAME_TO_LC: Record<string, Lc> = {
+    Russian: "ru", English: "en", Uzbek: "uz",
+    russian: "ru", english: "en", uzbek: "uz",
+    ru: "ru", en: "en", uz: "uz",
+  };
+  const initialBaseLc: Lc = NAME_TO_LC[initial?.base_language ?? ""] ?? "ru";
+  const [baseLc, setBaseLc] = useState<Lc>(initialBaseLc);
+  const [activeLc, setActiveLc] = useState<Lc>(initialBaseLc);
+  const seedLocaleStr = (lc: Lc, key: "title" | "short_description"): string => {
+    const perLc = (initial as any)?.[`${key}_${lc}`];
+    if (typeof perLc === "string" && perLc.trim() !== "") return perLc;
+    if (lc === initialBaseLc) return (initial as any)?.[key] ?? "";
+    return "";
+  };
+  const seedLocaleArr = (lc: Lc, key: "highlights" | "included" | "not_included"): string => {
+    const perLc = (initial as any)?.[`${key}_${lc}`];
+    if (Array.isArray(perLc) && perLc.length > 0) return arrToText(perLc);
+    if (lc === initialBaseLc) return arrToText((initial as any)?.[key] ?? []);
+    return "";
+  };
+  const [titleByLc, setTitleByLc] = useState<Record<Lc, string>>({
+    ru: seedLocaleStr("ru", "title"),
+    en: seedLocaleStr("en", "title"),
+    uz: seedLocaleStr("uz", "title"),
+  });
+  const [shortByLc, setShortByLc] = useState<Record<Lc, string>>({
+    ru: seedLocaleStr("ru", "short_description"),
+    en: seedLocaleStr("en", "short_description"),
+    uz: seedLocaleStr("uz", "short_description"),
+  });
+  const [translating, setTranslating] = useState(false);
+  const translateFn = useServerFn(translateTourContent);
   const [coverUrl, setCoverUrl] = useState(initial?.cover_url ?? "");
   const [cityId, setCityId] = useState(initial?.city_id ?? defaultCityId);
   const [durationHours, setDurationHours] = useState<number>(initial?.duration_hours ?? 2);
