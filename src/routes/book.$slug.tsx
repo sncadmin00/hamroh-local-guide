@@ -375,23 +375,59 @@ function BookPage() {
               </div>
             </div>
 
-            {tour.pricing_mode === "by_group" && categories.length > 0 && (
+            {exceedsCapacity && (
+              <p className="text-sm text-amber-700 bg-amber-500/10 rounded-xl p-3">
+                {lang === "ru"
+                  ? `Максимум ${pricing.max_guests} гостей. Уменьшите количество взрослых или свяжитесь с гидом.`
+                  : lang === "uz"
+                    ? `Maksimum ${pricing.max_guests} mehmon. Kattalar sonini kamaytiring yoki hamroh bilan bog'laning.`
+                    : `This tour accepts up to ${pricing.max_guests} guests. Reduce adults or contact the guide.`}
+              </p>
+            )}
+
+            {availableModes.length > 1 && !exceedsCapacity && (
               <div>
-                <label className="text-sm font-medium">Group size</label>
-                {selectedCategory ? (
-                  <div className="mt-2 inline-flex items-center gap-2 rounded-xl bg-secondary/60 px-4 py-3 text-sm">
-                    <span className="font-medium">{GROUP_CATEGORY_LABEL[selectedCategory]}</span>
-                    <span className="tabular-nums text-muted-foreground">${tour.group_prices[selectedCategory]}</span>
-                    <span className="text-xs text-muted-foreground">— auto-selected from {form.adults} {form.adults === 1 ? "adult" : "adults"}</span>
-                  </div>
-                ) : null}
-                {adultsExceedAll && (
-                  <p className="mt-2 text-sm text-amber-700 bg-amber-500/10 rounded-xl p-3">
-                    Your group is larger than the offered sizes. Please contact the guide to arrange a custom booking.
-                  </p>
-                )}
+                <label className="text-sm font-medium">
+                  {lang === "ru" ? "Как оплатить" : lang === "uz" ? "To'lash usuli" : "Choose how to pay"}
+                </label>
+                <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                  {modePreview.map(({ mode, price }) => {
+                    const on = effectiveMode === mode;
+                    const disabled = price == null;
+                    return (
+                      <button
+                        key={mode}
+                        type="button"
+                        disabled={disabled}
+                        onClick={() => setSelectedMode(mode)}
+                        className={`rounded-2xl border p-4 text-left transition ${
+                          on
+                            ? "border-primary bg-primary/5 ring-2 ring-primary"
+                            : "border-input bg-background hover:bg-muted"
+                        } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="font-medium text-sm">{modeLabel(mode)}</span>
+                          <span className="font-display text-lg font-semibold tabular-nums">
+                            {price != null ? `$${price}` : "—"}
+                          </span>
+                        </div>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          {mode === "fixed"
+                            ? (lang === "ru" ? "Одна цена за весь тур" : lang === "uz" ? "Butun tur uchun bitta narx" : "One flat price for the whole tour")
+                            : mode === "per_person"
+                              ? (lang === "ru" ? `$${pricing.per_person_price} × ${form.adults} взрослых` : lang === "uz" ? `$${pricing.per_person_price} × ${form.adults} katta` : `$${pricing.per_person_price} × ${form.adults} adults`)
+                              : (price == null
+                                  ? (lang === "ru" ? "Нет тарифа для этой группы" : lang === "uz" ? "Bu guruh uchun tarif yo'q" : "No tier for this group size")
+                                  : (lang === "ru" ? "Пакет на группу" : lang === "uz" ? "Guruh paketi" : "Group package"))}
+                        </p>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             )}
+
 
             {availableLanguages.length > 0 && (
               <div>
