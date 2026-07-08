@@ -25,6 +25,9 @@ const groupTierSchema = z.object({
   price: z.number().min(0).max(100000),
 });
 
+const localeStr = z.string().trim().max(2000).optional();
+const localeArr = z.array(z.string().trim().min(1).max(1000)).max(30).optional();
+
 export const upsertTourInputSchema = z.object({
   id: z.string().uuid().optional(),
   title: z.string().trim().min(1).max(200).optional(),
@@ -58,7 +61,20 @@ export const upsertTourInputSchema = z.object({
   published: z.boolean().optional(),
   sort_order: z.number().int().min(0).max(1000).optional(),
   category_ids: z.array(z.string().uuid()).max(20).optional(),
+
+  // Manual per-locale overrides. When provided, they take priority over
+  // AI translation for that locale and are written verbatim.
+  title_ru: localeStr, title_en: localeStr, title_uz: localeStr,
+  short_description_ru: localeStr, short_description_en: localeStr, short_description_uz: localeStr,
+  highlights_ru: localeArr, highlights_en: localeArr, highlights_uz: localeArr,
+  included_ru: localeArr, included_en: localeArr, included_uz: localeArr,
+  not_included_ru: localeArr, not_included_en: localeArr, not_included_uz: localeArr,
+
+  // When true, do NOT run auto-translation on this save. Manual overrides
+  // (title_<lng> etc.) are still written; other locales are left untouched.
+  skip_translate: z.boolean().optional(),
 });
+
 
 export type UpsertTourInput = z.infer<typeof upsertTourInputSchema>;
 
