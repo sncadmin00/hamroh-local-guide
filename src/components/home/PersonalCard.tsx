@@ -135,6 +135,65 @@ export function PersonalCard() {
           </div>
         </div>
 
+        {/* Upcoming tours vertical carousel */}
+        {upcoming.length > 0 && currentUp && (
+          <Link
+            to="/my-bookings"
+            className="block rounded-2xl p-3 mb-2 transition-transform hover:-translate-y-0.5"
+            style={{
+              background: "color-mix(in srgb, #1F9BB4 10%, transparent)",
+              border: "1px solid color-mix(in srgb, #1F9BB4 25%, transparent)",
+            }}
+          >
+            <div className="flex items-center gap-3">
+              <div
+                className="h-9 w-9 rounded-full flex items-center justify-center shrink-0"
+                style={{ background: "#1F9BB4" }}
+              >
+                <Clock className="h-4 w-4" style={{ color: "#fff" }} />
+              </div>
+              <div className="flex-1 min-w-0 overflow-hidden" style={{ height: 40 }}>
+                <div
+                  className="transition-transform duration-500 ease-out"
+                  style={{ transform: `translateY(-${upIdx * 40}px)` }}
+                >
+                  {upcoming.map((b) => {
+                    const d = daysUntil(b.date);
+                    const when = d === 0 ? "Today" : d === 1 ? "Tomorrow" : `in ${d} days`;
+                    return (
+                      <div key={b.id} className="flex flex-col justify-center" style={{ height: 40 }}>
+                        <p className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "#1F9BB4" }}>
+                          Upcoming tour · {when}
+                        </p>
+                        <p className="text-sm font-semibold truncate" style={{ color: "var(--foreground)" }}>
+                          <span className="truncate">{b.experience}</span>
+                          <span className="font-normal" style={{ color: "var(--muted-foreground)" }}> · {formatWhen(b.date, b.start_time)}</span>
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+              <ArrowRight className="h-4 w-4 shrink-0" style={{ color: "#1F9BB4" }} />
+            </div>
+            {upcoming.length > 1 && (
+              <div className="flex justify-center gap-1 mt-2">
+                {upcoming.map((_, i) => (
+                  <span
+                    key={i}
+                    className="h-1 rounded-full transition-all"
+                    style={{
+                      width: i === upIdx ? 12 : 4,
+                      background: i === upIdx ? "#1F9BB4" : "color-mix(in srgb, #1F9BB4 30%, transparent)",
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+          </Link>
+        )}
+
+
         {/* City row */}
         <div
           className="flex items-center gap-3 rounded-2xl p-3 mb-2"
