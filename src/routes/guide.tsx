@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback, useRef, lazy, Suspense } from "react"
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Calendar, CalendarClock, CalendarDays, Plus, Trash2, Check, X, LogOut, Loader2, Copy, Link2, Image as ImageIcon, Compass, Pencil, MapPin, Sparkles, ShieldCheck, Home, UserCircle2, Wallet } from "lucide-react";
+import { Calendar, CalendarClock, CalendarDays, Plus, Trash2, Check, X, LogOut, Loader2, Copy, Link2, Image as ImageIcon, Compass, Pencil, MapPin, Sparkles, ShieldCheck, Home, UserCircle2, Wallet, Languages as LanguagesIcon } from "lucide-react";
 import { CalendarPanel } from "@/components/guide/CalendarPanel";
 import { GuideAIPanel } from "@/components/guide/GuideAIPanel";
 import { VerificationPanel } from "@/components/guide/VerificationPanel";
@@ -29,6 +29,7 @@ import {
 import { listGuideBlocks, blockTime, unblockTime, type GuideBlock } from "@/lib/guide-blocks.functions";
 import { listTourSchedule, upsertTourSchedule, getGuideBuffer, setGuideBuffer } from "@/lib/tour-schedule.functions";
 import { generateTourDraft } from "@/lib/tour-ai.functions";
+import { translateTourContent } from "@/lib/translate-tour.functions";
 import { assessLanguageTest } from "@/lib/language-test.functions";
 import { useCities, useCategories } from "@/lib/content-queries";
 import { GuidePostsPanel } from "@/components/GuidePostsPanel";
@@ -741,6 +742,21 @@ type Tour = {
   highlights: string[];
   included: string[];
   not_included: string[];
+  title_ru?: string | null;
+  title_en?: string | null;
+  title_uz?: string | null;
+  short_description_ru?: string | null;
+  short_description_en?: string | null;
+  short_description_uz?: string | null;
+  highlights_ru?: string[] | null;
+  highlights_en?: string[] | null;
+  highlights_uz?: string[] | null;
+  included_ru?: string[] | null;
+  included_en?: string[] | null;
+  included_uz?: string[] | null;
+  not_included_ru?: string[] | null;
+  not_included_en?: string[] | null;
+  not_included_uz?: string[] | null;
   meeting_point?: string;
   end_point?: string;
   meeting_lat?: number | null;
@@ -1053,6 +1069,22 @@ function TourEditor({
     highlights: string[];
     included: string[];
     not_included: string[];
+    title_ru?: string;
+    title_en?: string;
+    title_uz?: string;
+    short_description_ru?: string;
+    short_description_en?: string;
+    short_description_uz?: string;
+    highlights_ru?: string[];
+    highlights_en?: string[];
+    highlights_uz?: string[];
+    included_ru?: string[];
+    included_en?: string[];
+    included_uz?: string[];
+    not_included_ru?: string[];
+    not_included_en?: string[];
+    not_included_uz?: string[];
+    skip_translate?: boolean;
     meeting_point: string;
     end_point: string;
     meeting_lat: number | null;
@@ -1072,8 +1104,43 @@ function TourEditor({
   const [aiOpen, setAiOpen] = useState(false);
   const [aiSeed, setAiSeed] = useState("");
   const [aiBusy, setAiBusy] = useState(false);
-  const [title, setTitle] = useState(initial?.title ?? "");
-  const [shortDesc, setShortDesc] = useState(initial?.short_description ?? "");
+  // Per-locale text state. Each locale (ru/en/uz) has its own title, short
+  // description, and three arrays (as newline-separated text).
+  type Lc = "ru" | "en" | "uz";
+  const LC_ORDER: Lc[] = ["ru", "en", "uz"];
+  const LC_NAME: Record<Lc, string> = { ru: "Russian", en: "English", uz: "Uzbek" };
+  const NAME_TO_LC: Record<string, Lc> = {
+    Russian: "ru", English: "en", Uzbek: "uz",
+    russian: "ru", english: "en", uzbek: "uz",
+    ru: "ru", en: "en", uz: "uz",
+  };
+  const initialBaseLc: Lc = NAME_TO_LC[initial?.base_language ?? ""] ?? "ru";
+  const [baseLc, setBaseLc] = useState<Lc>(initialBaseLc);
+  const [activeLc, setActiveLc] = useState<Lc>(initialBaseLc);
+  const seedLocaleStr = (lc: Lc, key: "title" | "short_description"): string => {
+    const perLc = (initial as any)?.[`${key}_${lc}`];
+    if (typeof perLc === "string" && perLc.trim() !== "") return perLc;
+    if (lc === initialBaseLc) return (initial as any)?.[key] ?? "";
+    return "";
+  };
+  const seedLocaleArr = (lc: Lc, key: "highlights" | "included" | "not_included"): string => {
+    const perLc = (initial as any)?.[`${key}_${lc}`];
+    if (Array.isArray(perLc) && perLc.length > 0) return arrToText(perLc);
+    if (lc === initialBaseLc) return arrToText((initial as any)?.[key] ?? []);
+    return "";
+  };
+  const [titleByLc, setTitleByLc] = useState<Record<Lc, string>>({
+    ru: seedLocaleStr("ru", "title"),
+    en: seedLocaleStr("en", "title"),
+    uz: seedLocaleStr("uz", "title"),
+  });
+  const [shortByLc, setShortByLc] = useState<Record<Lc, string>>({
+    ru: seedLocaleStr("ru", "short_description"),
+    en: seedLocaleStr("en", "short_description"),
+    uz: seedLocaleStr("uz", "short_description"),
+  });
+  const [translating, setTranslating] = useState(false);
+  const translateFn = useServerFn(translateTourContent);
   const [coverUrl, setCoverUrl] = useState(initial?.cover_url ?? "");
   const [cityId, setCityId] = useState(initial?.city_id ?? defaultCityId);
   const [durationHours, setDurationHours] = useState<number>(initial?.duration_hours ?? 2);
@@ -1118,7 +1185,7 @@ function TourEditor({
   const [maxGuestsText, setMaxGuestsText] = useState<string>(
     initial?.max_guests != null ? String(initial.max_guests) : "",
   );
-  const [baseLanguage, setBaseLanguage] = useState<string>(initial?.base_language ?? languages[0] ?? "Russian");
+  const baseLanguage = LC_NAME[baseLc];
   const [langMultsText, setLangMultsText] = useState<Record<string, string>>(() => {
     const out: Record<string, string> = {};
     languages.forEach((l) => {
@@ -1130,9 +1197,21 @@ function TourEditor({
   const [childrenFreeUnder, setChildrenFreeUnder] = useState<number>(initial?.children_free_under ?? 16);
   const [transportIncluded, setTransportIncluded] = useState<boolean>(initial?.transport_included ?? false);
   const [tourLangs, setTourLangs] = useState<string[]>(initial?.languages ?? languages);
-  const [highlights, setHighlights] = useState(arrToText(initial?.highlights ?? []));
-  const [included, setIncluded] = useState(arrToText(initial?.included ?? []));
-  const [notIncluded, setNotIncluded] = useState(arrToText(initial?.not_included ?? []));
+  const [highlightsByLc, setHighlightsByLc] = useState<Record<Lc, string>>({
+    ru: seedLocaleArr("ru", "highlights"),
+    en: seedLocaleArr("en", "highlights"),
+    uz: seedLocaleArr("uz", "highlights"),
+  });
+  const [includedByLc, setIncludedByLc] = useState<Record<Lc, string>>({
+    ru: seedLocaleArr("ru", "included"),
+    en: seedLocaleArr("en", "included"),
+    uz: seedLocaleArr("uz", "included"),
+  });
+  const [notIncludedByLc, setNotIncludedByLc] = useState<Record<Lc, string>>({
+    ru: seedLocaleArr("ru", "not_included"),
+    en: seedLocaleArr("en", "not_included"),
+    uz: seedLocaleArr("uz", "not_included"),
+  });
   const [meetingPoint, setMeetingPoint] = useState(initial?.meeting_point ?? "");
   const [endPoint, setEndPoint] = useState(initial?.end_point ?? "");
   const [meetingCoords, setMeetingCoords] = useState<{ lat: number; lng: number } | null>(
@@ -1246,9 +1325,9 @@ function TourEditor({
                             language_hint: (lang === "ru" || lang === "uz" || lang === "en") ? lang : "auto",
                           },
                         });
-                        if (res.title) setTitle(res.title);
-                        if (res.short_description) setShortDesc(res.short_description);
-                        if (res.highlights?.length) setHighlights(res.highlights.join("\n"));
+                        if (res.title) setTitleByLc((s) => ({ ...s, [activeLc]: res.title }));
+                        if (res.short_description) setShortByLc((s) => ({ ...s, [activeLc]: res.short_description }));
+                        if (res.highlights?.length) setHighlightsByLc((s) => ({ ...s, [activeLc]: res.highlights.join("\n") }));
                         toast.success(tg("editor.ai.done"));
                         setAiOpen(false);
                         setAiSeed("");
@@ -1268,14 +1347,140 @@ function TourEditor({
             )}
           </div>
 
-          <label className="block text-sm">
-            <span className="text-xs text-muted-foreground">{tg("editor.title")}</span>
-            <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={tg("editor.titlePh")} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
-          </label>
-          <label className="block text-sm">
-            <span className="text-xs text-muted-foreground">{tg("editor.shortDesc")}</span>
-            <input value={shortDesc} onChange={(e) => setShortDesc(e.target.value)} placeholder={tg("editor.shortDescPh")} className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm" />
-          </label>
+          <div className="rounded-2xl border border-border bg-card/40 p-3 space-y-3">
+            <div className="flex items-center gap-2 text-xs">
+              <span className="text-muted-foreground uppercase tracking-wide">Source language</span>
+              <select
+                value={baseLc}
+                onChange={(e) => {
+                  const next = e.target.value as Lc;
+                  setBaseLc(next);
+                  setActiveLc(next);
+                }}
+                className="h-8 rounded-lg border border-input bg-background px-2 text-xs font-medium"
+              >
+                {LC_ORDER.map((lc) => (
+                  <option key={lc} value={lc}>{LC_NAME[lc]}</option>
+                ))}
+              </select>
+              <button
+                type="button"
+                disabled={translating || !titleByLc[baseLc].trim()}
+                onClick={async () => {
+                  setTranslating(true);
+                  try {
+                    const out = await translateFn({
+                      data: {
+                        sourceLang: baseLc,
+                        title: titleByLc[baseLc],
+                        short_description: shortByLc[baseLc],
+                        description_md: "",
+                      },
+                    });
+                    setTitleByLc((s) => {
+                      const n = { ...s };
+                      for (const lc of LC_ORDER) if (lc !== baseLc && out[lc]?.title) n[lc] = out[lc].title;
+                      return n;
+                    });
+                    setShortByLc((s) => {
+                      const n = { ...s };
+                      for (const lc of LC_ORDER) if (lc !== baseLc && out[lc]?.short_description) n[lc] = out[lc].short_description;
+                      return n;
+                    });
+                    toast.success("Translated");
+                  } catch (e) {
+                    toast.error((e as Error).message);
+                  } finally {
+                    setTranslating(false);
+                  }
+                }}
+                className="ml-auto inline-flex items-center gap-1.5 h-8 px-3 rounded-full bg-primary/10 text-primary text-xs font-medium disabled:opacity-50"
+              >
+                {translating ? <Loader2 className="h-3 w-3 animate-spin" /> : <LanguagesIcon className="h-3 w-3" />}
+                Auto-translate
+              </button>
+            </div>
+
+            <div className="flex gap-1.5">
+              {LC_ORDER.map((lc) => {
+                const isActive = lc === activeLc;
+                const isBase = lc === baseLc;
+                return (
+                  <button
+                    key={lc}
+                    type="button"
+                    onClick={() => setActiveLc(lc)}
+                    className={`flex-1 h-9 rounded-full text-xs font-medium uppercase transition ${
+                      isActive
+                        ? "bg-foreground text-background"
+                        : "bg-background ring-1 ring-border text-foreground hover:bg-secondary"
+                    }`}
+                  >
+                    {lc}
+                    {isBase && <span className="ml-1 text-[9px] opacity-70">src</span>}
+                  </button>
+                );
+              })}
+            </div>
+
+            <label className="block text-sm">
+              <span className="text-xs text-muted-foreground">
+                {tg("editor.title")}
+                {activeLc !== baseLc && <span className="ml-1 text-[10px] uppercase">· auto</span>}
+              </span>
+              <input
+                value={titleByLc[activeLc]}
+                onChange={(e) => setTitleByLc((s) => ({ ...s, [activeLc]: e.target.value }))}
+                placeholder={tg("editor.titlePh")}
+                className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm"
+              />
+            </label>
+            <label className="block text-sm">
+              <span className="text-xs text-muted-foreground">
+                {tg("editor.shortDesc")}
+                {activeLc !== baseLc && <span className="ml-1 text-[10px] uppercase">· auto</span>}
+              </span>
+              <input
+                value={shortByLc[activeLc]}
+                onChange={(e) => setShortByLc((s) => ({ ...s, [activeLc]: e.target.value }))}
+                placeholder={tg("editor.shortDescPh")}
+                className="mt-1 w-full h-11 rounded-xl border border-input bg-background px-3 text-sm"
+              />
+            </label>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <label className="block text-sm">
+                <span className="text-xs text-muted-foreground">{tg("editor.highlights")}</span>
+                <textarea
+                  value={highlightsByLc[activeLc]}
+                  onChange={(e) => setHighlightsByLc((s) => ({ ...s, [activeLc]: e.target.value }))}
+                  rows={4}
+                  className="mt-1 w-full rounded-xl border border-input bg-background p-2 text-sm"
+                />
+              </label>
+              <label className="block text-sm">
+                <span className="text-xs text-muted-foreground">{tg("editor.included")}</span>
+                <textarea
+                  value={includedByLc[activeLc]}
+                  onChange={(e) => setIncludedByLc((s) => ({ ...s, [activeLc]: e.target.value }))}
+                  rows={4}
+                  className="mt-1 w-full rounded-xl border border-input bg-background p-2 text-sm"
+                />
+              </label>
+              <label className="block text-sm">
+                <span className="text-xs text-muted-foreground">{tg("editor.notIncluded")}</span>
+                <textarea
+                  value={notIncludedByLc[activeLc]}
+                  onChange={(e) => setNotIncludedByLc((s) => ({ ...s, [activeLc]: e.target.value }))}
+                  rows={4}
+                  className="mt-1 w-full rounded-xl border border-input bg-background p-2 text-sm"
+                />
+              </label>
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              Write on the source language; other tabs auto-fill on save or via Auto-translate. Manual edits on non-source tabs are preserved.
+            </p>
+          </div>
+
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <label className="block text-sm">
@@ -1471,16 +1676,9 @@ function TourEditor({
               <p className="mt-2 text-xs text-muted-foreground">{tg("editor.noProfileLanguages")}</p>
             ) : (
               <>
-                <div className="mt-3 flex items-center gap-2 text-sm">
-                  <span className="text-xs text-muted-foreground">{tg("editor.baseLanguage")}</span>
-                  <select
-                    value={baseLanguage}
-                    onChange={(e) => setBaseLanguage(e.target.value)}
-                    className="h-9 rounded-lg border border-input bg-background px-2 text-sm"
-                  >
-                    {languages.map((l) => <option key={l} value={l}>{l}</option>)}
-                  </select>
-                </div>
+                <p className="mt-2 text-[11px] text-muted-foreground">
+                  Base language for pricing multipliers: <span className="font-medium">{baseLanguage}</span> (from source language).
+                </p>
                 <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {languages.map((lng) => {
                     const enabled = tourLangs.includes(lng);
@@ -1514,21 +1712,6 @@ function TourEditor({
             )}
           </div>
 
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <label className="block text-sm">
-              <span className="text-xs text-muted-foreground">{tg("editor.highlights")}</span>
-              <textarea value={highlights} onChange={(e) => setHighlights(e.target.value)} rows={4} className="mt-1 w-full rounded-xl border border-input bg-background p-2 text-sm" />
-            </label>
-            <label className="block text-sm">
-              <span className="text-xs text-muted-foreground">{tg("editor.included")}</span>
-              <textarea value={included} onChange={(e) => setIncluded(e.target.value)} rows={4} className="mt-1 w-full rounded-xl border border-input bg-background p-2 text-sm" />
-            </label>
-            <label className="block text-sm">
-              <span className="text-xs text-muted-foreground">{tg("editor.notIncluded")}</span>
-              <textarea value={notIncluded} onChange={(e) => setNotIncluded(e.target.value)} rows={4} className="mt-1 w-full rounded-xl border border-input bg-background p-2 text-sm" />
-            </label>
-          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <label className="block text-sm">
@@ -1639,7 +1822,7 @@ function TourEditor({
         <div className="mt-6 flex justify-end gap-2">
           <button onClick={onClose} className="h-10 px-4 rounded-full bg-muted text-sm font-medium">{tg("common.cancel")}</button>
           <button
-            disabled={!title.trim() || !cityId}
+            disabled={!titleByLc[baseLc].trim() || !cityId}
             onClick={() => {
               const modes: ("fixed" | "per_person" | "by_group")[] = [];
               if (modeFixed) modes.push("fixed");
@@ -1677,10 +1860,20 @@ function TourEditor({
                 const n = Number(v);
                 if (Number.isFinite(n) && v !== "") mults[k] = n;
               }
+              const baseTitle = titleByLc[baseLc].trim();
+              const baseShort = shortByLc[baseLc].trim();
+              // Only forward per-locale overrides when the field has content
+              // (and it's not just the source language mirroring itself).
+              const strOverride = (lc: Lc, v: string) => (v.trim() !== "" && lc !== baseLc ? v.trim() : undefined);
+              const arrOverride = (lc: Lc, v: string) => {
+                if (lc === baseLc) return undefined;
+                const arr = textToArr(v);
+                return arr.length > 0 ? arr : undefined;
+              };
               onSave({
                 id: initial?.id,
-                title: title.trim(),
-                short_description: shortDesc.trim(),
+                title: baseTitle,
+                short_description: baseShort,
                 cover_url: coverUrl.trim() || null,
                 city_id: cityId,
                 duration_hours: durationHours,
@@ -1699,9 +1892,24 @@ function TourEditor({
                 children_free_under: childrenFreeUnder,
                 languages: tourLangs,
                 transport_included: transportIncluded,
-                highlights: textToArr(highlights),
-                included: textToArr(included),
-                not_included: textToArr(notIncluded),
+                highlights: textToArr(highlightsByLc[baseLc]),
+                included: textToArr(includedByLc[baseLc]),
+                not_included: textToArr(notIncludedByLc[baseLc]),
+                title_ru: strOverride("ru", titleByLc.ru),
+                title_en: strOverride("en", titleByLc.en),
+                title_uz: strOverride("uz", titleByLc.uz),
+                short_description_ru: strOverride("ru", shortByLc.ru),
+                short_description_en: strOverride("en", shortByLc.en),
+                short_description_uz: strOverride("uz", shortByLc.uz),
+                highlights_ru: arrOverride("ru", highlightsByLc.ru),
+                highlights_en: arrOverride("en", highlightsByLc.en),
+                highlights_uz: arrOverride("uz", highlightsByLc.uz),
+                included_ru: arrOverride("ru", includedByLc.ru),
+                included_en: arrOverride("en", includedByLc.en),
+                included_uz: arrOverride("uz", includedByLc.uz),
+                not_included_ru: arrOverride("ru", notIncludedByLc.ru),
+                not_included_en: arrOverride("en", notIncludedByLc.en),
+                not_included_uz: arrOverride("uz", notIncludedByLc.uz),
                 meeting_point: meetingPoint.trim(),
                 end_point: endSameAsMeeting ? meetingPoint.trim() : endPoint.trim(),
                 meeting_lat: meetingCoords?.lat ?? null,
