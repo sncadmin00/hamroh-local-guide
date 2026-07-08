@@ -59,11 +59,12 @@ Deno.serve(async (req) => {
   }
 
   try {
+    const hookToken = Deno.env.get("INTERNAL_HOOK_SECRET") ?? SERVICE_KEY;
     const res = await fetch(HOOK_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${SERVICE_KEY}`,
+        Authorization: `Bearer ${hookToken}`,
       },
       body: JSON.stringify({ user_id: userId, input }),
     });
