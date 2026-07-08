@@ -57,6 +57,7 @@ import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/e
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as ApiPublicTelegramWebhookRouteImport } from './routes/api/public/telegram/webhook'
+import { Route as ApiPublicHooksUpsertTourRouteImport } from './routes/api/public/hooks/upsert-tour'
 import { Route as ApiPublicHooksPriceQuoteRouteImport } from './routes/api/public/hooks/price-quote'
 import { Route as ApiPublicHooksGoogleOauthCallbackRouteImport } from './routes/api/public/hooks/google-oauth-callback'
 import { Route as ApiPublicHooksGenerateStatementsRouteImport } from './routes/api/public/hooks/generate-statements'
@@ -315,6 +316,12 @@ const ApiPublicTelegramWebhookRoute =
     path: '/api/public/telegram/webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksUpsertTourRoute =
+  ApiPublicHooksUpsertTourRouteImport.update({
+    id: '/api/public/hooks/upsert-tour',
+    path: '/api/public/hooks/upsert-tour',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksPriceQuoteRoute =
   ApiPublicHooksPriceQuoteRouteImport.update({
     id: '/api/public/hooks/price-quote',
@@ -445,6 +452,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/generate-statements': typeof ApiPublicHooksGenerateStatementsRoute
   '/api/public/hooks/google-oauth-callback': typeof ApiPublicHooksGoogleOauthCallbackRoute
   '/api/public/hooks/price-quote': typeof ApiPublicHooksPriceQuoteRoute
+  '/api/public/hooks/upsert-tour': typeof ApiPublicHooksUpsertTourRoute
   '/api/public/telegram/webhook': typeof ApiPublicTelegramWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -507,6 +515,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/generate-statements': typeof ApiPublicHooksGenerateStatementsRoute
   '/api/public/hooks/google-oauth-callback': typeof ApiPublicHooksGoogleOauthCallbackRoute
   '/api/public/hooks/price-quote': typeof ApiPublicHooksPriceQuoteRoute
+  '/api/public/hooks/upsert-tour': typeof ApiPublicHooksUpsertTourRoute
   '/api/public/telegram/webhook': typeof ApiPublicTelegramWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -571,6 +580,7 @@ export interface FileRoutesById {
   '/api/public/hooks/generate-statements': typeof ApiPublicHooksGenerateStatementsRoute
   '/api/public/hooks/google-oauth-callback': typeof ApiPublicHooksGoogleOauthCallbackRoute
   '/api/public/hooks/price-quote': typeof ApiPublicHooksPriceQuoteRoute
+  '/api/public/hooks/upsert-tour': typeof ApiPublicHooksUpsertTourRoute
   '/api/public/telegram/webhook': typeof ApiPublicTelegramWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -636,6 +646,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/generate-statements'
     | '/api/public/hooks/google-oauth-callback'
     | '/api/public/hooks/price-quote'
+    | '/api/public/hooks/upsert-tour'
     | '/api/public/telegram/webhook'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -698,6 +709,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/generate-statements'
     | '/api/public/hooks/google-oauth-callback'
     | '/api/public/hooks/price-quote'
+    | '/api/public/hooks/upsert-tour'
     | '/api/public/telegram/webhook'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -761,6 +773,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/generate-statements'
     | '/api/public/hooks/google-oauth-callback'
     | '/api/public/hooks/price-quote'
+    | '/api/public/hooks/upsert-tour'
     | '/api/public/telegram/webhook'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -821,6 +834,7 @@ export interface RootRouteChildren {
   ApiPublicHooksGenerateStatementsRoute: typeof ApiPublicHooksGenerateStatementsRoute
   ApiPublicHooksGoogleOauthCallbackRoute: typeof ApiPublicHooksGoogleOauthCallbackRoute
   ApiPublicHooksPriceQuoteRoute: typeof ApiPublicHooksPriceQuoteRoute
+  ApiPublicHooksUpsertTourRoute: typeof ApiPublicHooksUpsertTourRoute
   ApiPublicTelegramWebhookRoute: typeof ApiPublicTelegramWebhookRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
@@ -1171,6 +1185,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicTelegramWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/upsert-tour': {
+      id: '/api/public/hooks/upsert-tour'
+      path: '/api/public/hooks/upsert-tour'
+      fullPath: '/api/public/hooks/upsert-tour'
+      preLoaderRoute: typeof ApiPublicHooksUpsertTourRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/price-quote': {
       id: '/api/public/hooks/price-quote'
       path: '/api/public/hooks/price-quote'
@@ -1349,6 +1370,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksGoogleOauthCallbackRoute:
     ApiPublicHooksGoogleOauthCallbackRoute,
   ApiPublicHooksPriceQuoteRoute: ApiPublicHooksPriceQuoteRoute,
+  ApiPublicHooksUpsertTourRoute: ApiPublicHooksUpsertTourRoute,
   ApiPublicTelegramWebhookRoute: ApiPublicTelegramWebhookRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
