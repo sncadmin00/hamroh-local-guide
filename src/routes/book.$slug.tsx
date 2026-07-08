@@ -262,28 +262,54 @@ function BookPage() {
               const localeMap: Record<string, string> = { en: "en-US", ru: "ru-RU", uz: "uz-UZ" };
               const locale = localeMap[lang] ?? "en-US";
               const uniqueDates = Array.from(new Set(slots.map((s) => s.date))).sort();
+              const availableSet = new Set(uniqueDates);
               const activeDate = selectedDate || uniqueDates[0] || "";
               const daySlots = slots.filter((s) => s.date === activeDate);
-              const fmt = (iso: string) => {
+              const parseISO = (iso: string) => {
                 const [y, m, d] = iso.split("-").map(Number);
-                return new Date(Date.UTC(y, m - 1, d)).toLocaleDateString(locale, {
-                  month: "long", day: "numeric", year: "numeric", timeZone: "UTC",
-                });
+                return new Date(y, m - 1, d);
               };
+              const toISO = (d: Date) => {
+                const y = d.getFullYear();
+                const m = String(d.getMonth() + 1).padStart(2, "0");
+                const day = String(d.getDate()).padStart(2, "0");
+                return `${y}-${m}-${day}`;
+              };
+              const fmt = (iso: string) =>
+                parseISO(iso).toLocaleDateString(locale, { month: "long", day: "numeric", year: "numeric" });
+              const minDate = uniqueDates[0] ? parseISO(uniqueDates[0]) : new Date();
+              const maxDate = uniqueDates[uniqueDates.length - 1] ? parseISO(uniqueDates[uniqueDates.length - 1]) : undefined;
               return (
                 <div>
                   <label className="text-sm font-medium inline-flex items-center gap-1.5">
                     <Zap className="h-4 w-4 text-accent" /> Pick an available slot (instant booking)
                   </label>
-                  <select
-                    value={activeDate}
-                    onChange={(e) => { setSelectedDate(e.target.value); setSelectedSlot(null); }}
-                    className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus:ring-2 focus:ring-ring"
-                  >
-                    {uniqueDates.map((d) => (
-                      <option key={d} value={d}>{fmt(d)}</option>
-                    ))}
-                  </select>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button
+                        type="button"
+                        className="mt-2 inline-flex h-12 w-full items-center justify-between rounded-xl border border-input bg-background px-4 text-sm outline-none hover:bg-muted focus:ring-2 focus:ring-ring"
+                      >
+                        <span>{activeDate ? fmt(activeDate) : "Choose a date"}</span>
+                        <CalendarIcon className="h-4 w-4 text-muted-foreground" />
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={activeDate ? parseISO(activeDate) : undefined}
+                        onSelect={(d) => {
+                          if (!d) return;
+                          setSelectedDate(toISO(d));
+                          setSelectedSlot(null);
+                        }}
+                        disabled={(d) => !availableSet.has(toISO(d))}
+                        fromDate={minDate}
+                        toDate={maxDate}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
                   <div className="mt-3 flex flex-wrap gap-2">
                     {daySlots.map((s) => {
                       const on = selectedSlot === s.id;
