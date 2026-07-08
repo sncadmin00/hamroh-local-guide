@@ -321,6 +321,8 @@ export function EditorialHero() {
                 </p>
               </div>
             </div>
+
+            <UpcomingBookingsCard />
           </aside>
         </div>
       </div>
