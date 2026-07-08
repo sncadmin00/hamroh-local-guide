@@ -53,6 +53,26 @@ const GROUP_MAX: Record<"private" | "small" | "group" | "large", number> = {
   large: 25,
 };
 
+type GroupCat = "private" | "small" | "group" | "large";
+
+/**
+ * Auto-pick the smallest offered group category that fits the adult count.
+ * Mirrors the web client logic in `src/routes/book.$slug.tsx` so the mobile
+ * app (and any other caller) can omit `group_category` and let the server
+ * resolve it from `adults` + tour's offered categories.
+ */
+function autoPickCategory(
+  groupPrices: Record<string, number>,
+  adults: number,
+): GroupCat | null {
+  const offered = (Object.keys(GROUP_MAX) as GroupCat[]).filter(
+    (c) => Number(groupPrices[c] ?? 0) > 0,
+  );
+  const sorted = offered.sort((a, b) => GROUP_MAX[a] - GROUP_MAX[b]);
+  return sorted.find((c) => GROUP_MAX[c] >= adults) ?? null;
+}
+
+
 export type BookingCoreResult = { id: string; status: string };
 
 export const quoteSchema = z.object({
@@ -99,14 +119,19 @@ export async function quoteBookingCore(input: QuoteInput): Promise<PriceQuote> {
 
   let basePrice = 0;
   if (pricingMode === "by_group") {
-    if (!input.group_category) throw new Error("Please choose a group size.");
-    const max = GROUP_MAX[input.group_category];
+    const cat =
+      input.group_category ?? autoPickCategory(groupPrices, input.adults);
+    if (!cat) {
+      throw new Error("Your group is larger than this tour offers. Please contact the guide.");
+    }
+    const max = GROUP_MAX[cat];
     if (input.adults > max) {
       throw new Error("Your group is larger than this category. Please contact the guide.");
     }
-    basePrice = Number(groupPrices[input.group_category] ?? 0);
+    basePrice = Number(groupPrices[cat] ?? 0);
     if (basePrice <= 0) throw new Error("This group size is not offered for this tour.");
   } else {
+
     basePrice = Number(groupPrices.fixed ?? tour.price_from ?? 0);
     if (basePrice <= 0) throw new Error("Tour price is not set.");
   }
@@ -189,18 +214,24 @@ export async function createBookingCore(
   const baseLanguage = (tour as any).base_language as string | null;
 
   let basePrice = 0;
+  let resolvedCategory: GroupCat | null = null;
   if (pricingMode === "by_group") {
-    if (!data.group_category) throw new Error("Please choose a group size.");
-    const max = GROUP_MAX[data.group_category];
+    resolvedCategory =
+      data.group_category ?? autoPickCategory(groupPrices, data.adults);
+    if (!resolvedCategory) {
+      throw new Error("Your group is larger than this tour offers. Please contact the guide.");
+    }
+    const max = GROUP_MAX[resolvedCategory];
     if (data.adults > max) {
       throw new Error("Your group is larger than this category. Please contact the guide.");
     }
-    basePrice = Number(groupPrices[data.group_category] ?? 0);
+    basePrice = Number(groupPrices[resolvedCategory] ?? 0);
     if (basePrice <= 0) throw new Error("This group size is not offered for this tour.");
   } else {
     basePrice = Number(groupPrices.fixed ?? tour.price_from ?? 0);
     if (basePrice <= 0) throw new Error("Tour price is not set.");
   }
+
 
   const lang = data.language ?? null;
   const mult = !lang || lang === baseLanguage ? 0 : Number(langMults[lang] ?? 0);
@@ -267,7 +298,7 @@ export async function createBookingCore(
     guests: totalGuests,
     adults: data.adults,
     children: data.children,
-    group_category: data.group_category ?? null,
+    group_category: resolvedCategory ?? data.group_category ?? null,
     customer_name: data.customer_name,
     customer_email: data.customer_email || null,
     customer_telegram_user_id: data.customer_telegram_user_id ?? null,
