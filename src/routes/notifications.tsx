@@ -121,9 +121,12 @@ function NotificationsPage() {
 
   if (!ready) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-sm text-muted-foreground">
-        Loading…
-      </div>
+      <>
+        <SiteHeader />
+        <div className="min-h-[60vh] flex items-center justify-center text-sm text-muted-foreground">
+          Loading…
+        </div>
+      </>
     );
   }
 
