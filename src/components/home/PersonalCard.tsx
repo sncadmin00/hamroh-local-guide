@@ -1,11 +1,36 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { MapPin, Calendar, Sparkles, ArrowRight } from "lucide-react";
+import { MapPin, Calendar, Sparkles, ArrowRight, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 import { CityPicker } from "@/components/CityPicker";
 
 type Prefs = { city?: string; startDate?: string; endDate?: string };
+
+type UpcomingBooking = {
+  id: string;
+  experience: string;
+  date: string;
+  start_time: string | null;
+  status: string;
+};
+
+function formatWhen(date: string, time: string | null) {
+  try {
+    const d = new Date(`${date}T${(time ?? "12:00").slice(0, 8)}`);
+    const dateStr = d.toLocaleDateString("en-US", { month: "long", day: "numeric" });
+    const timeStr = time ? d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "";
+    return timeStr ? `${dateStr} · ${timeStr}` : dateStr;
+  } catch {
+    return date;
+  }
+}
+
+function daysUntil(date: string) {
+  const now = new Date(); now.setHours(0, 0, 0, 0);
+  const target = new Date(`${date}T00:00:00`);
+  return Math.round((target.getTime() - now.getTime()) / 86400000);
+}
 
 export function PersonalCard() {
   const { t } = useI18n();
