@@ -1556,14 +1556,23 @@ function BookingsPanel({ bookings, reload }: { bookings: Booking[]; reload: () =
     count: bookings.filter((b) => b.source === s && new Date(b.created_at).getTime() >= thirtyDaysAgo).length,
   }));
 
+  const updateStatusFn = useServerFn(updateBookingStatus);
   const setStatus = async (id: string, status: string) => {
-    const { error } = await supabase.from("bookings").update({ status }).eq("id", id);
-    if (error) toast.error(error.message);
-    else {
+    try {
+      if (status === "confirmed" || status === "declined" || status === "cancelled") {
+        // Route through the server fn so the client gets email + in-app notification.
+        await updateStatusFn({ data: { id, status: status as "confirmed" | "declined" | "cancelled" } });
+      } else {
+        const { error } = await supabase.from("bookings").update({ status }).eq("id", id);
+        if (error) throw error;
+      }
       toast.success(ta("common.statusUpdated"));
       await reload();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : String(e));
     }
   };
+
 
   const remove = async (id: string) => {
     if (!confirm(ta("bookings.confirmDelete"))) return;
