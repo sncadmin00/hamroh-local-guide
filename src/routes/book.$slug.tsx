@@ -31,6 +31,7 @@ function BookPage() {
   const [submitting, setSubmitting] = useState(false);
   const [slots, setSlots] = useState<Array<{ id: string; date: string; start_time: string; duration_minutes: number }>>([]);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string>("");
   const [telegramContact, setTelegramContact] = useState<{ telegram_user_id: number; telegram_chat_id: number | null; telegram_username: string | null } | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "online">("cash");
   const [offerVersion, setOfferVersion] = useState<string | null>(null);
