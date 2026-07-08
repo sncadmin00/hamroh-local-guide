@@ -1325,9 +1325,9 @@ function TourEditor({
                             language_hint: (lang === "ru" || lang === "uz" || lang === "en") ? lang : "auto",
                           },
                         });
-                        if (res.title) setTitle(res.title);
-                        if (res.short_description) setShortDesc(res.short_description);
-                        if (res.highlights?.length) setHighlights(res.highlights.join("\n"));
+                        if (res.title) setTitleByLc((s) => ({ ...s, [activeLc]: res.title }));
+                        if (res.short_description) setShortByLc((s) => ({ ...s, [activeLc]: res.short_description }));
+                        if (res.highlights?.length) setHighlightsByLc((s) => ({ ...s, [activeLc]: res.highlights.join("\n") }));
                         toast.success(tg("editor.ai.done"));
                         setAiOpen(false);
                         setAiSeed("");
