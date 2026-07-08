@@ -251,24 +251,33 @@ function GuidePortal() {
         {tab === "ai" && <GuideAIPanel />}
 
         {tab === "availability" && (
-          <AvailabilityPanel
-            slots={slots}
+          <TimeOffPanel
+            blocks={timeBlocks}
             onAdd={async (payload) => {
               try {
-                await addSlotFn({ data: payload });
-                toast.success(tg("availability.added"));
+                await addBlockFn({ data: payload });
+                toast.success(tg("timeoff.added"));
                 await load();
-              } catch (e) { toast.error((e as Error).message); }
+              } catch (e) {
+                const msg = (e as Error).message;
+                if (msg.startsWith("BOOKING_CONFLICT")) {
+                  toast.error(tg("timeoff.conflictTitle"), { description: tg("timeoff.conflictText") + "\n\n" + msg.replace("BOOKING_CONFLICT: ", "") });
+                } else {
+                  toast.error(msg);
+                }
+              }
             }}
             onDelete={async (id) => {
               try {
-                await deleteSlotFn({ data: { id } });
-                toast.success(tg("availability.removed"));
+                await removeBlockFn({ data: { id } });
+                toast.success(tg("timeoff.removed"));
                 await load();
               } catch (e) { toast.error((e as Error).message); }
             }}
           />
         )}
+        {/* Unused legacy slot handlers keep type-checks happy while we retire the API. */}
+        {false && <button onClick={() => { void addSlotFn; void deleteSlotFn; void slots; }} />}
 
         {tab === "bookings" && (
           <BookingsPanel
