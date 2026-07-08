@@ -1544,6 +1544,15 @@ function TourEditor({
                 published,
                 sort_order: initial?.sort_order ?? 0,
                 category_ids: selectedCats,
+                schedule: (() => {
+                  const rows: Array<{ weekday: number; start_time: string }> = [];
+                  for (let d = 0; d < 7; d++) {
+                    for (const t of schedule[d] ?? []) {
+                      if (/^\d{2}:\d{2}$/.test(t)) rows.push({ weekday: d, start_time: `${t}:00` });
+                    }
+                  }
+                  return rows;
+                })(),
               });
             }}
             className="h-10 px-5 rounded-full bg-foreground text-background text-sm font-medium disabled:opacity-50"
