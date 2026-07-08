@@ -17,7 +17,14 @@ export const Route = createFileRoute('/api/public/hooks/create-booking')({
         const auth =
           request.headers.get('authorization') ?? request.headers.get('apikey') ?? ''
         const token = auth.startsWith('Bearer ') ? auth.slice(7).trim() : auth.trim()
-        if (!token || token !== process.env.SUPABASE_SERVICE_ROLE_KEY) {
+        const expected = process.env.SUPABASE_SERVICE_ROLE_KEY
+        if (!token || !expected || token !== expected) {
+          console.error('[create-booking hook] auth failed', {
+            hasToken: !!token,
+            tokenLen: token?.length ?? 0,
+            hasExpected: !!expected,
+            expectedLen: expected?.length ?? 0,
+          })
           return Response.json({ error: 'Forbidden' }, { status: 403 })
         }
 
