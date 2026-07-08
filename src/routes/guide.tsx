@@ -1142,73 +1142,8 @@ function TourEditor({
           </div>
 
           {/* Weekly schedule */}
-          <div className="rounded-2xl border border-border bg-card/40 p-4 space-y-3">
-            <div>
-              <p className="text-sm font-medium">{tg("schedule.title")}</p>
-              <p className="text-xs text-muted-foreground mt-0.5">{tg("schedule.text")}</p>
-            </div>
-            {Object.values(schedule).every((a) => a.length === 0) && (
-              <p className="text-xs text-amber-600 dark:text-amber-400">{tg("schedule.empty")}</p>
-            )}
-            <div className="space-y-2">
-              {[1, 2, 3, 4, 5, 6, 0].map((d) => {
-                const times = schedule[d] ?? [];
-                return (
-                  <div key={d} className="flex items-start gap-3 rounded-xl border border-input bg-background px-3 py-2">
-                    <div className="w-10 shrink-0 pt-1.5 text-xs font-medium text-muted-foreground">
-                      {tg(`weekday.${d}` as Parameters<typeof tg>[0])}
-                    </div>
-                    <div className="flex-1 flex flex-wrap gap-2 items-center">
-                      {times.length === 0 && (
-                        <span className="text-xs text-muted-foreground">{tg("schedule.noTimes")}</span>
-                      )}
-                      {times.map((t, i) => (
-                        <div key={i} className="flex items-center gap-1 rounded-full bg-secondary px-2 h-8">
-                          <input
-                            type="time"
-                            value={t}
-                            onChange={(e) => {
-                              const nv = e.target.value;
-                              setSchedule((s) => {
-                                const arr = [...(s[d] ?? [])];
-                                arr[i] = nv;
-                                return { ...s, [d]: arr };
-                              });
-                            }}
-                            className="bg-transparent text-sm tabular-nums outline-none w-[68px]"
-                          />
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setSchedule((s) => ({ ...s, [d]: (s[d] ?? []).filter((_, j) => j !== i) }))
-                            }
-                            className="text-muted-foreground hover:text-destructive"
-                            aria-label="remove"
-                          >
-                            <X className="h-3.5 w-3.5" />
-                          </button>
-                        </div>
-                      ))}
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setSchedule((s) => {
-                            const arr = [...(s[d] ?? [])];
-                            const last = arr[arr.length - 1];
-                            arr.push(last ?? "09:00");
-                            return { ...s, [d]: arr };
-                          })
-                        }
-                        className="inline-flex items-center gap-1 h-8 px-3 rounded-full bg-foreground/10 hover:bg-foreground/20 text-xs font-medium"
-                      >
-                        <Plus className="h-3.5 w-3.5" /> {tg("schedule.addTime")}
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+          <ScheduleEditor schedule={schedule} setSchedule={setSchedule} />
+
 
           {/* Pricing */}
 
