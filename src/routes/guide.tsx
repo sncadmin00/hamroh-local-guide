@@ -981,15 +981,28 @@ function TourEditor({
               </label>
               <p className="text-xs text-muted-foreground">{tg("editor.fixedPriceHelp")}</p>
               {modeFixed && (
-                <div className="flex items-center gap-2 max-w-xs">
-                  <span className="text-muted-foreground text-sm">$</span>
-                  <input
-                    type="number" min={0}
-                    value={fixedPriceText}
-                    onChange={(e) => setFixedPriceText(e.target.value)}
-                    placeholder="0"
-                    className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm tabular-nums"
-                  />
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 max-w-xs">
+                    <span className="text-muted-foreground text-sm">$</span>
+                    <input
+                      type="number" min={0}
+                      value={fixedPriceText}
+                      onChange={(e) => setFixedPriceText(e.target.value)}
+                      placeholder="0"
+                      className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm tabular-nums"
+                    />
+                  </div>
+                  <label className="block text-xs max-w-xs">
+                    <span className="text-muted-foreground">{tg("editor.fixedMaxGuests")}</span>
+                    <input
+                      type="number" min={1}
+                      value={fixedMaxGuestsText}
+                      onChange={(e) => setFixedMaxGuestsText(e.target.value)}
+                      placeholder="—"
+                      className="mt-1 h-9 w-full rounded-lg border border-input bg-background px-2 text-sm tabular-nums"
+                    />
+                    <span className="mt-1 block text-[11px] text-muted-foreground">{tg("editor.fixedMaxGuestsHelp")}</span>
+                  </label>
                 </div>
               )}
             </div>
