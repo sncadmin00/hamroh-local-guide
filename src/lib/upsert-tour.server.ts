@@ -303,10 +303,10 @@ export async function upsertTourCore(input: UpsertTourInput, userId: string) {
       }
     }
 
-    // Clean language multipliers (drop base language)
+    // Clean language multipliers (drop pricing base language — its multiplier is always 0)
     const cleanedMults: Record<string, number> = {};
     for (const [k, v] of Object.entries(eff.language_multipliers ?? {})) {
-      if (k === eff.base_language) continue;
+      if (k === eff.pricing_base_language) continue;
       if (Number.isFinite(v)) cleanedMults[k] = v as number;
     }
 
@@ -314,7 +314,7 @@ export async function upsertTourCore(input: UpsertTourInput, userId: string) {
 
     const priceByLanguage: Record<string, number> = {};
     for (const lng of eff.languages ?? []) {
-      const mult = lng === eff.base_language ? 0 : Number(cleanedMults[lng] ?? 0);
+      const mult = lng === eff.pricing_base_language ? 0 : Number(cleanedMults[lng] ?? 0);
       priceByLanguage[lng] = Math.round(priceFrom * (1 + mult / 100) * 100) / 100;
     }
 
