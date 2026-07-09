@@ -10,21 +10,25 @@
  * }
  *
  * Returns: {
- *   currency: 'UZS',
+ *   currency: 'USD',
  *   commissionRate: number,             // e.g. 0.15
  *   period: { from, to },
- *   kpi: {                              // always this month (calendar)
- *     monthTotalEarnings: number,       // net for completed bookings
+ *   kpi: {
+ *     monthTotalEarnings: number,       // net (USD) for completed bookings — current calendar month
+ *     yearTotalEarnings: number,        // net (USD) for completed bookings — current calendar year
+ *     lifetimeTotalEarnings: number,    // net (USD) all time
  *     pendingPayout: number,            // lifetime net − paid out
  *     paidOut: number,                  // sum of payouts.status='paid'
- *     completedExperiences: number,
+ *     completedExperiences: number,     // completed bookings — current calendar month
+ *     lifetimeCompletedTours: number,   // completed bookings all time (guides.completed_tours_count)
+ *     lifetimeAvgBookingValue: number,  // lifetime gross / lifetime completed count
  *   },
  *   stats: {                            // for the requested period
  *     gross: number, commission: number, net: number,
  *     avgBookingValue: number, bookingsCount: number,
  *   },
  * }
- * All amounts UZS integers (rounded).
+ * All amounts USD integers (rounded).
  */
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
@@ -131,7 +135,7 @@ export const Route = createFileRoute("/api/public/hooks/my-earnings-summary")({
 
         const { data: guide } = await sb
           .from("guides")
-          .select("id")
+          .select("id, completed_tours_count")
           .eq("user_id", userId)
           .maybeSingle();
         if (!guide) {
@@ -141,6 +145,7 @@ export const Route = createFileRoute("/api/public/hooks/my-earnings-summary")({
           );
         }
         const guideId = (guide as any).id as string;
+        const lifetimeCompletedTours = Number((guide as any).completed_tours_count ?? 0);
 
         // commission rate
         const { data: rateRow } = await sb
@@ -192,17 +197,29 @@ export const Route = createFileRoute("/api/public/hooks/my-earnings-summary")({
         const monthNet = monthGross * (1 - rate);
         const completedExperiences = monthCompleted.length;
 
+        // KPI: this calendar year
+        const year = periodBounds("year");
+        const { data: yearRows } = await sb
+          .from("bookings")
+          .select("total, status")
+          .eq("guide_id", guideId)
+          .gte("date", year.from)
+          .lte("date", year.to);
+        const yearGross = ((yearRows ?? []) as any[])
+          .filter((b) => b.status === "completed")
+          .reduce((s, b) => s + Number(b.total ?? 0), 0);
+        const yearNet = yearGross * (1 - rate);
+
         // Lifetime net & paid out
         const { data: lifetimeRows } = await sb
           .from("bookings")
           .select("total")
           .eq("guide_id", guideId)
           .eq("status", "completed");
-        const lifetimeGross = ((lifetimeRows ?? []) as any[]).reduce(
-          (s, b) => s + Number(b.total ?? 0),
-          0,
-        );
+        const lifetimeList = (lifetimeRows ?? []) as any[];
+        const lifetimeGross = lifetimeList.reduce((s, b) => s + Number(b.total ?? 0), 0);
         const lifetimeNet = lifetimeGross * (1 - rate);
+        const lifetimeAvg = lifetimeList.length ? lifetimeGross / lifetimeList.length : 0;
 
         const { data: payouts } = await sb
           .from("payouts")
@@ -215,14 +232,18 @@ export const Route = createFileRoute("/api/public/hooks/my-earnings-summary")({
 
         return Response.json(
           {
-            currency: "UZS",
+            currency: "USD",
             commissionRate: rate,
             period: bounds,
             kpi: {
               monthTotalEarnings: Math.round(monthNet),
+              yearTotalEarnings: Math.round(yearNet),
+              lifetimeTotalEarnings: Math.round(lifetimeNet),
               pendingPayout: Math.round(pendingPayout),
               paidOut: Math.round(paidOut),
               completedExperiences,
+              lifetimeCompletedTours,
+              lifetimeAvgBookingValue: Math.round(lifetimeAvg),
             },
             stats: {
               gross: Math.round(gross),
