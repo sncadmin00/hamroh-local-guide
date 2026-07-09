@@ -42,6 +42,7 @@ export const upsertTourInputSchema = z.object({
   group_tiers: z.array(groupTierSchema).max(20).optional(),
   max_guests: z.number().int().min(1).max(500).nullable().optional(),
   base_language: z.string().trim().min(1).max(40).optional(),
+  pricing_base_language: z.string().trim().min(1).max(40).optional(),
   language_multipliers: z
     .record(z.string().min(1).max(40), z.number().min(-50).max(500))
     .optional(),
@@ -92,7 +93,7 @@ const TOUR_SELECT = `
   pricing_mode, pricing_modes,
   fixed_price, fixed_max_guests, per_person_price,
   group_tiers, group_prices, max_guests,
-  base_language, language_multipliers, languages,
+  base_language, pricing_base_language, language_multipliers, languages,
   children_free_under, transport_included,
   highlights, highlights_ru, highlights_en, highlights_uz,
   included, included_ru, included_en, included_uz,
@@ -161,6 +162,10 @@ export async function upsertTourCore(input: UpsertTourInput, userId: string) {
     group_tiers: pick(input.group_tiers, (current?.group_tiers ?? []) as Array<{ min: number; max: number; price: number }>),
     max_guests: pick(input.max_guests, current?.max_guests ?? null) as number | null,
     base_language: pick(input.base_language, current?.base_language ?? "Russian"),
+    pricing_base_language: pick(
+      input.pricing_base_language,
+      current?.pricing_base_language ?? pick(input.base_language, current?.base_language ?? "Russian"),
+    ),
     language_multipliers: pick(
       input.language_multipliers,
       (current?.language_multipliers ?? {}) as Record<string, number>,
@@ -211,7 +216,8 @@ export async function upsertTourCore(input: UpsertTourInput, userId: string) {
     input.max_guests !== undefined ||
     input.languages !== undefined ||
     input.language_multipliers !== undefined ||
-    input.base_language !== undefined;
+    input.base_language !== undefined ||
+    input.pricing_base_language !== undefined;
   const shouldRecomputePrice = isCreate || priceChanged;
 
   // 6. Build partial DB payload; only set fields we intend to change
@@ -245,6 +251,7 @@ export async function upsertTourCore(input: UpsertTourInput, userId: string) {
   if (isCreate || input.not_included !== undefined) payload.not_included = eff.not_included;
   if (isCreate || input.languages !== undefined) payload.languages = eff.languages;
   if (isCreate || input.base_language !== undefined) payload.base_language = eff.base_language;
+  if (isCreate || input.pricing_base_language !== undefined) payload.pricing_base_language = eff.pricing_base_language;
 
   // 7. Pricing normalization + legacy columns (only when we're recomputing)
   let priceFrom: number = Number(current?.price_from ?? 0);
@@ -296,10 +303,10 @@ export async function upsertTourCore(input: UpsertTourInput, userId: string) {
       }
     }
 
-    // Clean language multipliers (drop base language)
+    // Clean language multipliers (drop pricing base language — its multiplier is always 0)
     const cleanedMults: Record<string, number> = {};
     for (const [k, v] of Object.entries(eff.language_multipliers ?? {})) {
-      if (k === eff.base_language) continue;
+      if (k === eff.pricing_base_language) continue;
       if (Number.isFinite(v)) cleanedMults[k] = v as number;
     }
 
@@ -307,7 +314,7 @@ export async function upsertTourCore(input: UpsertTourInput, userId: string) {
 
     const priceByLanguage: Record<string, number> = {};
     for (const lng of eff.languages ?? []) {
-      const mult = lng === eff.base_language ? 0 : Number(cleanedMults[lng] ?? 0);
+      const mult = lng === eff.pricing_base_language ? 0 : Number(cleanedMults[lng] ?? 0);
       priceByLanguage[lng] = Math.round(priceFrom * (1 + mult / 100) * 100) / 100;
     }
 
