@@ -70,6 +70,7 @@ import { Route as ApiPublicHooksMyEarningsSummaryRouteImport } from './routes/ap
 import { Route as ApiPublicHooksGuideReelsRouteImport } from './routes/api/public/hooks/guide-reels'
 import { Route as ApiPublicHooksGuideAiRouteImport } from './routes/api/public/hooks/guide-ai'
 import { Route as ApiPublicHooksGoogleOauthCallbackRouteImport } from './routes/api/public/hooks/google-oauth-callback'
+import { Route as ApiPublicHooksGenerateTourDescriptionRouteImport } from './routes/api/public/hooks/generate-tour-description'
 import { Route as ApiPublicHooksGenerateStatementsRouteImport } from './routes/api/public/hooks/generate-statements'
 import { Route as ApiPublicHooksFeaturedReelsRouteImport } from './routes/api/public/hooks/featured-reels'
 import { Route as ApiPublicHooksExpireBookingsRouteImport } from './routes/api/public/hooks/expire-bookings'
@@ -403,6 +404,12 @@ const ApiPublicHooksGoogleOauthCallbackRoute =
     path: '/api/public/hooks/google-oauth-callback',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksGenerateTourDescriptionRoute =
+  ApiPublicHooksGenerateTourDescriptionRouteImport.update({
+    id: '/api/public/hooks/generate-tour-description',
+    path: '/api/public/hooks/generate-tour-description',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksGenerateStatementsRoute =
   ApiPublicHooksGenerateStatementsRouteImport.update({
     id: '/api/public/hooks/generate-statements',
@@ -534,6 +541,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/expire-bookings': typeof ApiPublicHooksExpireBookingsRoute
   '/api/public/hooks/featured-reels': typeof ApiPublicHooksFeaturedReelsRoute
   '/api/public/hooks/generate-statements': typeof ApiPublicHooksGenerateStatementsRoute
+  '/api/public/hooks/generate-tour-description': typeof ApiPublicHooksGenerateTourDescriptionRoute
   '/api/public/hooks/google-oauth-callback': typeof ApiPublicHooksGoogleOauthCallbackRoute
   '/api/public/hooks/guide-ai': typeof ApiPublicHooksGuideAiRoute
   '/api/public/hooks/guide-reels': typeof ApiPublicHooksGuideReelsRoute
@@ -609,6 +617,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/expire-bookings': typeof ApiPublicHooksExpireBookingsRoute
   '/api/public/hooks/featured-reels': typeof ApiPublicHooksFeaturedReelsRoute
   '/api/public/hooks/generate-statements': typeof ApiPublicHooksGenerateStatementsRoute
+  '/api/public/hooks/generate-tour-description': typeof ApiPublicHooksGenerateTourDescriptionRoute
   '/api/public/hooks/google-oauth-callback': typeof ApiPublicHooksGoogleOauthCallbackRoute
   '/api/public/hooks/guide-ai': typeof ApiPublicHooksGuideAiRoute
   '/api/public/hooks/guide-reels': typeof ApiPublicHooksGuideReelsRoute
@@ -686,6 +695,7 @@ export interface FileRoutesById {
   '/api/public/hooks/expire-bookings': typeof ApiPublicHooksExpireBookingsRoute
   '/api/public/hooks/featured-reels': typeof ApiPublicHooksFeaturedReelsRoute
   '/api/public/hooks/generate-statements': typeof ApiPublicHooksGenerateStatementsRoute
+  '/api/public/hooks/generate-tour-description': typeof ApiPublicHooksGenerateTourDescriptionRoute
   '/api/public/hooks/google-oauth-callback': typeof ApiPublicHooksGoogleOauthCallbackRoute
   '/api/public/hooks/guide-ai': typeof ApiPublicHooksGuideAiRoute
   '/api/public/hooks/guide-reels': typeof ApiPublicHooksGuideReelsRoute
@@ -764,6 +774,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/expire-bookings'
     | '/api/public/hooks/featured-reels'
     | '/api/public/hooks/generate-statements'
+    | '/api/public/hooks/generate-tour-description'
     | '/api/public/hooks/google-oauth-callback'
     | '/api/public/hooks/guide-ai'
     | '/api/public/hooks/guide-reels'
@@ -839,6 +850,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/expire-bookings'
     | '/api/public/hooks/featured-reels'
     | '/api/public/hooks/generate-statements'
+    | '/api/public/hooks/generate-tour-description'
     | '/api/public/hooks/google-oauth-callback'
     | '/api/public/hooks/guide-ai'
     | '/api/public/hooks/guide-reels'
@@ -915,6 +927,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/expire-bookings'
     | '/api/public/hooks/featured-reels'
     | '/api/public/hooks/generate-statements'
+    | '/api/public/hooks/generate-tour-description'
     | '/api/public/hooks/google-oauth-callback'
     | '/api/public/hooks/guide-ai'
     | '/api/public/hooks/guide-reels'
@@ -988,6 +1001,7 @@ export interface RootRouteChildren {
   ApiPublicHooksExpireBookingsRoute: typeof ApiPublicHooksExpireBookingsRoute
   ApiPublicHooksFeaturedReelsRoute: typeof ApiPublicHooksFeaturedReelsRoute
   ApiPublicHooksGenerateStatementsRoute: typeof ApiPublicHooksGenerateStatementsRoute
+  ApiPublicHooksGenerateTourDescriptionRoute: typeof ApiPublicHooksGenerateTourDescriptionRoute
   ApiPublicHooksGoogleOauthCallbackRoute: typeof ApiPublicHooksGoogleOauthCallbackRoute
   ApiPublicHooksGuideAiRoute: typeof ApiPublicHooksGuideAiRoute
   ApiPublicHooksGuideReelsRoute: typeof ApiPublicHooksGuideReelsRoute
@@ -1441,6 +1455,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksGoogleOauthCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/generate-tour-description': {
+      id: '/api/public/hooks/generate-tour-description'
+      path: '/api/public/hooks/generate-tour-description'
+      fullPath: '/api/public/hooks/generate-tour-description'
+      preLoaderRoute: typeof ApiPublicHooksGenerateTourDescriptionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/generate-statements': {
       id: '/api/public/hooks/generate-statements'
       path: '/api/public/hooks/generate-statements'
@@ -1619,6 +1640,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksExpireBookingsRoute: ApiPublicHooksExpireBookingsRoute,
   ApiPublicHooksFeaturedReelsRoute: ApiPublicHooksFeaturedReelsRoute,
   ApiPublicHooksGenerateStatementsRoute: ApiPublicHooksGenerateStatementsRoute,
+  ApiPublicHooksGenerateTourDescriptionRoute:
+    ApiPublicHooksGenerateTourDescriptionRoute,
   ApiPublicHooksGoogleOauthCallbackRoute:
     ApiPublicHooksGoogleOauthCallbackRoute,
   ApiPublicHooksGuideAiRoute: ApiPublicHooksGuideAiRoute,
