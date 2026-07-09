@@ -354,7 +354,11 @@ Rules:
 - Reply in the SAME language as the guide (Russian, Uzbek, or English).
 - Be concise and practical. Light markdown OK.
 - Times sent to tools must be ISO 8601. Assume Tashkent time unless told otherwise.
-- Booking edits (dates, prices, tours) are NOT in your toolset — tell the guide to use the app.`;
+- Booking edits (dates, prices, tours) are NOT in your toolset — tell the guide to use the app.
+- BEFORE calling createEvent or blockTime, ALWAYS call checkConflicts (or getSchedule) for the target interval.
+- If checkConflicts / a create call returns { conflict }: DO NOT insert. Summarize the conflicts to the guide (booking with client name, existing block, other event) and ask for explicit confirmation. Only after the guide confirms, call the same tool again with confirm:true.
+- If the guide's request is clearly free of conflicts, you may proceed directly.`;
+
 
         const gateway = createLovableAiGatewayProvider(key);
         const model = gateway("google/gemini-3-flash-preview");
