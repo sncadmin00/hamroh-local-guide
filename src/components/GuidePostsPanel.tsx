@@ -1,7 +1,7 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Eye, EyeOff, Trash2, ArrowUp, ArrowDown, Loader2, Plus, ImagePlus, Star } from "lucide-react";
+import { Eye, EyeOff, Trash2, ArrowUp, ArrowDown, Loader2, Plus, Star, Video } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useGuideI18n } from "@/lib/guide-i18n";
 import {
@@ -15,18 +15,17 @@ import {
 
 type Post = {
   id: string;
-  platform: string;
+  video_path: string;
   thumbnail_url: string | null;
   caption: string;
   visible: boolean;
   sort_order: number;
   featured_on_home: boolean;
+  duration_seconds: number | null;
 };
 
-const PLATFORMS = ["instagram", "facebook", "tiktok", "youtube", "other"] as const;
-type Platform = (typeof PLATFORMS)[number];
-
-const MAX_BYTES = 5 * 1024 * 1024;
+const MAX_VIDEO_BYTES = 50 * 1024 * 1024; // 50 MB
+const MAX_DURATION_SEC = 90;
 
 export function GuidePostsPanel() {
   const { tg } = useGuideI18n();
@@ -46,7 +45,16 @@ export function GuidePostsPanel() {
     try {
       const res = await fetchPosts();
       setGuideId(res.guideId);
-      setPosts(res.posts as Post[]);
+      setPosts(res.posts.map((p) => ({
+        id: p.id,
+        video_path: p.video_path,
+        thumbnail_url: p.thumbnail_url,
+        caption: p.caption,
+        visible: p.visible,
+        sort_order: p.sort_order,
+        featured_on_home: p.featured_on_home,
+        duration_seconds: p.duration_seconds,
+      })));
     } catch (e) {
       toast.error((e as Error).message);
     } finally {
@@ -55,6 +63,25 @@ export function GuidePostsPanel() {
   }, [fetchPosts]);
 
   useEffect(() => { load(); }, [load]);
+
+  // Preload signed thumbnail URLs for the owner's own posts.
+  const thumbPaths = useMemo(
+    () => posts.map((p) => p.thumbnail_url).filter((s): s is string => !!s),
+    [posts],
+  );
+  const [thumbMap, setThumbMap] = useState<Record<string, string>>({});
+  useEffect(() => {
+    if (thumbPaths.length === 0) { setThumbMap({}); return; }
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase.storage.from("guide-posts").createSignedUrls(thumbPaths, 3600);
+      if (cancelled) return;
+      const map: Record<string, string> = {};
+      (data ?? []).forEach((r) => { if (r.path && r.signedUrl) map[r.path] = r.signedUrl; });
+      setThumbMap(map);
+    })();
+    return () => { cancelled = true; };
+  }, [thumbPaths]);
 
   if (loading) {
     return (
@@ -71,7 +98,8 @@ export function GuidePostsPanel() {
           <div>
             <h2 className="font-display text-lg font-semibold">{tg("posts.title")}</h2>
             <p className="text-sm text-muted-foreground mt-1">
-              {tg("posts.text")}
+              Short videos (reels) featured on the home page and your public profile.
+              MP4, up to {MAX_DURATION_SEC}s, up to {Math.round(MAX_VIDEO_BYTES / 1024 / 1024)}MB.
             </p>
           </div>
           <button
@@ -84,7 +112,7 @@ export function GuidePostsPanel() {
 
         {showForm && guideId && (
           <div className="mt-4">
-            <PostForm
+            <VideoPostForm
               guideId={guideId}
               onCreate={async (payload) => {
                 try {
@@ -109,14 +137,23 @@ export function GuidePostsPanel() {
         <ul className="space-y-3">
           {posts.map((p, idx) => (
             <li key={p.id} className="rounded-2xl bg-card ring-1 ring-border p-3 flex gap-3 items-start">
-              <div className="w-20 h-20 rounded-xl bg-muted overflow-hidden flex-shrink-0">
-                {p.thumbnail_url ? (
-                  <img src={p.thumbnail_url} alt="" className="w-full h-full object-cover" />
+              <div className="w-20 h-28 rounded-xl bg-muted overflow-hidden flex-shrink-0 relative">
+                {p.thumbnail_url && thumbMap[p.thumbnail_url] ? (
+                  <img src={thumbMap[p.thumbnail_url]} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <Video className="h-6 w-6 text-muted-foreground" />
+                  </div>
+                )}
+                {p.duration_seconds ? (
+                  <span className="absolute bottom-1 right-1 text-[10px] px-1 rounded bg-black/70 text-white">
+                    {p.duration_seconds}s
+                  </span>
                 ) : null}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-muted-foreground">
-                  <span>{p.platform}</span>
+                  <span>reel</span>
                   {!p.visible && <span className="text-amber-600">{tg("posts.hidden")}</span>}
                   {p.featured_on_home && <span className="text-amber-500 normal-case tracking-normal inline-flex items-center gap-1"><Star className="h-3 w-3 fill-amber-500" /> On home</span>}
                 </div>
@@ -173,36 +210,106 @@ function IconBtn({ children, onClick, title, disabled }: { children: React.React
   );
 }
 
-function PostForm({ guideId, onCreate }: { guideId: string; onCreate: (p: { platform: Platform; caption: string; thumbnail_url: string }) => Promise<void> }) {
-  const { tg } = useGuideI18n();
-  const [platform, setPlatform] = useState<Platform>("instagram");
-  const [caption, setCaption] = useState("");
+type CreatePayload = {
+  video_path: string;
+  thumbnail_url: string | null;
+  caption: string;
+  duration_seconds?: number;
+  width?: number;
+  height?: number;
+  size_bytes?: number;
+};
+
+function VideoPostForm({ guideId, onCreate }: { guideId: string; onCreate: (p: CreatePayload) => Promise<void> }) {
   const [file, setFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [caption, setCaption] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [meta, setMeta] = useState<{ duration: number; width: number; height: number } | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!file) { setPreviewUrl(null); return; }
+    setMeta(null);
+    setError(null);
+    if (!file) return;
+    if (file.size > MAX_VIDEO_BYTES) {
+      setError(`Video is too large. Max ${Math.round(MAX_VIDEO_BYTES / 1024 / 1024)}MB.`);
+      return;
+    }
     const url = URL.createObjectURL(file);
-    setPreviewUrl(url);
-    return () => URL.revokeObjectURL(url);
+    const v = document.createElement("video");
+    v.preload = "metadata";
+    v.src = url;
+    v.onloadedmetadata = () => {
+      const duration = Math.round(v.duration);
+      if (duration > MAX_DURATION_SEC) {
+        setError(`Video is too long. Max ${MAX_DURATION_SEC}s.`);
+      }
+      setMeta({ duration, width: v.videoWidth, height: v.videoHeight });
+      URL.revokeObjectURL(url);
+    };
+    v.onerror = () => {
+      setError("Could not read video metadata. Please pick a valid MP4.");
+      URL.revokeObjectURL(url);
+    };
   }, [file]);
+
+  async function generateThumbnail(videoFile: File): Promise<Blob | null> {
+    return new Promise((resolve) => {
+      const url = URL.createObjectURL(videoFile);
+      const v = document.createElement("video");
+      v.preload = "metadata";
+      v.muted = true;
+      v.playsInline = true;
+      v.src = url;
+      v.onloadeddata = () => {
+        v.currentTime = Math.min(0.5, (v.duration || 1) / 2);
+      };
+      v.onseeked = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = v.videoWidth || 720;
+        canvas.height = v.videoHeight || 1280;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) { URL.revokeObjectURL(url); resolve(null); return; }
+        ctx.drawImage(v, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob((blob) => { URL.revokeObjectURL(url); resolve(blob); }, "image/jpeg", 0.85);
+      };
+      v.onerror = () => { URL.revokeObjectURL(url); resolve(null); };
+    });
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!file) { toast.error(tg("posts.uploadImage")); return; }
-    if (file.size > MAX_BYTES) { toast.error(tg("posts.tooLarge")); return; }
+    if (!file) { toast.error("Pick a video first"); return; }
+    if (error) { toast.error(error); return; }
     setSubmitting(true);
     try {
-      const ext = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
-      const path = `posts/${guideId}/${crypto.randomUUID()}.${ext}`;
+      const uuid = crypto.randomUUID();
+      const videoPath = `${guideId}/${uuid}.mp4`;
       const { error: upErr } = await supabase.storage
-        .from("guide-photos")
-        .upload(path, file, { contentType: file.type, upsert: false });
+        .from("guide-posts")
+        .upload(videoPath, file, { contentType: file.type || "video/mp4", upsert: false });
       if (upErr) throw upErr;
-      const { data: pub } = supabase.storage.from("guide-photos").getPublicUrl(path);
-      await onCreate({ platform, caption: caption.trim(), thumbnail_url: pub.publicUrl });
-      setCaption(""); setFile(null);
+
+      let thumbPath: string | null = null;
+      const thumbBlob = await generateThumbnail(file);
+      if (thumbBlob) {
+        thumbPath = `${guideId}/${uuid}.jpg`;
+        const { error: thErr } = await supabase.storage
+          .from("guide-posts")
+          .upload(thumbPath, thumbBlob, { contentType: "image/jpeg", upsert: false });
+        if (thErr) thumbPath = null; // non-fatal
+      }
+
+      await onCreate({
+        video_path: videoPath,
+        thumbnail_url: thumbPath,
+        caption: caption.trim(),
+        duration_seconds: meta?.duration,
+        width: meta?.width,
+        height: meta?.height,
+        size_bytes: file.size,
+      });
+      setFile(null); setCaption(""); setMeta(null);
     } catch (e) {
       toast.error((e as Error).message);
     } finally {
@@ -214,32 +321,33 @@ function PostForm({ guideId, onCreate }: { guideId: string; onCreate: (p: { plat
     <form onSubmit={handleSubmit} className="space-y-3 border-t border-border pt-4">
       <div className="flex gap-3 items-start">
         <label className="w-28 h-28 rounded-xl bg-muted ring-1 ring-border overflow-hidden flex items-center justify-center cursor-pointer hover:bg-muted/70 flex-shrink-0">
-          {previewUrl ? (
-            <img src={previewUrl} alt="" className="w-full h-full object-cover" />
-          ) : (
-            <ImagePlus className="h-6 w-6 text-muted-foreground" />
-          )}
+          <Video className="h-6 w-6 text-muted-foreground" />
           <input
             type="file"
-            accept="image/jpeg,image/png,image/webp"
+            accept="video/mp4,video/quicktime"
             className="hidden"
             onChange={(e) => setFile(e.target.files?.[0] ?? null)}
           />
         </label>
         <div className="flex-1 min-w-0 space-y-2">
-          <select
-            value={platform}
-            onChange={(e) => setPlatform(e.target.value as Platform)}
-            className="w-full h-9 px-3 rounded-lg bg-background ring-1 ring-border text-sm"
-          >
-            {PLATFORMS.map((p) => (
-              <option key={p} value={p}>{p[0].toUpperCase() + p.slice(1)}</option>
-            ))}
-          </select>
+          <div className="text-xs text-muted-foreground">
+            {file ? (
+              <>
+                <div className="truncate">{file.name}</div>
+                <div>
+                  {(file.size / 1024 / 1024).toFixed(1)}MB
+                  {meta ? ` · ${meta.duration}s · ${meta.width}×${meta.height}` : ""}
+                </div>
+                {error && <div className="text-destructive mt-1">{error}</div>}
+              </>
+            ) : (
+              <span>Tap to pick an MP4 (≤{MAX_DURATION_SEC}s, ≤{Math.round(MAX_VIDEO_BYTES / 1024 / 1024)}MB)</span>
+            )}
+          </div>
           <textarea
             value={caption}
             onChange={(e) => setCaption(e.target.value)}
-            placeholder={tg("posts.captionPh")}
+            placeholder="Caption (optional, max 500 chars)"
             maxLength={500}
             rows={3}
             className="w-full px-3 py-2 rounded-lg bg-background ring-1 ring-border text-sm resize-none"
@@ -248,11 +356,11 @@ function PostForm({ guideId, onCreate }: { guideId: string; onCreate: (p: { plat
       </div>
       <button
         type="submit"
-        disabled={submitting || !file}
+        disabled={submitting || !file || !!error}
         className="inline-flex items-center gap-2 h-9 px-4 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 disabled:opacity-50"
       >
         {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
-        {tg("posts.add")}
+        Upload video
       </button>
     </form>
   );
