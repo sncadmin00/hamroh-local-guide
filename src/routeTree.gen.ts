@@ -76,6 +76,7 @@ import { Route as ApiPublicHooksFeaturedReelsRouteImport } from './routes/api/pu
 import { Route as ApiPublicHooksExpireBookingsRouteImport } from './routes/api/public/hooks/expire-bookings'
 import { Route as ApiPublicHooksDailyBriefRouteImport } from './routes/api/public/hooks/daily-brief'
 import { Route as ApiPublicHooksCreateBookingRouteImport } from './routes/api/public/hooks/create-booking'
+import { Route as ApiPublicHooksClientAiRouteImport } from './routes/api/public/hooks/client-ai'
 import { Route as ApiPublicHooksChatNotificationsRouteImport } from './routes/api/public/hooks/chat-notifications'
 import { Route as ApiPublicHooksCalendarRemindersRouteImport } from './routes/api/public/hooks/calendar-reminders'
 import { Route as ApiPublicHooksBookingReviewsRouteImport } from './routes/api/public/hooks/booking-reviews'
@@ -440,6 +441,11 @@ const ApiPublicHooksCreateBookingRoute =
     path: '/api/public/hooks/create-booking',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksClientAiRoute = ApiPublicHooksClientAiRouteImport.update({
+  id: '/api/public/hooks/client-ai',
+  path: '/api/public/hooks/client-ai',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicHooksChatNotificationsRoute =
   ApiPublicHooksChatNotificationsRouteImport.update({
     id: '/api/public/hooks/chat-notifications',
@@ -536,6 +542,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/booking-reviews': typeof ApiPublicHooksBookingReviewsRoute
   '/api/public/hooks/calendar-reminders': typeof ApiPublicHooksCalendarRemindersRoute
   '/api/public/hooks/chat-notifications': typeof ApiPublicHooksChatNotificationsRoute
+  '/api/public/hooks/client-ai': typeof ApiPublicHooksClientAiRoute
   '/api/public/hooks/create-booking': typeof ApiPublicHooksCreateBookingRoute
   '/api/public/hooks/daily-brief': typeof ApiPublicHooksDailyBriefRoute
   '/api/public/hooks/expire-bookings': typeof ApiPublicHooksExpireBookingsRoute
@@ -612,6 +619,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/booking-reviews': typeof ApiPublicHooksBookingReviewsRoute
   '/api/public/hooks/calendar-reminders': typeof ApiPublicHooksCalendarRemindersRoute
   '/api/public/hooks/chat-notifications': typeof ApiPublicHooksChatNotificationsRoute
+  '/api/public/hooks/client-ai': typeof ApiPublicHooksClientAiRoute
   '/api/public/hooks/create-booking': typeof ApiPublicHooksCreateBookingRoute
   '/api/public/hooks/daily-brief': typeof ApiPublicHooksDailyBriefRoute
   '/api/public/hooks/expire-bookings': typeof ApiPublicHooksExpireBookingsRoute
@@ -690,6 +698,7 @@ export interface FileRoutesById {
   '/api/public/hooks/booking-reviews': typeof ApiPublicHooksBookingReviewsRoute
   '/api/public/hooks/calendar-reminders': typeof ApiPublicHooksCalendarRemindersRoute
   '/api/public/hooks/chat-notifications': typeof ApiPublicHooksChatNotificationsRoute
+  '/api/public/hooks/client-ai': typeof ApiPublicHooksClientAiRoute
   '/api/public/hooks/create-booking': typeof ApiPublicHooksCreateBookingRoute
   '/api/public/hooks/daily-brief': typeof ApiPublicHooksDailyBriefRoute
   '/api/public/hooks/expire-bookings': typeof ApiPublicHooksExpireBookingsRoute
@@ -769,6 +778,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/booking-reviews'
     | '/api/public/hooks/calendar-reminders'
     | '/api/public/hooks/chat-notifications'
+    | '/api/public/hooks/client-ai'
     | '/api/public/hooks/create-booking'
     | '/api/public/hooks/daily-brief'
     | '/api/public/hooks/expire-bookings'
@@ -845,6 +855,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/booking-reviews'
     | '/api/public/hooks/calendar-reminders'
     | '/api/public/hooks/chat-notifications'
+    | '/api/public/hooks/client-ai'
     | '/api/public/hooks/create-booking'
     | '/api/public/hooks/daily-brief'
     | '/api/public/hooks/expire-bookings'
@@ -922,6 +933,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/booking-reviews'
     | '/api/public/hooks/calendar-reminders'
     | '/api/public/hooks/chat-notifications'
+    | '/api/public/hooks/client-ai'
     | '/api/public/hooks/create-booking'
     | '/api/public/hooks/daily-brief'
     | '/api/public/hooks/expire-bookings'
@@ -996,6 +1008,7 @@ export interface RootRouteChildren {
   ApiPublicHooksBookingReviewsRoute: typeof ApiPublicHooksBookingReviewsRoute
   ApiPublicHooksCalendarRemindersRoute: typeof ApiPublicHooksCalendarRemindersRoute
   ApiPublicHooksChatNotificationsRoute: typeof ApiPublicHooksChatNotificationsRoute
+  ApiPublicHooksClientAiRoute: typeof ApiPublicHooksClientAiRoute
   ApiPublicHooksCreateBookingRoute: typeof ApiPublicHooksCreateBookingRoute
   ApiPublicHooksDailyBriefRoute: typeof ApiPublicHooksDailyBriefRoute
   ApiPublicHooksExpireBookingsRoute: typeof ApiPublicHooksExpireBookingsRoute
@@ -1497,6 +1510,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksCreateBookingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/client-ai': {
+      id: '/api/public/hooks/client-ai'
+      path: '/api/public/hooks/client-ai'
+      fullPath: '/api/public/hooks/client-ai'
+      preLoaderRoute: typeof ApiPublicHooksClientAiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/chat-notifications': {
       id: '/api/public/hooks/chat-notifications'
       path: '/api/public/hooks/chat-notifications'
@@ -1635,6 +1655,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksBookingReviewsRoute: ApiPublicHooksBookingReviewsRoute,
   ApiPublicHooksCalendarRemindersRoute: ApiPublicHooksCalendarRemindersRoute,
   ApiPublicHooksChatNotificationsRoute: ApiPublicHooksChatNotificationsRoute,
+  ApiPublicHooksClientAiRoute: ApiPublicHooksClientAiRoute,
   ApiPublicHooksCreateBookingRoute: ApiPublicHooksCreateBookingRoute,
   ApiPublicHooksDailyBriefRoute: ApiPublicHooksDailyBriefRoute,
   ApiPublicHooksExpireBookingsRoute: ApiPublicHooksExpireBookingsRoute,
