@@ -321,21 +321,15 @@ export function useGuidePosts(guideId: string | undefined) {
     queryKey: ["guide-posts", guideId],
     enabled: !!guideId,
     queryFn: async (): Promise<GuidePost[]> => {
-      const { data, error } = await supabase
-        .from("guide_posts")
-        .select("id, platform, url, thumbnail_url, caption, posted_at, sort_order")
-        .eq("guide_id", guideId!)
-        .eq("visible", true)
-        .order("sort_order", { ascending: true })
-        .order("posted_at", { ascending: false, nullsFirst: false });
-      if (error) throw error;
-      return (data ?? []).map((p) => ({
+      const res = await fetch(`/api/public/hooks/guide-reels?guide_id=${encodeURIComponent(guideId!)}`);
+      if (!res.ok) return [];
+      const json = await res.json() as { items?: Array<{ id: string; video_url: string | null; thumbnail_url: string | null; caption: string; duration_seconds: number | null }> };
+      return (json.items ?? []).map((p) => ({
         id: p.id,
-        platform: p.platform as GuidePost["platform"],
-        url: p.url,
+        videoUrl: p.video_url,
         thumbnailUrl: p.thumbnail_url,
         caption: p.caption ?? "",
-        postedAt: p.posted_at,
+        durationSeconds: p.duration_seconds,
       }));
     },
   });
