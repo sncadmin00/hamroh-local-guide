@@ -148,19 +148,49 @@ export const Route = createFileRoute("/api/public/hooks/guide-ai")({
             },
           }),
           blockTime: tool({
-            description: "Block a time slot so no booking can be made.",
+            description:
+              "Block a time slot so clients cannot book it. Writes to guide_time_blocks (enforced by the booking-conflict trigger) and mirrors to calendar_events for display.",
             inputSchema: z.object({
               starts_at: z.string(), ends_at: z.string(),
               reason: z.string().max(200).optional(),
             }),
             execute: async ({ starts_at, ends_at, reason }) => {
-              const { data, error } = await userClient.from("calendar_events").insert({
-                guide_id: guideId, type: "block",
-                title: reason ?? "Blocked",
-                starts_at, ends_at,
-                color: "destructive", source: "ai",
-              }).select("id").single();
-              const out = error ? { error: error.message } : { ok: true, id: data.id };
+              // 1) Real block — this is what the booking-conflict trigger reads.
+              const { data: block, error: blockErr } = await userClient
+                .from("guide_time_blocks")
+                .insert({
+                  guide_id: guideId,
+                  starts_at,
+                  ends_at,
+                  reason: reason ?? null,
+                  source: "ai",
+                  created_by: userId,
+                })
+                .select("id")
+                .single();
+              if (blockErr) {
+                const out = { error: blockErr.message };
+                record("blockTime", { starts_at, ends_at, reason }, out);
+                return out;
+              }
+              // 2) Mirror to calendar_events for the guide's calendar UI (best-effort).
+              let eventId: string | null = null;
+              const { data: ev } = await userClient
+                .from("calendar_events")
+                .insert({
+                  guide_id: guideId,
+                  type: "block",
+                  title: reason ?? "Blocked",
+                  starts_at,
+                  ends_at,
+                  color: "destructive",
+                  source: "ai",
+                  notes: `time_block:${block.id}`,
+                })
+                .select("id")
+                .single();
+              if (ev) eventId = ev.id;
+              const out = { ok: true, block_id: block.id, event_id: eventId };
               record("blockTime", { starts_at, ends_at, reason }, out);
               return out;
             },
