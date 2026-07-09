@@ -11,7 +11,7 @@ import { listAppUsers, setAdminRole, inviteAdminUser, deleteAppUser } from "@/li
 import { notifyGuideApplicationStatus } from "@/lib/lifecycle-emails.functions";
 import { finalizeApprovedGuide } from "@/lib/guide-approval.functions";
 import { reindexArticle, reindexAllArticles } from "@/lib/articles-rag.functions";
-import { adminCreateCityFromProposal } from "@/lib/admin-cities.functions";
+import { adminCreateCityFromProposal, listCitySuggestions, approveCitySuggestion, rejectCitySuggestion } from "@/lib/admin-cities.functions";
 import { Badge } from "@/components/ui/badge";
 
 import { SpotlightsPanel } from "@/components/admin/SpotlightsPanel";
@@ -551,10 +551,148 @@ function CitiesPanel({ cities, reload }: { cities: City[]; reload: () => Promise
           ))}
         </ul>
       </div>
+
+      <div className="md:col-span-2">
+        <CitySuggestionsSection reload={reload} />
+      </div>
     </div>
   );
 }
 
+type CitySuggestionRow = {
+  id: string;
+  user_id: string;
+  guide_id: string | null;
+  name: string;
+  region: string | null;
+  note: string | null;
+  status: string;
+  admin_note: string | null;
+  created_city_id: string | null;
+  created_at: string;
+  guide_name: string | null;
+  guide_slug: string | null;
+  submitter_name: string | null;
+  submitter_email: string | null;
+};
+
+function CitySuggestionsSection({ reload }: { reload: () => Promise<void> }) {
+  const listFn = useServerFn(listCitySuggestions);
+  const approveFn = useServerFn(approveCitySuggestion);
+  const rejectFn = useServerFn(rejectCitySuggestion);
+  const [rows, setRows] = useState<CitySuggestionRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [busyId, setBusyId] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = (await listFn()) as CitySuggestionRow[];
+      setRows(data);
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  }, [listFn]);
+
+  useEffect(() => { load(); }, [load]);
+
+  const approve = async (row: CitySuggestionRow) => {
+    setBusyId(row.id);
+    try {
+      const res = await approveFn({ data: { id: row.id } }) as { city: { name: string } | null };
+      toast.success(`Approved: ${res.city?.name ?? row.name}`);
+      await Promise.all([load(), reload()]);
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const reject = async (row: CitySuggestionRow) => {
+    const note = window.prompt("Reason (optional):", "") ?? undefined;
+    setBusyId(row.id);
+    try {
+      await rejectFn({ data: { id: row.id, admin_note: note || undefined } });
+      toast.success("Rejected");
+      await load();
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const pending = rows.filter((r) => r.status === "pending");
+  const others = rows.filter((r) => r.status !== "pending");
+
+  return (
+    <div className="rounded-3xl bg-card p-6 ring-1 ring-border/60">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="font-display text-lg font-semibold">City suggestions</h2>
+          <p className="text-xs text-muted-foreground mt-0.5">Guides propose cities — approving auto-creates & geocodes.</p>
+        </div>
+        <Badge variant="secondary">{pending.length} pending</Badge>
+      </div>
+
+      {loading ? (
+        <p className="mt-4 text-sm text-muted-foreground">Loading…</p>
+      ) : rows.length === 0 ? (
+        <p className="mt-4 text-sm text-muted-foreground">No suggestions yet.</p>
+      ) : (
+        <div className="mt-4 space-y-2">
+          {[...pending, ...others].map((r) => (
+            <div key={r.id} className="flex items-start justify-between gap-3 rounded-2xl border border-border/60 p-3">
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <p className="font-medium truncate">{r.name}</p>
+                  <StatusPill status={r.status} />
+                </div>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {r.region ? `${r.region} · ` : ""}
+                  {r.guide_name ?? r.submitter_name ?? r.submitter_email ?? r.user_id.slice(0, 8)}
+                  {" · "}
+                  {new Date(r.created_at).toLocaleDateString()}
+                </p>
+                {r.note && <p className="text-xs mt-1">{r.note}</p>}
+                {r.admin_note && <p className="text-xs text-muted-foreground mt-1 italic">Admin: {r.admin_note}</p>}
+              </div>
+              {r.status === "pending" && (
+                <div className="shrink-0 flex gap-2">
+                  <button
+                    onClick={() => approve(r)}
+                    disabled={busyId === r.id}
+                    className="h-9 px-3 rounded-full bg-primary text-primary-foreground text-xs font-semibold disabled:opacity-60"
+                  >
+                    Approve
+                  </button>
+                  <button
+                    onClick={() => reject(r)}
+                    disabled={busyId === r.id}
+                    className="h-9 px-3 rounded-full bg-secondary text-foreground text-xs font-semibold disabled:opacity-60"
+                  >
+                    Reject
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function StatusPill({ status }: { status: string }) {
+  const color =
+    status === "approved" ? "bg-emerald-500/15 text-emerald-600"
+      : status === "rejected" ? "bg-destructive/15 text-destructive"
+      : "bg-amber-500/15 text-amber-600";
+  return <span className={`text-[10px] uppercase font-semibold px-2 py-0.5 rounded-full ${color}`}>{status}</span>;
+}
 
 function GuidesPanel({
   guides,
