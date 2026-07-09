@@ -42,6 +42,7 @@ export const upsertTourInputSchema = z.object({
   group_tiers: z.array(groupTierSchema).max(20).optional(),
   max_guests: z.number().int().min(1).max(500).nullable().optional(),
   base_language: z.string().trim().min(1).max(40).optional(),
+  pricing_base_language: z.string().trim().min(1).max(40).optional(),
   language_multipliers: z
     .record(z.string().min(1).max(40), z.number().min(-50).max(500))
     .optional(),
