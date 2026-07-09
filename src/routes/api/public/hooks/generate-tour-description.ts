@@ -128,7 +128,7 @@ export const Route = createFileRoute("/api/public/hooks/generate-tour-descriptio
             { status: 400, headers: corsHeaders() },
           );
         }
-        const { title, city, language, context, length } = parsed.data;
+        const { title, city, language, context, length, categories, highlights, included } = parsed.data;
 
         const key = process.env.LOVABLE_API_KEY;
         if (!key) {
@@ -149,6 +149,9 @@ Length: ${LENGTH_HINTS[length]}`;
         const facts = [
           `Tour title: ${title}`,
           city && `City: ${city}`,
+          categories.length && `Categories: ${categories.join(", ")}`,
+          highlights.length && `Highlights: ${highlights.join("; ")}`,
+          included.length && `Included: ${included.join("; ")}`,
           context && `Extra context from the guide: ${context}`,
         ]
           .filter(Boolean)
