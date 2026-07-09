@@ -63,6 +63,20 @@ export const upsertTourInputSchema = z.object({
   sort_order: z.number().int().min(0).max(1000).optional(),
   category_ids: z.array(z.string().uuid()).max(20).optional(),
 
+  // Optional weekly recurring schedule (public.tour_schedules). When provided,
+  // the tour's existing rows are fully replaced with this set. `weekday`:
+  // 0=Sunday..6=Saturday (Postgres DOW). `start_time`: "HH:MM" or "HH:MM:SS".
+  // Pass `[]` to clear the schedule.
+  schedule: z
+    .array(
+      z.object({
+        weekday: z.number().int().min(0).max(6),
+        start_time: z.string().regex(/^\d{2}:\d{2}(:\d{2})?$/),
+      }),
+    )
+    .max(200)
+    .optional(),
+
   // Manual per-locale overrides. When provided, they take priority over
   // AI translation for that locale and are written verbatim.
   title_ru: localeStr, title_en: localeStr, title_uz: localeStr,
