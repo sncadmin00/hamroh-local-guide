@@ -1222,47 +1222,53 @@ export type Database = {
         Row: {
           caption: string
           created_at: string
+          duration_seconds: number | null
           featured_on_home: boolean
           guide_id: string
+          height: number | null
           id: string
           media_type: Database["public"]["Enums"]["post_media_type"]
-          platform: string
-          posted_at: string | null
+          size_bytes: number | null
           sort_order: number
           thumbnail_url: string | null
           updated_at: string
-          url: string
+          video_path: string
           visible: boolean
+          width: number | null
         }
         Insert: {
           caption?: string
           created_at?: string
+          duration_seconds?: number | null
           featured_on_home?: boolean
           guide_id: string
+          height?: number | null
           id?: string
           media_type?: Database["public"]["Enums"]["post_media_type"]
-          platform: string
-          posted_at?: string | null
+          size_bytes?: number | null
           sort_order?: number
           thumbnail_url?: string | null
           updated_at?: string
-          url: string
+          video_path: string
           visible?: boolean
+          width?: number | null
         }
         Update: {
           caption?: string
           created_at?: string
+          duration_seconds?: number | null
           featured_on_home?: boolean
           guide_id?: string
+          height?: number | null
           id?: string
           media_type?: Database["public"]["Enums"]["post_media_type"]
-          platform?: string
-          posted_at?: string | null
+          size_bytes?: number | null
           sort_order?: number
           thumbnail_url?: string | null
           updated_at?: string
-          url?: string
+          video_path?: string
           visible?: boolean
+          width?: number | null
         }
         Relationships: [
           {
