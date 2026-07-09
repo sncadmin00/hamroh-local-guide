@@ -6,6 +6,22 @@ import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
 
 type ChatBody = { messages?: UIMessage[] };
 
+const NUMERIC_TIMEZONE_RE = /[+-]\d{2}:?\d{2}$/;
+
+function normalizeTashkentDateTime(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed) return trimmed;
+
+  // AI tool calls may emit "Z" while meaning the guide's local wall-clock
+  // time. Treat naive timestamps and Z timestamps as Asia/Tashkent time;
+  // preserve explicit numeric offsets.
+  if (NUMERIC_TIMEZONE_RE.test(trimmed)) return trimmed;
+
+  const withoutUtcSuffix = trimmed.replace(/Z$/i, "");
+  const dateTime = withoutUtcSuffix.includes("T") ? withoutUtcSuffix : withoutUtcSuffix.replace(" ", "T");
+  return `${dateTime}+05:00`;
+}
+
 export const Route = createFileRoute("/api/guide-ai")({
   server: {
     handlers: {
@@ -49,12 +65,14 @@ export const Route = createFileRoute("/api/guide-ai")({
             to: z.string().describe("ISO datetime, end of range"),
           }),
           execute: async ({ from, to }) => {
+            const fromAt = normalizeTashkentDateTime(from);
+            const toAt = normalizeTashkentDateTime(to);
             const { data, error } = await userClient
               .from("calendar_events")
               .select("id, type, title, starts_at, ends_at, location, notes, color, source")
               .eq("guide_id", guideId)
-              .gte("starts_at", from)
-              .lte("starts_at", to)
+              .gte("starts_at", fromAt)
+              .lte("starts_at", toAt)
               .order("starts_at", { ascending: true });
             if (error) return { error: error.message };
             return { events: data ?? [] };
@@ -72,14 +90,16 @@ export const Route = createFileRoute("/api/guide-ai")({
             notes: z.string().max(2000).optional(),
           }),
           execute: async (input) => {
+            const startsAt = normalizeTashkentDateTime(input.starts_at);
+            const endsAt = normalizeTashkentDateTime(input.ends_at);
             const { data, error } = await userClient
               .from("calendar_events")
               .insert({
                 guide_id: guideId,
                 type: input.type,
                 title: input.title,
-                starts_at: input.starts_at,
-                ends_at: input.ends_at,
+                starts_at: startsAt,
+                ends_at: endsAt,
                 location: input.location ?? "",
                 notes: input.notes ?? "",
                 color: input.type === "block" ? "destructive" : "primary",
@@ -100,14 +120,16 @@ export const Route = createFileRoute("/api/guide-ai")({
             reason: z.string().max(200).optional(),
           }),
           execute: async ({ starts_at, ends_at, reason }) => {
+            const startsAt = normalizeTashkentDateTime(starts_at);
+            const endsAt = normalizeTashkentDateTime(ends_at);
             const { data, error } = await userClient
               .from("calendar_events")
               .insert({
                 guide_id: guideId,
                 type: "block",
                 title: reason ?? "Blocked",
-                starts_at,
-                ends_at,
+                starts_at: startsAt,
+                ends_at: endsAt,
                 color: "destructive",
                 source: "ai",
               })
@@ -175,7 +197,7 @@ Rules:
 - Confirm destructive actions (delete, block) in your reply.
 - Reply in the SAME language as the guide (Russian, Uzbek, or English).
 - Be concise, warm, and practical. Use light markdown.
-- Times you send to tools must be ISO 8601 with timezone. Assume Tashkent time (UTC+5) unless told otherwise.`;
+- Times you send to tools must be ISO 8601 with +05:00 for Tashkent local time. Never use Z for Tashkent wall-clock time.`;
 
         const gateway = createLovableAiGatewayProvider(key);
         const model = gateway("google/gemini-3-flash-preview");
