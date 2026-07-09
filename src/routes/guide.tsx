@@ -10,6 +10,7 @@ import { VerificationPanel } from "@/components/guide/VerificationPanel";
 import { ProfilePanel } from "@/components/guide/ProfilePanel";
 import { EarningsPanel } from "@/components/guide/EarningsPanel";
 import { GuidePlacesPanel } from "@/components/guide/GuidePlacesPanel";
+import { SuggestCityModal } from "@/components/guide/SuggestCityModal";
 
 import {
   getMyGuide,
