@@ -14,9 +14,14 @@ export const Route = createFileRoute('/api/public/hooks/calendar-reminders')({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        // /api/public/* bypasses auth at the edge; require apikey OR bearer to
+        // match either anon or service_role. Accepts both to match project pattern.
         const auth = request.headers.get('authorization') ?? request.headers.get('apikey') ?? ''
         const token = auth.startsWith('Bearer ') ? auth.slice(7).trim() : auth.trim()
-        if (!token || token !== process.env.SUPABASE_SERVICE_ROLE_KEY) {
+        const allowed = new Set(
+          [process.env.SUPABASE_SERVICE_ROLE_KEY, process.env.SUPABASE_ANON_KEY, process.env.SUPABASE_PUBLISHABLE_KEY].filter(Boolean) as string[],
+        )
+        if (!token || !allowed.has(token)) {
           return Response.json({ error: 'Forbidden' }, { status: 403 })
         }
 
