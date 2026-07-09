@@ -59,6 +59,7 @@ import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/em
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as ApiPublicTelegramWebhookRouteImport } from './routes/api/public/telegram/webhook'
 import { Route as ApiPublicHooksUpsertTourRouteImport } from './routes/api/public/hooks/upsert-tour'
+import { Route as ApiPublicHooksUpdateMyLanguagesRouteImport } from './routes/api/public/hooks/update-my-languages'
 import { Route as ApiPublicHooksRetranslateTourRouteImport } from './routes/api/public/hooks/retranslate-tour'
 import { Route as ApiPublicHooksPriceQuoteRouteImport } from './routes/api/public/hooks/price-quote'
 import { Route as ApiPublicHooksGoogleOauthCallbackRouteImport } from './routes/api/public/hooks/google-oauth-callback'
@@ -329,6 +330,12 @@ const ApiPublicHooksUpsertTourRoute =
     path: '/api/public/hooks/upsert-tour',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksUpdateMyLanguagesRoute =
+  ApiPublicHooksUpdateMyLanguagesRouteImport.update({
+    id: '/api/public/hooks/update-my-languages',
+    path: '/api/public/hooks/update-my-languages',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksRetranslateTourRoute =
   ApiPublicHooksRetranslateTourRouteImport.update({
     id: '/api/public/hooks/retranslate-tour',
@@ -467,6 +474,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/google-oauth-callback': typeof ApiPublicHooksGoogleOauthCallbackRoute
   '/api/public/hooks/price-quote': typeof ApiPublicHooksPriceQuoteRoute
   '/api/public/hooks/retranslate-tour': typeof ApiPublicHooksRetranslateTourRoute
+  '/api/public/hooks/update-my-languages': typeof ApiPublicHooksUpdateMyLanguagesRoute
   '/api/public/hooks/upsert-tour': typeof ApiPublicHooksUpsertTourRoute
   '/api/public/telegram/webhook': typeof ApiPublicTelegramWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -532,6 +540,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/google-oauth-callback': typeof ApiPublicHooksGoogleOauthCallbackRoute
   '/api/public/hooks/price-quote': typeof ApiPublicHooksPriceQuoteRoute
   '/api/public/hooks/retranslate-tour': typeof ApiPublicHooksRetranslateTourRoute
+  '/api/public/hooks/update-my-languages': typeof ApiPublicHooksUpdateMyLanguagesRoute
   '/api/public/hooks/upsert-tour': typeof ApiPublicHooksUpsertTourRoute
   '/api/public/telegram/webhook': typeof ApiPublicTelegramWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -599,6 +608,7 @@ export interface FileRoutesById {
   '/api/public/hooks/google-oauth-callback': typeof ApiPublicHooksGoogleOauthCallbackRoute
   '/api/public/hooks/price-quote': typeof ApiPublicHooksPriceQuoteRoute
   '/api/public/hooks/retranslate-tour': typeof ApiPublicHooksRetranslateTourRoute
+  '/api/public/hooks/update-my-languages': typeof ApiPublicHooksUpdateMyLanguagesRoute
   '/api/public/hooks/upsert-tour': typeof ApiPublicHooksUpsertTourRoute
   '/api/public/telegram/webhook': typeof ApiPublicTelegramWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -667,6 +677,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/google-oauth-callback'
     | '/api/public/hooks/price-quote'
     | '/api/public/hooks/retranslate-tour'
+    | '/api/public/hooks/update-my-languages'
     | '/api/public/hooks/upsert-tour'
     | '/api/public/telegram/webhook'
     | '/lovable/email/auth/preview'
@@ -732,6 +743,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/google-oauth-callback'
     | '/api/public/hooks/price-quote'
     | '/api/public/hooks/retranslate-tour'
+    | '/api/public/hooks/update-my-languages'
     | '/api/public/hooks/upsert-tour'
     | '/api/public/telegram/webhook'
     | '/lovable/email/auth/preview'
@@ -798,6 +810,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/google-oauth-callback'
     | '/api/public/hooks/price-quote'
     | '/api/public/hooks/retranslate-tour'
+    | '/api/public/hooks/update-my-languages'
     | '/api/public/hooks/upsert-tour'
     | '/api/public/telegram/webhook'
     | '/lovable/email/auth/preview'
@@ -861,6 +874,7 @@ export interface RootRouteChildren {
   ApiPublicHooksGoogleOauthCallbackRoute: typeof ApiPublicHooksGoogleOauthCallbackRoute
   ApiPublicHooksPriceQuoteRoute: typeof ApiPublicHooksPriceQuoteRoute
   ApiPublicHooksRetranslateTourRoute: typeof ApiPublicHooksRetranslateTourRoute
+  ApiPublicHooksUpdateMyLanguagesRoute: typeof ApiPublicHooksUpdateMyLanguagesRoute
   ApiPublicHooksUpsertTourRoute: typeof ApiPublicHooksUpsertTourRoute
   ApiPublicTelegramWebhookRoute: typeof ApiPublicTelegramWebhookRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
@@ -1226,6 +1240,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksUpsertTourRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/update-my-languages': {
+      id: '/api/public/hooks/update-my-languages'
+      path: '/api/public/hooks/update-my-languages'
+      fullPath: '/api/public/hooks/update-my-languages'
+      preLoaderRoute: typeof ApiPublicHooksUpdateMyLanguagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/retranslate-tour': {
       id: '/api/public/hooks/retranslate-tour'
       path: '/api/public/hooks/retranslate-tour'
@@ -1413,6 +1434,7 @@ const rootRouteChildren: RootRouteChildren = {
     ApiPublicHooksGoogleOauthCallbackRoute,
   ApiPublicHooksPriceQuoteRoute: ApiPublicHooksPriceQuoteRoute,
   ApiPublicHooksRetranslateTourRoute: ApiPublicHooksRetranslateTourRoute,
+  ApiPublicHooksUpdateMyLanguagesRoute: ApiPublicHooksUpdateMyLanguagesRoute,
   ApiPublicHooksUpsertTourRoute: ApiPublicHooksUpsertTourRoute,
   ApiPublicTelegramWebhookRoute: ApiPublicTelegramWebhookRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
