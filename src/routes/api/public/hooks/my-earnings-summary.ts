@@ -10,21 +10,25 @@
  * }
  *
  * Returns: {
- *   currency: 'UZS',
+ *   currency: 'USD',
  *   commissionRate: number,             // e.g. 0.15
  *   period: { from, to },
- *   kpi: {                              // always this month (calendar)
- *     monthTotalEarnings: number,       // net for completed bookings
+ *   kpi: {
+ *     monthTotalEarnings: number,       // net (USD) for completed bookings — current calendar month
+ *     yearTotalEarnings: number,        // net (USD) for completed bookings — current calendar year
+ *     lifetimeTotalEarnings: number,    // net (USD) all time
  *     pendingPayout: number,            // lifetime net − paid out
  *     paidOut: number,                  // sum of payouts.status='paid'
- *     completedExperiences: number,
+ *     completedExperiences: number,     // completed bookings — current calendar month
+ *     lifetimeCompletedTours: number,   // completed bookings all time (guides.completed_tours_count)
+ *     lifetimeAvgBookingValue: number,  // lifetime gross / lifetime completed count
  *   },
  *   stats: {                            // for the requested period
  *     gross: number, commission: number, net: number,
  *     avgBookingValue: number, bookingsCount: number,
  *   },
  * }
- * All amounts UZS integers (rounded).
+ * All amounts USD integers (rounded).
  */
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
