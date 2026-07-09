@@ -1,28 +1,29 @@
 import { useEffect, useState } from "react";
 import { Play } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 
-type Post = { id: string; url: string; caption: string | null; platform: string | null; thumbnail_url: string | null; guide_name?: string | null };
-
-const emoji = (p: string | null) => (p === "instagram" ? "📸" : p === "tiktok" ? "🎵" : p === "youtube" ? "▶️" : "🎬");
+type Reel = {
+  id: string;
+  video_url: string | null;
+  thumbnail_url: string | null;
+  caption: string;
+  guide_name: string | null;
+};
 
 export function ReelsRow() {
   const { t } = useI18n();
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<Reel[]>([]);
 
   useEffect(() => {
     (async () => {
-      const { data } = await supabase
-        .from("guide_posts")
-        .select("id,url,caption,platform,thumbnail_url,guides(name)")
-        .eq("visible", true)
-        .eq("featured_on_home", true)
-        .order("sort_order", { ascending: true })
-        .limit(12);
-      setPosts((data ?? []).map((r: { id: string; url: string; caption: string | null; platform: string | null; thumbnail_url: string | null; guides?: { name?: string | null } | null }) => ({
-        id: r.id, url: r.url, caption: r.caption, platform: r.platform, thumbnail_url: r.thumbnail_url, guide_name: r.guides?.name ?? null,
-      })));
+      try {
+        const res = await fetch("/api/public/hooks/featured-reels?limit=12");
+        if (!res.ok) return;
+        const json = (await res.json()) as { items?: Reel[] };
+        setPosts(json.items ?? []);
+      } catch {
+        /* noop */
+      }
     })();
   }, []);
 
@@ -37,7 +38,7 @@ export function ReelsRow() {
         {posts.map((p) => (
           <a
             key={p.id}
-            href={p.url}
+            href={p.video_url ?? "#"}
             target="_blank"
             rel="noopener noreferrer"
             className="shrink-0 w-[160px] md:w-[180px] snap-start rounded-2xl overflow-hidden relative group"
@@ -47,12 +48,11 @@ export function ReelsRow() {
               {p.thumbnail_url ? (
                 <img src={p.thumbnail_url} alt={p.caption ?? ""} className="w-full h-full object-cover" loading="lazy" />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-4xl">{emoji(p.platform)}</div>
+                <div className="w-full h-full flex items-center justify-center text-4xl">🎬</div>
               )}
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: "rgba(0,0,0,0.4)" }}>
                 <Play className="h-10 w-10 text-white fill-white" />
               </div>
-              <div className="absolute top-2 left-2 text-lg">{emoji(p.platform)}</div>
             </div>
             <div className="p-2">
               <p className="text-xs font-semibold truncate" style={{ color: "var(--foreground)" }}>{p.guide_name || "Guide"}</p>

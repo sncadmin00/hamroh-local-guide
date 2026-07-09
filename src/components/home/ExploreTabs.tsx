@@ -114,9 +114,9 @@ export function ExploreTabs() {
 
   const renderReels = () => {
     const list = topReels.map((r) => {
-      const meta = r.platform ? platformMeta[r.platform] : null;
-      const badgeLabel = r.source === "admin" ? "Hamroh" : meta?.label ?? "Reel";
-      const BadgeIcon = r.source === "admin" ? PlayCircle : (meta?.Icon ?? PlayCircle);
+      const badgeLabel = r.source === "admin" ? "Hamroh" : (r.guideName ?? "Reel");
+      const BadgeIcon = PlayCircle;
+
       const inner = (
         <div className="relative flex h-72 flex-col overflow-hidden rounded-2xl bg-card ring-1 ring-border/60 transition-transform hover:-translate-y-0.5">
           {r.thumbnailUrl ? (

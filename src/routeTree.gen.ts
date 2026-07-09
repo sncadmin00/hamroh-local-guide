@@ -67,8 +67,10 @@ import { Route as ApiPublicHooksMyTransactionsRouteImport } from './routes/api/p
 import { Route as ApiPublicHooksMyStatementsRouteImport } from './routes/api/public/hooks/my-statements'
 import { Route as ApiPublicHooksMyPayoutsRouteImport } from './routes/api/public/hooks/my-payouts'
 import { Route as ApiPublicHooksMyEarningsSummaryRouteImport } from './routes/api/public/hooks/my-earnings-summary'
+import { Route as ApiPublicHooksGuideReelsRouteImport } from './routes/api/public/hooks/guide-reels'
 import { Route as ApiPublicHooksGoogleOauthCallbackRouteImport } from './routes/api/public/hooks/google-oauth-callback'
 import { Route as ApiPublicHooksGenerateStatementsRouteImport } from './routes/api/public/hooks/generate-statements'
+import { Route as ApiPublicHooksFeaturedReelsRouteImport } from './routes/api/public/hooks/featured-reels'
 import { Route as ApiPublicHooksExpireBookingsRouteImport } from './routes/api/public/hooks/expire-bookings'
 import { Route as ApiPublicHooksDailyBriefRouteImport } from './routes/api/public/hooks/daily-brief'
 import { Route as ApiPublicHooksCreateBookingRouteImport } from './routes/api/public/hooks/create-booking'
@@ -382,6 +384,12 @@ const ApiPublicHooksMyEarningsSummaryRoute =
     path: '/api/public/hooks/my-earnings-summary',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksGuideReelsRoute =
+  ApiPublicHooksGuideReelsRouteImport.update({
+    id: '/api/public/hooks/guide-reels',
+    path: '/api/public/hooks/guide-reels',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksGoogleOauthCallbackRoute =
   ApiPublicHooksGoogleOauthCallbackRouteImport.update({
     id: '/api/public/hooks/google-oauth-callback',
@@ -392,6 +400,12 @@ const ApiPublicHooksGenerateStatementsRoute =
   ApiPublicHooksGenerateStatementsRouteImport.update({
     id: '/api/public/hooks/generate-statements',
     path: '/api/public/hooks/generate-statements',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksFeaturedReelsRoute =
+  ApiPublicHooksFeaturedReelsRouteImport.update({
+    id: '/api/public/hooks/featured-reels',
+    path: '/api/public/hooks/featured-reels',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicHooksExpireBookingsRoute =
@@ -504,8 +518,10 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/create-booking': typeof ApiPublicHooksCreateBookingRoute
   '/api/public/hooks/daily-brief': typeof ApiPublicHooksDailyBriefRoute
   '/api/public/hooks/expire-bookings': typeof ApiPublicHooksExpireBookingsRoute
+  '/api/public/hooks/featured-reels': typeof ApiPublicHooksFeaturedReelsRoute
   '/api/public/hooks/generate-statements': typeof ApiPublicHooksGenerateStatementsRoute
   '/api/public/hooks/google-oauth-callback': typeof ApiPublicHooksGoogleOauthCallbackRoute
+  '/api/public/hooks/guide-reels': typeof ApiPublicHooksGuideReelsRoute
   '/api/public/hooks/my-earnings-summary': typeof ApiPublicHooksMyEarningsSummaryRoute
   '/api/public/hooks/my-payouts': typeof ApiPublicHooksMyPayoutsRoute
   '/api/public/hooks/my-statements': typeof ApiPublicHooksMyStatementsRoute
@@ -575,8 +591,10 @@ export interface FileRoutesByTo {
   '/api/public/hooks/create-booking': typeof ApiPublicHooksCreateBookingRoute
   '/api/public/hooks/daily-brief': typeof ApiPublicHooksDailyBriefRoute
   '/api/public/hooks/expire-bookings': typeof ApiPublicHooksExpireBookingsRoute
+  '/api/public/hooks/featured-reels': typeof ApiPublicHooksFeaturedReelsRoute
   '/api/public/hooks/generate-statements': typeof ApiPublicHooksGenerateStatementsRoute
   '/api/public/hooks/google-oauth-callback': typeof ApiPublicHooksGoogleOauthCallbackRoute
+  '/api/public/hooks/guide-reels': typeof ApiPublicHooksGuideReelsRoute
   '/api/public/hooks/my-earnings-summary': typeof ApiPublicHooksMyEarningsSummaryRoute
   '/api/public/hooks/my-payouts': typeof ApiPublicHooksMyPayoutsRoute
   '/api/public/hooks/my-statements': typeof ApiPublicHooksMyStatementsRoute
@@ -648,8 +666,10 @@ export interface FileRoutesById {
   '/api/public/hooks/create-booking': typeof ApiPublicHooksCreateBookingRoute
   '/api/public/hooks/daily-brief': typeof ApiPublicHooksDailyBriefRoute
   '/api/public/hooks/expire-bookings': typeof ApiPublicHooksExpireBookingsRoute
+  '/api/public/hooks/featured-reels': typeof ApiPublicHooksFeaturedReelsRoute
   '/api/public/hooks/generate-statements': typeof ApiPublicHooksGenerateStatementsRoute
   '/api/public/hooks/google-oauth-callback': typeof ApiPublicHooksGoogleOauthCallbackRoute
+  '/api/public/hooks/guide-reels': typeof ApiPublicHooksGuideReelsRoute
   '/api/public/hooks/my-earnings-summary': typeof ApiPublicHooksMyEarningsSummaryRoute
   '/api/public/hooks/my-payouts': typeof ApiPublicHooksMyPayoutsRoute
   '/api/public/hooks/my-statements': typeof ApiPublicHooksMyStatementsRoute
@@ -722,8 +742,10 @@ export interface FileRouteTypes {
     | '/api/public/hooks/create-booking'
     | '/api/public/hooks/daily-brief'
     | '/api/public/hooks/expire-bookings'
+    | '/api/public/hooks/featured-reels'
     | '/api/public/hooks/generate-statements'
     | '/api/public/hooks/google-oauth-callback'
+    | '/api/public/hooks/guide-reels'
     | '/api/public/hooks/my-earnings-summary'
     | '/api/public/hooks/my-payouts'
     | '/api/public/hooks/my-statements'
@@ -793,8 +815,10 @@ export interface FileRouteTypes {
     | '/api/public/hooks/create-booking'
     | '/api/public/hooks/daily-brief'
     | '/api/public/hooks/expire-bookings'
+    | '/api/public/hooks/featured-reels'
     | '/api/public/hooks/generate-statements'
     | '/api/public/hooks/google-oauth-callback'
+    | '/api/public/hooks/guide-reels'
     | '/api/public/hooks/my-earnings-summary'
     | '/api/public/hooks/my-payouts'
     | '/api/public/hooks/my-statements'
@@ -865,8 +889,10 @@ export interface FileRouteTypes {
     | '/api/public/hooks/create-booking'
     | '/api/public/hooks/daily-brief'
     | '/api/public/hooks/expire-bookings'
+    | '/api/public/hooks/featured-reels'
     | '/api/public/hooks/generate-statements'
     | '/api/public/hooks/google-oauth-callback'
+    | '/api/public/hooks/guide-reels'
     | '/api/public/hooks/my-earnings-summary'
     | '/api/public/hooks/my-payouts'
     | '/api/public/hooks/my-statements'
@@ -934,8 +960,10 @@ export interface RootRouteChildren {
   ApiPublicHooksCreateBookingRoute: typeof ApiPublicHooksCreateBookingRoute
   ApiPublicHooksDailyBriefRoute: typeof ApiPublicHooksDailyBriefRoute
   ApiPublicHooksExpireBookingsRoute: typeof ApiPublicHooksExpireBookingsRoute
+  ApiPublicHooksFeaturedReelsRoute: typeof ApiPublicHooksFeaturedReelsRoute
   ApiPublicHooksGenerateStatementsRoute: typeof ApiPublicHooksGenerateStatementsRoute
   ApiPublicHooksGoogleOauthCallbackRoute: typeof ApiPublicHooksGoogleOauthCallbackRoute
+  ApiPublicHooksGuideReelsRoute: typeof ApiPublicHooksGuideReelsRoute
   ApiPublicHooksMyEarningsSummaryRoute: typeof ApiPublicHooksMyEarningsSummaryRoute
   ApiPublicHooksMyPayoutsRoute: typeof ApiPublicHooksMyPayoutsRoute
   ApiPublicHooksMyStatementsRoute: typeof ApiPublicHooksMyStatementsRoute
@@ -1365,6 +1393,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksMyEarningsSummaryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/guide-reels': {
+      id: '/api/public/hooks/guide-reels'
+      path: '/api/public/hooks/guide-reels'
+      fullPath: '/api/public/hooks/guide-reels'
+      preLoaderRoute: typeof ApiPublicHooksGuideReelsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/google-oauth-callback': {
       id: '/api/public/hooks/google-oauth-callback'
       path: '/api/public/hooks/google-oauth-callback'
@@ -1377,6 +1412,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/hooks/generate-statements'
       fullPath: '/api/public/hooks/generate-statements'
       preLoaderRoute: typeof ApiPublicHooksGenerateStatementsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/featured-reels': {
+      id: '/api/public/hooks/featured-reels'
+      path: '/api/public/hooks/featured-reels'
+      fullPath: '/api/public/hooks/featured-reels'
+      preLoaderRoute: typeof ApiPublicHooksFeaturedReelsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/expire-bookings': {
@@ -1533,9 +1575,11 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksCreateBookingRoute: ApiPublicHooksCreateBookingRoute,
   ApiPublicHooksDailyBriefRoute: ApiPublicHooksDailyBriefRoute,
   ApiPublicHooksExpireBookingsRoute: ApiPublicHooksExpireBookingsRoute,
+  ApiPublicHooksFeaturedReelsRoute: ApiPublicHooksFeaturedReelsRoute,
   ApiPublicHooksGenerateStatementsRoute: ApiPublicHooksGenerateStatementsRoute,
   ApiPublicHooksGoogleOauthCallbackRoute:
     ApiPublicHooksGoogleOauthCallbackRoute,
+  ApiPublicHooksGuideReelsRoute: ApiPublicHooksGuideReelsRoute,
   ApiPublicHooksMyEarningsSummaryRoute: ApiPublicHooksMyEarningsSummaryRoute,
   ApiPublicHooksMyPayoutsRoute: ApiPublicHooksMyPayoutsRoute,
   ApiPublicHooksMyStatementsRoute: ApiPublicHooksMyStatementsRoute,
