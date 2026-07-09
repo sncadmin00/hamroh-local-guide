@@ -251,6 +251,7 @@ export async function upsertTourCore(input: UpsertTourInput, userId: string) {
   if (isCreate || input.not_included !== undefined) payload.not_included = eff.not_included;
   if (isCreate || input.languages !== undefined) payload.languages = eff.languages;
   if (isCreate || input.base_language !== undefined) payload.base_language = eff.base_language;
+  if (isCreate || input.pricing_base_language !== undefined) payload.pricing_base_language = eff.pricing_base_language;
 
   // 7. Pricing normalization + legacy columns (only when we're recomputing)
   let priceFrom: number = Number(current?.price_from ?? 0);
