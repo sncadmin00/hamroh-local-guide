@@ -216,7 +216,8 @@ export async function upsertTourCore(input: UpsertTourInput, userId: string) {
     input.max_guests !== undefined ||
     input.languages !== undefined ||
     input.language_multipliers !== undefined ||
-    input.base_language !== undefined;
+    input.base_language !== undefined ||
+    input.pricing_base_language !== undefined;
   const shouldRecomputePrice = isCreate || priceChanged;
 
   // 6. Build partial DB payload; only set fields we intend to change
