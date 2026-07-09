@@ -36,6 +36,9 @@ const InputSchema = z.object({
   language: z.enum(["ru", "uz", "en", "auto"]).optional().default("auto"),
   context: z.string().trim().max(1000).optional().default(""),
   length: z.enum(["short", "medium", "long"]).optional().default("medium"),
+  categories: z.array(z.string().trim().max(80)).max(20).optional().default([]),
+  highlights: z.array(z.string().trim().max(200)).max(20).optional().default([]),
+  included: z.array(z.string().trim().max(200)).max(20).optional().default([]),
 });
 
 const LENGTH_HINTS: Record<"short" | "medium" | "long", string> = {
@@ -125,7 +128,7 @@ export const Route = createFileRoute("/api/public/hooks/generate-tour-descriptio
             { status: 400, headers: corsHeaders() },
           );
         }
-        const { title, city, language, context, length } = parsed.data;
+        const { title, city, language, context, length, categories, highlights, included } = parsed.data;
 
         const key = process.env.LOVABLE_API_KEY;
         if (!key) {
@@ -146,6 +149,9 @@ Length: ${LENGTH_HINTS[length]}`;
         const facts = [
           `Tour title: ${title}`,
           city && `City: ${city}`,
+          categories.length && `Categories: ${categories.join(", ")}`,
+          highlights.length && `Highlights: ${highlights.join("; ")}`,
+          included.length && `Included: ${included.join("; ")}`,
           context && `Extra context from the guide: ${context}`,
         ]
           .filter(Boolean)
