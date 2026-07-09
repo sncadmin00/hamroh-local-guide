@@ -237,8 +237,8 @@ Rules:
           const reply = result.text?.trim() ?? "";
           const nextHistory: ChatTurn[] = [
             ...history,
-            { role: "user", content: message },
-            { role: "assistant", content: reply },
+            { role: "user" as const, content: message },
+            { role: "assistant" as const, content: reply },
           ].slice(-40);
 
           return Response.json(

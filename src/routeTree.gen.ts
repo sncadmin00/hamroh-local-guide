@@ -68,6 +68,7 @@ import { Route as ApiPublicHooksMyStatementsRouteImport } from './routes/api/pub
 import { Route as ApiPublicHooksMyPayoutsRouteImport } from './routes/api/public/hooks/my-payouts'
 import { Route as ApiPublicHooksMyEarningsSummaryRouteImport } from './routes/api/public/hooks/my-earnings-summary'
 import { Route as ApiPublicHooksGuideReelsRouteImport } from './routes/api/public/hooks/guide-reels'
+import { Route as ApiPublicHooksGuideAiRouteImport } from './routes/api/public/hooks/guide-ai'
 import { Route as ApiPublicHooksGoogleOauthCallbackRouteImport } from './routes/api/public/hooks/google-oauth-callback'
 import { Route as ApiPublicHooksGenerateStatementsRouteImport } from './routes/api/public/hooks/generate-statements'
 import { Route as ApiPublicHooksFeaturedReelsRouteImport } from './routes/api/public/hooks/featured-reels'
@@ -390,6 +391,11 @@ const ApiPublicHooksGuideReelsRoute =
     path: '/api/public/hooks/guide-reels',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksGuideAiRoute = ApiPublicHooksGuideAiRouteImport.update({
+  id: '/api/public/hooks/guide-ai',
+  path: '/api/public/hooks/guide-ai',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicHooksGoogleOauthCallbackRoute =
   ApiPublicHooksGoogleOauthCallbackRouteImport.update({
     id: '/api/public/hooks/google-oauth-callback',
@@ -521,6 +527,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/featured-reels': typeof ApiPublicHooksFeaturedReelsRoute
   '/api/public/hooks/generate-statements': typeof ApiPublicHooksGenerateStatementsRoute
   '/api/public/hooks/google-oauth-callback': typeof ApiPublicHooksGoogleOauthCallbackRoute
+  '/api/public/hooks/guide-ai': typeof ApiPublicHooksGuideAiRoute
   '/api/public/hooks/guide-reels': typeof ApiPublicHooksGuideReelsRoute
   '/api/public/hooks/my-earnings-summary': typeof ApiPublicHooksMyEarningsSummaryRoute
   '/api/public/hooks/my-payouts': typeof ApiPublicHooksMyPayoutsRoute
@@ -594,6 +601,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/featured-reels': typeof ApiPublicHooksFeaturedReelsRoute
   '/api/public/hooks/generate-statements': typeof ApiPublicHooksGenerateStatementsRoute
   '/api/public/hooks/google-oauth-callback': typeof ApiPublicHooksGoogleOauthCallbackRoute
+  '/api/public/hooks/guide-ai': typeof ApiPublicHooksGuideAiRoute
   '/api/public/hooks/guide-reels': typeof ApiPublicHooksGuideReelsRoute
   '/api/public/hooks/my-earnings-summary': typeof ApiPublicHooksMyEarningsSummaryRoute
   '/api/public/hooks/my-payouts': typeof ApiPublicHooksMyPayoutsRoute
@@ -669,6 +677,7 @@ export interface FileRoutesById {
   '/api/public/hooks/featured-reels': typeof ApiPublicHooksFeaturedReelsRoute
   '/api/public/hooks/generate-statements': typeof ApiPublicHooksGenerateStatementsRoute
   '/api/public/hooks/google-oauth-callback': typeof ApiPublicHooksGoogleOauthCallbackRoute
+  '/api/public/hooks/guide-ai': typeof ApiPublicHooksGuideAiRoute
   '/api/public/hooks/guide-reels': typeof ApiPublicHooksGuideReelsRoute
   '/api/public/hooks/my-earnings-summary': typeof ApiPublicHooksMyEarningsSummaryRoute
   '/api/public/hooks/my-payouts': typeof ApiPublicHooksMyPayoutsRoute
@@ -745,6 +754,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/featured-reels'
     | '/api/public/hooks/generate-statements'
     | '/api/public/hooks/google-oauth-callback'
+    | '/api/public/hooks/guide-ai'
     | '/api/public/hooks/guide-reels'
     | '/api/public/hooks/my-earnings-summary'
     | '/api/public/hooks/my-payouts'
@@ -818,6 +828,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/featured-reels'
     | '/api/public/hooks/generate-statements'
     | '/api/public/hooks/google-oauth-callback'
+    | '/api/public/hooks/guide-ai'
     | '/api/public/hooks/guide-reels'
     | '/api/public/hooks/my-earnings-summary'
     | '/api/public/hooks/my-payouts'
@@ -892,6 +903,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/featured-reels'
     | '/api/public/hooks/generate-statements'
     | '/api/public/hooks/google-oauth-callback'
+    | '/api/public/hooks/guide-ai'
     | '/api/public/hooks/guide-reels'
     | '/api/public/hooks/my-earnings-summary'
     | '/api/public/hooks/my-payouts'
@@ -963,6 +975,7 @@ export interface RootRouteChildren {
   ApiPublicHooksFeaturedReelsRoute: typeof ApiPublicHooksFeaturedReelsRoute
   ApiPublicHooksGenerateStatementsRoute: typeof ApiPublicHooksGenerateStatementsRoute
   ApiPublicHooksGoogleOauthCallbackRoute: typeof ApiPublicHooksGoogleOauthCallbackRoute
+  ApiPublicHooksGuideAiRoute: typeof ApiPublicHooksGuideAiRoute
   ApiPublicHooksGuideReelsRoute: typeof ApiPublicHooksGuideReelsRoute
   ApiPublicHooksMyEarningsSummaryRoute: typeof ApiPublicHooksMyEarningsSummaryRoute
   ApiPublicHooksMyPayoutsRoute: typeof ApiPublicHooksMyPayoutsRoute
@@ -1400,6 +1413,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksGuideReelsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/guide-ai': {
+      id: '/api/public/hooks/guide-ai'
+      path: '/api/public/hooks/guide-ai'
+      fullPath: '/api/public/hooks/guide-ai'
+      preLoaderRoute: typeof ApiPublicHooksGuideAiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/google-oauth-callback': {
       id: '/api/public/hooks/google-oauth-callback'
       path: '/api/public/hooks/google-oauth-callback'
@@ -1579,6 +1599,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksGenerateStatementsRoute: ApiPublicHooksGenerateStatementsRoute,
   ApiPublicHooksGoogleOauthCallbackRoute:
     ApiPublicHooksGoogleOauthCallbackRoute,
+  ApiPublicHooksGuideAiRoute: ApiPublicHooksGuideAiRoute,
   ApiPublicHooksGuideReelsRoute: ApiPublicHooksGuideReelsRoute,
   ApiPublicHooksMyEarningsSummaryRoute: ApiPublicHooksMyEarningsSummaryRoute,
   ApiPublicHooksMyPayoutsRoute: ApiPublicHooksMyPayoutsRoute,
