@@ -159,53 +159,32 @@ export function useGuide(slug: string) {
 
 export type GuidePost = {
   id: string;
-  platform: "instagram" | "facebook" | "tiktok" | "youtube" | "other";
-  url: string;
-  thumbnailUrl: string | null;
+  videoUrl: string | null;   // signed URL (TTL 1h) or null
+  thumbnailUrl: string | null; // signed URL (TTL 1h) or null
   caption: string;
-  postedAt: string | null;
+  durationSeconds: number | null;
 };
 
 export type LatestPost = GuidePost & { guideId: string; guideSlug: string; guideName: string };
 
-export function useLatestPosts(limit = 12) {
+// Legacy hook — new video posts are surfaced via useLatestReels(). Kept as no-op
+// so existing consumers (article/home widgets) don't break at import time.
+export function useLatestPosts(_limit = 12) {
   return useQuery({
-    queryKey: ["latest-posts", limit],
-    queryFn: async (): Promise<LatestPost[]> => {
-      const { data, error } = await (supabase as any)
-        .from("guide_posts")
-        .select("id, platform, url, thumbnail_url, caption, posted_at, guide_id, media_type, guides(slug, name)")
-        .eq("visible", true)
-        .eq("media_type", "article")
-        .order("posted_at", { ascending: false, nullsFirst: false })
-        .limit(limit);
-      if (error) throw error;
-      return (data ?? [])
-        .filter((p: any) => p.guides)
-        .map((p: any) => ({
-          id: p.id,
-          platform: p.platform as GuidePost["platform"],
-          url: p.url,
-          thumbnailUrl: p.thumbnail_url,
-          caption: p.caption ?? "",
-          postedAt: p.posted_at,
-          guideId: p.guide_id,
-          guideSlug: p.guides.slug,
-          guideName: p.guides.name,
-        }));
-    },
+    queryKey: ["latest-posts", _limit],
+    queryFn: async (): Promise<LatestPost[]> => [],
   });
 }
 
 export type ReelItem = {
   id: string;
   source: "guide" | "admin";
-  url: string;
+  url: string;               // signed URL (guides) or public URL (admin)
   thumbnailUrl: string | null;
   caption: string;
   title: string;
   postedAt: string | null;
-  platform: GuidePost["platform"] | null;
+  platform: null;
   guideId: string | null;
   guideSlug: string | null;
   guideName: string | null;
@@ -215,14 +194,9 @@ export function useLatestReels(limit = 24) {
   return useQuery({
     queryKey: ["latest-reels", limit],
     queryFn: async (): Promise<ReelItem[]> => {
-      const [gp, ar] = await Promise.all([
-        (supabase as any)
-          .from("guide_posts")
-          .select("id, platform, url, thumbnail_url, caption, posted_at, guide_id, guides(slug, name)")
-          .eq("visible", true)
-          .eq("media_type", "reel")
-          .order("posted_at", { ascending: false, nullsFirst: false })
-          .limit(limit),
+      const [featured, ar] = await Promise.all([
+        fetch(`/api/public/hooks/featured-reels?limit=${limit}`).then((r) => r.ok ? r.json() : { items: [] }).catch(() => ({ items: [] })),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (supabase as any)
           .from("admin_reels")
           .select("id, title, video_url, thumbnail_url, caption, posted_at")
@@ -230,25 +204,24 @@ export function useLatestReels(limit = 24) {
           .order("posted_at", { ascending: false, nullsFirst: false })
           .limit(limit),
       ]);
-      if (gp.error) throw gp.error;
       if (ar.error) throw ar.error;
 
-      const fromGuides: ReelItem[] = (gp.data ?? [])
-        .filter((p: any) => p.guides)
-        .map((p: any) => ({
-          id: `g_${p.id}`,
-          source: "guide" as const,
-          url: p.url,
-          thumbnailUrl: p.thumbnail_url,
-          caption: p.caption ?? "",
-          title: p.guides.name,
-          postedAt: p.posted_at,
-          platform: p.platform,
-          guideId: p.guide_id,
-          guideSlug: p.guides.slug,
-          guideName: p.guides.name,
-        }));
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const fromGuides: ReelItem[] = ((featured.items ?? []) as any[]).map((p) => ({
+        id: `g_${p.id}`,
+        source: "guide" as const,
+        url: p.video_url,
+        thumbnailUrl: p.thumbnail_url ?? null,
+        caption: p.caption ?? "",
+        title: p.guide_name ?? "",
+        postedAt: p.created_at ?? null,
+        platform: null,
+        guideId: p.guide_id ?? null,
+        guideSlug: p.guide_slug ?? null,
+        guideName: p.guide_name ?? null,
+      }));
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const fromAdmin: ReelItem[] = (ar.data ?? []).map((r: any) => ({
         id: `a_${r.id}`,
         source: "admin" as const,
