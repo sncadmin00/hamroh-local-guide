@@ -114,6 +114,67 @@ export const Route = createFileRoute("/api/public/hooks/guide-ai")({
           actions.push({ tool: name, input, output, ok });
         };
 
+        // Shared conflict scan across bookings, time blocks and calendar events.
+        async function findConflicts(startsAt: string, endsAt: string) {
+          const startISO = new Date(startsAt).toISOString();
+          const endISO = new Date(endsAt).toISOString();
+          const dayFrom = startISO.slice(0, 10);
+          const dayTo = endISO.slice(0, 10);
+
+          const [bookingsRes, blocksRes, eventsRes] = await Promise.all([
+            userClient
+              .from("bookings")
+              .select("id, date, start_time, duration_minutes, status, customer_name, experience")
+              .eq("guide_id", guideId)
+              .in("status", ["pending", "confirmed"])
+              .gte("date", dayFrom)
+              .lte("date", dayTo),
+            userClient
+              .from("guide_time_blocks")
+              .select("id, starts_at, ends_at, reason")
+              .eq("guide_id", guideId)
+              .lt("starts_at", endISO)
+              .gt("ends_at", startISO),
+            userClient
+              .from("calendar_events")
+              .select("id, type, title, starts_at, ends_at, source")
+              .eq("guide_id", guideId)
+              .lt("starts_at", endISO)
+              .gt("ends_at", startISO),
+          ]);
+
+          const s = new Date(startISO).getTime();
+          const e = new Date(endISO).getTime();
+          const bookings = (bookingsRes.data ?? [])
+            .map((b) => {
+              if (!b.start_time) return null;
+              const bs = new Date(`${b.date}T${b.start_time}+05:00`).getTime();
+              const be = bs + (b.duration_minutes ?? 120) * 60_000;
+              if (bs < e && be > s) {
+                return {
+                  id: b.id,
+                  customer_name: b.customer_name,
+                  experience: b.experience,
+                  status: b.status,
+                  starts_at: new Date(bs).toISOString(),
+                  ends_at: new Date(be).toISOString(),
+                };
+              }
+              return null;
+            })
+            .filter(Boolean);
+
+          return {
+            bookings,
+            time_blocks: blocksRes.data ?? [],
+            calendar_events: eventsRes.data ?? [],
+            has_conflict:
+              bookings.length > 0 ||
+              (blocksRes.data ?? []).length > 0 ||
+              (eventsRes.data ?? []).length > 0,
+          };
+        }
+
         const tools = {
           getSchedule: tool({
             description: "Get the guide's schedule (calendar events + bookings) for a date range.",
@@ -130,8 +191,21 @@ export const Route = createFileRoute("/api/public/hooks/guide-ai")({
               return out;
             },
           }),
+          checkConflicts: tool({
+            description:
+              "Check whether a time interval overlaps any booking, existing time block, or calendar event. ALWAYS call this before createEvent or blockTime.",
+            inputSchema: z.object({ starts_at: z.string(), ends_at: z.string() }),
+            execute: async ({ starts_at, ends_at }) => {
+              const startsAt = normalizeTashkentDateTime(starts_at);
+              const endsAt = normalizeTashkentDateTime(ends_at);
+              const out = await findConflicts(startsAt, endsAt);
+              record("checkConflicts", { starts_at, ends_at }, out);
+              return out;
+            },
+          }),
           createEvent: tool({
-            description: "Create a personal event/reminder/block in the guide's calendar.",
+            description:
+              "Create a personal event/reminder/block in the guide's calendar. Requires confirm:true when the interval has conflicts — otherwise returns { conflict } without inserting.",
             inputSchema: z.object({
               title: z.string().min(1).max(200),
               type: z.enum(["personal", "block", "reminder"]),
@@ -139,10 +213,19 @@ export const Route = createFileRoute("/api/public/hooks/guide-ai")({
               ends_at: z.string(),
               location: z.string().max(200).optional(),
               notes: z.string().max(2000).optional(),
+              confirm: z.boolean().optional(),
             }),
             execute: async (input) => {
               const startsAt = normalizeTashkentDateTime(input.starts_at);
               const endsAt = normalizeTashkentDateTime(input.ends_at);
+              if (!input.confirm) {
+                const conflicts = await findConflicts(startsAt, endsAt);
+                if (conflicts.has_conflict) {
+                  const out = { conflict: conflicts, hint: "Ask the guide to confirm; call again with confirm:true to override." };
+                  record("createEvent", input, out);
+                  return out;
+                }
+              }
               const { data, error } = await userClient.from("calendar_events").insert({
                 guide_id: guideId,
                 type: input.type,
@@ -161,14 +244,23 @@ export const Route = createFileRoute("/api/public/hooks/guide-ai")({
           }),
           blockTime: tool({
             description:
-              "Block a time slot so clients cannot book it. Writes to guide_time_blocks (enforced by the booking-conflict trigger) and mirrors to calendar_events for display.",
+              "Block a time slot so clients cannot book it. Writes to guide_time_blocks and mirrors to calendar_events. Requires confirm:true when the interval has conflicts — otherwise returns { conflict } without inserting.",
             inputSchema: z.object({
               starts_at: z.string(), ends_at: z.string(),
               reason: z.string().max(200).optional(),
+              confirm: z.boolean().optional(),
             }),
-            execute: async ({ starts_at, ends_at, reason }) => {
+            execute: async ({ starts_at, ends_at, reason, confirm }) => {
               const startsAt = normalizeTashkentDateTime(starts_at);
               const endsAt = normalizeTashkentDateTime(ends_at);
+              if (!confirm) {
+                const conflicts = await findConflicts(startsAt, endsAt);
+                if (conflicts.has_conflict) {
+                  const out = { conflict: conflicts, hint: "Ask the guide to confirm; call again with confirm:true to override." };
+                  record("blockTime", { starts_at, ends_at, reason }, out);
+                  return out;
+                }
+              }
               // 1) Real block — this is what the booking-conflict trigger reads.
               const { data: block, error: blockErr } = await userClient
                 .from("guide_time_blocks")
@@ -209,6 +301,7 @@ export const Route = createFileRoute("/api/public/hooks/guide-ai")({
               return out;
             },
           }),
+
           deleteEvent: tool({
             description: "Delete a manual calendar event by id (never a booking).",
             inputSchema: z.object({ id: z.string().uuid() }),
