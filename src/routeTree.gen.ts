@@ -76,6 +76,7 @@ import { Route as ApiPublicHooksExpireBookingsRouteImport } from './routes/api/p
 import { Route as ApiPublicHooksDailyBriefRouteImport } from './routes/api/public/hooks/daily-brief'
 import { Route as ApiPublicHooksCreateBookingRouteImport } from './routes/api/public/hooks/create-booking'
 import { Route as ApiPublicHooksChatNotificationsRouteImport } from './routes/api/public/hooks/chat-notifications'
+import { Route as ApiPublicHooksCalendarRemindersRouteImport } from './routes/api/public/hooks/calendar-reminders'
 import { Route as ApiPublicHooksBookingReviewsRouteImport } from './routes/api/public/hooks/booking-reviews'
 import { Route as ApiPublicHooksBookingRemindersRouteImport } from './routes/api/public/hooks/booking-reminders'
 import { Route as ApiPublicToursTourIdSlotsRouteImport } from './routes/api/public/tours/$tourId/slots'
@@ -438,6 +439,12 @@ const ApiPublicHooksChatNotificationsRoute =
     path: '/api/public/hooks/chat-notifications',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksCalendarRemindersRoute =
+  ApiPublicHooksCalendarRemindersRouteImport.update({
+    id: '/api/public/hooks/calendar-reminders',
+    path: '/api/public/hooks/calendar-reminders',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksBookingReviewsRoute =
   ApiPublicHooksBookingReviewsRouteImport.update({
     id: '/api/public/hooks/booking-reviews',
@@ -520,6 +527,7 @@ export interface FileRoutesByFullPath {
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
   '/api/public/hooks/booking-reviews': typeof ApiPublicHooksBookingReviewsRoute
+  '/api/public/hooks/calendar-reminders': typeof ApiPublicHooksCalendarRemindersRoute
   '/api/public/hooks/chat-notifications': typeof ApiPublicHooksChatNotificationsRoute
   '/api/public/hooks/create-booking': typeof ApiPublicHooksCreateBookingRoute
   '/api/public/hooks/daily-brief': typeof ApiPublicHooksDailyBriefRoute
@@ -594,6 +602,7 @@ export interface FileRoutesByTo {
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
   '/api/public/hooks/booking-reviews': typeof ApiPublicHooksBookingReviewsRoute
+  '/api/public/hooks/calendar-reminders': typeof ApiPublicHooksCalendarRemindersRoute
   '/api/public/hooks/chat-notifications': typeof ApiPublicHooksChatNotificationsRoute
   '/api/public/hooks/create-booking': typeof ApiPublicHooksCreateBookingRoute
   '/api/public/hooks/daily-brief': typeof ApiPublicHooksDailyBriefRoute
@@ -670,6 +679,7 @@ export interface FileRoutesById {
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
   '/api/public/hooks/booking-reviews': typeof ApiPublicHooksBookingReviewsRoute
+  '/api/public/hooks/calendar-reminders': typeof ApiPublicHooksCalendarRemindersRoute
   '/api/public/hooks/chat-notifications': typeof ApiPublicHooksChatNotificationsRoute
   '/api/public/hooks/create-booking': typeof ApiPublicHooksCreateBookingRoute
   '/api/public/hooks/daily-brief': typeof ApiPublicHooksDailyBriefRoute
@@ -747,6 +757,7 @@ export interface FileRouteTypes {
     | '/lovable/email/suppression'
     | '/api/public/hooks/booking-reminders'
     | '/api/public/hooks/booking-reviews'
+    | '/api/public/hooks/calendar-reminders'
     | '/api/public/hooks/chat-notifications'
     | '/api/public/hooks/create-booking'
     | '/api/public/hooks/daily-brief'
@@ -821,6 +832,7 @@ export interface FileRouteTypes {
     | '/lovable/email/suppression'
     | '/api/public/hooks/booking-reminders'
     | '/api/public/hooks/booking-reviews'
+    | '/api/public/hooks/calendar-reminders'
     | '/api/public/hooks/chat-notifications'
     | '/api/public/hooks/create-booking'
     | '/api/public/hooks/daily-brief'
@@ -896,6 +908,7 @@ export interface FileRouteTypes {
     | '/lovable/email/suppression'
     | '/api/public/hooks/booking-reminders'
     | '/api/public/hooks/booking-reviews'
+    | '/api/public/hooks/calendar-reminders'
     | '/api/public/hooks/chat-notifications'
     | '/api/public/hooks/create-booking'
     | '/api/public/hooks/daily-brief'
@@ -968,6 +981,7 @@ export interface RootRouteChildren {
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   ApiPublicHooksBookingRemindersRoute: typeof ApiPublicHooksBookingRemindersRoute
   ApiPublicHooksBookingReviewsRoute: typeof ApiPublicHooksBookingReviewsRoute
+  ApiPublicHooksCalendarRemindersRoute: typeof ApiPublicHooksCalendarRemindersRoute
   ApiPublicHooksChatNotificationsRoute: typeof ApiPublicHooksChatNotificationsRoute
   ApiPublicHooksCreateBookingRoute: typeof ApiPublicHooksCreateBookingRoute
   ApiPublicHooksDailyBriefRoute: typeof ApiPublicHooksDailyBriefRoute
@@ -1469,6 +1483,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksChatNotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/calendar-reminders': {
+      id: '/api/public/hooks/calendar-reminders'
+      path: '/api/public/hooks/calendar-reminders'
+      fullPath: '/api/public/hooks/calendar-reminders'
+      preLoaderRoute: typeof ApiPublicHooksCalendarRemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/booking-reviews': {
       id: '/api/public/hooks/booking-reviews'
       path: '/api/public/hooks/booking-reviews'
@@ -1591,6 +1612,7 @@ const rootRouteChildren: RootRouteChildren = {
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   ApiPublicHooksBookingRemindersRoute: ApiPublicHooksBookingRemindersRoute,
   ApiPublicHooksBookingReviewsRoute: ApiPublicHooksBookingReviewsRoute,
+  ApiPublicHooksCalendarRemindersRoute: ApiPublicHooksCalendarRemindersRoute,
   ApiPublicHooksChatNotificationsRoute: ApiPublicHooksChatNotificationsRoute,
   ApiPublicHooksCreateBookingRoute: ApiPublicHooksCreateBookingRoute,
   ApiPublicHooksDailyBriefRoute: ApiPublicHooksDailyBriefRoute,
