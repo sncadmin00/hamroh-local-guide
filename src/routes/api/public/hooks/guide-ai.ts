@@ -48,13 +48,20 @@ function corsHeaders(): Record<string, string> {
 type ChatTurn = { role: "user" | "assistant"; content: string };
 type Action = { tool: string; input: unknown; output: unknown; ok: boolean };
 
-const EXPLICIT_TIMEZONE_RE = /(?:Z|[+-]\d{2}:?\d{2})$/i;
+const NUMERIC_TIMEZONE_RE = /[+-]\d{2}:?\d{2}$/;
 
 function normalizeTashkentDateTime(value: string): string {
   const trimmed = value.trim();
-  if (!trimmed || EXPLICIT_TIMEZONE_RE.test(trimmed)) return trimmed;
+  if (!trimmed) return trimmed;
 
-  const dateTime = trimmed.includes("T") ? trimmed : trimmed.replace(" ", "T");
+  // Model tool calls often use "Z" while still meaning the guide's local
+  // wall-clock time (e.g. 10:00 in Tashkent). Treat naive timestamps and "Z"
+  // timestamps as Asia/Tashkent clock time; preserve explicit numeric offsets
+  // such as +05:00 or +03:00.
+  if (NUMERIC_TIMEZONE_RE.test(trimmed)) return trimmed;
+
+  const withoutUtcSuffix = trimmed.replace(/Z$/i, "");
+  const dateTime = withoutUtcSuffix.includes("T") ? withoutUtcSuffix : withoutUtcSuffix.replace(" ", "T");
   return `${dateTime}+05:00`;
 }
 
@@ -180,11 +187,13 @@ export const Route = createFileRoute("/api/public/hooks/guide-ai")({
             description: "Get the guide's schedule (calendar events + bookings) for a date range.",
             inputSchema: z.object({ from: z.string(), to: z.string() }),
             execute: async ({ from, to }) => {
+              const fromAt = normalizeTashkentDateTime(from);
+              const toAt = normalizeTashkentDateTime(to);
               const { data, error } = await userClient
                 .from("calendar_events")
                 .select("id, type, title, starts_at, ends_at, location, notes, source")
                 .eq("guide_id", guideId)
-                .gte("starts_at", from).lte("starts_at", to)
+                .gte("starts_at", fromAt).lte("starts_at", toAt)
                 .order("starts_at", { ascending: true });
               const out = error ? { error: error.message } : { events: data ?? [] };
               record("getSchedule", { from, to }, out);
@@ -353,7 +362,7 @@ Rules:
 - Always use tools to read/modify the calendar — never invent events.
 - Reply in the SAME language as the guide (Russian, Uzbek, or English).
 - Be concise and practical. Light markdown OK.
-- Times sent to tools must be ISO 8601. Assume Tashkent time unless told otherwise.
+- Times sent to tools must be ISO 8601 with +05:00 for Tashkent local time. Never use Z for Tashkent wall-clock time.
 - Booking edits (dates, prices, tours) are NOT in your toolset — tell the guide to use the app.
 - BEFORE calling createEvent or blockTime, ALWAYS call checkConflicts (or getSchedule) for the target interval.
 - If checkConflicts / a create call returns { conflict }: DO NOT insert. Summarize the conflicts to the guide (booking with client name, existing block, other event) and ask for explicit confirmation. Only after the guide confirms, call the same tool again with confirm:true.
