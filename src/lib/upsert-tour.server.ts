@@ -499,9 +499,37 @@ export async function upsertTourCore(input: UpsertTourInput, userId: string) {
     }
   }
 
+  // 10b. Sync tour_schedules only when caller sent `schedule`
+  if (input.schedule !== undefined) {
+    const seen = new Set<string>();
+    const rows = input.schedule
+      .map((r) => ({
+        weekday: r.weekday,
+        start_time: r.start_time.length === 5 ? `${r.start_time}:00` : r.start_time.slice(0, 8),
+      }))
+      .filter((r) => {
+        const k = `${r.weekday}|${r.start_time}`;
+        if (seen.has(k)) return false;
+        seen.add(k);
+        return true;
+      });
+    const { error: delSchedErr } = await supabaseAdmin
+      .from("tour_schedules").delete().eq("tour_id", tourId);
+    if (delSchedErr) throw new Error(delSchedErr.message);
+    if (rows.length > 0) {
+      const { error: insSchedErr } = await supabaseAdmin
+        .from("tour_schedules")
+        .insert(rows.map((r) => ({ tour_id: tourId, ...r, is_active: true })));
+      if (insSchedErr) throw new Error(insSchedErr.message);
+    }
+  }
+
   // 11. Return full row
   const { data: saved, error: readErr } = await supabaseAdmin
     .from("tours")
+    .select(TOUR_SELECT)
+    .eq("id", tourId)
+    .single();
     .select(TOUR_SELECT)
     .eq("id", tourId)
     .single();
