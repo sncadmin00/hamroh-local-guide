@@ -162,6 +162,10 @@ export async function upsertTourCore(input: UpsertTourInput, userId: string) {
     group_tiers: pick(input.group_tiers, (current?.group_tiers ?? []) as Array<{ min: number; max: number; price: number }>),
     max_guests: pick(input.max_guests, current?.max_guests ?? null) as number | null,
     base_language: pick(input.base_language, current?.base_language ?? "Russian"),
+    pricing_base_language: pick(
+      input.pricing_base_language,
+      current?.pricing_base_language ?? pick(input.base_language, current?.base_language ?? "Russian"),
+    ),
     language_multipliers: pick(
       input.language_multipliers,
       (current?.language_multipliers ?? {}) as Record<string, number>,
