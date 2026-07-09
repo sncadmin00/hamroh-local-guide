@@ -48,6 +48,16 @@ function corsHeaders(): Record<string, string> {
 type ChatTurn = { role: "user" | "assistant"; content: string };
 type Action = { tool: string; input: unknown; output: unknown; ok: boolean };
 
+const EXPLICIT_TIMEZONE_RE = /(?:Z|[+-]\d{2}:?\d{2})$/i;
+
+function normalizeTashkentDateTime(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed || EXPLICIT_TIMEZONE_RE.test(trimmed)) return trimmed;
+
+  const dateTime = trimmed.includes("T") ? trimmed : trimmed.replace(" ", "T");
+  return `${dateTime}+05:00`;
+}
+
 export const Route = createFileRoute("/api/public/hooks/guide-ai")({
   server: {
     handlers: {
@@ -131,12 +141,14 @@ export const Route = createFileRoute("/api/public/hooks/guide-ai")({
               notes: z.string().max(2000).optional(),
             }),
             execute: async (input) => {
+              const startsAt = normalizeTashkentDateTime(input.starts_at);
+              const endsAt = normalizeTashkentDateTime(input.ends_at);
               const { data, error } = await userClient.from("calendar_events").insert({
                 guide_id: guideId,
                 type: input.type,
                 title: input.title,
-                starts_at: input.starts_at,
-                ends_at: input.ends_at,
+                starts_at: startsAt,
+                ends_at: endsAt,
                 location: input.location ?? "",
                 notes: input.notes ?? "",
                 color: input.type === "block" ? "destructive" : "primary",
@@ -155,13 +167,15 @@ export const Route = createFileRoute("/api/public/hooks/guide-ai")({
               reason: z.string().max(200).optional(),
             }),
             execute: async ({ starts_at, ends_at, reason }) => {
+              const startsAt = normalizeTashkentDateTime(starts_at);
+              const endsAt = normalizeTashkentDateTime(ends_at);
               // 1) Real block — this is what the booking-conflict trigger reads.
               const { data: block, error: blockErr } = await userClient
                 .from("guide_time_blocks")
                 .insert({
                   guide_id: guideId,
-                  starts_at,
-                  ends_at,
+                  starts_at: startsAt,
+                  ends_at: endsAt,
                   reason: reason ?? null,
                   source: "ai",
                   created_by: userId,
@@ -181,8 +195,8 @@ export const Route = createFileRoute("/api/public/hooks/guide-ai")({
                   guide_id: guideId,
                   type: "block",
                   title: reason ?? "Blocked",
-                  starts_at,
-                  ends_at,
+                  starts_at: startsAt,
+                  ends_at: endsAt,
                   color: "destructive",
                   source: "ai",
                   notes: `time_block:${block.id}`,
