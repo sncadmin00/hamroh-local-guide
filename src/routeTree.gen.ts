@@ -66,6 +66,7 @@ import { Route as ApiPublicHooksPriceQuoteRouteImport } from './routes/api/publi
 import { Route as ApiPublicHooksMyTransactionsRouteImport } from './routes/api/public/hooks/my-transactions'
 import { Route as ApiPublicHooksMyStatementsRouteImport } from './routes/api/public/hooks/my-statements'
 import { Route as ApiPublicHooksMyPayoutsRouteImport } from './routes/api/public/hooks/my-payouts'
+import { Route as ApiPublicHooksMyNotificationEmailRouteImport } from './routes/api/public/hooks/my-notification-email'
 import { Route as ApiPublicHooksMyEarningsSummaryRouteImport } from './routes/api/public/hooks/my-earnings-summary'
 import { Route as ApiPublicHooksGuideReelsRouteImport } from './routes/api/public/hooks/guide-reels'
 import { Route as ApiPublicHooksGuideAiRouteImport } from './routes/api/public/hooks/guide-ai'
@@ -382,6 +383,12 @@ const ApiPublicHooksMyPayoutsRoute = ApiPublicHooksMyPayoutsRouteImport.update({
   path: '/api/public/hooks/my-payouts',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksMyNotificationEmailRoute =
+  ApiPublicHooksMyNotificationEmailRouteImport.update({
+    id: '/api/public/hooks/my-notification-email',
+    path: '/api/public/hooks/my-notification-email',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksMyEarningsSummaryRoute =
   ApiPublicHooksMyEarningsSummaryRouteImport.update({
     id: '/api/public/hooks/my-earnings-summary',
@@ -553,6 +560,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/guide-ai': typeof ApiPublicHooksGuideAiRoute
   '/api/public/hooks/guide-reels': typeof ApiPublicHooksGuideReelsRoute
   '/api/public/hooks/my-earnings-summary': typeof ApiPublicHooksMyEarningsSummaryRoute
+  '/api/public/hooks/my-notification-email': typeof ApiPublicHooksMyNotificationEmailRoute
   '/api/public/hooks/my-payouts': typeof ApiPublicHooksMyPayoutsRoute
   '/api/public/hooks/my-statements': typeof ApiPublicHooksMyStatementsRoute
   '/api/public/hooks/my-transactions': typeof ApiPublicHooksMyTransactionsRoute
@@ -630,6 +638,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/guide-ai': typeof ApiPublicHooksGuideAiRoute
   '/api/public/hooks/guide-reels': typeof ApiPublicHooksGuideReelsRoute
   '/api/public/hooks/my-earnings-summary': typeof ApiPublicHooksMyEarningsSummaryRoute
+  '/api/public/hooks/my-notification-email': typeof ApiPublicHooksMyNotificationEmailRoute
   '/api/public/hooks/my-payouts': typeof ApiPublicHooksMyPayoutsRoute
   '/api/public/hooks/my-statements': typeof ApiPublicHooksMyStatementsRoute
   '/api/public/hooks/my-transactions': typeof ApiPublicHooksMyTransactionsRoute
@@ -709,6 +718,7 @@ export interface FileRoutesById {
   '/api/public/hooks/guide-ai': typeof ApiPublicHooksGuideAiRoute
   '/api/public/hooks/guide-reels': typeof ApiPublicHooksGuideReelsRoute
   '/api/public/hooks/my-earnings-summary': typeof ApiPublicHooksMyEarningsSummaryRoute
+  '/api/public/hooks/my-notification-email': typeof ApiPublicHooksMyNotificationEmailRoute
   '/api/public/hooks/my-payouts': typeof ApiPublicHooksMyPayoutsRoute
   '/api/public/hooks/my-statements': typeof ApiPublicHooksMyStatementsRoute
   '/api/public/hooks/my-transactions': typeof ApiPublicHooksMyTransactionsRoute
@@ -789,6 +799,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/guide-ai'
     | '/api/public/hooks/guide-reels'
     | '/api/public/hooks/my-earnings-summary'
+    | '/api/public/hooks/my-notification-email'
     | '/api/public/hooks/my-payouts'
     | '/api/public/hooks/my-statements'
     | '/api/public/hooks/my-transactions'
@@ -866,6 +877,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/guide-ai'
     | '/api/public/hooks/guide-reels'
     | '/api/public/hooks/my-earnings-summary'
+    | '/api/public/hooks/my-notification-email'
     | '/api/public/hooks/my-payouts'
     | '/api/public/hooks/my-statements'
     | '/api/public/hooks/my-transactions'
@@ -944,6 +956,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/guide-ai'
     | '/api/public/hooks/guide-reels'
     | '/api/public/hooks/my-earnings-summary'
+    | '/api/public/hooks/my-notification-email'
     | '/api/public/hooks/my-payouts'
     | '/api/public/hooks/my-statements'
     | '/api/public/hooks/my-transactions'
@@ -1019,6 +1032,7 @@ export interface RootRouteChildren {
   ApiPublicHooksGuideAiRoute: typeof ApiPublicHooksGuideAiRoute
   ApiPublicHooksGuideReelsRoute: typeof ApiPublicHooksGuideReelsRoute
   ApiPublicHooksMyEarningsSummaryRoute: typeof ApiPublicHooksMyEarningsSummaryRoute
+  ApiPublicHooksMyNotificationEmailRoute: typeof ApiPublicHooksMyNotificationEmailRoute
   ApiPublicHooksMyPayoutsRoute: typeof ApiPublicHooksMyPayoutsRoute
   ApiPublicHooksMyStatementsRoute: typeof ApiPublicHooksMyStatementsRoute
   ApiPublicHooksMyTransactionsRoute: typeof ApiPublicHooksMyTransactionsRoute
@@ -1440,6 +1454,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksMyPayoutsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/my-notification-email': {
+      id: '/api/public/hooks/my-notification-email'
+      path: '/api/public/hooks/my-notification-email'
+      fullPath: '/api/public/hooks/my-notification-email'
+      preLoaderRoute: typeof ApiPublicHooksMyNotificationEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/my-earnings-summary': {
       id: '/api/public/hooks/my-earnings-summary'
       path: '/api/public/hooks/my-earnings-summary'
@@ -1668,6 +1689,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksGuideAiRoute: ApiPublicHooksGuideAiRoute,
   ApiPublicHooksGuideReelsRoute: ApiPublicHooksGuideReelsRoute,
   ApiPublicHooksMyEarningsSummaryRoute: ApiPublicHooksMyEarningsSummaryRoute,
+  ApiPublicHooksMyNotificationEmailRoute:
+    ApiPublicHooksMyNotificationEmailRoute,
   ApiPublicHooksMyPayoutsRoute: ApiPublicHooksMyPayoutsRoute,
   ApiPublicHooksMyStatementsRoute: ApiPublicHooksMyStatementsRoute,
   ApiPublicHooksMyTransactionsRoute: ApiPublicHooksMyTransactionsRoute,
