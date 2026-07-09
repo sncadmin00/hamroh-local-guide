@@ -1952,6 +1952,7 @@ function CitiesPanel({
   const updateFn = useServerFn(updateMyCities);
   const [selected, setSelected] = useState<string[]>(currentExtra);
   const [saving, setSaving] = useState(false);
+  const [suggestOpen, setSuggestOpen] = useState(false);
 
   useEffect(() => { setSelected(currentExtra); }, [currentExtra]);
 
