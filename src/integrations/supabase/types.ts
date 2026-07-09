@@ -2433,6 +2433,7 @@ export type Database = {
           per_person_price: number | null
           price_by_language: Json
           price_from: number
+          pricing_base_language: string | null
           pricing_mode: string
           pricing_modes: string[]
           published: boolean
@@ -2493,6 +2494,7 @@ export type Database = {
           per_person_price?: number | null
           price_by_language?: Json
           price_from?: number
+          pricing_base_language?: string | null
           pricing_mode?: string
           pricing_modes?: string[]
           published?: boolean
@@ -2553,6 +2555,7 @@ export type Database = {
           per_person_price?: number | null
           price_by_language?: Json
           price_from?: number
+          pricing_base_language?: string | null
           pricing_mode?: string
           pricing_modes?: string[]
           published?: boolean
