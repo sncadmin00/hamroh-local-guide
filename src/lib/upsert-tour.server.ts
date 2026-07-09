@@ -63,6 +63,20 @@ export const upsertTourInputSchema = z.object({
   sort_order: z.number().int().min(0).max(1000).optional(),
   category_ids: z.array(z.string().uuid()).max(20).optional(),
 
+  // Optional weekly recurring schedule (public.tour_schedules). When provided,
+  // the tour's existing rows are fully replaced with this set. `weekday`:
+  // 0=Sunday..6=Saturday (Postgres DOW). `start_time`: "HH:MM" or "HH:MM:SS".
+  // Pass `[]` to clear the schedule.
+  schedule: z
+    .array(
+      z.object({
+        weekday: z.number().int().min(0).max(6),
+        start_time: z.string().regex(/^\d{2}:\d{2}(:\d{2})?$/),
+      }),
+    )
+    .max(200)
+    .optional(),
+
   // Manual per-locale overrides. When provided, they take priority over
   // AI translation for that locale and are written verbatim.
   title_ru: localeStr, title_en: localeStr, title_uz: localeStr,
@@ -482,6 +496,31 @@ export async function upsertTourCore(input: UpsertTourInput, userId: string) {
       const { error: insErr } = await supabaseAdmin
         .from("tour_categories").insert(rows);
       if (insErr) throw new Error(insErr.message);
+    }
+  }
+
+  // 10b. Sync tour_schedules only when caller sent `schedule`
+  if (input.schedule !== undefined) {
+    const seen = new Set<string>();
+    const rows = input.schedule
+      .map((r) => ({
+        weekday: r.weekday,
+        start_time: r.start_time.length === 5 ? `${r.start_time}:00` : r.start_time.slice(0, 8),
+      }))
+      .filter((r) => {
+        const k = `${r.weekday}|${r.start_time}`;
+        if (seen.has(k)) return false;
+        seen.add(k);
+        return true;
+      });
+    const { error: delSchedErr } = await supabaseAdmin
+      .from("tour_schedules").delete().eq("tour_id", tourId);
+    if (delSchedErr) throw new Error(delSchedErr.message);
+    if (rows.length > 0) {
+      const { error: insSchedErr } = await supabaseAdmin
+        .from("tour_schedules")
+        .insert(rows.map((r) => ({ tour_id: tourId, ...r, is_active: true })));
+      if (insSchedErr) throw new Error(insSchedErr.message);
     }
   }
 
