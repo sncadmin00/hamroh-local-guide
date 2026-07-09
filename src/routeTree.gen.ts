@@ -50,6 +50,7 @@ import { Route as ApiGuideAiRouteImport } from './routes/api/guide-ai'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AiThreadIdRouteImport } from './routes/ai.$threadId'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
+import { Route as ApiPublicSiteLanguagesRouteImport } from './routes/api/public/site-languages'
 import { Route as ApiEarningsReportRouteImport } from './routes/api/earnings/report'
 import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
@@ -278,6 +279,11 @@ const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
   path: '/lovable/email/suppression',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicSiteLanguagesRoute = ApiPublicSiteLanguagesRouteImport.update({
+  id: '/api/public/site-languages',
+  path: '/api/public/site-languages',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiEarningsReportRoute = ApiEarningsReportRouteImport.update({
   id: '/api/earnings/report',
   path: '/api/earnings/report',
@@ -449,6 +455,7 @@ export interface FileRoutesByFullPath {
   '/book/': typeof BookIndexRoute
   '/messages/': typeof MessagesIndexRoute
   '/api/earnings/report': typeof ApiEarningsReportRoute
+  '/api/public/site-languages': typeof ApiPublicSiteLanguagesRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
   '/api/public/hooks/booking-reviews': typeof ApiPublicHooksBookingReviewsRoute
@@ -513,6 +520,7 @@ export interface FileRoutesByTo {
   '/book': typeof BookIndexRoute
   '/messages': typeof MessagesIndexRoute
   '/api/earnings/report': typeof ApiEarningsReportRoute
+  '/api/public/site-languages': typeof ApiPublicSiteLanguagesRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
   '/api/public/hooks/booking-reviews': typeof ApiPublicHooksBookingReviewsRoute
@@ -579,6 +587,7 @@ export interface FileRoutesById {
   '/book/': typeof BookIndexRoute
   '/messages/': typeof MessagesIndexRoute
   '/api/earnings/report': typeof ApiEarningsReportRoute
+  '/api/public/site-languages': typeof ApiPublicSiteLanguagesRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
   '/api/public/hooks/booking-reviews': typeof ApiPublicHooksBookingReviewsRoute
@@ -646,6 +655,7 @@ export interface FileRouteTypes {
     | '/book/'
     | '/messages/'
     | '/api/earnings/report'
+    | '/api/public/site-languages'
     | '/lovable/email/suppression'
     | '/api/public/hooks/booking-reminders'
     | '/api/public/hooks/booking-reviews'
@@ -710,6 +720,7 @@ export interface FileRouteTypes {
     | '/book'
     | '/messages'
     | '/api/earnings/report'
+    | '/api/public/site-languages'
     | '/lovable/email/suppression'
     | '/api/public/hooks/booking-reminders'
     | '/api/public/hooks/booking-reviews'
@@ -775,6 +786,7 @@ export interface FileRouteTypes {
     | '/book/'
     | '/messages/'
     | '/api/earnings/report'
+    | '/api/public/site-languages'
     | '/lovable/email/suppression'
     | '/api/public/hooks/booking-reminders'
     | '/api/public/hooks/booking-reviews'
@@ -837,6 +849,7 @@ export interface RootRouteChildren {
   ToursSlugRoute: typeof ToursSlugRoute
   BookIndexRoute: typeof BookIndexRoute
   ApiEarningsReportRoute: typeof ApiEarningsReportRoute
+  ApiPublicSiteLanguagesRoute: typeof ApiPublicSiteLanguagesRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   ApiPublicHooksBookingRemindersRoute: typeof ApiPublicHooksBookingRemindersRoute
   ApiPublicHooksBookingReviewsRoute: typeof ApiPublicHooksBookingReviewsRoute
@@ -1150,6 +1163,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailSuppressionRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/site-languages': {
+      id: '/api/public/site-languages'
+      path: '/api/public/site-languages'
+      fullPath: '/api/public/site-languages'
+      preLoaderRoute: typeof ApiPublicSiteLanguagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/earnings/report': {
       id: '/api/earnings/report'
       path: '/api/earnings/report'
@@ -1380,6 +1400,7 @@ const rootRouteChildren: RootRouteChildren = {
   ToursSlugRoute: ToursSlugRoute,
   BookIndexRoute: BookIndexRoute,
   ApiEarningsReportRoute: ApiEarningsReportRoute,
+  ApiPublicSiteLanguagesRoute: ApiPublicSiteLanguagesRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   ApiPublicHooksBookingRemindersRoute: ApiPublicHooksBookingRemindersRoute,
   ApiPublicHooksBookingReviewsRoute: ApiPublicHooksBookingReviewsRoute,
@@ -1407,13 +1428,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
