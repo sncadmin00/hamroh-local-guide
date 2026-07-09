@@ -530,9 +530,6 @@ export async function upsertTourCore(input: UpsertTourInput, userId: string) {
     .select(TOUR_SELECT)
     .eq("id", tourId)
     .single();
-    .select(TOUR_SELECT)
-    .eq("id", tourId)
-    .single();
   if (readErr) throw new Error(readErr.message);
 
   const row: any = saved;
