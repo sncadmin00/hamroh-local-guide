@@ -63,6 +63,10 @@ import { Route as ApiPublicHooksUpdateMyLanguagesRouteImport } from './routes/ap
 import { Route as ApiPublicHooksSuggestCityRouteImport } from './routes/api/public/hooks/suggest-city'
 import { Route as ApiPublicHooksRetranslateTourRouteImport } from './routes/api/public/hooks/retranslate-tour'
 import { Route as ApiPublicHooksPriceQuoteRouteImport } from './routes/api/public/hooks/price-quote'
+import { Route as ApiPublicHooksMyTransactionsRouteImport } from './routes/api/public/hooks/my-transactions'
+import { Route as ApiPublicHooksMyStatementsRouteImport } from './routes/api/public/hooks/my-statements'
+import { Route as ApiPublicHooksMyPayoutsRouteImport } from './routes/api/public/hooks/my-payouts'
+import { Route as ApiPublicHooksMyEarningsSummaryRouteImport } from './routes/api/public/hooks/my-earnings-summary'
 import { Route as ApiPublicHooksGoogleOauthCallbackRouteImport } from './routes/api/public/hooks/google-oauth-callback'
 import { Route as ApiPublicHooksGenerateStatementsRouteImport } from './routes/api/public/hooks/generate-statements'
 import { Route as ApiPublicHooksExpireBookingsRouteImport } from './routes/api/public/hooks/expire-bookings'
@@ -355,6 +359,29 @@ const ApiPublicHooksPriceQuoteRoute =
     path: '/api/public/hooks/price-quote',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksMyTransactionsRoute =
+  ApiPublicHooksMyTransactionsRouteImport.update({
+    id: '/api/public/hooks/my-transactions',
+    path: '/api/public/hooks/my-transactions',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksMyStatementsRoute =
+  ApiPublicHooksMyStatementsRouteImport.update({
+    id: '/api/public/hooks/my-statements',
+    path: '/api/public/hooks/my-statements',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksMyPayoutsRoute = ApiPublicHooksMyPayoutsRouteImport.update({
+  id: '/api/public/hooks/my-payouts',
+  path: '/api/public/hooks/my-payouts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicHooksMyEarningsSummaryRoute =
+  ApiPublicHooksMyEarningsSummaryRouteImport.update({
+    id: '/api/public/hooks/my-earnings-summary',
+    path: '/api/public/hooks/my-earnings-summary',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksGoogleOauthCallbackRoute =
   ApiPublicHooksGoogleOauthCallbackRouteImport.update({
     id: '/api/public/hooks/google-oauth-callback',
@@ -479,6 +506,10 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/expire-bookings': typeof ApiPublicHooksExpireBookingsRoute
   '/api/public/hooks/generate-statements': typeof ApiPublicHooksGenerateStatementsRoute
   '/api/public/hooks/google-oauth-callback': typeof ApiPublicHooksGoogleOauthCallbackRoute
+  '/api/public/hooks/my-earnings-summary': typeof ApiPublicHooksMyEarningsSummaryRoute
+  '/api/public/hooks/my-payouts': typeof ApiPublicHooksMyPayoutsRoute
+  '/api/public/hooks/my-statements': typeof ApiPublicHooksMyStatementsRoute
+  '/api/public/hooks/my-transactions': typeof ApiPublicHooksMyTransactionsRoute
   '/api/public/hooks/price-quote': typeof ApiPublicHooksPriceQuoteRoute
   '/api/public/hooks/retranslate-tour': typeof ApiPublicHooksRetranslateTourRoute
   '/api/public/hooks/suggest-city': typeof ApiPublicHooksSuggestCityRoute
@@ -546,6 +577,10 @@ export interface FileRoutesByTo {
   '/api/public/hooks/expire-bookings': typeof ApiPublicHooksExpireBookingsRoute
   '/api/public/hooks/generate-statements': typeof ApiPublicHooksGenerateStatementsRoute
   '/api/public/hooks/google-oauth-callback': typeof ApiPublicHooksGoogleOauthCallbackRoute
+  '/api/public/hooks/my-earnings-summary': typeof ApiPublicHooksMyEarningsSummaryRoute
+  '/api/public/hooks/my-payouts': typeof ApiPublicHooksMyPayoutsRoute
+  '/api/public/hooks/my-statements': typeof ApiPublicHooksMyStatementsRoute
+  '/api/public/hooks/my-transactions': typeof ApiPublicHooksMyTransactionsRoute
   '/api/public/hooks/price-quote': typeof ApiPublicHooksPriceQuoteRoute
   '/api/public/hooks/retranslate-tour': typeof ApiPublicHooksRetranslateTourRoute
   '/api/public/hooks/suggest-city': typeof ApiPublicHooksSuggestCityRoute
@@ -615,6 +650,10 @@ export interface FileRoutesById {
   '/api/public/hooks/expire-bookings': typeof ApiPublicHooksExpireBookingsRoute
   '/api/public/hooks/generate-statements': typeof ApiPublicHooksGenerateStatementsRoute
   '/api/public/hooks/google-oauth-callback': typeof ApiPublicHooksGoogleOauthCallbackRoute
+  '/api/public/hooks/my-earnings-summary': typeof ApiPublicHooksMyEarningsSummaryRoute
+  '/api/public/hooks/my-payouts': typeof ApiPublicHooksMyPayoutsRoute
+  '/api/public/hooks/my-statements': typeof ApiPublicHooksMyStatementsRoute
+  '/api/public/hooks/my-transactions': typeof ApiPublicHooksMyTransactionsRoute
   '/api/public/hooks/price-quote': typeof ApiPublicHooksPriceQuoteRoute
   '/api/public/hooks/retranslate-tour': typeof ApiPublicHooksRetranslateTourRoute
   '/api/public/hooks/suggest-city': typeof ApiPublicHooksSuggestCityRoute
@@ -685,6 +724,10 @@ export interface FileRouteTypes {
     | '/api/public/hooks/expire-bookings'
     | '/api/public/hooks/generate-statements'
     | '/api/public/hooks/google-oauth-callback'
+    | '/api/public/hooks/my-earnings-summary'
+    | '/api/public/hooks/my-payouts'
+    | '/api/public/hooks/my-statements'
+    | '/api/public/hooks/my-transactions'
     | '/api/public/hooks/price-quote'
     | '/api/public/hooks/retranslate-tour'
     | '/api/public/hooks/suggest-city'
@@ -752,6 +795,10 @@ export interface FileRouteTypes {
     | '/api/public/hooks/expire-bookings'
     | '/api/public/hooks/generate-statements'
     | '/api/public/hooks/google-oauth-callback'
+    | '/api/public/hooks/my-earnings-summary'
+    | '/api/public/hooks/my-payouts'
+    | '/api/public/hooks/my-statements'
+    | '/api/public/hooks/my-transactions'
     | '/api/public/hooks/price-quote'
     | '/api/public/hooks/retranslate-tour'
     | '/api/public/hooks/suggest-city'
@@ -820,6 +867,10 @@ export interface FileRouteTypes {
     | '/api/public/hooks/expire-bookings'
     | '/api/public/hooks/generate-statements'
     | '/api/public/hooks/google-oauth-callback'
+    | '/api/public/hooks/my-earnings-summary'
+    | '/api/public/hooks/my-payouts'
+    | '/api/public/hooks/my-statements'
+    | '/api/public/hooks/my-transactions'
     | '/api/public/hooks/price-quote'
     | '/api/public/hooks/retranslate-tour'
     | '/api/public/hooks/suggest-city'
@@ -885,6 +936,10 @@ export interface RootRouteChildren {
   ApiPublicHooksExpireBookingsRoute: typeof ApiPublicHooksExpireBookingsRoute
   ApiPublicHooksGenerateStatementsRoute: typeof ApiPublicHooksGenerateStatementsRoute
   ApiPublicHooksGoogleOauthCallbackRoute: typeof ApiPublicHooksGoogleOauthCallbackRoute
+  ApiPublicHooksMyEarningsSummaryRoute: typeof ApiPublicHooksMyEarningsSummaryRoute
+  ApiPublicHooksMyPayoutsRoute: typeof ApiPublicHooksMyPayoutsRoute
+  ApiPublicHooksMyStatementsRoute: typeof ApiPublicHooksMyStatementsRoute
+  ApiPublicHooksMyTransactionsRoute: typeof ApiPublicHooksMyTransactionsRoute
   ApiPublicHooksPriceQuoteRoute: typeof ApiPublicHooksPriceQuoteRoute
   ApiPublicHooksRetranslateTourRoute: typeof ApiPublicHooksRetranslateTourRoute
   ApiPublicHooksSuggestCityRoute: typeof ApiPublicHooksSuggestCityRoute
@@ -1282,6 +1337,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksPriceQuoteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/my-transactions': {
+      id: '/api/public/hooks/my-transactions'
+      path: '/api/public/hooks/my-transactions'
+      fullPath: '/api/public/hooks/my-transactions'
+      preLoaderRoute: typeof ApiPublicHooksMyTransactionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/my-statements': {
+      id: '/api/public/hooks/my-statements'
+      path: '/api/public/hooks/my-statements'
+      fullPath: '/api/public/hooks/my-statements'
+      preLoaderRoute: typeof ApiPublicHooksMyStatementsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/my-payouts': {
+      id: '/api/public/hooks/my-payouts'
+      path: '/api/public/hooks/my-payouts'
+      fullPath: '/api/public/hooks/my-payouts'
+      preLoaderRoute: typeof ApiPublicHooksMyPayoutsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/my-earnings-summary': {
+      id: '/api/public/hooks/my-earnings-summary'
+      path: '/api/public/hooks/my-earnings-summary'
+      fullPath: '/api/public/hooks/my-earnings-summary'
+      preLoaderRoute: typeof ApiPublicHooksMyEarningsSummaryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/google-oauth-callback': {
       id: '/api/public/hooks/google-oauth-callback'
       path: '/api/public/hooks/google-oauth-callback'
@@ -1453,6 +1536,10 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksGenerateStatementsRoute: ApiPublicHooksGenerateStatementsRoute,
   ApiPublicHooksGoogleOauthCallbackRoute:
     ApiPublicHooksGoogleOauthCallbackRoute,
+  ApiPublicHooksMyEarningsSummaryRoute: ApiPublicHooksMyEarningsSummaryRoute,
+  ApiPublicHooksMyPayoutsRoute: ApiPublicHooksMyPayoutsRoute,
+  ApiPublicHooksMyStatementsRoute: ApiPublicHooksMyStatementsRoute,
+  ApiPublicHooksMyTransactionsRoute: ApiPublicHooksMyTransactionsRoute,
   ApiPublicHooksPriceQuoteRoute: ApiPublicHooksPriceQuoteRoute,
   ApiPublicHooksRetranslateTourRoute: ApiPublicHooksRetranslateTourRoute,
   ApiPublicHooksSuggestCityRoute: ApiPublicHooksSuggestCityRoute,
@@ -1472,13 +1559,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
