@@ -93,7 +93,7 @@ const TOUR_SELECT = `
   pricing_mode, pricing_modes,
   fixed_price, fixed_max_guests, per_person_price,
   group_tiers, group_prices, max_guests,
-  base_language, language_multipliers, languages,
+  base_language, pricing_base_language, language_multipliers, languages,
   children_free_under, transport_included,
   highlights, highlights_ru, highlights_en, highlights_uz,
   included, included_ru, included_en, included_uz,
