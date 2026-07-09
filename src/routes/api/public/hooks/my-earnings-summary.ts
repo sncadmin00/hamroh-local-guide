@@ -135,7 +135,7 @@ export const Route = createFileRoute("/api/public/hooks/my-earnings-summary")({
 
         const { data: guide } = await sb
           .from("guides")
-          .select("id")
+          .select("id, completed_tours_count")
           .eq("user_id", userId)
           .maybeSingle();
         if (!guide) {
@@ -145,6 +145,7 @@ export const Route = createFileRoute("/api/public/hooks/my-earnings-summary")({
           );
         }
         const guideId = (guide as any).id as string;
+        const lifetimeCompletedTours = Number((guide as any).completed_tours_count ?? 0);
 
         // commission rate
         const { data: rateRow } = await sb
