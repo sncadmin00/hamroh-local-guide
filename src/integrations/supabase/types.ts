@@ -649,6 +649,63 @@ export type Database = {
         }
         Relationships: []
       }
+      city_suggestions: {
+        Row: {
+          admin_note: string | null
+          created_at: string
+          created_city_id: string | null
+          guide_id: string | null
+          id: string
+          name: string
+          note: string | null
+          region: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_note?: string | null
+          created_at?: string
+          created_city_id?: string | null
+          guide_id?: string | null
+          id?: string
+          name: string
+          note?: string | null
+          region?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_note?: string | null
+          created_at?: string
+          created_city_id?: string | null
+          guide_id?: string | null
+          id?: string
+          name?: string
+          note?: string | null
+          region?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "city_suggestions_created_city_id_fkey"
+            columns: ["created_city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "city_suggestions_guide_id_fkey"
+            columns: ["guide_id"]
+            isOneToOne: false
+            referencedRelation: "guides"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_send_log: {
         Row: {
           created_at: string
