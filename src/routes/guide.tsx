@@ -2002,13 +2002,27 @@ function CitiesPanel({
           );
         })}
       </div>
-      <button
-        onClick={save}
-        disabled={saving}
-        className="h-10 px-5 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-50"
-      >
-        {saving ? tg("common.loading") : tg("cities.save")}
-      </button>
+      <div className="flex flex-wrap items-center gap-3 pt-1">
+        <button
+          onClick={save}
+          disabled={saving}
+          className="h-10 px-5 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-50"
+        >
+          {saving ? tg("common.loading") : tg("cities.save")}
+        </button>
+        <button
+          type="button"
+          onClick={() => setSuggestOpen(true)}
+          className="h-10 px-4 rounded-full text-sm font-medium border border-border hover:bg-secondary inline-flex items-center gap-2"
+        >
+          <MapPin className="h-4 w-4" /> Suggest a city
+        </button>
+      </div>
+      <SuggestCityModal
+        open={suggestOpen}
+        onClose={() => setSuggestOpen(false)}
+        onApproved={onSaved}
+      />
     </div>
   );
 }
