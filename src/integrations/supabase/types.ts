@@ -1884,6 +1884,7 @@ export type Database = {
       }
       place_suggestions: {
         Row: {
+          address: string
           admin_note: string | null
           category: string
           city_id: string | null
@@ -1901,6 +1902,7 @@ export type Database = {
           submitted_by: string | null
         }
         Insert: {
+          address?: string
           admin_note?: string | null
           category?: string
           city_id?: string | null
@@ -1918,6 +1920,7 @@ export type Database = {
           submitted_by?: string | null
         }
         Update: {
+          address?: string
           admin_note?: string | null
           category?: string
           city_id?: string | null
