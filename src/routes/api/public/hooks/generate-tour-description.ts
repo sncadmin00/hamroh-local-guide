@@ -36,6 +36,9 @@ const InputSchema = z.object({
   language: z.enum(["ru", "uz", "en", "auto"]).optional().default("auto"),
   context: z.string().trim().max(1000).optional().default(""),
   length: z.enum(["short", "medium", "long"]).optional().default("medium"),
+  categories: z.array(z.string().trim().max(80)).max(20).optional().default([]),
+  highlights: z.array(z.string().trim().max(200)).max(20).optional().default([]),
+  included: z.array(z.string().trim().max(200)).max(20).optional().default([]),
 });
 
 const LENGTH_HINTS: Record<"short" | "medium" | "long", string> = {
