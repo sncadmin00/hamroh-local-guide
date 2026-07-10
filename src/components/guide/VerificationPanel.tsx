@@ -6,7 +6,6 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   getMyVerification,
   submitIdentity,
-  submitIntroVideo,
 } from "@/lib/guide-verification.functions";
 import { useGuideI18n } from "@/lib/guide-i18n";
 
