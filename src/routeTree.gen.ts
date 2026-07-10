@@ -70,6 +70,7 @@ import { Route as ApiPublicHooksSubmitLicenseRouteImport } from './routes/api/pu
 import { Route as ApiPublicHooksSubmitIntroVideoRouteImport } from './routes/api/public/hooks/submit-intro-video'
 import { Route as ApiPublicHooksSubmitIdentityRouteImport } from './routes/api/public/hooks/submit-identity'
 import { Route as ApiPublicHooksRetranslateTourRouteImport } from './routes/api/public/hooks/retranslate-tour'
+import { Route as ApiPublicHooksRequestPayoutRouteImport } from './routes/api/public/hooks/request-payout'
 import { Route as ApiPublicHooksPriceQuoteRouteImport } from './routes/api/public/hooks/price-quote'
 import { Route as ApiPublicHooksMyVerificationRouteImport } from './routes/api/public/hooks/my-verification'
 import { Route as ApiPublicHooksMyTransactionsRouteImport } from './routes/api/public/hooks/my-transactions'
@@ -425,6 +426,12 @@ const ApiPublicHooksRetranslateTourRoute =
     path: '/api/public/hooks/retranslate-tour',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksRequestPayoutRoute =
+  ApiPublicHooksRequestPayoutRouteImport.update({
+    id: '/api/public/hooks/request-payout',
+    path: '/api/public/hooks/request-payout',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksPriceQuoteRoute =
   ApiPublicHooksPriceQuoteRouteImport.update({
     id: '/api/public/hooks/price-quote',
@@ -690,6 +697,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/my-transactions': typeof ApiPublicHooksMyTransactionsRoute
   '/api/public/hooks/my-verification': typeof ApiPublicHooksMyVerificationRoute
   '/api/public/hooks/price-quote': typeof ApiPublicHooksPriceQuoteRoute
+  '/api/public/hooks/request-payout': typeof ApiPublicHooksRequestPayoutRoute
   '/api/public/hooks/retranslate-tour': typeof ApiPublicHooksRetranslateTourRoute
   '/api/public/hooks/submit-identity': typeof ApiPublicHooksSubmitIdentityRoute
   '/api/public/hooks/submit-intro-video': typeof ApiPublicHooksSubmitIntroVideoRoute
@@ -785,6 +793,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/my-transactions': typeof ApiPublicHooksMyTransactionsRoute
   '/api/public/hooks/my-verification': typeof ApiPublicHooksMyVerificationRoute
   '/api/public/hooks/price-quote': typeof ApiPublicHooksPriceQuoteRoute
+  '/api/public/hooks/request-payout': typeof ApiPublicHooksRequestPayoutRoute
   '/api/public/hooks/retranslate-tour': typeof ApiPublicHooksRetranslateTourRoute
   '/api/public/hooks/submit-identity': typeof ApiPublicHooksSubmitIdentityRoute
   '/api/public/hooks/submit-intro-video': typeof ApiPublicHooksSubmitIntroVideoRoute
@@ -882,6 +891,7 @@ export interface FileRoutesById {
   '/api/public/hooks/my-transactions': typeof ApiPublicHooksMyTransactionsRoute
   '/api/public/hooks/my-verification': typeof ApiPublicHooksMyVerificationRoute
   '/api/public/hooks/price-quote': typeof ApiPublicHooksPriceQuoteRoute
+  '/api/public/hooks/request-payout': typeof ApiPublicHooksRequestPayoutRoute
   '/api/public/hooks/retranslate-tour': typeof ApiPublicHooksRetranslateTourRoute
   '/api/public/hooks/submit-identity': typeof ApiPublicHooksSubmitIdentityRoute
   '/api/public/hooks/submit-intro-video': typeof ApiPublicHooksSubmitIntroVideoRoute
@@ -980,6 +990,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/my-transactions'
     | '/api/public/hooks/my-verification'
     | '/api/public/hooks/price-quote'
+    | '/api/public/hooks/request-payout'
     | '/api/public/hooks/retranslate-tour'
     | '/api/public/hooks/submit-identity'
     | '/api/public/hooks/submit-intro-video'
@@ -1075,6 +1086,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/my-transactions'
     | '/api/public/hooks/my-verification'
     | '/api/public/hooks/price-quote'
+    | '/api/public/hooks/request-payout'
     | '/api/public/hooks/retranslate-tour'
     | '/api/public/hooks/submit-identity'
     | '/api/public/hooks/submit-intro-video'
@@ -1171,6 +1183,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/my-transactions'
     | '/api/public/hooks/my-verification'
     | '/api/public/hooks/price-quote'
+    | '/api/public/hooks/request-payout'
     | '/api/public/hooks/retranslate-tour'
     | '/api/public/hooks/submit-identity'
     | '/api/public/hooks/submit-intro-video'
@@ -1264,6 +1277,7 @@ export interface RootRouteChildren {
   ApiPublicHooksMyTransactionsRoute: typeof ApiPublicHooksMyTransactionsRoute
   ApiPublicHooksMyVerificationRoute: typeof ApiPublicHooksMyVerificationRoute
   ApiPublicHooksPriceQuoteRoute: typeof ApiPublicHooksPriceQuoteRoute
+  ApiPublicHooksRequestPayoutRoute: typeof ApiPublicHooksRequestPayoutRoute
   ApiPublicHooksRetranslateTourRoute: typeof ApiPublicHooksRetranslateTourRoute
   ApiPublicHooksSubmitIdentityRoute: typeof ApiPublicHooksSubmitIdentityRoute
   ApiPublicHooksSubmitIntroVideoRoute: typeof ApiPublicHooksSubmitIntroVideoRoute
@@ -1720,6 +1734,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksRetranslateTourRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/request-payout': {
+      id: '/api/public/hooks/request-payout'
+      path: '/api/public/hooks/request-payout'
+      fullPath: '/api/public/hooks/request-payout'
+      preLoaderRoute: typeof ApiPublicHooksRequestPayoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/price-quote': {
       id: '/api/public/hooks/price-quote'
       path: '/api/public/hooks/price-quote'
@@ -2059,6 +2080,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksMyTransactionsRoute: ApiPublicHooksMyTransactionsRoute,
   ApiPublicHooksMyVerificationRoute: ApiPublicHooksMyVerificationRoute,
   ApiPublicHooksPriceQuoteRoute: ApiPublicHooksPriceQuoteRoute,
+  ApiPublicHooksRequestPayoutRoute: ApiPublicHooksRequestPayoutRoute,
   ApiPublicHooksRetranslateTourRoute: ApiPublicHooksRetranslateTourRoute,
   ApiPublicHooksSubmitIdentityRoute: ApiPublicHooksSubmitIdentityRoute,
   ApiPublicHooksSubmitIntroVideoRoute: ApiPublicHooksSubmitIntroVideoRoute,
