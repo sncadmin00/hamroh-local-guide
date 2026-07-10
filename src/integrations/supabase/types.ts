@@ -2400,6 +2400,60 @@ export type Database = {
         }
         Relationships: []
       }
+      telegram_link_codes: {
+        Row: {
+          code: string
+          consumed_at: string | null
+          created_at: string
+          expires_at: string
+          telegram_user_id: number | null
+          user_id: string
+        }
+        Insert: {
+          code: string
+          consumed_at?: string | null
+          created_at?: string
+          expires_at: string
+          telegram_user_id?: number | null
+          user_id: string
+        }
+        Update: {
+          code?: string
+          consumed_at?: string | null
+          created_at?: string
+          expires_at?: string
+          telegram_user_id?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      telegram_signin_nonces: {
+        Row: {
+          action_link: string | null
+          consumed_at: string | null
+          created_at: string
+          expires_at: string
+          nonce: string
+          telegram_user_id: number | null
+        }
+        Insert: {
+          action_link?: string | null
+          consumed_at?: string | null
+          created_at?: string
+          expires_at: string
+          nonce: string
+          telegram_user_id?: number | null
+        }
+        Update: {
+          action_link?: string | null
+          consumed_at?: string | null
+          created_at?: string
+          expires_at?: string
+          nonce?: string
+          telegram_user_id?: number | null
+        }
+        Relationships: []
+      }
       tour_categories: {
         Row: {
           category_id: string
