@@ -106,6 +106,7 @@ import { Route as ApiPublicToursTourIdSlotsRouteImport } from './routes/api/publ
 import { Route as ApiPublicHooksPayoutStepUpVerifyRouteImport } from './routes/api/public/hooks/payout-step-up/verify'
 import { Route as ApiPublicHooksPayoutStepUpStartRouteImport } from './routes/api/public/hooks/payout-step-up/start'
 import { Route as ApiPublicHooksNotificationsPushRouteImport } from './routes/api/public/hooks/notifications/push'
+import { Route as ApiPublicHooksCronSyncPublicHolidaysRouteImport } from './routes/api/public/hooks/cron/sync-public-holidays'
 import { Route as ApiPublicGuidesGuideIdSlotsRouteImport } from './routes/api/public/guides/$guideId/slots'
 import { Route as ApiPublicGuidesGuideIdBusyRouteImport } from './routes/api/public/guides/$guideId/busy'
 import { Route as ApiPublicBookingsIdPdfRouteImport } from './routes/api/public/bookings/$id/pdf'
@@ -644,6 +645,12 @@ const ApiPublicHooksNotificationsPushRoute =
     path: '/api/public/hooks/notifications/push',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksCronSyncPublicHolidaysRoute =
+  ApiPublicHooksCronSyncPublicHolidaysRouteImport.update({
+    id: '/api/public/hooks/cron/sync-public-holidays',
+    path: '/api/public/hooks/cron/sync-public-holidays',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicGuidesGuideIdSlotsRoute =
   ApiPublicGuidesGuideIdSlotsRouteImport.update({
     id: '/api/public/guides/$guideId/slots',
@@ -759,6 +766,7 @@ export interface FileRoutesByFullPath {
   '/api/public/bookings/$id/pdf': typeof ApiPublicBookingsIdPdfRoute
   '/api/public/guides/$guideId/busy': typeof ApiPublicGuidesGuideIdBusyRoute
   '/api/public/guides/$guideId/slots': typeof ApiPublicGuidesGuideIdSlotsRoute
+  '/api/public/hooks/cron/sync-public-holidays': typeof ApiPublicHooksCronSyncPublicHolidaysRoute
   '/api/public/hooks/notifications/push': typeof ApiPublicHooksNotificationsPushRoute
   '/api/public/hooks/payout-step-up/start': typeof ApiPublicHooksPayoutStepUpStartRoute
   '/api/public/hooks/payout-step-up/verify': typeof ApiPublicHooksPayoutStepUpVerifyRoute
@@ -860,6 +868,7 @@ export interface FileRoutesByTo {
   '/api/public/bookings/$id/pdf': typeof ApiPublicBookingsIdPdfRoute
   '/api/public/guides/$guideId/busy': typeof ApiPublicGuidesGuideIdBusyRoute
   '/api/public/guides/$guideId/slots': typeof ApiPublicGuidesGuideIdSlotsRoute
+  '/api/public/hooks/cron/sync-public-holidays': typeof ApiPublicHooksCronSyncPublicHolidaysRoute
   '/api/public/hooks/notifications/push': typeof ApiPublicHooksNotificationsPushRoute
   '/api/public/hooks/payout-step-up/start': typeof ApiPublicHooksPayoutStepUpStartRoute
   '/api/public/hooks/payout-step-up/verify': typeof ApiPublicHooksPayoutStepUpVerifyRoute
@@ -963,6 +972,7 @@ export interface FileRoutesById {
   '/api/public/bookings/$id/pdf': typeof ApiPublicBookingsIdPdfRoute
   '/api/public/guides/$guideId/busy': typeof ApiPublicGuidesGuideIdBusyRoute
   '/api/public/guides/$guideId/slots': typeof ApiPublicGuidesGuideIdSlotsRoute
+  '/api/public/hooks/cron/sync-public-holidays': typeof ApiPublicHooksCronSyncPublicHolidaysRoute
   '/api/public/hooks/notifications/push': typeof ApiPublicHooksNotificationsPushRoute
   '/api/public/hooks/payout-step-up/start': typeof ApiPublicHooksPayoutStepUpStartRoute
   '/api/public/hooks/payout-step-up/verify': typeof ApiPublicHooksPayoutStepUpVerifyRoute
@@ -1067,6 +1077,7 @@ export interface FileRouteTypes {
     | '/api/public/bookings/$id/pdf'
     | '/api/public/guides/$guideId/busy'
     | '/api/public/guides/$guideId/slots'
+    | '/api/public/hooks/cron/sync-public-holidays'
     | '/api/public/hooks/notifications/push'
     | '/api/public/hooks/payout-step-up/start'
     | '/api/public/hooks/payout-step-up/verify'
@@ -1168,6 +1179,7 @@ export interface FileRouteTypes {
     | '/api/public/bookings/$id/pdf'
     | '/api/public/guides/$guideId/busy'
     | '/api/public/guides/$guideId/slots'
+    | '/api/public/hooks/cron/sync-public-holidays'
     | '/api/public/hooks/notifications/push'
     | '/api/public/hooks/payout-step-up/start'
     | '/api/public/hooks/payout-step-up/verify'
@@ -1270,6 +1282,7 @@ export interface FileRouteTypes {
     | '/api/public/bookings/$id/pdf'
     | '/api/public/guides/$guideId/busy'
     | '/api/public/guides/$guideId/slots'
+    | '/api/public/hooks/cron/sync-public-holidays'
     | '/api/public/hooks/notifications/push'
     | '/api/public/hooks/payout-step-up/start'
     | '/api/public/hooks/payout-step-up/verify'
@@ -1369,6 +1382,7 @@ export interface RootRouteChildren {
   ApiPublicBookingsIdPdfRoute: typeof ApiPublicBookingsIdPdfRoute
   ApiPublicGuidesGuideIdBusyRoute: typeof ApiPublicGuidesGuideIdBusyRoute
   ApiPublicGuidesGuideIdSlotsRoute: typeof ApiPublicGuidesGuideIdSlotsRoute
+  ApiPublicHooksCronSyncPublicHolidaysRoute: typeof ApiPublicHooksCronSyncPublicHolidaysRoute
   ApiPublicHooksNotificationsPushRoute: typeof ApiPublicHooksNotificationsPushRoute
   ApiPublicHooksPayoutStepUpStartRoute: typeof ApiPublicHooksPayoutStepUpStartRoute
   ApiPublicHooksPayoutStepUpVerifyRoute: typeof ApiPublicHooksPayoutStepUpVerifyRoute
@@ -2056,6 +2070,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksNotificationsPushRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/cron/sync-public-holidays': {
+      id: '/api/public/hooks/cron/sync-public-holidays'
+      path: '/api/public/hooks/cron/sync-public-holidays'
+      fullPath: '/api/public/hooks/cron/sync-public-holidays'
+      preLoaderRoute: typeof ApiPublicHooksCronSyncPublicHolidaysRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/guides/$guideId/slots': {
       id: '/api/public/guides/$guideId/slots'
       path: '/api/public/guides/$guideId/slots'
@@ -2214,6 +2235,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicBookingsIdPdfRoute: ApiPublicBookingsIdPdfRoute,
   ApiPublicGuidesGuideIdBusyRoute: ApiPublicGuidesGuideIdBusyRoute,
   ApiPublicGuidesGuideIdSlotsRoute: ApiPublicGuidesGuideIdSlotsRoute,
+  ApiPublicHooksCronSyncPublicHolidaysRoute:
+    ApiPublicHooksCronSyncPublicHolidaysRoute,
   ApiPublicHooksNotificationsPushRoute: ApiPublicHooksNotificationsPushRoute,
   ApiPublicHooksPayoutStepUpStartRoute: ApiPublicHooksPayoutStepUpStartRoute,
   ApiPublicHooksPayoutStepUpVerifyRoute: ApiPublicHooksPayoutStepUpVerifyRoute,

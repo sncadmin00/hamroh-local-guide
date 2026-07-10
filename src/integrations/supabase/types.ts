@@ -1591,42 +1591,48 @@ export type Database = {
       }
       local_events: {
         Row: {
-          city_id: string
+          city_id: string | null
           cover_url: string | null
           created_at: string
           date_end: string
           date_start: string
           description: string | null
+          external_id: string | null
           id: string
           is_published: boolean
+          kind: string
           sort_order: number
           source_url: string | null
           title: string
           updated_at: string
         }
         Insert: {
-          city_id: string
+          city_id?: string | null
           cover_url?: string | null
           created_at?: string
           date_end: string
           date_start: string
           description?: string | null
+          external_id?: string | null
           id?: string
           is_published?: boolean
+          kind?: string
           sort_order?: number
           source_url?: string | null
           title: string
           updated_at?: string
         }
         Update: {
-          city_id?: string
+          city_id?: string | null
           cover_url?: string | null
           created_at?: string
           date_end?: string
           date_start?: string
           description?: string | null
+          external_id?: string | null
           id?: string
           is_published?: boolean
+          kind?: string
           sort_order?: number
           source_url?: string | null
           title?: string
