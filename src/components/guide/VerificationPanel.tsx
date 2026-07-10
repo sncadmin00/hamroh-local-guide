@@ -174,24 +174,12 @@ export function VerificationPanel() {
         </button>
       </form>
 
-      <form onSubmit={onSubmitVideo} className="rounded-2xl bg-card ring-1 ring-border p-5 space-y-3">
-        <p className="font-display text-lg font-semibold flex items-center gap-2"><Video className="h-5 w-5" /> {tg("verification.introVideo")}</p>
-        <p className="text-sm text-muted-foreground">{tg("verification.videoText")}</p>
-        <input
-          type="file"
-          accept="video/*"
-          onChange={(e) => setVideoFile(e.target.files?.[0] ?? null)}
-          className="w-full text-sm"
-        />
-        <button
-          type="submit"
-          disabled={savingVideo}
-          className="inline-flex items-center gap-2 h-10 px-4 rounded-full bg-primary text-primary-foreground text-sm font-medium disabled:opacity-50"
-        >
-          {savingVideo ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-          {tg("verification.submit")}
-        </button>
-      </form>
+      <div className="rounded-2xl bg-muted/40 ring-1 ring-border p-5 text-sm text-muted-foreground">
+        <p className="font-display text-base font-semibold text-foreground flex items-center gap-2"><Video className="h-4 w-4" /> {tg("verification.introVideo")}</p>
+        <p className="mt-1">{tg("verification.videoText")}</p>
+        <p className="mt-2 text-xs">→ Profile tab</p>
+      </div>
+
 
       <div className="rounded-2xl bg-muted/40 ring-1 ring-border p-5">
         <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">{tg("verification.stats")}</p>
