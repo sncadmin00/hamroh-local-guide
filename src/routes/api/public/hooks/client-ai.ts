@@ -299,8 +299,9 @@ export const Route = createFileRoute("/api/public/hooks/client-ai")({
         } catch (e) {
           console.error("client-ai: article retrieval failed", e);
         }
+        const holidays = sanitizeHolidays(body.context?.upcomingHolidays);
+        const system = await buildSystemPrompt(userClient, articleContext, lang, holidays);
 
-        const system = await buildSystemPrompt(userClient, articleContext, lang);
 
         const gateway = createLovableAiGatewayProvider(key);
         const model = gateway("google/gemini-3.1-flash-lite-preview");
