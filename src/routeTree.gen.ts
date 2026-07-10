@@ -65,6 +65,7 @@ import { Route as ApiPublicHooksSubmitLicenseRouteImport } from './routes/api/pu
 import { Route as ApiPublicHooksSubmitIdentityRouteImport } from './routes/api/public/hooks/submit-identity'
 import { Route as ApiPublicHooksRetranslateTourRouteImport } from './routes/api/public/hooks/retranslate-tour'
 import { Route as ApiPublicHooksPriceQuoteRouteImport } from './routes/api/public/hooks/price-quote'
+import { Route as ApiPublicHooksMyVerificationRouteImport } from './routes/api/public/hooks/my-verification'
 import { Route as ApiPublicHooksMyTransactionsRouteImport } from './routes/api/public/hooks/my-transactions'
 import { Route as ApiPublicHooksMyStatementsRouteImport } from './routes/api/public/hooks/my-statements'
 import { Route as ApiPublicHooksMyPayoutsRouteImport } from './routes/api/public/hooks/my-payouts'
@@ -382,6 +383,12 @@ const ApiPublicHooksPriceQuoteRoute =
     path: '/api/public/hooks/price-quote',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksMyVerificationRoute =
+  ApiPublicHooksMyVerificationRouteImport.update({
+    id: '/api/public/hooks/my-verification',
+    path: '/api/public/hooks/my-verification',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksMyTransactionsRoute =
   ApiPublicHooksMyTransactionsRouteImport.update({
     id: '/api/public/hooks/my-transactions',
@@ -594,6 +601,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/my-payouts': typeof ApiPublicHooksMyPayoutsRoute
   '/api/public/hooks/my-statements': typeof ApiPublicHooksMyStatementsRoute
   '/api/public/hooks/my-transactions': typeof ApiPublicHooksMyTransactionsRoute
+  '/api/public/hooks/my-verification': typeof ApiPublicHooksMyVerificationRoute
   '/api/public/hooks/price-quote': typeof ApiPublicHooksPriceQuoteRoute
   '/api/public/hooks/retranslate-tour': typeof ApiPublicHooksRetranslateTourRoute
   '/api/public/hooks/submit-identity': typeof ApiPublicHooksSubmitIdentityRoute
@@ -676,6 +684,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/my-payouts': typeof ApiPublicHooksMyPayoutsRoute
   '/api/public/hooks/my-statements': typeof ApiPublicHooksMyStatementsRoute
   '/api/public/hooks/my-transactions': typeof ApiPublicHooksMyTransactionsRoute
+  '/api/public/hooks/my-verification': typeof ApiPublicHooksMyVerificationRoute
   '/api/public/hooks/price-quote': typeof ApiPublicHooksPriceQuoteRoute
   '/api/public/hooks/retranslate-tour': typeof ApiPublicHooksRetranslateTourRoute
   '/api/public/hooks/submit-identity': typeof ApiPublicHooksSubmitIdentityRoute
@@ -760,6 +769,7 @@ export interface FileRoutesById {
   '/api/public/hooks/my-payouts': typeof ApiPublicHooksMyPayoutsRoute
   '/api/public/hooks/my-statements': typeof ApiPublicHooksMyStatementsRoute
   '/api/public/hooks/my-transactions': typeof ApiPublicHooksMyTransactionsRoute
+  '/api/public/hooks/my-verification': typeof ApiPublicHooksMyVerificationRoute
   '/api/public/hooks/price-quote': typeof ApiPublicHooksPriceQuoteRoute
   '/api/public/hooks/retranslate-tour': typeof ApiPublicHooksRetranslateTourRoute
   '/api/public/hooks/submit-identity': typeof ApiPublicHooksSubmitIdentityRoute
@@ -845,6 +855,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/my-payouts'
     | '/api/public/hooks/my-statements'
     | '/api/public/hooks/my-transactions'
+    | '/api/public/hooks/my-verification'
     | '/api/public/hooks/price-quote'
     | '/api/public/hooks/retranslate-tour'
     | '/api/public/hooks/submit-identity'
@@ -927,6 +938,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/my-payouts'
     | '/api/public/hooks/my-statements'
     | '/api/public/hooks/my-transactions'
+    | '/api/public/hooks/my-verification'
     | '/api/public/hooks/price-quote'
     | '/api/public/hooks/retranslate-tour'
     | '/api/public/hooks/submit-identity'
@@ -1010,6 +1022,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/my-payouts'
     | '/api/public/hooks/my-statements'
     | '/api/public/hooks/my-transactions'
+    | '/api/public/hooks/my-verification'
     | '/api/public/hooks/price-quote'
     | '/api/public/hooks/retranslate-tour'
     | '/api/public/hooks/submit-identity'
@@ -1090,6 +1103,7 @@ export interface RootRouteChildren {
   ApiPublicHooksMyPayoutsRoute: typeof ApiPublicHooksMyPayoutsRoute
   ApiPublicHooksMyStatementsRoute: typeof ApiPublicHooksMyStatementsRoute
   ApiPublicHooksMyTransactionsRoute: typeof ApiPublicHooksMyTransactionsRoute
+  ApiPublicHooksMyVerificationRoute: typeof ApiPublicHooksMyVerificationRoute
   ApiPublicHooksPriceQuoteRoute: typeof ApiPublicHooksPriceQuoteRoute
   ApiPublicHooksRetranslateTourRoute: typeof ApiPublicHooksRetranslateTourRoute
   ApiPublicHooksSubmitIdentityRoute: typeof ApiPublicHooksSubmitIdentityRoute
@@ -1503,6 +1517,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksPriceQuoteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/my-verification': {
+      id: '/api/public/hooks/my-verification'
+      path: '/api/public/hooks/my-verification'
+      fullPath: '/api/public/hooks/my-verification'
+      preLoaderRoute: typeof ApiPublicHooksMyVerificationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/my-transactions': {
       id: '/api/public/hooks/my-transactions'
       path: '/api/public/hooks/my-transactions'
@@ -1781,6 +1802,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksMyPayoutsRoute: ApiPublicHooksMyPayoutsRoute,
   ApiPublicHooksMyStatementsRoute: ApiPublicHooksMyStatementsRoute,
   ApiPublicHooksMyTransactionsRoute: ApiPublicHooksMyTransactionsRoute,
+  ApiPublicHooksMyVerificationRoute: ApiPublicHooksMyVerificationRoute,
   ApiPublicHooksPriceQuoteRoute: ApiPublicHooksPriceQuoteRoute,
   ApiPublicHooksRetranslateTourRoute: ApiPublicHooksRetranslateTourRoute,
   ApiPublicHooksSubmitIdentityRoute: ApiPublicHooksSubmitIdentityRoute,
