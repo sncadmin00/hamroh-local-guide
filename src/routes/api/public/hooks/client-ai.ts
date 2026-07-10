@@ -99,7 +99,9 @@ async function buildSystemPrompt(
   client: ReturnType<typeof createClient<any, any, any>>,
   articleContext: Array<{ title: string; slug: string; content: string }>,
   lang: Lang,
+  holidays: Holiday[],
 ) {
+
   const [guidesRes, placesRes, toursRes] = await Promise.all([
     client
       .from("guides")
