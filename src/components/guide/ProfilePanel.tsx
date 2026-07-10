@@ -16,6 +16,8 @@ export function ProfilePanel({ guideId }: { guideId: string }) {
   const { tg } = useGuideI18n();
   const updateTaxFn = useServerFn(updateMyTaxInfo);
   const getTaxFn = useServerFn(getMyTaxInfo);
+  const getVerificationFn = useServerFn(getMyVerification);
+  const submitIntroVideoFn = useServerFn(submitIntroVideo);
   const [userId, setUserId] = useState<string | null>(null);
   const [currentCover, setCurrentCover] = useState<string | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
