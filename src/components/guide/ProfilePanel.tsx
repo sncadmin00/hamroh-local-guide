@@ -166,7 +166,40 @@ export function ProfilePanel({ guideId }: { guideId: string }) {
     toast.success(tg("common.saved"));
   };
 
+  const sameArr = (a: string[], b: string[]) => a.length === b.length && a.every((v, i) => v === b[i]);
+  const dirtySkills =
+    !sameArr(languages, initialSkills.languages) ||
+    !sameArr(specialties, initialSkills.specialties) ||
+    hasTransport !== initialSkills.hasTransport ||
+    (transportSeats ?? null) !== (initialSkills.transportSeats ?? null);
+
+  const addChip = (list: string[], value: string, setList: (v: string[]) => void, setInput: (v: string) => void, max = 12) => {
+    const v = value.trim().slice(0, 40);
+    if (!v) return;
+    if (list.length >= max) { toast.error(`Max ${max} items`); return; }
+    if (list.some((x) => x.toLowerCase() === v.toLowerCase())) { setInput(""); return; }
+    setList([...list, v]);
+    setInput("");
+  };
+
+  const saveSkills = async () => {
+    setSavingSkills(true);
+    const patch: Record<string, unknown> = {
+      languages,
+      specialties,
+      has_transport: hasTransport,
+      transport_seats: hasTransport ? (transportSeats && transportSeats > 0 ? transportSeats : null) : null,
+    };
+    const { error } = await supabase.from("guides").update(patch).eq("id", guideId);
+    setSavingSkills(false);
+    if (error) { toast.error(error.message); return; }
+    setInitialSkills({ languages, specialties, hasTransport, transportSeats: patch.transport_seats as number | null });
+    setTransportSeats(patch.transport_seats as number | null);
+    toast.success(tg("common.saved"));
+  };
+
   const effectiveCover = currentCover || photoUrl;
+
 
   return (
     <section className="space-y-8">
