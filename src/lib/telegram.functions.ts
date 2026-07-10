@@ -14,7 +14,24 @@ const telegramLoginSchema = z.object({
   photo_url: z.string().url().optional(),
   auth_date: z.number().int().positive(),
   hash: z.string().min(32),
+  redirect_to: z.string().max(500).optional(),
 });
+
+const ALLOWED_REDIRECT_PREFIXES = [
+  "https://hamrohim.com/",
+  "https://www.hamrohim.com/",
+  "https://hamroh-local-guide.lovable.app/",
+  "hamrohmobile://",
+];
+
+function resolveRedirectTo(candidate: string | undefined | null): string {
+  const fallback = "https://hamrohim.com/login";
+  if (!candidate) return fallback;
+  const trimmed = candidate.trim();
+  if (!trimmed) return fallback;
+  if (ALLOWED_REDIRECT_PREFIXES.some((p) => trimmed.startsWith(p))) return trimmed;
+  return fallback;
+}
 
 type TelegramMe = { username?: string };
 
@@ -88,7 +105,7 @@ export const signInWithTelegram = createServerFn({ method: "POST" })
     const { data: link, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
       type: "magiclink",
       email,
-      options: { redirectTo: "https://hamrohim.com/login" },
+      options: { redirectTo: resolveRedirectTo(data.redirect_to) },
     });
     if (linkError) throw new Error(linkError.message);
 

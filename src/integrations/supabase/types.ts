@@ -2490,6 +2490,7 @@ export type Database = {
           expires_at: string
           nonce: string
           platform: string | null
+          redirect_to: string | null
           telegram_user_id: number | null
         }
         Insert: {
@@ -2500,6 +2501,7 @@ export type Database = {
           expires_at: string
           nonce: string
           platform?: string | null
+          redirect_to?: string | null
           telegram_user_id?: number | null
         }
         Update: {
@@ -2510,6 +2512,7 @@ export type Database = {
           expires_at?: string
           nonce?: string
           platform?: string | null
+          redirect_to?: string | null
           telegram_user_id?: number | null
         }
         Relationships: []
