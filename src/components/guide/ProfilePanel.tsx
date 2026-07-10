@@ -107,6 +107,7 @@ export function ProfilePanel({ guideId }: { guideId: string }) {
       setTaxStatus(((tax as any)?.tax_status ?? "none") as any);
       setTaxId(((tax as any)?.tax_id ?? "") as string);
       setLoading(false);
+      loadIntroVideo();
     })();
     return () => { alive = false; };
   }, [guideId]);
