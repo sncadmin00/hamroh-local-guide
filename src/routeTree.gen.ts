@@ -63,6 +63,7 @@ import { Route as ApiPublicHooksUpdateMyLanguagesRouteImport } from './routes/ap
 import { Route as ApiPublicHooksTelegramSigninStartRouteImport } from './routes/api/public/hooks/telegram-signin-start'
 import { Route as ApiPublicHooksTelegramSigninPollRouteImport } from './routes/api/public/hooks/telegram-signin-poll'
 import { Route as ApiPublicHooksTelegramLinkCodeRouteImport } from './routes/api/public/hooks/telegram-link-code'
+import { Route as ApiPublicHooksSupportContactsRouteImport } from './routes/api/public/hooks/support-contacts'
 import { Route as ApiPublicHooksSuggestCityRouteImport } from './routes/api/public/hooks/suggest-city'
 import { Route as ApiPublicHooksSubmitLicenseRouteImport } from './routes/api/public/hooks/submit-license'
 import { Route as ApiPublicHooksSubmitIntroVideoRouteImport } from './routes/api/public/hooks/submit-intro-video'
@@ -378,6 +379,12 @@ const ApiPublicHooksTelegramLinkCodeRoute =
     path: '/api/public/hooks/telegram-link-code',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksSupportContactsRoute =
+  ApiPublicHooksSupportContactsRouteImport.update({
+    id: '/api/public/hooks/support-contacts',
+    path: '/api/public/hooks/support-contacts',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksSuggestCityRoute =
   ApiPublicHooksSuggestCityRouteImport.update({
     id: '/api/public/hooks/suggest-city',
@@ -659,6 +666,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/submit-intro-video': typeof ApiPublicHooksSubmitIntroVideoRoute
   '/api/public/hooks/submit-license': typeof ApiPublicHooksSubmitLicenseRoute
   '/api/public/hooks/suggest-city': typeof ApiPublicHooksSuggestCityRoute
+  '/api/public/hooks/support-contacts': typeof ApiPublicHooksSupportContactsRoute
   '/api/public/hooks/telegram-link-code': typeof ApiPublicHooksTelegramLinkCodeRoute
   '/api/public/hooks/telegram-signin-poll': typeof ApiPublicHooksTelegramSigninPollRoute
   '/api/public/hooks/telegram-signin-start': typeof ApiPublicHooksTelegramSigninStartRoute
@@ -749,6 +757,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/submit-intro-video': typeof ApiPublicHooksSubmitIntroVideoRoute
   '/api/public/hooks/submit-license': typeof ApiPublicHooksSubmitLicenseRoute
   '/api/public/hooks/suggest-city': typeof ApiPublicHooksSuggestCityRoute
+  '/api/public/hooks/support-contacts': typeof ApiPublicHooksSupportContactsRoute
   '/api/public/hooks/telegram-link-code': typeof ApiPublicHooksTelegramLinkCodeRoute
   '/api/public/hooks/telegram-signin-poll': typeof ApiPublicHooksTelegramSigninPollRoute
   '/api/public/hooks/telegram-signin-start': typeof ApiPublicHooksTelegramSigninStartRoute
@@ -841,6 +850,7 @@ export interface FileRoutesById {
   '/api/public/hooks/submit-intro-video': typeof ApiPublicHooksSubmitIntroVideoRoute
   '/api/public/hooks/submit-license': typeof ApiPublicHooksSubmitLicenseRoute
   '/api/public/hooks/suggest-city': typeof ApiPublicHooksSuggestCityRoute
+  '/api/public/hooks/support-contacts': typeof ApiPublicHooksSupportContactsRoute
   '/api/public/hooks/telegram-link-code': typeof ApiPublicHooksTelegramLinkCodeRoute
   '/api/public/hooks/telegram-signin-poll': typeof ApiPublicHooksTelegramSigninPollRoute
   '/api/public/hooks/telegram-signin-start': typeof ApiPublicHooksTelegramSigninStartRoute
@@ -934,6 +944,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/submit-intro-video'
     | '/api/public/hooks/submit-license'
     | '/api/public/hooks/suggest-city'
+    | '/api/public/hooks/support-contacts'
     | '/api/public/hooks/telegram-link-code'
     | '/api/public/hooks/telegram-signin-poll'
     | '/api/public/hooks/telegram-signin-start'
@@ -1024,6 +1035,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/submit-intro-video'
     | '/api/public/hooks/submit-license'
     | '/api/public/hooks/suggest-city'
+    | '/api/public/hooks/support-contacts'
     | '/api/public/hooks/telegram-link-code'
     | '/api/public/hooks/telegram-signin-poll'
     | '/api/public/hooks/telegram-signin-start'
@@ -1115,6 +1127,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/submit-intro-video'
     | '/api/public/hooks/submit-license'
     | '/api/public/hooks/suggest-city'
+    | '/api/public/hooks/support-contacts'
     | '/api/public/hooks/telegram-link-code'
     | '/api/public/hooks/telegram-signin-poll'
     | '/api/public/hooks/telegram-signin-start'
@@ -1203,6 +1216,7 @@ export interface RootRouteChildren {
   ApiPublicHooksSubmitIntroVideoRoute: typeof ApiPublicHooksSubmitIntroVideoRoute
   ApiPublicHooksSubmitLicenseRoute: typeof ApiPublicHooksSubmitLicenseRoute
   ApiPublicHooksSuggestCityRoute: typeof ApiPublicHooksSuggestCityRoute
+  ApiPublicHooksSupportContactsRoute: typeof ApiPublicHooksSupportContactsRoute
   ApiPublicHooksTelegramLinkCodeRoute: typeof ApiPublicHooksTelegramLinkCodeRoute
   ApiPublicHooksTelegramSigninPollRoute: typeof ApiPublicHooksTelegramSigninPollRoute
   ApiPublicHooksTelegramSigninStartRoute: typeof ApiPublicHooksTelegramSigninStartRoute
@@ -1601,6 +1615,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksTelegramLinkCodeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/support-contacts': {
+      id: '/api/public/hooks/support-contacts'
+      path: '/api/public/hooks/support-contacts'
+      fullPath: '/api/public/hooks/support-contacts'
+      preLoaderRoute: typeof ApiPublicHooksSupportContactsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/suggest-city': {
       id: '/api/public/hooks/suggest-city'
       path: '/api/public/hooks/suggest-city'
@@ -1958,6 +1979,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksSubmitIntroVideoRoute: ApiPublicHooksSubmitIntroVideoRoute,
   ApiPublicHooksSubmitLicenseRoute: ApiPublicHooksSubmitLicenseRoute,
   ApiPublicHooksSuggestCityRoute: ApiPublicHooksSuggestCityRoute,
+  ApiPublicHooksSupportContactsRoute: ApiPublicHooksSupportContactsRoute,
   ApiPublicHooksTelegramLinkCodeRoute: ApiPublicHooksTelegramLinkCodeRoute,
   ApiPublicHooksTelegramSigninPollRoute: ApiPublicHooksTelegramSigninPollRoute,
   ApiPublicHooksTelegramSigninStartRoute:
