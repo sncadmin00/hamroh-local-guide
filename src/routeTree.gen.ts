@@ -76,6 +76,8 @@ import { Route as ApiPublicHooksMyVerificationRouteImport } from './routes/api/p
 import { Route as ApiPublicHooksMyTransactionsRouteImport } from './routes/api/public/hooks/my-transactions'
 import { Route as ApiPublicHooksMyStatementsRouteImport } from './routes/api/public/hooks/my-statements'
 import { Route as ApiPublicHooksMyReportUrlRouteImport } from './routes/api/public/hooks/my-report-url'
+import { Route as ApiPublicHooksMyReferralCodeRouteImport } from './routes/api/public/hooks/my-referral-code'
+import { Route as ApiPublicHooksMyPromoCodesRouteImport } from './routes/api/public/hooks/my-promo-codes'
 import { Route as ApiPublicHooksMyPayoutsRouteImport } from './routes/api/public/hooks/my-payouts'
 import { Route as ApiPublicHooksMyPayoutDetailsRouteImport } from './routes/api/public/hooks/my-payout-details'
 import { Route as ApiPublicHooksMyNotificationEmailRouteImport } from './routes/api/public/hooks/my-notification-email'
@@ -83,6 +85,7 @@ import { Route as ApiPublicHooksMyInvoiceUrlRouteImport } from './routes/api/pub
 import { Route as ApiPublicHooksMyGuidePostsRouteImport } from './routes/api/public/hooks/my-guide-posts'
 import { Route as ApiPublicHooksMyGuidePostSignedUrlsRouteImport } from './routes/api/public/hooks/my-guide-post-signed-urls'
 import { Route as ApiPublicHooksMyEarningsSummaryRouteImport } from './routes/api/public/hooks/my-earnings-summary'
+import { Route as ApiPublicHooksLocalEventsRouteImport } from './routes/api/public/hooks/local-events'
 import { Route as ApiPublicHooksGuideReelsRouteImport } from './routes/api/public/hooks/guide-reels'
 import { Route as ApiPublicHooksGuideAiRouteImport } from './routes/api/public/hooks/guide-ai'
 import { Route as ApiPublicHooksGoogleOauthCallbackRouteImport } from './routes/api/public/hooks/google-oauth-callback'
@@ -90,6 +93,7 @@ import { Route as ApiPublicHooksGenerateTourDescriptionRouteImport } from './rou
 import { Route as ApiPublicHooksGenerateStatementsRouteImport } from './routes/api/public/hooks/generate-statements'
 import { Route as ApiPublicHooksFeaturedReelsRouteImport } from './routes/api/public/hooks/featured-reels'
 import { Route as ApiPublicHooksExpireBookingsRouteImport } from './routes/api/public/hooks/expire-bookings'
+import { Route as ApiPublicHooksEmergencyContactsRouteImport } from './routes/api/public/hooks/emergency-contacts'
 import { Route as ApiPublicHooksDailyBriefRouteImport } from './routes/api/public/hooks/daily-brief'
 import { Route as ApiPublicHooksCreateBookingRouteImport } from './routes/api/public/hooks/create-booking'
 import { Route as ApiPublicHooksClientAiRouteImport } from './routes/api/public/hooks/client-ai'
@@ -97,6 +101,7 @@ import { Route as ApiPublicHooksChatNotificationsRouteImport } from './routes/ap
 import { Route as ApiPublicHooksCalendarRemindersRouteImport } from './routes/api/public/hooks/calendar-reminders'
 import { Route as ApiPublicHooksBookingReviewsRouteImport } from './routes/api/public/hooks/booking-reviews'
 import { Route as ApiPublicHooksBookingRemindersRouteImport } from './routes/api/public/hooks/booking-reminders'
+import { Route as ApiPublicHooksApplyReferralRouteImport } from './routes/api/public/hooks/apply-referral'
 import { Route as ApiPublicToursTourIdSlotsRouteImport } from './routes/api/public/tours/$tourId/slots'
 import { Route as ApiPublicHooksPayoutStepUpVerifyRouteImport } from './routes/api/public/hooks/payout-step-up/verify'
 import { Route as ApiPublicHooksPayoutStepUpStartRouteImport } from './routes/api/public/hooks/payout-step-up/start'
@@ -462,6 +467,18 @@ const ApiPublicHooksMyReportUrlRoute =
     path: '/api/public/hooks/my-report-url',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksMyReferralCodeRoute =
+  ApiPublicHooksMyReferralCodeRouteImport.update({
+    id: '/api/public/hooks/my-referral-code',
+    path: '/api/public/hooks/my-referral-code',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksMyPromoCodesRoute =
+  ApiPublicHooksMyPromoCodesRouteImport.update({
+    id: '/api/public/hooks/my-promo-codes',
+    path: '/api/public/hooks/my-promo-codes',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksMyPayoutsRoute = ApiPublicHooksMyPayoutsRouteImport.update({
   id: '/api/public/hooks/my-payouts',
   path: '/api/public/hooks/my-payouts',
@@ -501,6 +518,12 @@ const ApiPublicHooksMyEarningsSummaryRoute =
   ApiPublicHooksMyEarningsSummaryRouteImport.update({
     id: '/api/public/hooks/my-earnings-summary',
     path: '/api/public/hooks/my-earnings-summary',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksLocalEventsRoute =
+  ApiPublicHooksLocalEventsRouteImport.update({
+    id: '/api/public/hooks/local-events',
+    path: '/api/public/hooks/local-events',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicHooksGuideReelsRoute =
@@ -544,6 +567,12 @@ const ApiPublicHooksExpireBookingsRoute =
     path: '/api/public/hooks/expire-bookings',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksEmergencyContactsRoute =
+  ApiPublicHooksEmergencyContactsRouteImport.update({
+    id: '/api/public/hooks/emergency-contacts',
+    path: '/api/public/hooks/emergency-contacts',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksDailyBriefRoute =
   ApiPublicHooksDailyBriefRouteImport.update({
     id: '/api/public/hooks/daily-brief',
@@ -583,6 +612,12 @@ const ApiPublicHooksBookingRemindersRoute =
   ApiPublicHooksBookingRemindersRouteImport.update({
     id: '/api/public/hooks/booking-reminders',
     path: '/api/public/hooks/booking-reminders',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksApplyReferralRoute =
+  ApiPublicHooksApplyReferralRouteImport.update({
+    id: '/api/public/hooks/apply-referral',
+    path: '/api/public/hooks/apply-referral',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicToursTourIdSlotsRoute =
@@ -671,6 +706,7 @@ export interface FileRoutesByFullPath {
   '/api/earnings/report': typeof ApiEarningsReportRoute
   '/api/public/site-languages': typeof ApiPublicSiteLanguagesRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/api/public/hooks/apply-referral': typeof ApiPublicHooksApplyReferralRoute
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
   '/api/public/hooks/booking-reviews': typeof ApiPublicHooksBookingReviewsRoute
   '/api/public/hooks/calendar-reminders': typeof ApiPublicHooksCalendarRemindersRoute
@@ -678,6 +714,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/client-ai': typeof ApiPublicHooksClientAiRoute
   '/api/public/hooks/create-booking': typeof ApiPublicHooksCreateBookingRoute
   '/api/public/hooks/daily-brief': typeof ApiPublicHooksDailyBriefRoute
+  '/api/public/hooks/emergency-contacts': typeof ApiPublicHooksEmergencyContactsRoute
   '/api/public/hooks/expire-bookings': typeof ApiPublicHooksExpireBookingsRoute
   '/api/public/hooks/featured-reels': typeof ApiPublicHooksFeaturedReelsRoute
   '/api/public/hooks/generate-statements': typeof ApiPublicHooksGenerateStatementsRoute
@@ -685,6 +722,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/google-oauth-callback': typeof ApiPublicHooksGoogleOauthCallbackRoute
   '/api/public/hooks/guide-ai': typeof ApiPublicHooksGuideAiRoute
   '/api/public/hooks/guide-reels': typeof ApiPublicHooksGuideReelsRoute
+  '/api/public/hooks/local-events': typeof ApiPublicHooksLocalEventsRoute
   '/api/public/hooks/my-earnings-summary': typeof ApiPublicHooksMyEarningsSummaryRoute
   '/api/public/hooks/my-guide-post-signed-urls': typeof ApiPublicHooksMyGuidePostSignedUrlsRoute
   '/api/public/hooks/my-guide-posts': typeof ApiPublicHooksMyGuidePostsRoute
@@ -692,6 +730,8 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/my-notification-email': typeof ApiPublicHooksMyNotificationEmailRoute
   '/api/public/hooks/my-payout-details': typeof ApiPublicHooksMyPayoutDetailsRoute
   '/api/public/hooks/my-payouts': typeof ApiPublicHooksMyPayoutsRoute
+  '/api/public/hooks/my-promo-codes': typeof ApiPublicHooksMyPromoCodesRoute
+  '/api/public/hooks/my-referral-code': typeof ApiPublicHooksMyReferralCodeRoute
   '/api/public/hooks/my-report-url': typeof ApiPublicHooksMyReportUrlRoute
   '/api/public/hooks/my-statements': typeof ApiPublicHooksMyStatementsRoute
   '/api/public/hooks/my-transactions': typeof ApiPublicHooksMyTransactionsRoute
@@ -767,6 +807,7 @@ export interface FileRoutesByTo {
   '/api/earnings/report': typeof ApiEarningsReportRoute
   '/api/public/site-languages': typeof ApiPublicSiteLanguagesRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/api/public/hooks/apply-referral': typeof ApiPublicHooksApplyReferralRoute
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
   '/api/public/hooks/booking-reviews': typeof ApiPublicHooksBookingReviewsRoute
   '/api/public/hooks/calendar-reminders': typeof ApiPublicHooksCalendarRemindersRoute
@@ -774,6 +815,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/client-ai': typeof ApiPublicHooksClientAiRoute
   '/api/public/hooks/create-booking': typeof ApiPublicHooksCreateBookingRoute
   '/api/public/hooks/daily-brief': typeof ApiPublicHooksDailyBriefRoute
+  '/api/public/hooks/emergency-contacts': typeof ApiPublicHooksEmergencyContactsRoute
   '/api/public/hooks/expire-bookings': typeof ApiPublicHooksExpireBookingsRoute
   '/api/public/hooks/featured-reels': typeof ApiPublicHooksFeaturedReelsRoute
   '/api/public/hooks/generate-statements': typeof ApiPublicHooksGenerateStatementsRoute
@@ -781,6 +823,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/google-oauth-callback': typeof ApiPublicHooksGoogleOauthCallbackRoute
   '/api/public/hooks/guide-ai': typeof ApiPublicHooksGuideAiRoute
   '/api/public/hooks/guide-reels': typeof ApiPublicHooksGuideReelsRoute
+  '/api/public/hooks/local-events': typeof ApiPublicHooksLocalEventsRoute
   '/api/public/hooks/my-earnings-summary': typeof ApiPublicHooksMyEarningsSummaryRoute
   '/api/public/hooks/my-guide-post-signed-urls': typeof ApiPublicHooksMyGuidePostSignedUrlsRoute
   '/api/public/hooks/my-guide-posts': typeof ApiPublicHooksMyGuidePostsRoute
@@ -788,6 +831,8 @@ export interface FileRoutesByTo {
   '/api/public/hooks/my-notification-email': typeof ApiPublicHooksMyNotificationEmailRoute
   '/api/public/hooks/my-payout-details': typeof ApiPublicHooksMyPayoutDetailsRoute
   '/api/public/hooks/my-payouts': typeof ApiPublicHooksMyPayoutsRoute
+  '/api/public/hooks/my-promo-codes': typeof ApiPublicHooksMyPromoCodesRoute
+  '/api/public/hooks/my-referral-code': typeof ApiPublicHooksMyReferralCodeRoute
   '/api/public/hooks/my-report-url': typeof ApiPublicHooksMyReportUrlRoute
   '/api/public/hooks/my-statements': typeof ApiPublicHooksMyStatementsRoute
   '/api/public/hooks/my-transactions': typeof ApiPublicHooksMyTransactionsRoute
@@ -865,6 +910,7 @@ export interface FileRoutesById {
   '/api/earnings/report': typeof ApiEarningsReportRoute
   '/api/public/site-languages': typeof ApiPublicSiteLanguagesRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/api/public/hooks/apply-referral': typeof ApiPublicHooksApplyReferralRoute
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
   '/api/public/hooks/booking-reviews': typeof ApiPublicHooksBookingReviewsRoute
   '/api/public/hooks/calendar-reminders': typeof ApiPublicHooksCalendarRemindersRoute
@@ -872,6 +918,7 @@ export interface FileRoutesById {
   '/api/public/hooks/client-ai': typeof ApiPublicHooksClientAiRoute
   '/api/public/hooks/create-booking': typeof ApiPublicHooksCreateBookingRoute
   '/api/public/hooks/daily-brief': typeof ApiPublicHooksDailyBriefRoute
+  '/api/public/hooks/emergency-contacts': typeof ApiPublicHooksEmergencyContactsRoute
   '/api/public/hooks/expire-bookings': typeof ApiPublicHooksExpireBookingsRoute
   '/api/public/hooks/featured-reels': typeof ApiPublicHooksFeaturedReelsRoute
   '/api/public/hooks/generate-statements': typeof ApiPublicHooksGenerateStatementsRoute
@@ -879,6 +926,7 @@ export interface FileRoutesById {
   '/api/public/hooks/google-oauth-callback': typeof ApiPublicHooksGoogleOauthCallbackRoute
   '/api/public/hooks/guide-ai': typeof ApiPublicHooksGuideAiRoute
   '/api/public/hooks/guide-reels': typeof ApiPublicHooksGuideReelsRoute
+  '/api/public/hooks/local-events': typeof ApiPublicHooksLocalEventsRoute
   '/api/public/hooks/my-earnings-summary': typeof ApiPublicHooksMyEarningsSummaryRoute
   '/api/public/hooks/my-guide-post-signed-urls': typeof ApiPublicHooksMyGuidePostSignedUrlsRoute
   '/api/public/hooks/my-guide-posts': typeof ApiPublicHooksMyGuidePostsRoute
@@ -886,6 +934,8 @@ export interface FileRoutesById {
   '/api/public/hooks/my-notification-email': typeof ApiPublicHooksMyNotificationEmailRoute
   '/api/public/hooks/my-payout-details': typeof ApiPublicHooksMyPayoutDetailsRoute
   '/api/public/hooks/my-payouts': typeof ApiPublicHooksMyPayoutsRoute
+  '/api/public/hooks/my-promo-codes': typeof ApiPublicHooksMyPromoCodesRoute
+  '/api/public/hooks/my-referral-code': typeof ApiPublicHooksMyReferralCodeRoute
   '/api/public/hooks/my-report-url': typeof ApiPublicHooksMyReportUrlRoute
   '/api/public/hooks/my-statements': typeof ApiPublicHooksMyStatementsRoute
   '/api/public/hooks/my-transactions': typeof ApiPublicHooksMyTransactionsRoute
@@ -964,6 +1014,7 @@ export interface FileRouteTypes {
     | '/api/earnings/report'
     | '/api/public/site-languages'
     | '/lovable/email/suppression'
+    | '/api/public/hooks/apply-referral'
     | '/api/public/hooks/booking-reminders'
     | '/api/public/hooks/booking-reviews'
     | '/api/public/hooks/calendar-reminders'
@@ -971,6 +1022,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/client-ai'
     | '/api/public/hooks/create-booking'
     | '/api/public/hooks/daily-brief'
+    | '/api/public/hooks/emergency-contacts'
     | '/api/public/hooks/expire-bookings'
     | '/api/public/hooks/featured-reels'
     | '/api/public/hooks/generate-statements'
@@ -978,6 +1030,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/google-oauth-callback'
     | '/api/public/hooks/guide-ai'
     | '/api/public/hooks/guide-reels'
+    | '/api/public/hooks/local-events'
     | '/api/public/hooks/my-earnings-summary'
     | '/api/public/hooks/my-guide-post-signed-urls'
     | '/api/public/hooks/my-guide-posts'
@@ -985,6 +1038,8 @@ export interface FileRouteTypes {
     | '/api/public/hooks/my-notification-email'
     | '/api/public/hooks/my-payout-details'
     | '/api/public/hooks/my-payouts'
+    | '/api/public/hooks/my-promo-codes'
+    | '/api/public/hooks/my-referral-code'
     | '/api/public/hooks/my-report-url'
     | '/api/public/hooks/my-statements'
     | '/api/public/hooks/my-transactions'
@@ -1060,6 +1115,7 @@ export interface FileRouteTypes {
     | '/api/earnings/report'
     | '/api/public/site-languages'
     | '/lovable/email/suppression'
+    | '/api/public/hooks/apply-referral'
     | '/api/public/hooks/booking-reminders'
     | '/api/public/hooks/booking-reviews'
     | '/api/public/hooks/calendar-reminders'
@@ -1067,6 +1123,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/client-ai'
     | '/api/public/hooks/create-booking'
     | '/api/public/hooks/daily-brief'
+    | '/api/public/hooks/emergency-contacts'
     | '/api/public/hooks/expire-bookings'
     | '/api/public/hooks/featured-reels'
     | '/api/public/hooks/generate-statements'
@@ -1074,6 +1131,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/google-oauth-callback'
     | '/api/public/hooks/guide-ai'
     | '/api/public/hooks/guide-reels'
+    | '/api/public/hooks/local-events'
     | '/api/public/hooks/my-earnings-summary'
     | '/api/public/hooks/my-guide-post-signed-urls'
     | '/api/public/hooks/my-guide-posts'
@@ -1081,6 +1139,8 @@ export interface FileRouteTypes {
     | '/api/public/hooks/my-notification-email'
     | '/api/public/hooks/my-payout-details'
     | '/api/public/hooks/my-payouts'
+    | '/api/public/hooks/my-promo-codes'
+    | '/api/public/hooks/my-referral-code'
     | '/api/public/hooks/my-report-url'
     | '/api/public/hooks/my-statements'
     | '/api/public/hooks/my-transactions'
@@ -1157,6 +1217,7 @@ export interface FileRouteTypes {
     | '/api/earnings/report'
     | '/api/public/site-languages'
     | '/lovable/email/suppression'
+    | '/api/public/hooks/apply-referral'
     | '/api/public/hooks/booking-reminders'
     | '/api/public/hooks/booking-reviews'
     | '/api/public/hooks/calendar-reminders'
@@ -1164,6 +1225,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/client-ai'
     | '/api/public/hooks/create-booking'
     | '/api/public/hooks/daily-brief'
+    | '/api/public/hooks/emergency-contacts'
     | '/api/public/hooks/expire-bookings'
     | '/api/public/hooks/featured-reels'
     | '/api/public/hooks/generate-statements'
@@ -1171,6 +1233,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/google-oauth-callback'
     | '/api/public/hooks/guide-ai'
     | '/api/public/hooks/guide-reels'
+    | '/api/public/hooks/local-events'
     | '/api/public/hooks/my-earnings-summary'
     | '/api/public/hooks/my-guide-post-signed-urls'
     | '/api/public/hooks/my-guide-posts'
@@ -1178,6 +1241,8 @@ export interface FileRouteTypes {
     | '/api/public/hooks/my-notification-email'
     | '/api/public/hooks/my-payout-details'
     | '/api/public/hooks/my-payouts'
+    | '/api/public/hooks/my-promo-codes'
+    | '/api/public/hooks/my-referral-code'
     | '/api/public/hooks/my-report-url'
     | '/api/public/hooks/my-statements'
     | '/api/public/hooks/my-transactions'
@@ -1251,6 +1316,7 @@ export interface RootRouteChildren {
   ApiEarningsReportRoute: typeof ApiEarningsReportRoute
   ApiPublicSiteLanguagesRoute: typeof ApiPublicSiteLanguagesRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
+  ApiPublicHooksApplyReferralRoute: typeof ApiPublicHooksApplyReferralRoute
   ApiPublicHooksBookingRemindersRoute: typeof ApiPublicHooksBookingRemindersRoute
   ApiPublicHooksBookingReviewsRoute: typeof ApiPublicHooksBookingReviewsRoute
   ApiPublicHooksCalendarRemindersRoute: typeof ApiPublicHooksCalendarRemindersRoute
@@ -1258,6 +1324,7 @@ export interface RootRouteChildren {
   ApiPublicHooksClientAiRoute: typeof ApiPublicHooksClientAiRoute
   ApiPublicHooksCreateBookingRoute: typeof ApiPublicHooksCreateBookingRoute
   ApiPublicHooksDailyBriefRoute: typeof ApiPublicHooksDailyBriefRoute
+  ApiPublicHooksEmergencyContactsRoute: typeof ApiPublicHooksEmergencyContactsRoute
   ApiPublicHooksExpireBookingsRoute: typeof ApiPublicHooksExpireBookingsRoute
   ApiPublicHooksFeaturedReelsRoute: typeof ApiPublicHooksFeaturedReelsRoute
   ApiPublicHooksGenerateStatementsRoute: typeof ApiPublicHooksGenerateStatementsRoute
@@ -1265,6 +1332,7 @@ export interface RootRouteChildren {
   ApiPublicHooksGoogleOauthCallbackRoute: typeof ApiPublicHooksGoogleOauthCallbackRoute
   ApiPublicHooksGuideAiRoute: typeof ApiPublicHooksGuideAiRoute
   ApiPublicHooksGuideReelsRoute: typeof ApiPublicHooksGuideReelsRoute
+  ApiPublicHooksLocalEventsRoute: typeof ApiPublicHooksLocalEventsRoute
   ApiPublicHooksMyEarningsSummaryRoute: typeof ApiPublicHooksMyEarningsSummaryRoute
   ApiPublicHooksMyGuidePostSignedUrlsRoute: typeof ApiPublicHooksMyGuidePostSignedUrlsRoute
   ApiPublicHooksMyGuidePostsRoute: typeof ApiPublicHooksMyGuidePostsRoute
@@ -1272,6 +1340,8 @@ export interface RootRouteChildren {
   ApiPublicHooksMyNotificationEmailRoute: typeof ApiPublicHooksMyNotificationEmailRoute
   ApiPublicHooksMyPayoutDetailsRoute: typeof ApiPublicHooksMyPayoutDetailsRoute
   ApiPublicHooksMyPayoutsRoute: typeof ApiPublicHooksMyPayoutsRoute
+  ApiPublicHooksMyPromoCodesRoute: typeof ApiPublicHooksMyPromoCodesRoute
+  ApiPublicHooksMyReferralCodeRoute: typeof ApiPublicHooksMyReferralCodeRoute
   ApiPublicHooksMyReportUrlRoute: typeof ApiPublicHooksMyReportUrlRoute
   ApiPublicHooksMyStatementsRoute: typeof ApiPublicHooksMyStatementsRoute
   ApiPublicHooksMyTransactionsRoute: typeof ApiPublicHooksMyTransactionsRoute
@@ -1776,6 +1846,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksMyReportUrlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/my-referral-code': {
+      id: '/api/public/hooks/my-referral-code'
+      path: '/api/public/hooks/my-referral-code'
+      fullPath: '/api/public/hooks/my-referral-code'
+      preLoaderRoute: typeof ApiPublicHooksMyReferralCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/my-promo-codes': {
+      id: '/api/public/hooks/my-promo-codes'
+      path: '/api/public/hooks/my-promo-codes'
+      fullPath: '/api/public/hooks/my-promo-codes'
+      preLoaderRoute: typeof ApiPublicHooksMyPromoCodesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/my-payouts': {
       id: '/api/public/hooks/my-payouts'
       path: '/api/public/hooks/my-payouts'
@@ -1823,6 +1907,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/hooks/my-earnings-summary'
       fullPath: '/api/public/hooks/my-earnings-summary'
       preLoaderRoute: typeof ApiPublicHooksMyEarningsSummaryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/local-events': {
+      id: '/api/public/hooks/local-events'
+      path: '/api/public/hooks/local-events'
+      fullPath: '/api/public/hooks/local-events'
+      preLoaderRoute: typeof ApiPublicHooksLocalEventsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/guide-reels': {
@@ -1874,6 +1965,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksExpireBookingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/emergency-contacts': {
+      id: '/api/public/hooks/emergency-contacts'
+      path: '/api/public/hooks/emergency-contacts'
+      fullPath: '/api/public/hooks/emergency-contacts'
+      preLoaderRoute: typeof ApiPublicHooksEmergencyContactsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/daily-brief': {
       id: '/api/public/hooks/daily-brief'
       path: '/api/public/hooks/daily-brief'
@@ -1921,6 +2019,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/hooks/booking-reminders'
       fullPath: '/api/public/hooks/booking-reminders'
       preLoaderRoute: typeof ApiPublicHooksBookingRemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/apply-referral': {
+      id: '/api/public/hooks/apply-referral'
+      path: '/api/public/hooks/apply-referral'
+      fullPath: '/api/public/hooks/apply-referral'
+      preLoaderRoute: typeof ApiPublicHooksApplyReferralRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/tours/$tourId/slots': {
@@ -2050,6 +2155,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiEarningsReportRoute: ApiEarningsReportRoute,
   ApiPublicSiteLanguagesRoute: ApiPublicSiteLanguagesRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
+  ApiPublicHooksApplyReferralRoute: ApiPublicHooksApplyReferralRoute,
   ApiPublicHooksBookingRemindersRoute: ApiPublicHooksBookingRemindersRoute,
   ApiPublicHooksBookingReviewsRoute: ApiPublicHooksBookingReviewsRoute,
   ApiPublicHooksCalendarRemindersRoute: ApiPublicHooksCalendarRemindersRoute,
@@ -2057,6 +2163,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksClientAiRoute: ApiPublicHooksClientAiRoute,
   ApiPublicHooksCreateBookingRoute: ApiPublicHooksCreateBookingRoute,
   ApiPublicHooksDailyBriefRoute: ApiPublicHooksDailyBriefRoute,
+  ApiPublicHooksEmergencyContactsRoute: ApiPublicHooksEmergencyContactsRoute,
   ApiPublicHooksExpireBookingsRoute: ApiPublicHooksExpireBookingsRoute,
   ApiPublicHooksFeaturedReelsRoute: ApiPublicHooksFeaturedReelsRoute,
   ApiPublicHooksGenerateStatementsRoute: ApiPublicHooksGenerateStatementsRoute,
@@ -2066,6 +2173,7 @@ const rootRouteChildren: RootRouteChildren = {
     ApiPublicHooksGoogleOauthCallbackRoute,
   ApiPublicHooksGuideAiRoute: ApiPublicHooksGuideAiRoute,
   ApiPublicHooksGuideReelsRoute: ApiPublicHooksGuideReelsRoute,
+  ApiPublicHooksLocalEventsRoute: ApiPublicHooksLocalEventsRoute,
   ApiPublicHooksMyEarningsSummaryRoute: ApiPublicHooksMyEarningsSummaryRoute,
   ApiPublicHooksMyGuidePostSignedUrlsRoute:
     ApiPublicHooksMyGuidePostSignedUrlsRoute,
@@ -2075,6 +2183,8 @@ const rootRouteChildren: RootRouteChildren = {
     ApiPublicHooksMyNotificationEmailRoute,
   ApiPublicHooksMyPayoutDetailsRoute: ApiPublicHooksMyPayoutDetailsRoute,
   ApiPublicHooksMyPayoutsRoute: ApiPublicHooksMyPayoutsRoute,
+  ApiPublicHooksMyPromoCodesRoute: ApiPublicHooksMyPromoCodesRoute,
+  ApiPublicHooksMyReferralCodeRoute: ApiPublicHooksMyReferralCodeRoute,
   ApiPublicHooksMyReportUrlRoute: ApiPublicHooksMyReportUrlRoute,
   ApiPublicHooksMyStatementsRoute: ApiPublicHooksMyStatementsRoute,
   ApiPublicHooksMyTransactionsRoute: ApiPublicHooksMyTransactionsRoute,
