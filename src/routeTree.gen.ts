@@ -67,6 +67,7 @@ import { Route as ApiPublicHooksMyTransactionsRouteImport } from './routes/api/p
 import { Route as ApiPublicHooksMyStatementsRouteImport } from './routes/api/public/hooks/my-statements'
 import { Route as ApiPublicHooksMyPayoutsRouteImport } from './routes/api/public/hooks/my-payouts'
 import { Route as ApiPublicHooksMyNotificationEmailRouteImport } from './routes/api/public/hooks/my-notification-email'
+import { Route as ApiPublicHooksMyGuidePostsRouteImport } from './routes/api/public/hooks/my-guide-posts'
 import { Route as ApiPublicHooksMyEarningsSummaryRouteImport } from './routes/api/public/hooks/my-earnings-summary'
 import { Route as ApiPublicHooksGuideReelsRouteImport } from './routes/api/public/hooks/guide-reels'
 import { Route as ApiPublicHooksGuideAiRouteImport } from './routes/api/public/hooks/guide-ai'
@@ -389,6 +390,12 @@ const ApiPublicHooksMyNotificationEmailRoute =
     path: '/api/public/hooks/my-notification-email',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksMyGuidePostsRoute =
+  ApiPublicHooksMyGuidePostsRouteImport.update({
+    id: '/api/public/hooks/my-guide-posts',
+    path: '/api/public/hooks/my-guide-posts',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksMyEarningsSummaryRoute =
   ApiPublicHooksMyEarningsSummaryRouteImport.update({
     id: '/api/public/hooks/my-earnings-summary',
@@ -560,6 +567,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/guide-ai': typeof ApiPublicHooksGuideAiRoute
   '/api/public/hooks/guide-reels': typeof ApiPublicHooksGuideReelsRoute
   '/api/public/hooks/my-earnings-summary': typeof ApiPublicHooksMyEarningsSummaryRoute
+  '/api/public/hooks/my-guide-posts': typeof ApiPublicHooksMyGuidePostsRoute
   '/api/public/hooks/my-notification-email': typeof ApiPublicHooksMyNotificationEmailRoute
   '/api/public/hooks/my-payouts': typeof ApiPublicHooksMyPayoutsRoute
   '/api/public/hooks/my-statements': typeof ApiPublicHooksMyStatementsRoute
@@ -638,6 +646,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/guide-ai': typeof ApiPublicHooksGuideAiRoute
   '/api/public/hooks/guide-reels': typeof ApiPublicHooksGuideReelsRoute
   '/api/public/hooks/my-earnings-summary': typeof ApiPublicHooksMyEarningsSummaryRoute
+  '/api/public/hooks/my-guide-posts': typeof ApiPublicHooksMyGuidePostsRoute
   '/api/public/hooks/my-notification-email': typeof ApiPublicHooksMyNotificationEmailRoute
   '/api/public/hooks/my-payouts': typeof ApiPublicHooksMyPayoutsRoute
   '/api/public/hooks/my-statements': typeof ApiPublicHooksMyStatementsRoute
@@ -718,6 +727,7 @@ export interface FileRoutesById {
   '/api/public/hooks/guide-ai': typeof ApiPublicHooksGuideAiRoute
   '/api/public/hooks/guide-reels': typeof ApiPublicHooksGuideReelsRoute
   '/api/public/hooks/my-earnings-summary': typeof ApiPublicHooksMyEarningsSummaryRoute
+  '/api/public/hooks/my-guide-posts': typeof ApiPublicHooksMyGuidePostsRoute
   '/api/public/hooks/my-notification-email': typeof ApiPublicHooksMyNotificationEmailRoute
   '/api/public/hooks/my-payouts': typeof ApiPublicHooksMyPayoutsRoute
   '/api/public/hooks/my-statements': typeof ApiPublicHooksMyStatementsRoute
@@ -799,6 +809,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/guide-ai'
     | '/api/public/hooks/guide-reels'
     | '/api/public/hooks/my-earnings-summary'
+    | '/api/public/hooks/my-guide-posts'
     | '/api/public/hooks/my-notification-email'
     | '/api/public/hooks/my-payouts'
     | '/api/public/hooks/my-statements'
@@ -877,6 +888,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/guide-ai'
     | '/api/public/hooks/guide-reels'
     | '/api/public/hooks/my-earnings-summary'
+    | '/api/public/hooks/my-guide-posts'
     | '/api/public/hooks/my-notification-email'
     | '/api/public/hooks/my-payouts'
     | '/api/public/hooks/my-statements'
@@ -956,6 +968,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/guide-ai'
     | '/api/public/hooks/guide-reels'
     | '/api/public/hooks/my-earnings-summary'
+    | '/api/public/hooks/my-guide-posts'
     | '/api/public/hooks/my-notification-email'
     | '/api/public/hooks/my-payouts'
     | '/api/public/hooks/my-statements'
@@ -1032,6 +1045,7 @@ export interface RootRouteChildren {
   ApiPublicHooksGuideAiRoute: typeof ApiPublicHooksGuideAiRoute
   ApiPublicHooksGuideReelsRoute: typeof ApiPublicHooksGuideReelsRoute
   ApiPublicHooksMyEarningsSummaryRoute: typeof ApiPublicHooksMyEarningsSummaryRoute
+  ApiPublicHooksMyGuidePostsRoute: typeof ApiPublicHooksMyGuidePostsRoute
   ApiPublicHooksMyNotificationEmailRoute: typeof ApiPublicHooksMyNotificationEmailRoute
   ApiPublicHooksMyPayoutsRoute: typeof ApiPublicHooksMyPayoutsRoute
   ApiPublicHooksMyStatementsRoute: typeof ApiPublicHooksMyStatementsRoute
@@ -1461,6 +1475,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksMyNotificationEmailRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/my-guide-posts': {
+      id: '/api/public/hooks/my-guide-posts'
+      path: '/api/public/hooks/my-guide-posts'
+      fullPath: '/api/public/hooks/my-guide-posts'
+      preLoaderRoute: typeof ApiPublicHooksMyGuidePostsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/my-earnings-summary': {
       id: '/api/public/hooks/my-earnings-summary'
       path: '/api/public/hooks/my-earnings-summary'
@@ -1689,6 +1710,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksGuideAiRoute: ApiPublicHooksGuideAiRoute,
   ApiPublicHooksGuideReelsRoute: ApiPublicHooksGuideReelsRoute,
   ApiPublicHooksMyEarningsSummaryRoute: ApiPublicHooksMyEarningsSummaryRoute,
+  ApiPublicHooksMyGuidePostsRoute: ApiPublicHooksMyGuidePostsRoute,
   ApiPublicHooksMyNotificationEmailRoute:
     ApiPublicHooksMyNotificationEmailRoute,
   ApiPublicHooksMyPayoutsRoute: ApiPublicHooksMyPayoutsRoute,
