@@ -1,0 +1,1 @@
+ALTER TABLE public.telegram_signin_nonces ADD COLUMN IF NOT EXISTS redirect_to text;
