@@ -95,6 +95,7 @@ import { Route as ApiPublicHooksCalendarRemindersRouteImport } from './routes/ap
 import { Route as ApiPublicHooksBookingReviewsRouteImport } from './routes/api/public/hooks/booking-reviews'
 import { Route as ApiPublicHooksBookingRemindersRouteImport } from './routes/api/public/hooks/booking-reminders'
 import { Route as ApiPublicToursTourIdSlotsRouteImport } from './routes/api/public/tours/$tourId/slots'
+import { Route as ApiPublicHooksPayoutStepUpVerifyRouteImport } from './routes/api/public/hooks/payout-step-up/verify'
 import { Route as ApiPublicHooksPayoutStepUpStartRouteImport } from './routes/api/public/hooks/payout-step-up/start'
 import { Route as ApiPublicHooksNotificationsPushRouteImport } from './routes/api/public/hooks/notifications/push'
 import { Route as ApiPublicGuidesGuideIdSlotsRouteImport } from './routes/api/public/guides/$guideId/slots'
@@ -569,6 +570,12 @@ const ApiPublicToursTourIdSlotsRoute =
     path: '/api/public/tours/$tourId/slots',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksPayoutStepUpVerifyRoute =
+  ApiPublicHooksPayoutStepUpVerifyRouteImport.update({
+    id: '/api/public/hooks/payout-step-up/verify',
+    path: '/api/public/hooks/payout-step-up/verify',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksPayoutStepUpStartRoute =
   ApiPublicHooksPayoutStepUpStartRouteImport.update({
     id: '/api/public/hooks/payout-step-up/start',
@@ -690,6 +697,7 @@ export interface FileRoutesByFullPath {
   '/api/public/guides/$guideId/slots': typeof ApiPublicGuidesGuideIdSlotsRoute
   '/api/public/hooks/notifications/push': typeof ApiPublicHooksNotificationsPushRoute
   '/api/public/hooks/payout-step-up/start': typeof ApiPublicHooksPayoutStepUpStartRoute
+  '/api/public/hooks/payout-step-up/verify': typeof ApiPublicHooksPayoutStepUpVerifyRoute
   '/api/public/tours/$tourId/slots': typeof ApiPublicToursTourIdSlotsRoute
 }
 export interface FileRoutesByTo {
@@ -782,6 +790,7 @@ export interface FileRoutesByTo {
   '/api/public/guides/$guideId/slots': typeof ApiPublicGuidesGuideIdSlotsRoute
   '/api/public/hooks/notifications/push': typeof ApiPublicHooksNotificationsPushRoute
   '/api/public/hooks/payout-step-up/start': typeof ApiPublicHooksPayoutStepUpStartRoute
+  '/api/public/hooks/payout-step-up/verify': typeof ApiPublicHooksPayoutStepUpVerifyRoute
   '/api/public/tours/$tourId/slots': typeof ApiPublicToursTourIdSlotsRoute
 }
 export interface FileRoutesById {
@@ -876,6 +885,7 @@ export interface FileRoutesById {
   '/api/public/guides/$guideId/slots': typeof ApiPublicGuidesGuideIdSlotsRoute
   '/api/public/hooks/notifications/push': typeof ApiPublicHooksNotificationsPushRoute
   '/api/public/hooks/payout-step-up/start': typeof ApiPublicHooksPayoutStepUpStartRoute
+  '/api/public/hooks/payout-step-up/verify': typeof ApiPublicHooksPayoutStepUpVerifyRoute
   '/api/public/tours/$tourId/slots': typeof ApiPublicToursTourIdSlotsRoute
 }
 export interface FileRouteTypes {
@@ -971,6 +981,7 @@ export interface FileRouteTypes {
     | '/api/public/guides/$guideId/slots'
     | '/api/public/hooks/notifications/push'
     | '/api/public/hooks/payout-step-up/start'
+    | '/api/public/hooks/payout-step-up/verify'
     | '/api/public/tours/$tourId/slots'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -1063,6 +1074,7 @@ export interface FileRouteTypes {
     | '/api/public/guides/$guideId/slots'
     | '/api/public/hooks/notifications/push'
     | '/api/public/hooks/payout-step-up/start'
+    | '/api/public/hooks/payout-step-up/verify'
     | '/api/public/tours/$tourId/slots'
   id:
     | '__root__'
@@ -1156,6 +1168,7 @@ export interface FileRouteTypes {
     | '/api/public/guides/$guideId/slots'
     | '/api/public/hooks/notifications/push'
     | '/api/public/hooks/payout-step-up/start'
+    | '/api/public/hooks/payout-step-up/verify'
     | '/api/public/tours/$tourId/slots'
   fileRoutesById: FileRoutesById
 }
@@ -1246,6 +1259,7 @@ export interface RootRouteChildren {
   ApiPublicGuidesGuideIdSlotsRoute: typeof ApiPublicGuidesGuideIdSlotsRoute
   ApiPublicHooksNotificationsPushRoute: typeof ApiPublicHooksNotificationsPushRoute
   ApiPublicHooksPayoutStepUpStartRoute: typeof ApiPublicHooksPayoutStepUpStartRoute
+  ApiPublicHooksPayoutStepUpVerifyRoute: typeof ApiPublicHooksPayoutStepUpVerifyRoute
   ApiPublicToursTourIdSlotsRoute: typeof ApiPublicToursTourIdSlotsRoute
 }
 
@@ -1853,6 +1867,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicToursTourIdSlotsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/payout-step-up/verify': {
+      id: '/api/public/hooks/payout-step-up/verify'
+      path: '/api/public/hooks/payout-step-up/verify'
+      fullPath: '/api/public/hooks/payout-step-up/verify'
+      preLoaderRoute: typeof ApiPublicHooksPayoutStepUpVerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/payout-step-up/start': {
       id: '/api/public/hooks/payout-step-up/start'
       path: '/api/public/hooks/payout-step-up/start'
@@ -2018,6 +2039,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicGuidesGuideIdSlotsRoute: ApiPublicGuidesGuideIdSlotsRoute,
   ApiPublicHooksNotificationsPushRoute: ApiPublicHooksNotificationsPushRoute,
   ApiPublicHooksPayoutStepUpStartRoute: ApiPublicHooksPayoutStepUpStartRoute,
+  ApiPublicHooksPayoutStepUpVerifyRoute: ApiPublicHooksPayoutStepUpVerifyRoute,
   ApiPublicToursTourIdSlotsRoute: ApiPublicToursTourIdSlotsRoute,
 }
 export const routeTree = rootRouteImport
