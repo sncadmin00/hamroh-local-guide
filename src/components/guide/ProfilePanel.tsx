@@ -274,6 +274,103 @@ export function ProfilePanel({ guideId }: { guideId: string }) {
         </div>
       </div>
 
+      {/* Skills & mobility */}
+      <div className="space-y-5 pt-6 border-t border-border">
+        <div>
+          <h2 className="font-display text-xl font-semibold">Languages, specialties & transport</h2>
+          <p className="mt-1 text-sm text-muted-foreground">Shown on your public profile and used for search filters.</p>
+        </div>
+
+        {/* Languages */}
+        <div className="space-y-2">
+          <div className="text-sm text-muted-foreground">Languages you speak <span className="text-xs">({languages.length}/12)</span></div>
+          <div className="flex flex-wrap gap-2">
+            {languages.map((l) => (
+              <span key={l} className="inline-flex items-center gap-1 rounded-full bg-secondary px-3 h-8 text-xs">
+                {l}
+                <button type="button" onClick={() => setLanguages(languages.filter((x) => x !== l))} className="text-muted-foreground hover:text-foreground">
+                  <X className="h-3 w-3" />
+                </button>
+              </span>
+            ))}
+          </div>
+          <div className="flex gap-2">
+            <input
+              value={langInput}
+              onChange={(e) => setLangInput(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addChip(languages, langInput, setLanguages, setLangInput); } }}
+              placeholder="e.g. English"
+              className="flex-1 h-10 px-3 rounded-md border border-border bg-background text-sm"
+            />
+            <button type="button" onClick={() => addChip(languages, langInput, setLanguages, setLangInput)} className="inline-flex items-center gap-1 rounded-full bg-secondary hover:bg-muted px-3 h-10 text-xs">
+              <Plus className="h-3.5 w-3.5" /> Add
+            </button>
+          </div>
+        </div>
+
+        {/* Specialties */}
+        <div className="space-y-2">
+          <div className="text-sm text-muted-foreground">Specialties <span className="text-xs">({specialties.length}/12)</span></div>
+          <div className="flex flex-wrap gap-2">
+            {specialties.map((s) => (
+              <span key={s} className="inline-flex items-center gap-1 rounded-full bg-secondary px-3 h-8 text-xs">
+                {s}
+                <button type="button" onClick={() => setSpecialties(specialties.filter((x) => x !== s))} className="text-muted-foreground hover:text-foreground">
+                  <X className="h-3 w-3" />
+                </button>
+              </span>
+            ))}
+          </div>
+          <div className="flex gap-2">
+            <input
+              value={specInput}
+              onChange={(e) => setSpecInput(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addChip(specialties, specInput, setSpecialties, setSpecInput); } }}
+              placeholder="e.g. History, Food, Photography"
+              className="flex-1 h-10 px-3 rounded-md border border-border bg-background text-sm"
+            />
+            <button type="button" onClick={() => addChip(specialties, specInput, setSpecialties, setSpecInput)} className="inline-flex items-center gap-1 rounded-full bg-secondary hover:bg-muted px-3 h-10 text-xs">
+              <Plus className="h-3.5 w-3.5" /> Add
+            </button>
+          </div>
+        </div>
+
+        {/* Transport */}
+        <div className="space-y-2">
+          <label className="inline-flex items-center gap-2 text-sm cursor-pointer">
+            <input type="checkbox" checked={hasTransport} onChange={(e) => setHasTransport(e.target.checked)} className="h-4 w-4" />
+            <Car className="h-4 w-4 text-muted-foreground" />
+            <span>I have my own transport for tours</span>
+          </label>
+          {hasTransport && (
+            <label className="text-sm flex flex-col gap-1 max-w-[220px]">
+              <span className="text-muted-foreground">Seats (passengers)</span>
+              <input
+                type="number"
+                min={1}
+                max={60}
+                value={transportSeats ?? ""}
+                onChange={(e) => setTransportSeats(e.target.value ? Math.max(1, Math.min(60, parseInt(e.target.value, 10) || 0)) : null)}
+                placeholder="e.g. 4"
+                className="h-10 px-3 rounded-md border border-border bg-background"
+              />
+            </label>
+          )}
+        </div>
+
+        <div>
+          <button
+            onClick={saveSkills}
+            disabled={savingSkills || !dirtySkills}
+            className="h-10 px-5 rounded-full bg-primary text-primary-foreground text-sm font-medium disabled:opacity-50"
+          >
+            {savingSkills ? tg("common.loading") : tg("common.save")}
+          </button>
+        </div>
+      </div>
+
+
+
       {/* Cover banner */}
       <div className="space-y-4 pt-6 border-t border-border">
         <div>
