@@ -456,6 +456,7 @@ function AdminPage() {
         {tab === "verifications" && <VerificationsPanel />}
         {tab === "invitations" && <GuideInvitationsPanel />}
         {tab === "statements" && <StatementsAdminPanel />}
+        {tab === "emergency" && <EmergencyContactsPanel />}
 
       </div>
     </div>
