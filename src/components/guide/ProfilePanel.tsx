@@ -180,6 +180,26 @@ export function ProfilePanel({ guideId }: { guideId: string }) {
     setUploadingAvatar(false);
   };
 
+  const onPickIntroVideo = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]; if (!file) return;
+    e.target.value = "";
+    if (!file.type.startsWith("video/")) { toast.error("Please pick a video file"); return; }
+    if (file.size > MAX_VIDEO_BYTES) { toast.error("Video is larger than 80MB"); return; }
+    if (!userId) { toast.error("Not signed in"); return; }
+    setUploadingVideo(true);
+    try {
+      const ext = (file.name.split(".").pop() || "mp4").toLowerCase().replace(/[^a-z0-9]/g, "") || "mp4";
+      const path = `${guideId}/intro-${Date.now()}.${ext}`;
+      const { error } = await supabase.storage.from("guide-intro-videos").upload(path, file, { upsert: true, contentType: file.type });
+      if (error) throw error;
+      await submitIntroVideoFn({ data: { video_path: path } });
+      toast.success("Intro video submitted for review");
+      await loadIntroVideo();
+    } catch (err: any) { toast.error(err.message); }
+    setUploadingVideo(false);
+  };
+
+
   const dirtyProfile =
     name.trim() !== initialProfile.name ||
     tagline.trim() !== initialProfile.tagline ||
