@@ -72,6 +72,7 @@ import { Route as ApiPublicHooksMyStatementsRouteImport } from './routes/api/pub
 import { Route as ApiPublicHooksMyReportUrlRouteImport } from './routes/api/public/hooks/my-report-url'
 import { Route as ApiPublicHooksMyPayoutsRouteImport } from './routes/api/public/hooks/my-payouts'
 import { Route as ApiPublicHooksMyNotificationEmailRouteImport } from './routes/api/public/hooks/my-notification-email'
+import { Route as ApiPublicHooksMyInvoiceUrlRouteImport } from './routes/api/public/hooks/my-invoice-url'
 import { Route as ApiPublicHooksMyGuidePostsRouteImport } from './routes/api/public/hooks/my-guide-posts'
 import { Route as ApiPublicHooksMyGuidePostSignedUrlsRouteImport } from './routes/api/public/hooks/my-guide-post-signed-urls'
 import { Route as ApiPublicHooksMyEarningsSummaryRouteImport } from './routes/api/public/hooks/my-earnings-summary'
@@ -427,6 +428,12 @@ const ApiPublicHooksMyNotificationEmailRoute =
     path: '/api/public/hooks/my-notification-email',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksMyInvoiceUrlRoute =
+  ApiPublicHooksMyInvoiceUrlRouteImport.update({
+    id: '/api/public/hooks/my-invoice-url',
+    path: '/api/public/hooks/my-invoice-url',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksMyGuidePostsRoute =
   ApiPublicHooksMyGuidePostsRouteImport.update({
     id: '/api/public/hooks/my-guide-posts',
@@ -618,6 +625,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/my-earnings-summary': typeof ApiPublicHooksMyEarningsSummaryRoute
   '/api/public/hooks/my-guide-post-signed-urls': typeof ApiPublicHooksMyGuidePostSignedUrlsRoute
   '/api/public/hooks/my-guide-posts': typeof ApiPublicHooksMyGuidePostsRoute
+  '/api/public/hooks/my-invoice-url': typeof ApiPublicHooksMyInvoiceUrlRoute
   '/api/public/hooks/my-notification-email': typeof ApiPublicHooksMyNotificationEmailRoute
   '/api/public/hooks/my-payouts': typeof ApiPublicHooksMyPayoutsRoute
   '/api/public/hooks/my-report-url': typeof ApiPublicHooksMyReportUrlRoute
@@ -704,6 +712,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/my-earnings-summary': typeof ApiPublicHooksMyEarningsSummaryRoute
   '/api/public/hooks/my-guide-post-signed-urls': typeof ApiPublicHooksMyGuidePostSignedUrlsRoute
   '/api/public/hooks/my-guide-posts': typeof ApiPublicHooksMyGuidePostsRoute
+  '/api/public/hooks/my-invoice-url': typeof ApiPublicHooksMyInvoiceUrlRoute
   '/api/public/hooks/my-notification-email': typeof ApiPublicHooksMyNotificationEmailRoute
   '/api/public/hooks/my-payouts': typeof ApiPublicHooksMyPayoutsRoute
   '/api/public/hooks/my-report-url': typeof ApiPublicHooksMyReportUrlRoute
@@ -792,6 +801,7 @@ export interface FileRoutesById {
   '/api/public/hooks/my-earnings-summary': typeof ApiPublicHooksMyEarningsSummaryRoute
   '/api/public/hooks/my-guide-post-signed-urls': typeof ApiPublicHooksMyGuidePostSignedUrlsRoute
   '/api/public/hooks/my-guide-posts': typeof ApiPublicHooksMyGuidePostsRoute
+  '/api/public/hooks/my-invoice-url': typeof ApiPublicHooksMyInvoiceUrlRoute
   '/api/public/hooks/my-notification-email': typeof ApiPublicHooksMyNotificationEmailRoute
   '/api/public/hooks/my-payouts': typeof ApiPublicHooksMyPayoutsRoute
   '/api/public/hooks/my-report-url': typeof ApiPublicHooksMyReportUrlRoute
@@ -881,6 +891,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/my-earnings-summary'
     | '/api/public/hooks/my-guide-post-signed-urls'
     | '/api/public/hooks/my-guide-posts'
+    | '/api/public/hooks/my-invoice-url'
     | '/api/public/hooks/my-notification-email'
     | '/api/public/hooks/my-payouts'
     | '/api/public/hooks/my-report-url'
@@ -967,6 +978,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/my-earnings-summary'
     | '/api/public/hooks/my-guide-post-signed-urls'
     | '/api/public/hooks/my-guide-posts'
+    | '/api/public/hooks/my-invoice-url'
     | '/api/public/hooks/my-notification-email'
     | '/api/public/hooks/my-payouts'
     | '/api/public/hooks/my-report-url'
@@ -1054,6 +1066,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/my-earnings-summary'
     | '/api/public/hooks/my-guide-post-signed-urls'
     | '/api/public/hooks/my-guide-posts'
+    | '/api/public/hooks/my-invoice-url'
     | '/api/public/hooks/my-notification-email'
     | '/api/public/hooks/my-payouts'
     | '/api/public/hooks/my-report-url'
@@ -1138,6 +1151,7 @@ export interface RootRouteChildren {
   ApiPublicHooksMyEarningsSummaryRoute: typeof ApiPublicHooksMyEarningsSummaryRoute
   ApiPublicHooksMyGuidePostSignedUrlsRoute: typeof ApiPublicHooksMyGuidePostSignedUrlsRoute
   ApiPublicHooksMyGuidePostsRoute: typeof ApiPublicHooksMyGuidePostsRoute
+  ApiPublicHooksMyInvoiceUrlRoute: typeof ApiPublicHooksMyInvoiceUrlRoute
   ApiPublicHooksMyNotificationEmailRoute: typeof ApiPublicHooksMyNotificationEmailRoute
   ApiPublicHooksMyPayoutsRoute: typeof ApiPublicHooksMyPayoutsRoute
   ApiPublicHooksMyReportUrlRoute: typeof ApiPublicHooksMyReportUrlRoute
@@ -1608,6 +1622,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksMyNotificationEmailRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/my-invoice-url': {
+      id: '/api/public/hooks/my-invoice-url'
+      path: '/api/public/hooks/my-invoice-url'
+      fullPath: '/api/public/hooks/my-invoice-url'
+      preLoaderRoute: typeof ApiPublicHooksMyInvoiceUrlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/my-guide-posts': {
       id: '/api/public/hooks/my-guide-posts'
       path: '/api/public/hooks/my-guide-posts'
@@ -1860,6 +1881,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksMyGuidePostSignedUrlsRoute:
     ApiPublicHooksMyGuidePostSignedUrlsRoute,
   ApiPublicHooksMyGuidePostsRoute: ApiPublicHooksMyGuidePostsRoute,
+  ApiPublicHooksMyInvoiceUrlRoute: ApiPublicHooksMyInvoiceUrlRoute,
   ApiPublicHooksMyNotificationEmailRoute:
     ApiPublicHooksMyNotificationEmailRoute,
   ApiPublicHooksMyPayoutsRoute: ApiPublicHooksMyPayoutsRoute,
