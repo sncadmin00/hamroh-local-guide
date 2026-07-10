@@ -48,7 +48,7 @@ export function ProfilePanel({ guideId }: { guideId: string }) {
       const { data: userRes } = await supabase.auth.getUser();
       const uid = userRes.user?.id ?? null;
       const [g, t, tax] = await Promise.all([
-        supabase.from("guides").select("name, tagline, bio, photo_url, cover_url").eq("id", guideId).maybeSingle(),
+        supabase.from("guides").select("name, tagline, bio, photo_url, cover_url, languages, specialties, has_transport, transport_seats").eq("id", guideId).maybeSingle(),
         supabase.from("tours").select("title, cover_url").eq("guide_id", guideId).not("cover_url", "is", null),
         getTaxFn().catch(() => ({ tax_status: "none" as const, tax_id: "" })),
       ]);
@@ -69,6 +69,12 @@ export function ProfilePanel({ guideId }: { guideId: string }) {
       const b = g.data?.bio ?? "";
       setName(n); setTagline(tl); setBio(b);
       setInitialProfile({ name: n, tagline: tl, bio: b });
+      const langs = (g.data?.languages ?? []) as string[];
+      const specs = (g.data?.specialties ?? []) as string[];
+      const ht = !!g.data?.has_transport;
+      const ts = (g.data?.transport_seats ?? null) as number | null;
+      setLanguages(langs); setSpecialties(specs); setHasTransport(ht); setTransportSeats(ts);
+      setInitialSkills({ languages: langs, specialties: specs, hasTransport: ht, transportSeats: ts });
       setTaxStatus(((tax as any)?.tax_status ?? "none") as any);
       setTaxId(((tax as any)?.tax_id ?? "") as string);
       setLoading(false);
