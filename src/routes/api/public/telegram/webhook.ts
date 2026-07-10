@@ -132,7 +132,7 @@ async function completeLoginConfirmation(
   const now = new Date();
   const { data: row } = await supabase
     .from("telegram_signin_nonces")
-    .select("nonce, expires_at, consumed_at, action_link, telegram_user_id")
+    .select("nonce, expires_at, consumed_at, action_link, telegram_user_id, redirect_to")
     .eq("nonce", nonce)
     .maybeSingle();
   if (!row) return "This sign-in code is invalid.";
