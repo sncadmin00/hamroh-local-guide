@@ -419,6 +419,48 @@ export function ProfilePanel({ guideId }: { guideId: string }) {
         </div>
       </div>
 
+      {/* Intro video (video postcard) */}
+      <div className="space-y-4 pt-6 border-t border-border">
+        <div>
+          <h2 className="font-display text-xl font-semibold flex items-center gap-2"><Video className="h-5 w-5" /> Intro video</h2>
+          <p className="mt-1 text-sm text-muted-foreground">A short video postcard (up to 60s, 80MB). Shown on your public profile and in the Reels row on the home screen after moderation.</p>
+        </div>
+
+        <div className="flex items-center gap-2 text-xs">
+          {introVideoStatus.verified ? (
+            <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary px-2.5 py-1 font-medium"><CheckCircle2 className="h-3.5 w-3.5" /> Verified</span>
+          ) : introVideoStatus.rejected ? (
+            <span className="inline-flex items-center gap-1 rounded-full bg-destructive/10 text-destructive px-2.5 py-1 font-medium"><AlertCircle className="h-3.5 w-3.5" /> Rejected: {introVideoStatus.rejected}</span>
+          ) : introVideoStatus.submittedAt ? (
+            <span className="inline-flex items-center gap-1 rounded-full bg-muted text-muted-foreground px-2.5 py-1 font-medium"><Clock className="h-3.5 w-3.5" /> Pending review</span>
+          ) : (
+            <span className="inline-flex items-center gap-1 rounded-full bg-muted text-muted-foreground px-2.5 py-1">Not submitted</span>
+          )}
+        </div>
+
+        <div className="overflow-hidden rounded-2xl ring-1 ring-border/60 bg-secondary max-w-sm">
+          {videoPreviewUrl ? (
+            <video src={videoPreviewUrl} controls playsInline className="aspect-[9/16] w-full object-cover bg-black" />
+          ) : (
+            <div className="aspect-[9/16] w-full grid place-items-center text-muted-foreground text-sm">
+              <div className="flex flex-col items-center gap-2"><Video className="h-8 w-8" /><span>No video yet</span></div>
+            </div>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => videoInputRef.current?.click()}
+            disabled={uploadingVideo || !userId}
+            className="inline-flex items-center gap-2 h-10 px-5 rounded-full bg-primary text-primary-foreground text-sm font-medium disabled:opacity-50"
+          >
+            {uploadingVideo ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+            {introVideoUrl ? "Replace video" : "Upload video"}
+          </button>
+          <input ref={videoInputRef} type="file" accept="video/*" className="hidden" onChange={onPickIntroVideo} />
+        </div>
+      </div>
 
 
       {/* Cover banner */}
