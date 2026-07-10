@@ -40,10 +40,11 @@ export const Route = createFileRoute("/api/public/hooks/local-events")({
 
         let q = supabase
           .from("local_events")
-          .select("id, city_id, title, description, date_start, date_end, cover_url, source_url, sort_order")
+          .select("id, city_id, title, description, date_start, date_end, cover_url, source_url, sort_order, kind")
           .eq("is_published", true);
 
-        if (cityId) q = q.eq("city_id", cityId);
+        // City filter includes global entries (city_id IS NULL), e.g. national holidays
+        if (cityId) q = q.or(`city_id.eq.${cityId},city_id.is.null`);
 
         // Overlap: event.date_start <= to AND event.date_end >= from
         const today = new Date().toISOString().slice(0, 10);
