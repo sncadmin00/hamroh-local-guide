@@ -431,6 +431,12 @@ function AdminPage() {
           >
             Statements
           </button>
+          <button
+            onClick={() => setTab("emergency")}
+            className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "emergency" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+          >
+            Emergency
+          </button>
         </div>
 
         {tab === "bookings" && <BookingsPanel bookings={bookings} reload={loadData} />}
