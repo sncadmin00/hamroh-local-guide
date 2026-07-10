@@ -249,9 +249,10 @@ export const Route = createFileRoute("/api/public/hooks/client-ai")({
         }
         const userId = userRes.user.id;
 
-        let body: { message?: string; history?: Turn[]; lang?: Lang };
+        let body: { message?: string; history?: Turn[]; lang?: Lang; context?: ClientContext };
         try {
-          body = (await request.json()) as { message?: string; history?: Turn[]; lang?: Lang };
+          body = (await request.json()) as { message?: string; history?: Turn[]; lang?: Lang; context?: ClientContext };
+
         } catch {
           return Response.json({ error: "Invalid JSON" }, { status: 400, headers: corsHeaders() });
         }
