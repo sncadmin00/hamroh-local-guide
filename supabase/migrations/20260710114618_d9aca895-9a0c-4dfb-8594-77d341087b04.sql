@@ -1,0 +1,1 @@
+ALTER TABLE public.telegram_signin_nonces ADD COLUMN IF NOT EXISTS platform text, ADD COLUMN IF NOT EXISTS confirmed_at timestamptz;

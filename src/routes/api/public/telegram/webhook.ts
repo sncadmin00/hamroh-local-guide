@@ -1,6 +1,7 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { createFileRoute } from "@tanstack/react-router";
 import {
+  callTelegramApi,
   deriveTelegramWebhookSecret,
   safeEqual,
   sendTelegramMessage,
@@ -30,7 +31,6 @@ async function handleLinkCode(
   if (row.consumed_at) return "This linking code has already been used.";
   if (new Date(row.expires_at).getTime() < now.getTime()) return "This linking code has expired. Request a new one in the app.";
 
-  // Ensure this Telegram account isn't already linked to another user.
   const { data: existing } = await supabase
     .from("telegram_accounts")
     .select("user_id")
@@ -60,7 +60,69 @@ async function handleLinkCode(
   return "✅ Telegram is linked. You'll get booking notifications here.";
 }
 
-async function handleLoginNonce(
+/**
+ * Step 1 of Telegram sign-in: send an explicit confirmation prompt with
+ * device/platform info so the user can verify they initiated this — protects
+ * against social-engineering ("open this bonus link") where a victim is
+ * tricked into approving an attacker's login.
+ *
+ * Does NOT consume the nonce or issue an action link yet — that only happens
+ * after the user taps "Confirm" (callback_query handled below).
+ */
+async function sendLoginConfirmationPrompt(
+  supabase: SupabaseClient,
+  nonce: string,
+  telegramUserId: number,
+  chatId: number,
+): Promise<void> {
+  const { data: row } = await supabase
+    .from("telegram_signin_nonces")
+    .select("nonce, expires_at, consumed_at, action_link, platform")
+    .eq("nonce", nonce)
+    .maybeSingle();
+  if (!row) {
+    await sendTelegramMessage(chatId, "This sign-in code is invalid.");
+    return;
+  }
+  if (row.consumed_at || row.action_link) {
+    await sendTelegramMessage(chatId, "This sign-in code has already been used.");
+    return;
+  }
+  if (new Date(row.expires_at).getTime() < Date.now()) {
+    await sendTelegramMessage(chatId, "This sign-in code has expired. Request a new one in the app.");
+    return;
+  }
+
+  // Bind this login attempt to this Telegram user immediately so a leaked
+  // /start link can't be redeemed by a different account.
+  await supabase
+    .from("telegram_signin_nonces")
+    .update({ telegram_user_id: telegramUserId })
+    .eq("nonce", nonce);
+
+  const platform = row.platform ? String(row.platform).slice(0, 40) : "unknown device";
+  const text =
+    `<b>Sign in to Hamroh</b>\n` +
+    `Device: ${platform}\n` +
+    `Requested: just now\n\n` +
+    `If you didn't just try to sign in to the Hamroh app on this device, ignore this message — someone may be trying to trick you into approving their login. Never approve a sign-in you didn't start yourself.`;
+
+  await callTelegramApi("sendMessage", {
+    chat_id: chatId,
+    text,
+    parse_mode: "HTML",
+    reply_markup: {
+      inline_keyboard: [
+        [
+          { text: "✅ Yes, sign me in", callback_data: `login_confirm:${nonce}` },
+          { text: "🚫 Not me", callback_data: `login_deny:${nonce}` },
+        ],
+      ],
+    },
+  });
+}
+
+async function completeLoginConfirmation(
   supabase: SupabaseClient,
   nonce: string,
   telegramUserId: number,
@@ -70,14 +132,18 @@ async function handleLoginNonce(
   const now = new Date();
   const { data: row } = await supabase
     .from("telegram_signin_nonces")
-    .select("nonce, expires_at, consumed_at, action_link")
+    .select("nonce, expires_at, consumed_at, action_link, telegram_user_id")
     .eq("nonce", nonce)
     .maybeSingle();
   if (!row) return "This sign-in code is invalid.";
   if (row.consumed_at || row.action_link) return "This sign-in code has already been used.";
   if (new Date(row.expires_at).getTime() < now.getTime()) return "This sign-in code has expired. Request a new one in the app.";
+  // The confirm button must be tapped by the same Telegram account that opened
+  // the /start link — prevents forwarding the message to another user.
+  if (row.telegram_user_id && row.telegram_user_id !== telegramUserId) {
+    return "This sign-in was started by a different Telegram account.";
+  }
 
-  // Find or create the Supabase user for this Telegram account.
   const { data: existingAccount } = await supabase
     .from("telegram_accounts")
     .select("user_id")
@@ -88,11 +154,11 @@ async function handleLoginNonce(
   let email = telegramEmail(telegramUserId);
 
   if (userId) {
-    const { data: existingUser } = await (supabase as SupabaseClient).auth.admin.getUserById(userId);
+    const { data: existingUser } = await supabase.auth.admin.getUserById(userId);
     email = existingUser.user?.email ?? email;
   } else {
     const password = crypto.randomUUID() + crypto.randomUUID();
-    const { data: created, error: createError } = await (supabase as SupabaseClient).auth.admin.createUser({
+    const { data: created, error: createError } = await supabase.auth.admin.createUser({
       email,
       password,
       email_confirm: true,
@@ -124,7 +190,7 @@ async function handleLoginNonce(
     { onConflict: "telegram_user_id" },
   );
 
-  const { data: link, error: linkError } = await (supabase as SupabaseClient).auth.admin.generateLink({
+  const { data: link, error: linkError } = await supabase.auth.admin.generateLink({
     type: "magiclink",
     email,
     options: { redirectTo: "https://hamrohim.com/login" },
@@ -135,10 +201,23 @@ async function handleLoginNonce(
 
   await supabase
     .from("telegram_signin_nonces")
-    .update({ action_link: link.properties.action_link, telegram_user_id: telegramUserId })
+    .update({
+      action_link: link.properties.action_link,
+      telegram_user_id: telegramUserId,
+      confirmed_at: now.toISOString(),
+    })
     .eq("nonce", nonce);
 
   return "✅ Sign-in confirmed. Return to the Hamroh app — it will finish signing you in.";
+}
+
+async function denyLogin(supabase: SupabaseClient, nonce: string, telegramUserId: number): Promise<string> {
+  await supabase
+    .from("telegram_signin_nonces")
+    .update({ consumed_at: new Date().toISOString(), telegram_user_id: telegramUserId })
+    .eq("nonce", nonce)
+    .is("action_link", null);
+  return "Sign-in cancelled. If this wasn't you, your account is safe — no one signed in.";
 }
 
 export const Route = createFileRoute("/api/public/telegram/webhook")({
@@ -158,14 +237,44 @@ export const Route = createFileRoute("/api/public/telegram/webhook")({
         }
 
         const update = await request.json();
-        const message = update.message ?? update.edited_message;
-        const chatId = message?.chat?.id;
-        const telegramUserId = message?.from?.id;
-        if (!chatId || !telegramUserId) return Response.json({ ok: true, ignored: true });
 
         const supabase = createClient(supabaseUrl, serviceKey, {
           auth: { autoRefreshToken: false, persistSession: false },
         });
+
+        // ---- Callback queries (inline-button taps) ----
+        const cb = update.callback_query;
+        if (cb) {
+          const cbData = typeof cb.data === "string" ? cb.data : "";
+          const cbChatId = cb.message?.chat?.id;
+          const cbUserId = cb.from?.id;
+          if (cbChatId && cbUserId) {
+            const from = {
+              username: cb.from?.username,
+              first_name: cb.from?.first_name,
+              last_name: cb.from?.last_name,
+              photo_url: undefined as string | undefined,
+            };
+            let reply: string | null = null;
+            if (cbData.startsWith("login_confirm:")) {
+              reply = await completeLoginConfirmation(supabase, cbData.slice("login_confirm:".length), cbUserId, cbChatId, from);
+            } else if (cbData.startsWith("login_deny:")) {
+              reply = await denyLogin(supabase, cbData.slice("login_deny:".length), cbUserId);
+            }
+            try {
+              await callTelegramApi("answerCallbackQuery", { callback_query_id: cb.id });
+            } catch {
+              // best-effort
+            }
+            if (reply) await sendTelegramMessage(cbChatId, reply);
+          }
+          return Response.json({ ok: true });
+        }
+
+        const message = update.message ?? update.edited_message;
+        const chatId = message?.chat?.id;
+        const telegramUserId = message?.from?.id;
+        if (!chatId || !telegramUserId) return Response.json({ ok: true, ignored: true });
 
         await supabase.from("telegram_accounts").upsert(
           {
@@ -180,7 +289,6 @@ export const Route = createFileRoute("/api/public/telegram/webhook")({
 
         const text = typeof message.text === "string" ? message.text.trim() : "";
 
-        // /start <payload> — deep-link linking or sign-in.
         const startMatch = text.match(/^\/start(?:@\w+)?\s+(\S+)/i);
         if (startMatch) {
           const payload = startMatch[1];
@@ -196,8 +304,8 @@ export const Route = createFileRoute("/api/public/telegram/webhook")({
             return Response.json({ ok: true });
           }
           if (payload.startsWith("login_")) {
-            const reply = await handleLoginNonce(supabase, payload.slice(6), telegramUserId, chatId, from);
-            await sendTelegramMessage(chatId, reply);
+            // Do NOT auto-issue action link — send explicit confirmation prompt.
+            await sendLoginConfirmationPrompt(supabase, payload.slice(6), telegramUserId, chatId);
             return Response.json({ ok: true });
           }
         }
