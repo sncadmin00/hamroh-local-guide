@@ -1748,6 +1748,51 @@ export type Database = {
         }
         Relationships: []
       }
+      payout_change_challenges: {
+        Row: {
+          attempts: number
+          code_hash: string
+          consumed_at: string | null
+          created_at: string
+          delivery_channel: string | null
+          expires_at: string
+          id: string
+          purpose: string
+          token_expires_at: string | null
+          token_hash: string | null
+          user_id: string
+          verified_at: string | null
+        }
+        Insert: {
+          attempts?: number
+          code_hash: string
+          consumed_at?: string | null
+          created_at?: string
+          delivery_channel?: string | null
+          expires_at: string
+          id?: string
+          purpose: string
+          token_expires_at?: string | null
+          token_hash?: string | null
+          user_id: string
+          verified_at?: string | null
+        }
+        Update: {
+          attempts?: number
+          code_hash?: string
+          consumed_at?: string | null
+          created_at?: string
+          delivery_channel?: string | null
+          expires_at?: string
+          id?: string
+          purpose?: string
+          token_expires_at?: string | null
+          token_hash?: string | null
+          user_id?: string
+          verified_at?: string | null
+        }
+        Relationships: []
+      }
       payout_items: {
         Row: {
           booking_id: string
