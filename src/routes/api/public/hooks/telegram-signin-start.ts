@@ -1,13 +1,17 @@
 /**
  * POST /api/public/hooks/telegram-signin-start
  * No auth required (public — this is the sign-in flow).
- * Body: none
+ * Body: { platform?: string } — short human label (e.g. "iOS", "Android", "Web").
+ *   The bot echoes this back to the user so they can verify what they're
+ *   approving. It is untrusted metadata — displayed only, never used for auth.
  * Response: { nonce, start_param, expires_at }
  *
  * Mobile flow:
  * 1. Call to obtain a `start_param` (e.g. "login_...") and nonce.
  * 2. Open `https://t.me/<bot_username>?start=<start_param>`.
- * 3. Poll `/api/public/hooks/telegram-signin-poll` with { nonce } until it
+ * 3. Bot posts a confirmation message with the platform label; user taps
+ *    "Confirm" or "This wasn't me".
+ * 4. Poll `/api/public/hooks/telegram-signin-poll` with { nonce } until it
  *    returns { action_link }. Open that URL in the in-app browser — Supabase
  *    completes the magic-link sign-in and returns tokens the app can capture.
  *
@@ -27,13 +31,22 @@ export const Route = createFileRoute("/api/public/hooks/telegram-signin-start")(
   server: {
     handlers: {
       OPTIONS: async () => new Response(null, { status: 204, headers: cors }),
-      POST: async () => {
+      POST: async ({ request }) => {
+        let platform: string | null = null;
+        try {
+          const body = await request.json();
+          if (body && typeof body.platform === "string") {
+            platform = body.platform.trim().slice(0, 40) || null;
+          }
+        } catch {
+          // no body — fine
+        }
         const nonce = randomBytes(24).toString("base64url");
         const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { error } = await supabaseAdmin
           .from("telegram_signin_nonces")
-          .insert({ nonce, expires_at: expiresAt });
+          .insert({ nonce, expires_at: expiresAt, platform });
         if (error) {
           return Response.json({ error: error.message }, { status: 500, headers: cors });
         }
