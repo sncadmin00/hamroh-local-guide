@@ -16,8 +16,12 @@
  *   {
  *     "message": "string, required, <= 300 chars",
  *     "history": [ { "role": "user"|"assistant", "content": "string" } ],  // optional
- *     "lang":    "en" | "ru" | "uz"                                        // optional, default "en"
+ *     "lang":    "en" | "ru" | "uz",                                       // optional, default "en"
+ *     "context": {                                                          // optional
+ *       "upcomingHolidays": [ { "title": "Navruz", "date_start": "2027-03-21", "date_end": "2027-03-21" } ]
+ *     }
  *   }
+
  *
  * Response 200:
  *   {
@@ -52,6 +56,39 @@ const MAX_QUERY_LEN = 300;
 
 type Turn = { role: "user" | "assistant"; content: string };
 type Lang = "en" | "ru" | "uz";
+type Holiday = { title: string; date_start: string; date_end?: string | null };
+type ClientContext = { upcomingHolidays?: Holiday[] };
+
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+function sanitizeHolidays(input: unknown): Holiday[] {
+  if (!Array.isArray(input)) return [];
+  const out: Holiday[] = [];
+  for (const h of input) {
+    if (!h || typeof h !== "object") continue;
+    const rec = h as Record<string, unknown>;
+    const title = typeof rec.title === "string" ? rec.title.trim().slice(0, 120) : "";
+    const date_start = typeof rec.date_start === "string" ? rec.date_start.slice(0, 10) : "";
+    const date_end =
+      typeof rec.date_end === "string" && DATE_RE.test(rec.date_end.slice(0, 10))
+        ? rec.date_end.slice(0, 10)
+        : null;
+    if (!title || !DATE_RE.test(date_start)) continue;
+    out.push({ title, date_start, date_end });
+    if (out.length >= 20) break;
+  }
+  return out;
+}
+
+function formatHolidaysBlock(holidays: Holiday[]): string {
+  if (!holidays.length) return "(none provided)";
+  return holidays
+    .map((h) => {
+      const range = h.date_end && h.date_end !== h.date_start ? `${h.date_start} → ${h.date_end}` : h.date_start;
+      return `- ${range}: ${h.title}`;
+    })
+    .join("\n");
+}
 
 function corsHeaders(): Record<string, string> {
   return {
@@ -66,7 +103,9 @@ async function buildSystemPrompt(
   client: ReturnType<typeof createClient<any, any, any>>,
   articleContext: Array<{ title: string; slug: string; content: string }>,
   lang: Lang,
+  holidays: Holiday[],
 ) {
+
   const [guidesRes, placesRes, toursRes] = await Promise.all([
     client
       .from("guides")
@@ -148,6 +187,12 @@ ${placesCatalog || "(no places yet)"}
 === RELEVANT ARTICLES (use this knowledge first when relevant) ===
 ${articlesBlock}
 
+=== UPCOMING PUBLIC HOLIDAYS IN UZBEKISTAN (client-provided; use only if the user asks about travel dates, opening hours, or planning around specific days) ===
+${formatHolidaysBlock(holidays)}
+- Warn the traveller that on these dates many shops, bazaars, museums, and offices may be closed or on reduced hours; transport can be busier and prices higher. Mention this only when it's relevant to the user's question — never as a random aside.
+
+
+
 === HOW TO ANSWER ===
 - ALWAYS reply in this language: ${lang === "ru" ? "Russian (русский)" : lang === "uz" ? "Uzbek (o'zbek tili, latin script)" : "English"}. This is the user's selected UI language — ignore the language of their query and respond ONLY in the selected language.
 - Keep replies warm, concise, useful. Light markdown (bold, lists).
@@ -208,9 +253,10 @@ export const Route = createFileRoute("/api/public/hooks/client-ai")({
         }
         const userId = userRes.user.id;
 
-        let body: { message?: string; history?: Turn[]; lang?: Lang };
+        let body: { message?: string; history?: Turn[]; lang?: Lang; context?: ClientContext };
         try {
-          body = (await request.json()) as { message?: string; history?: Turn[]; lang?: Lang };
+          body = (await request.json()) as { message?: string; history?: Turn[]; lang?: Lang; context?: ClientContext };
+
         } catch {
           return Response.json({ error: "Invalid JSON" }, { status: 400, headers: corsHeaders() });
         }
@@ -257,8 +303,9 @@ export const Route = createFileRoute("/api/public/hooks/client-ai")({
         } catch (e) {
           console.error("client-ai: article retrieval failed", e);
         }
+        const holidays = sanitizeHolidays(body.context?.upcomingHolidays);
+        const system = await buildSystemPrompt(userClient, articleContext, lang, holidays);
 
-        const system = await buildSystemPrompt(userClient, articleContext, lang);
 
         const gateway = createLovableAiGatewayProvider(key);
         const model = gateway("google/gemini-3.1-flash-lite-preview");
