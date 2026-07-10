@@ -20,6 +20,7 @@ import { ToursPanel } from "@/components/admin/ToursPanel";
 import { VerificationsPanel } from "@/components/admin/VerificationsPanel";
 import { GuideInvitationsPanel } from "@/components/admin/GuideInvitationsPanel";
 import { StatementsAdminPanel } from "@/components/admin/StatementsAdminPanel";
+import { EmergencyContactsPanel } from "@/components/admin/EmergencyContactsPanel";
 
 import { useAdminI18n } from "@/lib/admin-i18n";
 import hamrohLogo from "@/assets/hamroh-logo.png";
