@@ -1,34 +1,47 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Check, X, Image as ImageIcon } from "lucide-react";
+import { Check, X, Image as ImageIcon, Upload, Loader2, Camera } from "lucide-react";
 import { getMyTaxInfo, updateMyTaxInfo } from "@/lib/earnings.functions";
 import { useGuideI18n } from "@/lib/guide-i18n";
 
-type MediaItem = { url: string; label: string; source: "photo" | "tour" | "post" };
+type MediaItem = { url: string; label: string; source: "photo" | "tour" };
+
+const MAX_IMAGE_BYTES = 8 * 1024 * 1024; // 8MB
 
 export function ProfilePanel({ guideId }: { guideId: string }) {
   const { tg } = useGuideI18n();
   const updateTaxFn = useServerFn(updateMyTaxInfo);
   const getTaxFn = useServerFn(getMyTaxInfo);
+  const [userId, setUserId] = useState<string | null>(null);
   const [currentCover, setCurrentCover] = useState<string | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+  const [name, setName] = useState("");
+  const [tagline, setTagline] = useState("");
+  const [bio, setBio] = useState("");
+  const [initialProfile, setInitialProfile] = useState({ name: "", tagline: "", bio: "" });
   const [media, setMedia] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploadingCover, setUploadingCover] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [savingProfile, setSavingProfile] = useState(false);
   const [taxStatus, setTaxStatus] = useState<"none" | "self_employed" | "ip">("none");
   const [taxId, setTaxId] = useState("");
   const [taxSaving, setTaxSaving] = useState(false);
+  const coverInputRef = useRef<HTMLInputElement>(null);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     let alive = true;
     (async () => {
       setLoading(true);
-      const [g, t, p, tax] = await Promise.all([
-        supabase.from("guides").select("photo_url, cover_url").eq("id", guideId).maybeSingle(),
+      const { data: userRes } = await supabase.auth.getUser();
+      const uid = userRes.user?.id ?? null;
+      const [g, t, tax] = await Promise.all([
+        supabase.from("guides").select("name, tagline, bio, photo_url, cover_url").eq("id", guideId).maybeSingle(),
         supabase.from("tours").select("title, cover_url").eq("guide_id", guideId).not("cover_url", "is", null),
-        supabase.from("guide_posts").select("caption, thumbnail_url").eq("guide_id", guideId).not("thumbnail_url", "is", null),
         getTaxFn().catch(() => ({ tax_status: "none" as const, tax_id: "" })),
       ]);
       if (!alive) return;
@@ -37,15 +50,17 @@ export function ProfilePanel({ guideId }: { guideId: string }) {
       (t.data ?? []).forEach((row) => {
         if (row.cover_url) items.push({ url: row.cover_url, label: row.title || "Tour", source: "tour" });
       });
-      (p.data ?? []).forEach((row) => {
-        if (row.thumbnail_url) items.push({ url: row.thumbnail_url, label: row.caption || "Post", source: "post" });
-      });
-      // dedupe by url
       const seen = new Set<string>();
       const unique = items.filter((m) => (seen.has(m.url) ? false : (seen.add(m.url), true)));
+      setUserId(uid);
       setMedia(unique);
       setPhotoUrl(g.data?.photo_url ?? null);
       setCurrentCover(g.data?.cover_url ?? null);
+      const n = g.data?.name ?? "";
+      const tl = g.data?.tagline ?? "";
+      const b = g.data?.bio ?? "";
+      setName(n); setTagline(tl); setBio(b);
+      setInitialProfile({ name: n, tagline: tl, bio: b });
       setTaxStatus(((tax as any)?.tax_status ?? "none") as any);
       setTaxId(((tax as any)?.tax_id ?? "") as string);
       setLoading(false);
@@ -65,7 +80,7 @@ export function ProfilePanel({ guideId }: { guideId: string }) {
     }
   };
 
-  const save = async (url: string | null) => {
+  const saveCover = async (url: string | null) => {
     setSaving(true);
     const { error } = await supabase.from("guides").update({ cover_url: url }).eq("id", guideId);
     setSaving(false);
@@ -74,78 +89,226 @@ export function ProfilePanel({ guideId }: { guideId: string }) {
     toast.success(url ? "Cover banner updated" : "Cover banner removed");
   };
 
+  const uploadImage = async (file: File, prefix: string) => {
+    if (!userId) throw new Error("Not signed in");
+    if (!file.type.startsWith("image/")) throw new Error("Please pick an image file");
+    if (file.size > MAX_IMAGE_BYTES) throw new Error("Image is larger than 8MB");
+    const ext = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
+    const path = `${userId}/${prefix}/${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from("tour-photos").upload(path, file, {
+      upsert: true, contentType: file.type,
+    });
+    if (error) throw error;
+    const { data } = supabase.storage.from("tour-photos").getPublicUrl(path);
+    return data.publicUrl;
+  };
+
+  const onPickCoverFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]; if (!file) return;
+    e.target.value = "";
+    setUploadingCover(true);
+    try {
+      const url = await uploadImage(file, "cover");
+      const { error } = await supabase.from("guides").update({ cover_url: url }).eq("id", guideId);
+      if (error) throw error;
+      setCurrentCover(url);
+      setMedia((prev) => [{ url, label: "Uploaded cover", source: "photo" }, ...prev.filter((m) => m.url !== url)]);
+      toast.success("Cover banner updated");
+    } catch (err: any) { toast.error(err.message); }
+    setUploadingCover(false);
+  };
+
+  const onPickAvatarFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]; if (!file) return;
+    e.target.value = "";
+    setUploadingAvatar(true);
+    try {
+      const url = await uploadImage(file, "avatar");
+      const { error } = await supabase.from("guides").update({ photo_url: url }).eq("id", guideId);
+      if (error) throw error;
+      setPhotoUrl(url);
+      setMedia((prev) => {
+        const rest = prev.filter((m) => m.source !== "photo");
+        return [{ url, label: "Profile photo", source: "photo" }, ...rest];
+      });
+      toast.success("Profile photo updated");
+    } catch (err: any) { toast.error(err.message); }
+    setUploadingAvatar(false);
+  };
+
+  const dirtyProfile =
+    name.trim() !== initialProfile.name ||
+    tagline.trim() !== initialProfile.tagline ||
+    bio.trim() !== initialProfile.bio;
+
+  const saveProfile = async () => {
+    if (!name.trim()) { toast.error("Name is required"); return; }
+    setSavingProfile(true);
+    const patch = { name: name.trim(), tagline: tagline.trim(), bio: bio.trim() };
+    const { error } = await supabase.from("guides").update(patch).eq("id", guideId);
+    setSavingProfile(false);
+    if (error) { toast.error(error.message); return; }
+    setInitialProfile(patch);
+    toast.success(tg("common.saved"));
+  };
+
   const effectiveCover = currentCover || photoUrl;
 
   return (
-    <section className="space-y-6">
-      <div>
-        <h2 className="font-display text-xl font-semibold">Cover banner</h2>
-        <p className="mt-1 text-sm text-muted-foreground">Choose the wide image shown above your profile. Pick from your existing media — profile photo, tour covers, or post images.</p>
-      </div>
+    <section className="space-y-8">
+      {/* Basic info */}
+      <div className="space-y-4">
+        <div>
+          <h2 className="font-display text-xl font-semibold">Profile info</h2>
+          <p className="mt-1 text-sm text-muted-foreground">Your name, tagline and bio shown to travelers.</p>
+        </div>
 
-      <div className="overflow-hidden rounded-2xl ring-1 ring-border/60 bg-secondary">
-        {effectiveCover ? (
-          <img src={effectiveCover} alt="Current cover" className="aspect-[16/9] w-full object-cover" />
-        ) : (
-          <div className="aspect-[16/9] w-full grid place-items-center text-muted-foreground text-sm">
-            <span className="inline-flex items-center gap-2"><ImageIcon className="h-4 w-4" /> No cover yet</span>
+        <div className="flex items-start gap-4">
+          <div className="relative shrink-0">
+            <div className="h-20 w-20 overflow-hidden rounded-full ring-1 ring-border/60 bg-secondary grid place-items-center">
+              {photoUrl ? (
+                <img src={photoUrl} alt="Profile" className="h-full w-full object-cover" />
+              ) : (
+                <ImageIcon className="h-6 w-6 text-muted-foreground" />
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={() => avatarInputRef.current?.click()}
+              disabled={uploadingAvatar || !userId}
+              className="absolute -bottom-1 -right-1 h-8 w-8 rounded-full bg-primary text-primary-foreground grid place-items-center ring-2 ring-background disabled:opacity-60"
+              title="Change profile photo"
+            >
+              {uploadingAvatar ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
+            </button>
+            <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={onPickAvatarFile} />
           </div>
-        )}
+
+          <div className="flex-1 min-w-0 space-y-3">
+            <label className="text-sm flex flex-col gap-1">
+              <span className="text-muted-foreground">Name</span>
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value.slice(0, 80))}
+                className="h-10 px-3 rounded-md border border-border bg-background"
+              />
+            </label>
+            <label className="text-sm flex flex-col gap-1">
+              <span className="text-muted-foreground">Tagline <span className="text-xs">({tagline.length}/120)</span></span>
+              <input
+                value={tagline}
+                onChange={(e) => setTagline(e.target.value.slice(0, 120))}
+                placeholder="Short one-liner shown under your name"
+                className="h-10 px-3 rounded-md border border-border bg-background"
+              />
+            </label>
+          </div>
+        </div>
+
+        <label className="text-sm flex flex-col gap-1">
+          <span className="text-muted-foreground">Bio <span className="text-xs">({bio.length}/1000)</span></span>
+          <textarea
+            value={bio}
+            onChange={(e) => setBio(e.target.value.slice(0, 1000))}
+            rows={5}
+            placeholder="Tell travelers about yourself, your style and what makes your tours special."
+            className="px-3 py-2 rounded-md border border-border bg-background resize-y"
+          />
+        </label>
+
+        <div>
+          <button
+            onClick={saveProfile}
+            disabled={savingProfile || !dirtyProfile}
+            className="h-10 px-5 rounded-full bg-primary text-primary-foreground text-sm font-medium disabled:opacity-50"
+          >
+            {savingProfile ? tg("common.loading") : tg("common.save")}
+          </button>
+        </div>
       </div>
 
-      <div className="flex items-center gap-3 text-sm">
-        <span className="text-muted-foreground">
-          {currentCover ? "Custom cover set" : "Using profile photo as fallback"}
-        </span>
-        {currentCover && (
+      {/* Cover banner */}
+      <div className="space-y-4 pt-6 border-t border-border">
+        <div>
+          <h2 className="font-display text-xl font-semibold">Cover banner</h2>
+          <p className="mt-1 text-sm text-muted-foreground">The wide image shown above your public profile. Upload a new one or pick from your existing media.</p>
+        </div>
+
+        <div className="overflow-hidden rounded-2xl ring-1 ring-border/60 bg-secondary">
+          {effectiveCover ? (
+            <img src={effectiveCover} alt="Current cover" className="aspect-[16/9] w-full object-cover" />
+          ) : (
+            <div className="aspect-[16/9] w-full grid place-items-center text-muted-foreground text-sm">
+              <span className="inline-flex items-center gap-2"><ImageIcon className="h-4 w-4" /> No cover yet</span>
+            </div>
+          )}
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 text-sm">
           <button
             type="button"
-            disabled={saving}
-            onClick={() => save(null)}
-            className="inline-flex items-center gap-1 rounded-full bg-secondary hover:bg-muted px-3 h-8 text-xs"
+            onClick={() => coverInputRef.current?.click()}
+            disabled={uploadingCover || !userId}
+            className="inline-flex items-center gap-1.5 rounded-full bg-primary text-primary-foreground px-4 h-9 text-xs font-medium disabled:opacity-60"
           >
-            <X className="h-3.5 w-3.5" /> Remove cover
+            {uploadingCover ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Upload className="h-3.5 w-3.5" />}
+            Upload new cover
           </button>
-        )}
+          <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={onPickCoverFile} />
+          {currentCover && (
+            <button
+              type="button"
+              disabled={saving}
+              onClick={() => saveCover(null)}
+              className="inline-flex items-center gap-1 rounded-full bg-secondary hover:bg-muted px-3 h-9 text-xs"
+            >
+              <X className="h-3.5 w-3.5" /> Remove cover
+            </button>
+          )}
+          <span className="text-muted-foreground text-xs">
+            {currentCover ? "Custom cover set" : "Using profile photo as fallback"}
+          </span>
+        </div>
+
+        <div>
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Pick from your media</h3>
+          {loading ? (
+            <p className="mt-3 text-sm text-muted-foreground">Loading…</p>
+          ) : media.length === 0 ? (
+            <p className="mt-3 text-sm text-muted-foreground">No images found yet. Upload a cover above, add a profile photo, or add tour covers.</p>
+          ) : (
+            <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+              {media.map((m) => {
+                const selected = currentCover === m.url;
+                return (
+                  <button
+                    key={m.url}
+                    type="button"
+                    disabled={saving || selected}
+                    onClick={() => saveCover(m.url)}
+                    className={`group relative overflow-hidden rounded-xl ring-1 transition ${
+                      selected ? "ring-2 ring-primary" : "ring-border/60 hover:ring-foreground/40"
+                    }`}
+                    title={m.label}
+                  >
+                    <img src={m.url} alt={m.label} className="aspect-[16/9] w-full object-cover" />
+                    <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 bg-gradient-to-t from-black/70 to-transparent px-2 py-1.5">
+                      <span className="text-[10px] font-medium text-white capitalize">{m.source}</span>
+                      {selected && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold text-primary-foreground">
+                          <Check className="h-3 w-3" /> Active
+                        </span>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
 
-      <div>
-        <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Pick from your media</h3>
-        {loading ? (
-          <p className="mt-3 text-sm text-muted-foreground">Loading…</p>
-        ) : media.length === 0 ? (
-          <p className="mt-3 text-sm text-muted-foreground">No images found yet. Add a profile photo, tour covers, or posts to use as a banner.</p>
-        ) : (
-          <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-            {media.map((m) => {
-              const selected = currentCover === m.url;
-              return (
-                <button
-                  key={m.url}
-                  type="button"
-                  disabled={saving || selected}
-                  onClick={() => save(m.url)}
-                  className={`group relative overflow-hidden rounded-xl ring-1 transition ${
-                    selected ? "ring-2 ring-primary" : "ring-border/60 hover:ring-foreground/40"
-                  }`}
-                  title={m.label}
-                >
-                  <img src={m.url} alt={m.label} className="aspect-[16/9] w-full object-cover" />
-                  <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 bg-gradient-to-t from-black/70 to-transparent px-2 py-1.5">
-                    <span className="text-[10px] font-medium text-white capitalize">{m.source}</span>
-                    {selected && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold text-primary-foreground">
-                        <Check className="h-3 w-3" /> Active
-                      </span>
-                    )}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        )}
-      </div>
-
+      {/* Tax */}
       <div className="space-y-3 pt-6 border-t border-border">
         <h2 className="font-display text-xl font-semibold">{tg("profile.tax.title")}</h2>
         <div className="grid sm:grid-cols-2 gap-3">
