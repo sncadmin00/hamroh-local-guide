@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Check, X, Image as ImageIcon, Upload, Loader2, Camera } from "lucide-react";
+import { Check, X, Image as ImageIcon, Upload, Loader2, Camera, Plus, Car } from "lucide-react";
 import { getMyTaxInfo, updateMyTaxInfo } from "@/lib/earnings.functions";
 import { useGuideI18n } from "@/lib/guide-i18n";
 
