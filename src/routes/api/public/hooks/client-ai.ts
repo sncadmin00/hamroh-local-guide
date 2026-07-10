@@ -52,6 +52,39 @@ const MAX_QUERY_LEN = 300;
 
 type Turn = { role: "user" | "assistant"; content: string };
 type Lang = "en" | "ru" | "uz";
+type Holiday = { title: string; date_start: string; date_end?: string | null };
+type ClientContext = { upcomingHolidays?: Holiday[] };
+
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+function sanitizeHolidays(input: unknown): Holiday[] {
+  if (!Array.isArray(input)) return [];
+  const out: Holiday[] = [];
+  for (const h of input) {
+    if (!h || typeof h !== "object") continue;
+    const rec = h as Record<string, unknown>;
+    const title = typeof rec.title === "string" ? rec.title.trim().slice(0, 120) : "";
+    const date_start = typeof rec.date_start === "string" ? rec.date_start.slice(0, 10) : "";
+    const date_end =
+      typeof rec.date_end === "string" && DATE_RE.test(rec.date_end.slice(0, 10))
+        ? rec.date_end.slice(0, 10)
+        : null;
+    if (!title || !DATE_RE.test(date_start)) continue;
+    out.push({ title, date_start, date_end });
+    if (out.length >= 20) break;
+  }
+  return out;
+}
+
+function formatHolidaysBlock(holidays: Holiday[]): string {
+  if (!holidays.length) return "(none provided)";
+  return holidays
+    .map((h) => {
+      const range = h.date_end && h.date_end !== h.date_start ? `${h.date_start} → ${h.date_end}` : h.date_start;
+      return `- ${range}: ${h.title}`;
+    })
+    .join("\n");
+}
 
 function corsHeaders(): Record<string, string> {
   return {
