@@ -44,6 +44,31 @@ export function ProfilePanel({ guideId }: { guideId: string }) {
   const [specInput, setSpecInput] = useState("");
   const coverInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
+
+  const [introVideoUrl, setIntroVideoUrl] = useState<string | null>(null);
+  const [introVideoStatus, setIntroVideoStatus] = useState<{ verified: boolean; submittedAt: string | null; rejected: string | null }>({ verified: false, submittedAt: null, rejected: null });
+  const [videoPreviewUrl, setVideoPreviewUrl] = useState<string | null>(null);
+  const [uploadingVideo, setUploadingVideo] = useState(false);
+
+  const loadIntroVideo = useCallback(async () => {
+    try {
+      const v = await getVerificationFn();
+      setIntroVideoStatus({
+        verified: !!v?.intro_video_verified,
+        submittedAt: v?.intro_video_submitted_at ?? null,
+        rejected: v?.intro_video_rejected_reason ?? null,
+      });
+      const path = v?.intro_video_url ?? null;
+      setIntroVideoUrl(path);
+      if (path) {
+        const { data } = await supabase.storage.from("guide-intro-videos").createSignedUrl(path, 3600);
+        setVideoPreviewUrl(data?.signedUrl ?? null);
+      } else {
+        setVideoPreviewUrl(null);
+      }
+    } catch (e) { /* silent */ }
+  }, [getVerificationFn]);
 
   useEffect(() => {
     let alive = true;
