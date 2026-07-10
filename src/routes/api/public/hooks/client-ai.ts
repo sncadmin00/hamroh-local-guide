@@ -16,8 +16,12 @@
  *   {
  *     "message": "string, required, <= 300 chars",
  *     "history": [ { "role": "user"|"assistant", "content": "string" } ],  // optional
- *     "lang":    "en" | "ru" | "uz"                                        // optional, default "en"
+ *     "lang":    "en" | "ru" | "uz",                                       // optional, default "en"
+ *     "context": {                                                          // optional
+ *       "upcomingHolidays": [ { "title": "Navruz", "date_start": "2027-03-21", "date_end": "2027-03-21" } ]
+ *     }
  *   }
+
  *
  * Response 200:
  *   {
