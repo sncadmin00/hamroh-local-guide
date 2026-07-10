@@ -2430,26 +2430,32 @@ export type Database = {
       telegram_signin_nonces: {
         Row: {
           action_link: string | null
+          confirmed_at: string | null
           consumed_at: string | null
           created_at: string
           expires_at: string
           nonce: string
+          platform: string | null
           telegram_user_id: number | null
         }
         Insert: {
           action_link?: string | null
+          confirmed_at?: string | null
           consumed_at?: string | null
           created_at?: string
           expires_at: string
           nonce: string
+          platform?: string | null
           telegram_user_id?: number | null
         }
         Update: {
           action_link?: string | null
+          confirmed_at?: string | null
           consumed_at?: string | null
           created_at?: string
           expires_at?: string
           nonce?: string
+          platform?: string | null
           telegram_user_id?: number | null
         }
         Relationships: []
