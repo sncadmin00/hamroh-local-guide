@@ -1894,7 +1894,10 @@ export type Database = {
           description: string
           guide_id: string | null
           id: string
+          lat: number | null
+          lng: number | null
           name: string
+          photo_url: string | null
           raw_query: string
           source: string
           source_url: string
@@ -1912,7 +1915,10 @@ export type Database = {
           description?: string
           guide_id?: string | null
           id?: string
+          lat?: number | null
+          lng?: number | null
           name: string
+          photo_url?: string | null
           raw_query?: string
           source?: string
           source_url?: string
@@ -1930,7 +1936,10 @@ export type Database = {
           description?: string
           guide_id?: string | null
           id?: string
+          lat?: number | null
+          lng?: number | null
           name?: string
+          photo_url?: string | null
           raw_query?: string
           source?: string
           source_url?: string
