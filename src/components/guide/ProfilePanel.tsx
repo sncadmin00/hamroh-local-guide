@@ -1,14 +1,16 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Check, X, Image as ImageIcon, Upload, Loader2, Camera, Plus, Car } from "lucide-react";
+import { Check, X, Image as ImageIcon, Upload, Loader2, Camera, Plus, Car, Video, CheckCircle2, Clock, AlertCircle } from "lucide-react";
 import { getMyTaxInfo, updateMyTaxInfo } from "@/lib/earnings.functions";
+import { getMyVerification, submitIntroVideo } from "@/lib/guide-verification.functions";
 import { useGuideI18n } from "@/lib/guide-i18n";
 
 type MediaItem = { url: string; label: string; source: "photo" | "tour" };
 
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024; // 8MB
+const MAX_VIDEO_BYTES = 80 * 1024 * 1024; // 80MB
 
 export function ProfilePanel({ guideId }: { guideId: string }) {
   const { tg } = useGuideI18n();
