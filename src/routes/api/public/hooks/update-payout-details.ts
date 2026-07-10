@@ -137,9 +137,9 @@ export const Route = createFileRoute("/api/public/hooks/update-payout-details")(
           .from("guides")
           .update({
             payout_method: method,
-            payout_details: validatedDetails,
+            payout_details: validatedDetails as any,
             payout_details_updated_at: new Date().toISOString(),
-          })
+          } as any)
           .eq("id", (guide as any).id);
         if (updErr) {
           return Response.json(

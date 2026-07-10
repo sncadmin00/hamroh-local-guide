@@ -59,6 +59,7 @@ import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/em
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as ApiPublicTelegramWebhookRouteImport } from './routes/api/public/telegram/webhook'
 import { Route as ApiPublicHooksUpsertTourRouteImport } from './routes/api/public/hooks/upsert-tour'
+import { Route as ApiPublicHooksUpdatePayoutDetailsRouteImport } from './routes/api/public/hooks/update-payout-details'
 import { Route as ApiPublicHooksUpdateMyLanguagesRouteImport } from './routes/api/public/hooks/update-my-languages'
 import { Route as ApiPublicHooksTelegramSigninStartRouteImport } from './routes/api/public/hooks/telegram-signin-start'
 import { Route as ApiPublicHooksTelegramSigninPollRouteImport } from './routes/api/public/hooks/telegram-signin-poll'
@@ -356,6 +357,12 @@ const ApiPublicHooksUpsertTourRoute =
   ApiPublicHooksUpsertTourRouteImport.update({
     id: '/api/public/hooks/upsert-tour',
     path: '/api/public/hooks/upsert-tour',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksUpdatePayoutDetailsRoute =
+  ApiPublicHooksUpdatePayoutDetailsRouteImport.update({
+    id: '/api/public/hooks/update-payout-details',
+    path: '/api/public/hooks/update-payout-details',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicHooksUpdateMyLanguagesRoute =
@@ -693,6 +700,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/telegram-signin-poll': typeof ApiPublicHooksTelegramSigninPollRoute
   '/api/public/hooks/telegram-signin-start': typeof ApiPublicHooksTelegramSigninStartRoute
   '/api/public/hooks/update-my-languages': typeof ApiPublicHooksUpdateMyLanguagesRoute
+  '/api/public/hooks/update-payout-details': typeof ApiPublicHooksUpdatePayoutDetailsRoute
   '/api/public/hooks/upsert-tour': typeof ApiPublicHooksUpsertTourRoute
   '/api/public/telegram/webhook': typeof ApiPublicTelegramWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -787,6 +795,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/telegram-signin-poll': typeof ApiPublicHooksTelegramSigninPollRoute
   '/api/public/hooks/telegram-signin-start': typeof ApiPublicHooksTelegramSigninStartRoute
   '/api/public/hooks/update-my-languages': typeof ApiPublicHooksUpdateMyLanguagesRoute
+  '/api/public/hooks/update-payout-details': typeof ApiPublicHooksUpdatePayoutDetailsRoute
   '/api/public/hooks/upsert-tour': typeof ApiPublicHooksUpsertTourRoute
   '/api/public/telegram/webhook': typeof ApiPublicTelegramWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -883,6 +892,7 @@ export interface FileRoutesById {
   '/api/public/hooks/telegram-signin-poll': typeof ApiPublicHooksTelegramSigninPollRoute
   '/api/public/hooks/telegram-signin-start': typeof ApiPublicHooksTelegramSigninStartRoute
   '/api/public/hooks/update-my-languages': typeof ApiPublicHooksUpdateMyLanguagesRoute
+  '/api/public/hooks/update-payout-details': typeof ApiPublicHooksUpdatePayoutDetailsRoute
   '/api/public/hooks/upsert-tour': typeof ApiPublicHooksUpsertTourRoute
   '/api/public/telegram/webhook': typeof ApiPublicTelegramWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -980,6 +990,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/telegram-signin-poll'
     | '/api/public/hooks/telegram-signin-start'
     | '/api/public/hooks/update-my-languages'
+    | '/api/public/hooks/update-payout-details'
     | '/api/public/hooks/upsert-tour'
     | '/api/public/telegram/webhook'
     | '/lovable/email/auth/preview'
@@ -1074,6 +1085,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/telegram-signin-poll'
     | '/api/public/hooks/telegram-signin-start'
     | '/api/public/hooks/update-my-languages'
+    | '/api/public/hooks/update-payout-details'
     | '/api/public/hooks/upsert-tour'
     | '/api/public/telegram/webhook'
     | '/lovable/email/auth/preview'
@@ -1169,6 +1181,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/telegram-signin-poll'
     | '/api/public/hooks/telegram-signin-start'
     | '/api/public/hooks/update-my-languages'
+    | '/api/public/hooks/update-payout-details'
     | '/api/public/hooks/upsert-tour'
     | '/api/public/telegram/webhook'
     | '/lovable/email/auth/preview'
@@ -1261,6 +1274,7 @@ export interface RootRouteChildren {
   ApiPublicHooksTelegramSigninPollRoute: typeof ApiPublicHooksTelegramSigninPollRoute
   ApiPublicHooksTelegramSigninStartRoute: typeof ApiPublicHooksTelegramSigninStartRoute
   ApiPublicHooksUpdateMyLanguagesRoute: typeof ApiPublicHooksUpdateMyLanguagesRoute
+  ApiPublicHooksUpdatePayoutDetailsRoute: typeof ApiPublicHooksUpdatePayoutDetailsRoute
   ApiPublicHooksUpsertTourRoute: typeof ApiPublicHooksUpsertTourRoute
   ApiPublicTelegramWebhookRoute: typeof ApiPublicTelegramWebhookRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
@@ -1627,6 +1641,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/hooks/upsert-tour'
       fullPath: '/api/public/hooks/upsert-tour'
       preLoaderRoute: typeof ApiPublicHooksUpsertTourRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/update-payout-details': {
+      id: '/api/public/hooks/update-payout-details'
+      path: '/api/public/hooks/update-payout-details'
+      fullPath: '/api/public/hooks/update-payout-details'
+      preLoaderRoute: typeof ApiPublicHooksUpdatePayoutDetailsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/update-my-languages': {
@@ -2049,6 +2070,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksTelegramSigninStartRoute:
     ApiPublicHooksTelegramSigninStartRoute,
   ApiPublicHooksUpdateMyLanguagesRoute: ApiPublicHooksUpdateMyLanguagesRoute,
+  ApiPublicHooksUpdatePayoutDetailsRoute:
+    ApiPublicHooksUpdatePayoutDetailsRoute,
   ApiPublicHooksUpsertTourRoute: ApiPublicHooksUpsertTourRoute,
   ApiPublicTelegramWebhookRoute: ApiPublicTelegramWebhookRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
