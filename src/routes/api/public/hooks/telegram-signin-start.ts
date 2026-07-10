@@ -33,10 +33,21 @@ export const Route = createFileRoute("/api/public/hooks/telegram-signin-start")(
       OPTIONS: async () => new Response(null, { status: 204, headers: cors }),
       POST: async ({ request }) => {
         let platform: string | null = null;
+        let redirectTo: string | null = null;
         try {
           const body = await request.json();
           if (body && typeof body.platform === "string") {
             platform = body.platform.trim().slice(0, 40) || null;
+          }
+          if (body && typeof body.redirect_to === "string") {
+            const v = body.redirect_to.trim().slice(0, 500);
+            const allowed = [
+              "https://hamrohim.com/",
+              "https://www.hamrohim.com/",
+              "https://hamroh-local-guide.lovable.app/",
+              "hamrohmobile://",
+            ];
+            if (allowed.some((p) => v.startsWith(p))) redirectTo = v;
           }
         } catch {
           // no body — fine
@@ -46,7 +57,7 @@ export const Route = createFileRoute("/api/public/hooks/telegram-signin-start")(
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { error } = await supabaseAdmin
           .from("telegram_signin_nonces")
-          .insert({ nonce, expires_at: expiresAt, platform });
+          .insert({ nonce, expires_at: expiresAt, platform, redirect_to: redirectTo });
         if (error) {
           return Response.json({ error: error.message }, { status: 500, headers: cors });
         }
