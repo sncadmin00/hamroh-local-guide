@@ -20,6 +20,7 @@ import { ToursPanel } from "@/components/admin/ToursPanel";
 import { VerificationsPanel } from "@/components/admin/VerificationsPanel";
 import { GuideInvitationsPanel } from "@/components/admin/GuideInvitationsPanel";
 import { StatementsAdminPanel } from "@/components/admin/StatementsAdminPanel";
+import { EmergencyContactsPanel } from "@/components/admin/EmergencyContactsPanel";
 
 import { useAdminI18n } from "@/lib/admin-i18n";
 import hamrohLogo from "@/assets/hamroh-logo.png";
@@ -244,7 +245,7 @@ function AdminPage() {
   const { ta } = useAdminI18n();
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
-  const [tab, setTab] = useState<"bookings" | "applications" | "verifications" | "cities" | "guides" | "tours" | "spotlights" | "reels" | "categories" | "languages" | "places" | "suggestions" | "articles" | "social" | "users" | "invitations" | "statements">("bookings");
+  const [tab, setTab] = useState<"bookings" | "applications" | "verifications" | "cities" | "guides" | "tours" | "spotlights" | "reels" | "categories" | "languages" | "places" | "suggestions" | "articles" | "social" | "users" | "invitations" | "statements" | "emergency">("bookings");
   const [cities, setCities] = useState<City[]>([]);
   const [guides, setGuides] = useState<Guide[]>([]);
   const [articles, setArticles] = useState<Article[]>([]);
@@ -430,6 +431,12 @@ function AdminPage() {
           >
             Statements
           </button>
+          <button
+            onClick={() => setTab("emergency")}
+            className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "emergency" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+          >
+            Emergency
+          </button>
         </div>
 
         {tab === "bookings" && <BookingsPanel bookings={bookings} reload={loadData} />}
@@ -449,6 +456,7 @@ function AdminPage() {
         {tab === "verifications" && <VerificationsPanel />}
         {tab === "invitations" && <GuideInvitationsPanel />}
         {tab === "statements" && <StatementsAdminPanel />}
+        {tab === "emergency" && <EmergencyContactsPanel />}
 
       </div>
     </div>
