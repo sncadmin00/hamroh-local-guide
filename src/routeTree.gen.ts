@@ -61,8 +61,11 @@ import { Route as ApiPublicTelegramWebhookRouteImport } from './routes/api/publi
 import { Route as ApiPublicHooksUpsertTourRouteImport } from './routes/api/public/hooks/upsert-tour'
 import { Route as ApiPublicHooksUpdateMyLanguagesRouteImport } from './routes/api/public/hooks/update-my-languages'
 import { Route as ApiPublicHooksSuggestCityRouteImport } from './routes/api/public/hooks/suggest-city'
+import { Route as ApiPublicHooksSubmitLicenseRouteImport } from './routes/api/public/hooks/submit-license'
+import { Route as ApiPublicHooksSubmitIdentityRouteImport } from './routes/api/public/hooks/submit-identity'
 import { Route as ApiPublicHooksRetranslateTourRouteImport } from './routes/api/public/hooks/retranslate-tour'
 import { Route as ApiPublicHooksPriceQuoteRouteImport } from './routes/api/public/hooks/price-quote'
+import { Route as ApiPublicHooksMyVerificationRouteImport } from './routes/api/public/hooks/my-verification'
 import { Route as ApiPublicHooksMyTransactionsRouteImport } from './routes/api/public/hooks/my-transactions'
 import { Route as ApiPublicHooksMyStatementsRouteImport } from './routes/api/public/hooks/my-statements'
 import { Route as ApiPublicHooksMyPayoutsRouteImport } from './routes/api/public/hooks/my-payouts'
@@ -356,6 +359,18 @@ const ApiPublicHooksSuggestCityRoute =
     path: '/api/public/hooks/suggest-city',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksSubmitLicenseRoute =
+  ApiPublicHooksSubmitLicenseRouteImport.update({
+    id: '/api/public/hooks/submit-license',
+    path: '/api/public/hooks/submit-license',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksSubmitIdentityRoute =
+  ApiPublicHooksSubmitIdentityRouteImport.update({
+    id: '/api/public/hooks/submit-identity',
+    path: '/api/public/hooks/submit-identity',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksRetranslateTourRoute =
   ApiPublicHooksRetranslateTourRouteImport.update({
     id: '/api/public/hooks/retranslate-tour',
@@ -366,6 +381,12 @@ const ApiPublicHooksPriceQuoteRoute =
   ApiPublicHooksPriceQuoteRouteImport.update({
     id: '/api/public/hooks/price-quote',
     path: '/api/public/hooks/price-quote',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksMyVerificationRoute =
+  ApiPublicHooksMyVerificationRouteImport.update({
+    id: '/api/public/hooks/my-verification',
+    path: '/api/public/hooks/my-verification',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicHooksMyTransactionsRoute =
@@ -580,8 +601,11 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/my-payouts': typeof ApiPublicHooksMyPayoutsRoute
   '/api/public/hooks/my-statements': typeof ApiPublicHooksMyStatementsRoute
   '/api/public/hooks/my-transactions': typeof ApiPublicHooksMyTransactionsRoute
+  '/api/public/hooks/my-verification': typeof ApiPublicHooksMyVerificationRoute
   '/api/public/hooks/price-quote': typeof ApiPublicHooksPriceQuoteRoute
   '/api/public/hooks/retranslate-tour': typeof ApiPublicHooksRetranslateTourRoute
+  '/api/public/hooks/submit-identity': typeof ApiPublicHooksSubmitIdentityRoute
+  '/api/public/hooks/submit-license': typeof ApiPublicHooksSubmitLicenseRoute
   '/api/public/hooks/suggest-city': typeof ApiPublicHooksSuggestCityRoute
   '/api/public/hooks/update-my-languages': typeof ApiPublicHooksUpdateMyLanguagesRoute
   '/api/public/hooks/upsert-tour': typeof ApiPublicHooksUpsertTourRoute
@@ -660,8 +684,11 @@ export interface FileRoutesByTo {
   '/api/public/hooks/my-payouts': typeof ApiPublicHooksMyPayoutsRoute
   '/api/public/hooks/my-statements': typeof ApiPublicHooksMyStatementsRoute
   '/api/public/hooks/my-transactions': typeof ApiPublicHooksMyTransactionsRoute
+  '/api/public/hooks/my-verification': typeof ApiPublicHooksMyVerificationRoute
   '/api/public/hooks/price-quote': typeof ApiPublicHooksPriceQuoteRoute
   '/api/public/hooks/retranslate-tour': typeof ApiPublicHooksRetranslateTourRoute
+  '/api/public/hooks/submit-identity': typeof ApiPublicHooksSubmitIdentityRoute
+  '/api/public/hooks/submit-license': typeof ApiPublicHooksSubmitLicenseRoute
   '/api/public/hooks/suggest-city': typeof ApiPublicHooksSuggestCityRoute
   '/api/public/hooks/update-my-languages': typeof ApiPublicHooksUpdateMyLanguagesRoute
   '/api/public/hooks/upsert-tour': typeof ApiPublicHooksUpsertTourRoute
@@ -742,8 +769,11 @@ export interface FileRoutesById {
   '/api/public/hooks/my-payouts': typeof ApiPublicHooksMyPayoutsRoute
   '/api/public/hooks/my-statements': typeof ApiPublicHooksMyStatementsRoute
   '/api/public/hooks/my-transactions': typeof ApiPublicHooksMyTransactionsRoute
+  '/api/public/hooks/my-verification': typeof ApiPublicHooksMyVerificationRoute
   '/api/public/hooks/price-quote': typeof ApiPublicHooksPriceQuoteRoute
   '/api/public/hooks/retranslate-tour': typeof ApiPublicHooksRetranslateTourRoute
+  '/api/public/hooks/submit-identity': typeof ApiPublicHooksSubmitIdentityRoute
+  '/api/public/hooks/submit-license': typeof ApiPublicHooksSubmitLicenseRoute
   '/api/public/hooks/suggest-city': typeof ApiPublicHooksSuggestCityRoute
   '/api/public/hooks/update-my-languages': typeof ApiPublicHooksUpdateMyLanguagesRoute
   '/api/public/hooks/upsert-tour': typeof ApiPublicHooksUpsertTourRoute
@@ -825,8 +855,11 @@ export interface FileRouteTypes {
     | '/api/public/hooks/my-payouts'
     | '/api/public/hooks/my-statements'
     | '/api/public/hooks/my-transactions'
+    | '/api/public/hooks/my-verification'
     | '/api/public/hooks/price-quote'
     | '/api/public/hooks/retranslate-tour'
+    | '/api/public/hooks/submit-identity'
+    | '/api/public/hooks/submit-license'
     | '/api/public/hooks/suggest-city'
     | '/api/public/hooks/update-my-languages'
     | '/api/public/hooks/upsert-tour'
@@ -905,8 +938,11 @@ export interface FileRouteTypes {
     | '/api/public/hooks/my-payouts'
     | '/api/public/hooks/my-statements'
     | '/api/public/hooks/my-transactions'
+    | '/api/public/hooks/my-verification'
     | '/api/public/hooks/price-quote'
     | '/api/public/hooks/retranslate-tour'
+    | '/api/public/hooks/submit-identity'
+    | '/api/public/hooks/submit-license'
     | '/api/public/hooks/suggest-city'
     | '/api/public/hooks/update-my-languages'
     | '/api/public/hooks/upsert-tour'
@@ -986,8 +1022,11 @@ export interface FileRouteTypes {
     | '/api/public/hooks/my-payouts'
     | '/api/public/hooks/my-statements'
     | '/api/public/hooks/my-transactions'
+    | '/api/public/hooks/my-verification'
     | '/api/public/hooks/price-quote'
     | '/api/public/hooks/retranslate-tour'
+    | '/api/public/hooks/submit-identity'
+    | '/api/public/hooks/submit-license'
     | '/api/public/hooks/suggest-city'
     | '/api/public/hooks/update-my-languages'
     | '/api/public/hooks/upsert-tour'
@@ -1064,8 +1103,11 @@ export interface RootRouteChildren {
   ApiPublicHooksMyPayoutsRoute: typeof ApiPublicHooksMyPayoutsRoute
   ApiPublicHooksMyStatementsRoute: typeof ApiPublicHooksMyStatementsRoute
   ApiPublicHooksMyTransactionsRoute: typeof ApiPublicHooksMyTransactionsRoute
+  ApiPublicHooksMyVerificationRoute: typeof ApiPublicHooksMyVerificationRoute
   ApiPublicHooksPriceQuoteRoute: typeof ApiPublicHooksPriceQuoteRoute
   ApiPublicHooksRetranslateTourRoute: typeof ApiPublicHooksRetranslateTourRoute
+  ApiPublicHooksSubmitIdentityRoute: typeof ApiPublicHooksSubmitIdentityRoute
+  ApiPublicHooksSubmitLicenseRoute: typeof ApiPublicHooksSubmitLicenseRoute
   ApiPublicHooksSuggestCityRoute: typeof ApiPublicHooksSuggestCityRoute
   ApiPublicHooksUpdateMyLanguagesRoute: typeof ApiPublicHooksUpdateMyLanguagesRoute
   ApiPublicHooksUpsertTourRoute: typeof ApiPublicHooksUpsertTourRoute
@@ -1447,6 +1489,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksSuggestCityRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/submit-license': {
+      id: '/api/public/hooks/submit-license'
+      path: '/api/public/hooks/submit-license'
+      fullPath: '/api/public/hooks/submit-license'
+      preLoaderRoute: typeof ApiPublicHooksSubmitLicenseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/submit-identity': {
+      id: '/api/public/hooks/submit-identity'
+      path: '/api/public/hooks/submit-identity'
+      fullPath: '/api/public/hooks/submit-identity'
+      preLoaderRoute: typeof ApiPublicHooksSubmitIdentityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/retranslate-tour': {
       id: '/api/public/hooks/retranslate-tour'
       path: '/api/public/hooks/retranslate-tour'
@@ -1459,6 +1515,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/hooks/price-quote'
       fullPath: '/api/public/hooks/price-quote'
       preLoaderRoute: typeof ApiPublicHooksPriceQuoteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/my-verification': {
+      id: '/api/public/hooks/my-verification'
+      path: '/api/public/hooks/my-verification'
+      fullPath: '/api/public/hooks/my-verification'
+      preLoaderRoute: typeof ApiPublicHooksMyVerificationRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/my-transactions': {
@@ -1739,8 +1802,11 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksMyPayoutsRoute: ApiPublicHooksMyPayoutsRoute,
   ApiPublicHooksMyStatementsRoute: ApiPublicHooksMyStatementsRoute,
   ApiPublicHooksMyTransactionsRoute: ApiPublicHooksMyTransactionsRoute,
+  ApiPublicHooksMyVerificationRoute: ApiPublicHooksMyVerificationRoute,
   ApiPublicHooksPriceQuoteRoute: ApiPublicHooksPriceQuoteRoute,
   ApiPublicHooksRetranslateTourRoute: ApiPublicHooksRetranslateTourRoute,
+  ApiPublicHooksSubmitIdentityRoute: ApiPublicHooksSubmitIdentityRoute,
+  ApiPublicHooksSubmitLicenseRoute: ApiPublicHooksSubmitLicenseRoute,
   ApiPublicHooksSuggestCityRoute: ApiPublicHooksSuggestCityRoute,
   ApiPublicHooksUpdateMyLanguagesRoute: ApiPublicHooksUpdateMyLanguagesRoute,
   ApiPublicHooksUpsertTourRoute: ApiPublicHooksUpsertTourRoute,
