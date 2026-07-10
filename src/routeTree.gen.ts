@@ -59,6 +59,7 @@ import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/em
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as ApiPublicTelegramWebhookRouteImport } from './routes/api/public/telegram/webhook'
 import { Route as ApiPublicHooksUpsertTourRouteImport } from './routes/api/public/hooks/upsert-tour'
+import { Route as ApiPublicHooksUpdatePayoutDetailsRouteImport } from './routes/api/public/hooks/update-payout-details'
 import { Route as ApiPublicHooksUpdateMyLanguagesRouteImport } from './routes/api/public/hooks/update-my-languages'
 import { Route as ApiPublicHooksTelegramSigninStartRouteImport } from './routes/api/public/hooks/telegram-signin-start'
 import { Route as ApiPublicHooksTelegramSigninPollRouteImport } from './routes/api/public/hooks/telegram-signin-poll'
@@ -69,12 +70,14 @@ import { Route as ApiPublicHooksSubmitLicenseRouteImport } from './routes/api/pu
 import { Route as ApiPublicHooksSubmitIntroVideoRouteImport } from './routes/api/public/hooks/submit-intro-video'
 import { Route as ApiPublicHooksSubmitIdentityRouteImport } from './routes/api/public/hooks/submit-identity'
 import { Route as ApiPublicHooksRetranslateTourRouteImport } from './routes/api/public/hooks/retranslate-tour'
+import { Route as ApiPublicHooksRequestPayoutRouteImport } from './routes/api/public/hooks/request-payout'
 import { Route as ApiPublicHooksPriceQuoteRouteImport } from './routes/api/public/hooks/price-quote'
 import { Route as ApiPublicHooksMyVerificationRouteImport } from './routes/api/public/hooks/my-verification'
 import { Route as ApiPublicHooksMyTransactionsRouteImport } from './routes/api/public/hooks/my-transactions'
 import { Route as ApiPublicHooksMyStatementsRouteImport } from './routes/api/public/hooks/my-statements'
 import { Route as ApiPublicHooksMyReportUrlRouteImport } from './routes/api/public/hooks/my-report-url'
 import { Route as ApiPublicHooksMyPayoutsRouteImport } from './routes/api/public/hooks/my-payouts'
+import { Route as ApiPublicHooksMyPayoutDetailsRouteImport } from './routes/api/public/hooks/my-payout-details'
 import { Route as ApiPublicHooksMyNotificationEmailRouteImport } from './routes/api/public/hooks/my-notification-email'
 import { Route as ApiPublicHooksMyInvoiceUrlRouteImport } from './routes/api/public/hooks/my-invoice-url'
 import { Route as ApiPublicHooksMyGuidePostsRouteImport } from './routes/api/public/hooks/my-guide-posts'
@@ -357,6 +360,12 @@ const ApiPublicHooksUpsertTourRoute =
     path: '/api/public/hooks/upsert-tour',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksUpdatePayoutDetailsRoute =
+  ApiPublicHooksUpdatePayoutDetailsRouteImport.update({
+    id: '/api/public/hooks/update-payout-details',
+    path: '/api/public/hooks/update-payout-details',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksUpdateMyLanguagesRoute =
   ApiPublicHooksUpdateMyLanguagesRouteImport.update({
     id: '/api/public/hooks/update-my-languages',
@@ -417,6 +426,12 @@ const ApiPublicHooksRetranslateTourRoute =
     path: '/api/public/hooks/retranslate-tour',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksRequestPayoutRoute =
+  ApiPublicHooksRequestPayoutRouteImport.update({
+    id: '/api/public/hooks/request-payout',
+    path: '/api/public/hooks/request-payout',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksPriceQuoteRoute =
   ApiPublicHooksPriceQuoteRouteImport.update({
     id: '/api/public/hooks/price-quote',
@@ -452,6 +467,12 @@ const ApiPublicHooksMyPayoutsRoute = ApiPublicHooksMyPayoutsRouteImport.update({
   path: '/api/public/hooks/my-payouts',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksMyPayoutDetailsRoute =
+  ApiPublicHooksMyPayoutDetailsRouteImport.update({
+    id: '/api/public/hooks/my-payout-details',
+    path: '/api/public/hooks/my-payout-details',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksMyNotificationEmailRoute =
   ApiPublicHooksMyNotificationEmailRouteImport.update({
     id: '/api/public/hooks/my-notification-email',
@@ -669,12 +690,14 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/my-guide-posts': typeof ApiPublicHooksMyGuidePostsRoute
   '/api/public/hooks/my-invoice-url': typeof ApiPublicHooksMyInvoiceUrlRoute
   '/api/public/hooks/my-notification-email': typeof ApiPublicHooksMyNotificationEmailRoute
+  '/api/public/hooks/my-payout-details': typeof ApiPublicHooksMyPayoutDetailsRoute
   '/api/public/hooks/my-payouts': typeof ApiPublicHooksMyPayoutsRoute
   '/api/public/hooks/my-report-url': typeof ApiPublicHooksMyReportUrlRoute
   '/api/public/hooks/my-statements': typeof ApiPublicHooksMyStatementsRoute
   '/api/public/hooks/my-transactions': typeof ApiPublicHooksMyTransactionsRoute
   '/api/public/hooks/my-verification': typeof ApiPublicHooksMyVerificationRoute
   '/api/public/hooks/price-quote': typeof ApiPublicHooksPriceQuoteRoute
+  '/api/public/hooks/request-payout': typeof ApiPublicHooksRequestPayoutRoute
   '/api/public/hooks/retranslate-tour': typeof ApiPublicHooksRetranslateTourRoute
   '/api/public/hooks/submit-identity': typeof ApiPublicHooksSubmitIdentityRoute
   '/api/public/hooks/submit-intro-video': typeof ApiPublicHooksSubmitIntroVideoRoute
@@ -685,6 +708,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/telegram-signin-poll': typeof ApiPublicHooksTelegramSigninPollRoute
   '/api/public/hooks/telegram-signin-start': typeof ApiPublicHooksTelegramSigninStartRoute
   '/api/public/hooks/update-my-languages': typeof ApiPublicHooksUpdateMyLanguagesRoute
+  '/api/public/hooks/update-payout-details': typeof ApiPublicHooksUpdatePayoutDetailsRoute
   '/api/public/hooks/upsert-tour': typeof ApiPublicHooksUpsertTourRoute
   '/api/public/telegram/webhook': typeof ApiPublicTelegramWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -762,12 +786,14 @@ export interface FileRoutesByTo {
   '/api/public/hooks/my-guide-posts': typeof ApiPublicHooksMyGuidePostsRoute
   '/api/public/hooks/my-invoice-url': typeof ApiPublicHooksMyInvoiceUrlRoute
   '/api/public/hooks/my-notification-email': typeof ApiPublicHooksMyNotificationEmailRoute
+  '/api/public/hooks/my-payout-details': typeof ApiPublicHooksMyPayoutDetailsRoute
   '/api/public/hooks/my-payouts': typeof ApiPublicHooksMyPayoutsRoute
   '/api/public/hooks/my-report-url': typeof ApiPublicHooksMyReportUrlRoute
   '/api/public/hooks/my-statements': typeof ApiPublicHooksMyStatementsRoute
   '/api/public/hooks/my-transactions': typeof ApiPublicHooksMyTransactionsRoute
   '/api/public/hooks/my-verification': typeof ApiPublicHooksMyVerificationRoute
   '/api/public/hooks/price-quote': typeof ApiPublicHooksPriceQuoteRoute
+  '/api/public/hooks/request-payout': typeof ApiPublicHooksRequestPayoutRoute
   '/api/public/hooks/retranslate-tour': typeof ApiPublicHooksRetranslateTourRoute
   '/api/public/hooks/submit-identity': typeof ApiPublicHooksSubmitIdentityRoute
   '/api/public/hooks/submit-intro-video': typeof ApiPublicHooksSubmitIntroVideoRoute
@@ -778,6 +804,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/telegram-signin-poll': typeof ApiPublicHooksTelegramSigninPollRoute
   '/api/public/hooks/telegram-signin-start': typeof ApiPublicHooksTelegramSigninStartRoute
   '/api/public/hooks/update-my-languages': typeof ApiPublicHooksUpdateMyLanguagesRoute
+  '/api/public/hooks/update-payout-details': typeof ApiPublicHooksUpdatePayoutDetailsRoute
   '/api/public/hooks/upsert-tour': typeof ApiPublicHooksUpsertTourRoute
   '/api/public/telegram/webhook': typeof ApiPublicTelegramWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -857,12 +884,14 @@ export interface FileRoutesById {
   '/api/public/hooks/my-guide-posts': typeof ApiPublicHooksMyGuidePostsRoute
   '/api/public/hooks/my-invoice-url': typeof ApiPublicHooksMyInvoiceUrlRoute
   '/api/public/hooks/my-notification-email': typeof ApiPublicHooksMyNotificationEmailRoute
+  '/api/public/hooks/my-payout-details': typeof ApiPublicHooksMyPayoutDetailsRoute
   '/api/public/hooks/my-payouts': typeof ApiPublicHooksMyPayoutsRoute
   '/api/public/hooks/my-report-url': typeof ApiPublicHooksMyReportUrlRoute
   '/api/public/hooks/my-statements': typeof ApiPublicHooksMyStatementsRoute
   '/api/public/hooks/my-transactions': typeof ApiPublicHooksMyTransactionsRoute
   '/api/public/hooks/my-verification': typeof ApiPublicHooksMyVerificationRoute
   '/api/public/hooks/price-quote': typeof ApiPublicHooksPriceQuoteRoute
+  '/api/public/hooks/request-payout': typeof ApiPublicHooksRequestPayoutRoute
   '/api/public/hooks/retranslate-tour': typeof ApiPublicHooksRetranslateTourRoute
   '/api/public/hooks/submit-identity': typeof ApiPublicHooksSubmitIdentityRoute
   '/api/public/hooks/submit-intro-video': typeof ApiPublicHooksSubmitIntroVideoRoute
@@ -873,6 +902,7 @@ export interface FileRoutesById {
   '/api/public/hooks/telegram-signin-poll': typeof ApiPublicHooksTelegramSigninPollRoute
   '/api/public/hooks/telegram-signin-start': typeof ApiPublicHooksTelegramSigninStartRoute
   '/api/public/hooks/update-my-languages': typeof ApiPublicHooksUpdateMyLanguagesRoute
+  '/api/public/hooks/update-payout-details': typeof ApiPublicHooksUpdatePayoutDetailsRoute
   '/api/public/hooks/upsert-tour': typeof ApiPublicHooksUpsertTourRoute
   '/api/public/telegram/webhook': typeof ApiPublicTelegramWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -953,12 +983,14 @@ export interface FileRouteTypes {
     | '/api/public/hooks/my-guide-posts'
     | '/api/public/hooks/my-invoice-url'
     | '/api/public/hooks/my-notification-email'
+    | '/api/public/hooks/my-payout-details'
     | '/api/public/hooks/my-payouts'
     | '/api/public/hooks/my-report-url'
     | '/api/public/hooks/my-statements'
     | '/api/public/hooks/my-transactions'
     | '/api/public/hooks/my-verification'
     | '/api/public/hooks/price-quote'
+    | '/api/public/hooks/request-payout'
     | '/api/public/hooks/retranslate-tour'
     | '/api/public/hooks/submit-identity'
     | '/api/public/hooks/submit-intro-video'
@@ -969,6 +1001,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/telegram-signin-poll'
     | '/api/public/hooks/telegram-signin-start'
     | '/api/public/hooks/update-my-languages'
+    | '/api/public/hooks/update-payout-details'
     | '/api/public/hooks/upsert-tour'
     | '/api/public/telegram/webhook'
     | '/lovable/email/auth/preview'
@@ -1046,12 +1079,14 @@ export interface FileRouteTypes {
     | '/api/public/hooks/my-guide-posts'
     | '/api/public/hooks/my-invoice-url'
     | '/api/public/hooks/my-notification-email'
+    | '/api/public/hooks/my-payout-details'
     | '/api/public/hooks/my-payouts'
     | '/api/public/hooks/my-report-url'
     | '/api/public/hooks/my-statements'
     | '/api/public/hooks/my-transactions'
     | '/api/public/hooks/my-verification'
     | '/api/public/hooks/price-quote'
+    | '/api/public/hooks/request-payout'
     | '/api/public/hooks/retranslate-tour'
     | '/api/public/hooks/submit-identity'
     | '/api/public/hooks/submit-intro-video'
@@ -1062,6 +1097,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/telegram-signin-poll'
     | '/api/public/hooks/telegram-signin-start'
     | '/api/public/hooks/update-my-languages'
+    | '/api/public/hooks/update-payout-details'
     | '/api/public/hooks/upsert-tour'
     | '/api/public/telegram/webhook'
     | '/lovable/email/auth/preview'
@@ -1140,12 +1176,14 @@ export interface FileRouteTypes {
     | '/api/public/hooks/my-guide-posts'
     | '/api/public/hooks/my-invoice-url'
     | '/api/public/hooks/my-notification-email'
+    | '/api/public/hooks/my-payout-details'
     | '/api/public/hooks/my-payouts'
     | '/api/public/hooks/my-report-url'
     | '/api/public/hooks/my-statements'
     | '/api/public/hooks/my-transactions'
     | '/api/public/hooks/my-verification'
     | '/api/public/hooks/price-quote'
+    | '/api/public/hooks/request-payout'
     | '/api/public/hooks/retranslate-tour'
     | '/api/public/hooks/submit-identity'
     | '/api/public/hooks/submit-intro-video'
@@ -1156,6 +1194,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/telegram-signin-poll'
     | '/api/public/hooks/telegram-signin-start'
     | '/api/public/hooks/update-my-languages'
+    | '/api/public/hooks/update-payout-details'
     | '/api/public/hooks/upsert-tour'
     | '/api/public/telegram/webhook'
     | '/lovable/email/auth/preview'
@@ -1231,12 +1270,14 @@ export interface RootRouteChildren {
   ApiPublicHooksMyGuidePostsRoute: typeof ApiPublicHooksMyGuidePostsRoute
   ApiPublicHooksMyInvoiceUrlRoute: typeof ApiPublicHooksMyInvoiceUrlRoute
   ApiPublicHooksMyNotificationEmailRoute: typeof ApiPublicHooksMyNotificationEmailRoute
+  ApiPublicHooksMyPayoutDetailsRoute: typeof ApiPublicHooksMyPayoutDetailsRoute
   ApiPublicHooksMyPayoutsRoute: typeof ApiPublicHooksMyPayoutsRoute
   ApiPublicHooksMyReportUrlRoute: typeof ApiPublicHooksMyReportUrlRoute
   ApiPublicHooksMyStatementsRoute: typeof ApiPublicHooksMyStatementsRoute
   ApiPublicHooksMyTransactionsRoute: typeof ApiPublicHooksMyTransactionsRoute
   ApiPublicHooksMyVerificationRoute: typeof ApiPublicHooksMyVerificationRoute
   ApiPublicHooksPriceQuoteRoute: typeof ApiPublicHooksPriceQuoteRoute
+  ApiPublicHooksRequestPayoutRoute: typeof ApiPublicHooksRequestPayoutRoute
   ApiPublicHooksRetranslateTourRoute: typeof ApiPublicHooksRetranslateTourRoute
   ApiPublicHooksSubmitIdentityRoute: typeof ApiPublicHooksSubmitIdentityRoute
   ApiPublicHooksSubmitIntroVideoRoute: typeof ApiPublicHooksSubmitIntroVideoRoute
@@ -1247,6 +1288,7 @@ export interface RootRouteChildren {
   ApiPublicHooksTelegramSigninPollRoute: typeof ApiPublicHooksTelegramSigninPollRoute
   ApiPublicHooksTelegramSigninStartRoute: typeof ApiPublicHooksTelegramSigninStartRoute
   ApiPublicHooksUpdateMyLanguagesRoute: typeof ApiPublicHooksUpdateMyLanguagesRoute
+  ApiPublicHooksUpdatePayoutDetailsRoute: typeof ApiPublicHooksUpdatePayoutDetailsRoute
   ApiPublicHooksUpsertTourRoute: typeof ApiPublicHooksUpsertTourRoute
   ApiPublicTelegramWebhookRoute: typeof ApiPublicTelegramWebhookRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
@@ -1615,6 +1657,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksUpsertTourRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/update-payout-details': {
+      id: '/api/public/hooks/update-payout-details'
+      path: '/api/public/hooks/update-payout-details'
+      fullPath: '/api/public/hooks/update-payout-details'
+      preLoaderRoute: typeof ApiPublicHooksUpdatePayoutDetailsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/update-my-languages': {
       id: '/api/public/hooks/update-my-languages'
       path: '/api/public/hooks/update-my-languages'
@@ -1685,6 +1734,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksRetranslateTourRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/request-payout': {
+      id: '/api/public/hooks/request-payout'
+      path: '/api/public/hooks/request-payout'
+      fullPath: '/api/public/hooks/request-payout'
+      preLoaderRoute: typeof ApiPublicHooksRequestPayoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/price-quote': {
       id: '/api/public/hooks/price-quote'
       path: '/api/public/hooks/price-quote'
@@ -1725,6 +1781,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/hooks/my-payouts'
       fullPath: '/api/public/hooks/my-payouts'
       preLoaderRoute: typeof ApiPublicHooksMyPayoutsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/my-payout-details': {
+      id: '/api/public/hooks/my-payout-details'
+      path: '/api/public/hooks/my-payout-details'
+      fullPath: '/api/public/hooks/my-payout-details'
+      preLoaderRoute: typeof ApiPublicHooksMyPayoutDetailsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/my-notification-email': {
@@ -2010,12 +2073,14 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksMyInvoiceUrlRoute: ApiPublicHooksMyInvoiceUrlRoute,
   ApiPublicHooksMyNotificationEmailRoute:
     ApiPublicHooksMyNotificationEmailRoute,
+  ApiPublicHooksMyPayoutDetailsRoute: ApiPublicHooksMyPayoutDetailsRoute,
   ApiPublicHooksMyPayoutsRoute: ApiPublicHooksMyPayoutsRoute,
   ApiPublicHooksMyReportUrlRoute: ApiPublicHooksMyReportUrlRoute,
   ApiPublicHooksMyStatementsRoute: ApiPublicHooksMyStatementsRoute,
   ApiPublicHooksMyTransactionsRoute: ApiPublicHooksMyTransactionsRoute,
   ApiPublicHooksMyVerificationRoute: ApiPublicHooksMyVerificationRoute,
   ApiPublicHooksPriceQuoteRoute: ApiPublicHooksPriceQuoteRoute,
+  ApiPublicHooksRequestPayoutRoute: ApiPublicHooksRequestPayoutRoute,
   ApiPublicHooksRetranslateTourRoute: ApiPublicHooksRetranslateTourRoute,
   ApiPublicHooksSubmitIdentityRoute: ApiPublicHooksSubmitIdentityRoute,
   ApiPublicHooksSubmitIntroVideoRoute: ApiPublicHooksSubmitIntroVideoRoute,
@@ -2027,6 +2092,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksTelegramSigninStartRoute:
     ApiPublicHooksTelegramSigninStartRoute,
   ApiPublicHooksUpdateMyLanguagesRoute: ApiPublicHooksUpdateMyLanguagesRoute,
+  ApiPublicHooksUpdatePayoutDetailsRoute:
+    ApiPublicHooksUpdatePayoutDetailsRoute,
   ApiPublicHooksUpsertTourRoute: ApiPublicHooksUpsertTourRoute,
   ApiPublicTelegramWebhookRoute: ApiPublicTelegramWebhookRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,

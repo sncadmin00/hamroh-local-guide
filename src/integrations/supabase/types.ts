@@ -1353,6 +1353,9 @@ export type Database = {
           locale: string
           name: string
           notification_email: string | null
+          payout_details: Json | null
+          payout_details_updated_at: string | null
+          payout_method: string | null
           photo_url: string | null
           price_per_day: number
           rating: number
@@ -1398,6 +1401,9 @@ export type Database = {
           locale?: string
           name: string
           notification_email?: string | null
+          payout_details?: Json | null
+          payout_details_updated_at?: string | null
+          payout_method?: string | null
           photo_url?: string | null
           price_per_day?: number
           rating?: number
@@ -1443,6 +1449,9 @@ export type Database = {
           locale?: string
           name?: string
           notification_email?: string | null
+          payout_details?: Json | null
+          payout_details_updated_at?: string | null
+          payout_method?: string | null
           photo_url?: string | null
           price_per_day?: number
           rating?: number
