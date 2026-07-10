@@ -1,7 +1,11 @@
 /**
- * GET /api/public/hooks/local-events?city_id=<uuid>&from=YYYY-MM-DD&to=YYYY-MM-DD
- * Public. Returns published local events overlapping the [from, to] window
- * for a given city. If from/to omitted, returns future events (date_end >= today).
+ * GET /api/public/hooks/local-events?city_id=<uuid>&kind=holiday|event&from=YYYY-MM-DD&to=YYYY-MM-DD
+ * Public. Returns published local events overlapping the [from, to] window.
+ * - No city_id  -> all published items (global holidays + city events)
+ * - city_id set -> that city's events PLUS global entries (city_id IS NULL)
+ * - kind=holiday -> only national holidays (global, city_id IS NULL)
+ * - kind=event   -> only city events (excludes global)
+ * If from/to omitted, returns future items (date_end >= today).
  */
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
