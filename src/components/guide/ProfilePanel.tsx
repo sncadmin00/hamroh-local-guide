@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Check, X, Image as ImageIcon, Upload, Loader2, Camera } from "lucide-react";
+import { Check, X, Image as ImageIcon, Upload, Loader2, Camera, Plus, Car } from "lucide-react";
 import { getMyTaxInfo, updateMyTaxInfo } from "@/lib/earnings.functions";
 import { useGuideI18n } from "@/lib/guide-i18n";
 
@@ -30,6 +30,14 @@ export function ProfilePanel({ guideId }: { guideId: string }) {
   const [taxStatus, setTaxStatus] = useState<"none" | "self_employed" | "ip">("none");
   const [taxId, setTaxId] = useState("");
   const [taxSaving, setTaxSaving] = useState(false);
+  const [languages, setLanguages] = useState<string[]>([]);
+  const [specialties, setSpecialties] = useState<string[]>([]);
+  const [hasTransport, setHasTransport] = useState(false);
+  const [transportSeats, setTransportSeats] = useState<number | null>(null);
+  const [initialSkills, setInitialSkills] = useState({ languages: [] as string[], specialties: [] as string[], hasTransport: false, transportSeats: null as number | null });
+  const [savingSkills, setSavingSkills] = useState(false);
+  const [langInput, setLangInput] = useState("");
+  const [specInput, setSpecInput] = useState("");
   const coverInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
 
@@ -40,7 +48,7 @@ export function ProfilePanel({ guideId }: { guideId: string }) {
       const { data: userRes } = await supabase.auth.getUser();
       const uid = userRes.user?.id ?? null;
       const [g, t, tax] = await Promise.all([
-        supabase.from("guides").select("name, tagline, bio, photo_url, cover_url").eq("id", guideId).maybeSingle(),
+        supabase.from("guides").select("name, tagline, bio, photo_url, cover_url, languages, specialties, has_transport, transport_seats").eq("id", guideId).maybeSingle(),
         supabase.from("tours").select("title, cover_url").eq("guide_id", guideId).not("cover_url", "is", null),
         getTaxFn().catch(() => ({ tax_status: "none" as const, tax_id: "" })),
       ]);
@@ -61,6 +69,12 @@ export function ProfilePanel({ guideId }: { guideId: string }) {
       const b = g.data?.bio ?? "";
       setName(n); setTagline(tl); setBio(b);
       setInitialProfile({ name: n, tagline: tl, bio: b });
+      const langs = (g.data?.languages ?? []) as string[];
+      const specs = (g.data?.specialties ?? []) as string[];
+      const ht = !!g.data?.has_transport;
+      const ts = (g.data?.transport_seats ?? null) as number | null;
+      setLanguages(langs); setSpecialties(specs); setHasTransport(ht); setTransportSeats(ts);
+      setInitialSkills({ languages: langs, specialties: specs, hasTransport: ht, transportSeats: ts });
       setTaxStatus(((tax as any)?.tax_status ?? "none") as any);
       setTaxId(((tax as any)?.tax_id ?? "") as string);
       setLoading(false);
@@ -152,7 +166,40 @@ export function ProfilePanel({ guideId }: { guideId: string }) {
     toast.success(tg("common.saved"));
   };
 
+  const sameArr = (a: string[], b: string[]) => a.length === b.length && a.every((v, i) => v === b[i]);
+  const dirtySkills =
+    !sameArr(languages, initialSkills.languages) ||
+    !sameArr(specialties, initialSkills.specialties) ||
+    hasTransport !== initialSkills.hasTransport ||
+    (transportSeats ?? null) !== (initialSkills.transportSeats ?? null);
+
+  const addChip = (list: string[], value: string, setList: (v: string[]) => void, setInput: (v: string) => void, max = 12) => {
+    const v = value.trim().slice(0, 40);
+    if (!v) return;
+    if (list.length >= max) { toast.error(`Max ${max} items`); return; }
+    if (list.some((x) => x.toLowerCase() === v.toLowerCase())) { setInput(""); return; }
+    setList([...list, v]);
+    setInput("");
+  };
+
+  const saveSkills = async () => {
+    setSavingSkills(true);
+    const seats = hasTransport ? (transportSeats && transportSeats > 0 ? transportSeats : null) : null;
+    const { error } = await supabase.from("guides").update({
+      languages,
+      specialties,
+      has_transport: hasTransport,
+      transport_seats: seats,
+    }).eq("id", guideId);
+    setSavingSkills(false);
+    if (error) { toast.error(error.message); return; }
+    setInitialSkills({ languages, specialties, hasTransport, transportSeats: seats });
+    setTransportSeats(seats);
+    toast.success(tg("common.saved"));
+  };
+
   const effectiveCover = currentCover || photoUrl;
+
 
   return (
     <section className="space-y-8">
@@ -226,6 +273,103 @@ export function ProfilePanel({ guideId }: { guideId: string }) {
           </button>
         </div>
       </div>
+
+      {/* Skills & mobility */}
+      <div className="space-y-5 pt-6 border-t border-border">
+        <div>
+          <h2 className="font-display text-xl font-semibold">Languages, specialties & transport</h2>
+          <p className="mt-1 text-sm text-muted-foreground">Shown on your public profile and used for search filters.</p>
+        </div>
+
+        {/* Languages */}
+        <div className="space-y-2">
+          <div className="text-sm text-muted-foreground">Languages you speak <span className="text-xs">({languages.length}/12)</span></div>
+          <div className="flex flex-wrap gap-2">
+            {languages.map((l) => (
+              <span key={l} className="inline-flex items-center gap-1 rounded-full bg-secondary px-3 h-8 text-xs">
+                {l}
+                <button type="button" onClick={() => setLanguages(languages.filter((x) => x !== l))} className="text-muted-foreground hover:text-foreground">
+                  <X className="h-3 w-3" />
+                </button>
+              </span>
+            ))}
+          </div>
+          <div className="flex gap-2">
+            <input
+              value={langInput}
+              onChange={(e) => setLangInput(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addChip(languages, langInput, setLanguages, setLangInput); } }}
+              placeholder="e.g. English"
+              className="flex-1 h-10 px-3 rounded-md border border-border bg-background text-sm"
+            />
+            <button type="button" onClick={() => addChip(languages, langInput, setLanguages, setLangInput)} className="inline-flex items-center gap-1 rounded-full bg-secondary hover:bg-muted px-3 h-10 text-xs">
+              <Plus className="h-3.5 w-3.5" /> Add
+            </button>
+          </div>
+        </div>
+
+        {/* Specialties */}
+        <div className="space-y-2">
+          <div className="text-sm text-muted-foreground">Specialties <span className="text-xs">({specialties.length}/12)</span></div>
+          <div className="flex flex-wrap gap-2">
+            {specialties.map((s) => (
+              <span key={s} className="inline-flex items-center gap-1 rounded-full bg-secondary px-3 h-8 text-xs">
+                {s}
+                <button type="button" onClick={() => setSpecialties(specialties.filter((x) => x !== s))} className="text-muted-foreground hover:text-foreground">
+                  <X className="h-3 w-3" />
+                </button>
+              </span>
+            ))}
+          </div>
+          <div className="flex gap-2">
+            <input
+              value={specInput}
+              onChange={(e) => setSpecInput(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addChip(specialties, specInput, setSpecialties, setSpecInput); } }}
+              placeholder="e.g. History, Food, Photography"
+              className="flex-1 h-10 px-3 rounded-md border border-border bg-background text-sm"
+            />
+            <button type="button" onClick={() => addChip(specialties, specInput, setSpecialties, setSpecInput)} className="inline-flex items-center gap-1 rounded-full bg-secondary hover:bg-muted px-3 h-10 text-xs">
+              <Plus className="h-3.5 w-3.5" /> Add
+            </button>
+          </div>
+        </div>
+
+        {/* Transport */}
+        <div className="space-y-2">
+          <label className="inline-flex items-center gap-2 text-sm cursor-pointer">
+            <input type="checkbox" checked={hasTransport} onChange={(e) => setHasTransport(e.target.checked)} className="h-4 w-4" />
+            <Car className="h-4 w-4 text-muted-foreground" />
+            <span>I have my own transport for tours</span>
+          </label>
+          {hasTransport && (
+            <label className="text-sm flex flex-col gap-1 max-w-[220px]">
+              <span className="text-muted-foreground">Seats (passengers)</span>
+              <input
+                type="number"
+                min={1}
+                max={60}
+                value={transportSeats ?? ""}
+                onChange={(e) => setTransportSeats(e.target.value ? Math.max(1, Math.min(60, parseInt(e.target.value, 10) || 0)) : null)}
+                placeholder="e.g. 4"
+                className="h-10 px-3 rounded-md border border-border bg-background"
+              />
+            </label>
+          )}
+        </div>
+
+        <div>
+          <button
+            onClick={saveSkills}
+            disabled={savingSkills || !dirtySkills}
+            className="h-10 px-5 rounded-full bg-primary text-primary-foreground text-sm font-medium disabled:opacity-50"
+          >
+            {savingSkills ? tg("common.loading") : tg("common.save")}
+          </button>
+        </div>
+      </div>
+
+
 
       {/* Cover banner */}
       <div className="space-y-4 pt-6 border-t border-border">
