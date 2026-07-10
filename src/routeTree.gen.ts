@@ -62,6 +62,7 @@ import { Route as ApiPublicHooksUpsertTourRouteImport } from './routes/api/publi
 import { Route as ApiPublicHooksUpdateMyLanguagesRouteImport } from './routes/api/public/hooks/update-my-languages'
 import { Route as ApiPublicHooksSuggestCityRouteImport } from './routes/api/public/hooks/suggest-city'
 import { Route as ApiPublicHooksSubmitLicenseRouteImport } from './routes/api/public/hooks/submit-license'
+import { Route as ApiPublicHooksSubmitIntroVideoRouteImport } from './routes/api/public/hooks/submit-intro-video'
 import { Route as ApiPublicHooksSubmitIdentityRouteImport } from './routes/api/public/hooks/submit-identity'
 import { Route as ApiPublicHooksRetranslateTourRouteImport } from './routes/api/public/hooks/retranslate-tour'
 import { Route as ApiPublicHooksPriceQuoteRouteImport } from './routes/api/public/hooks/price-quote'
@@ -366,6 +367,12 @@ const ApiPublicHooksSubmitLicenseRoute =
     path: '/api/public/hooks/submit-license',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksSubmitIntroVideoRoute =
+  ApiPublicHooksSubmitIntroVideoRouteImport.update({
+    id: '/api/public/hooks/submit-intro-video',
+    path: '/api/public/hooks/submit-intro-video',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksSubmitIdentityRoute =
   ApiPublicHooksSubmitIdentityRouteImport.update({
     id: '/api/public/hooks/submit-identity',
@@ -612,6 +619,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/price-quote': typeof ApiPublicHooksPriceQuoteRoute
   '/api/public/hooks/retranslate-tour': typeof ApiPublicHooksRetranslateTourRoute
   '/api/public/hooks/submit-identity': typeof ApiPublicHooksSubmitIdentityRoute
+  '/api/public/hooks/submit-intro-video': typeof ApiPublicHooksSubmitIntroVideoRoute
   '/api/public/hooks/submit-license': typeof ApiPublicHooksSubmitLicenseRoute
   '/api/public/hooks/suggest-city': typeof ApiPublicHooksSuggestCityRoute
   '/api/public/hooks/update-my-languages': typeof ApiPublicHooksUpdateMyLanguagesRoute
@@ -696,6 +704,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/price-quote': typeof ApiPublicHooksPriceQuoteRoute
   '/api/public/hooks/retranslate-tour': typeof ApiPublicHooksRetranslateTourRoute
   '/api/public/hooks/submit-identity': typeof ApiPublicHooksSubmitIdentityRoute
+  '/api/public/hooks/submit-intro-video': typeof ApiPublicHooksSubmitIntroVideoRoute
   '/api/public/hooks/submit-license': typeof ApiPublicHooksSubmitLicenseRoute
   '/api/public/hooks/suggest-city': typeof ApiPublicHooksSuggestCityRoute
   '/api/public/hooks/update-my-languages': typeof ApiPublicHooksUpdateMyLanguagesRoute
@@ -782,6 +791,7 @@ export interface FileRoutesById {
   '/api/public/hooks/price-quote': typeof ApiPublicHooksPriceQuoteRoute
   '/api/public/hooks/retranslate-tour': typeof ApiPublicHooksRetranslateTourRoute
   '/api/public/hooks/submit-identity': typeof ApiPublicHooksSubmitIdentityRoute
+  '/api/public/hooks/submit-intro-video': typeof ApiPublicHooksSubmitIntroVideoRoute
   '/api/public/hooks/submit-license': typeof ApiPublicHooksSubmitLicenseRoute
   '/api/public/hooks/suggest-city': typeof ApiPublicHooksSuggestCityRoute
   '/api/public/hooks/update-my-languages': typeof ApiPublicHooksUpdateMyLanguagesRoute
@@ -869,6 +879,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/price-quote'
     | '/api/public/hooks/retranslate-tour'
     | '/api/public/hooks/submit-identity'
+    | '/api/public/hooks/submit-intro-video'
     | '/api/public/hooks/submit-license'
     | '/api/public/hooks/suggest-city'
     | '/api/public/hooks/update-my-languages'
@@ -953,6 +964,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/price-quote'
     | '/api/public/hooks/retranslate-tour'
     | '/api/public/hooks/submit-identity'
+    | '/api/public/hooks/submit-intro-video'
     | '/api/public/hooks/submit-license'
     | '/api/public/hooks/suggest-city'
     | '/api/public/hooks/update-my-languages'
@@ -1038,6 +1050,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/price-quote'
     | '/api/public/hooks/retranslate-tour'
     | '/api/public/hooks/submit-identity'
+    | '/api/public/hooks/submit-intro-video'
     | '/api/public/hooks/submit-license'
     | '/api/public/hooks/suggest-city'
     | '/api/public/hooks/update-my-languages'
@@ -1120,6 +1133,7 @@ export interface RootRouteChildren {
   ApiPublicHooksPriceQuoteRoute: typeof ApiPublicHooksPriceQuoteRoute
   ApiPublicHooksRetranslateTourRoute: typeof ApiPublicHooksRetranslateTourRoute
   ApiPublicHooksSubmitIdentityRoute: typeof ApiPublicHooksSubmitIdentityRoute
+  ApiPublicHooksSubmitIntroVideoRoute: typeof ApiPublicHooksSubmitIntroVideoRoute
   ApiPublicHooksSubmitLicenseRoute: typeof ApiPublicHooksSubmitLicenseRoute
   ApiPublicHooksSuggestCityRoute: typeof ApiPublicHooksSuggestCityRoute
   ApiPublicHooksUpdateMyLanguagesRoute: typeof ApiPublicHooksUpdateMyLanguagesRoute
@@ -1510,6 +1524,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksSubmitLicenseRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/submit-intro-video': {
+      id: '/api/public/hooks/submit-intro-video'
+      path: '/api/public/hooks/submit-intro-video'
+      fullPath: '/api/public/hooks/submit-intro-video'
+      preLoaderRoute: typeof ApiPublicHooksSubmitIntroVideoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/submit-identity': {
       id: '/api/public/hooks/submit-identity'
       path: '/api/public/hooks/submit-identity'
@@ -1827,6 +1848,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksPriceQuoteRoute: ApiPublicHooksPriceQuoteRoute,
   ApiPublicHooksRetranslateTourRoute: ApiPublicHooksRetranslateTourRoute,
   ApiPublicHooksSubmitIdentityRoute: ApiPublicHooksSubmitIdentityRoute,
+  ApiPublicHooksSubmitIntroVideoRoute: ApiPublicHooksSubmitIntroVideoRoute,
   ApiPublicHooksSubmitLicenseRoute: ApiPublicHooksSubmitLicenseRoute,
   ApiPublicHooksSuggestCityRoute: ApiPublicHooksSuggestCityRoute,
   ApiPublicHooksUpdateMyLanguagesRoute: ApiPublicHooksUpdateMyLanguagesRoute,
