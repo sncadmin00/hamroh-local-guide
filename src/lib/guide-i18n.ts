@@ -29,7 +29,7 @@ const guideTranslations = {
   "tab.bookings": { en: "Bookings ({n})", uz: "Bronlar ({n})", ru: "Бронирования ({n})" },
   "tab.cities": { en: "Cities", uz: "Shaharlar", ru: "Города" },
   "tab.languages": { en: "Languages", uz: "Tillar", ru: "Языки" },
-  "tab.posts": { en: "Video", uz: "Video lavhalar", ru: "Видео" },
+  "tab.posts": { en: "Reels", uz: "Video lavhalar", ru: "Видео" },
   "tab.referral": { en: "Referral", uz: "Referal", ru: "Реферал" },
   "tab.verification": { en: "Verification", uz: "Tasdiqlash", ru: "Верификация" },
 
