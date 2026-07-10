@@ -54,8 +54,6 @@ export function VerificationPanel() {
   const [passportFile, setPassportFile] = useState<File | null>(null);
   const [savingId, setSavingId] = useState(false);
 
-  const [videoFile, setVideoFile] = useState<File | null>(null);
-  const [savingVideo, setSavingVideo] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
