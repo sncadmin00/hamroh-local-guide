@@ -793,6 +793,56 @@ export type Database = {
         }
         Relationships: []
       }
+      emergency_contacts: {
+        Row: {
+          city_id: string | null
+          country_code: string | null
+          created_at: string
+          id: string
+          is_published: boolean
+          kind: string
+          label: string
+          notes: string | null
+          phone: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          city_id?: string | null
+          country_code?: string | null
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          kind: string
+          label: string
+          notes?: string | null
+          phone: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          city_id?: string | null
+          country_code?: string | null
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          kind?: string
+          label?: string
+          notes?: string | null
+          phone?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "emergency_contacts_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       feedback: {
         Row: {
           created_at: string
@@ -1538,6 +1588,59 @@ export type Database = {
           version?: string
         }
         Relationships: []
+      }
+      local_events: {
+        Row: {
+          city_id: string
+          cover_url: string | null
+          created_at: string
+          date_end: string
+          date_start: string
+          description: string | null
+          id: string
+          is_published: boolean
+          sort_order: number
+          source_url: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          city_id: string
+          cover_url?: string | null
+          created_at?: string
+          date_end: string
+          date_start: string
+          description?: string | null
+          id?: string
+          is_published?: boolean
+          sort_order?: number
+          source_url?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          city_id?: string
+          cover_url?: string | null
+          created_at?: string
+          date_end?: string
+          date_start?: string
+          description?: string | null
+          id?: string
+          is_published?: boolean
+          sort_order?: number
+          source_url?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "local_events_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       monthly_statements: {
         Row: {
@@ -2906,6 +3009,134 @@ export type Database = {
         }
         Relationships: []
       }
+      user_promo_codes: {
+        Row: {
+          code: string
+          created_at: string
+          currency: string
+          id: string
+          kind: string
+          max_discount: number | null
+          min_booking_amount: number | null
+          source: string
+          used_at: string | null
+          used_booking_id: string | null
+          user_id: string
+          valid_from: string
+          valid_until: string | null
+          value: number
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          currency?: string
+          id?: string
+          kind: string
+          max_discount?: number | null
+          min_booking_amount?: number | null
+          source?: string
+          used_at?: string | null
+          used_booking_id?: string | null
+          user_id: string
+          valid_from?: string
+          valid_until?: string | null
+          value: number
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          currency?: string
+          id?: string
+          kind?: string
+          max_discount?: number | null
+          min_booking_amount?: number | null
+          source?: string
+          used_at?: string | null
+          used_booking_id?: string | null
+          user_id?: string
+          valid_from?: string
+          valid_until?: string | null
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_promo_codes_used_booking_id_fkey"
+            columns: ["used_booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_referral_codes: {
+        Row: {
+          code: string
+          created_at: string
+          user_id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          user_id: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_referrals: {
+        Row: {
+          created_at: string
+          id: string
+          qualified_at: string | null
+          qualifying_booking_id: string | null
+          referred_user_id: string
+          referrer_user_id: string
+          reward_promo_code_id: string | null
+          rewarded_at: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          qualified_at?: string | null
+          qualifying_booking_id?: string | null
+          referred_user_id: string
+          referrer_user_id: string
+          reward_promo_code_id?: string | null
+          rewarded_at?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          qualified_at?: string | null
+          qualifying_booking_id?: string | null
+          referred_user_id?: string
+          referrer_user_id?: string
+          reward_promo_code_id?: string | null
+          rewarded_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_referrals_qualifying_booking_id_fkey"
+            columns: ["qualifying_booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_referrals_reward_promo_code_id_fkey"
+            columns: ["reward_promo_code_id"]
+            isOneToOne: false
+            referencedRelation: "user_promo_codes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -3042,6 +3273,7 @@ export type Database = {
         Returns: number
       }
       generate_guide_referral_code: { Args: { _base: string }; Returns: string }
+      generate_user_referral_code: { Args: never; Returns: string }
       get_wallet_summary: { Args: { _wallet_id: string }; Returns: Json }
       has_role: {
         Args: {
