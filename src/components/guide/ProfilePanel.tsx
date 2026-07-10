@@ -184,17 +184,17 @@ export function ProfilePanel({ guideId }: { guideId: string }) {
 
   const saveSkills = async () => {
     setSavingSkills(true);
-    const patch: Record<string, unknown> = {
+    const seats = hasTransport ? (transportSeats && transportSeats > 0 ? transportSeats : null) : null;
+    const { error } = await supabase.from("guides").update({
       languages,
       specialties,
       has_transport: hasTransport,
-      transport_seats: hasTransport ? (transportSeats && transportSeats > 0 ? transportSeats : null) : null,
-    };
-    const { error } = await supabase.from("guides").update(patch).eq("id", guideId);
+      transport_seats: seats,
+    }).eq("id", guideId);
     setSavingSkills(false);
     if (error) { toast.error(error.message); return; }
-    setInitialSkills({ languages, specialties, hasTransport, transportSeats: patch.transport_seats as number | null });
-    setTransportSeats(patch.transport_seats as number | null);
+    setInitialSkills({ languages, specialties, hasTransport, transportSeats: seats });
+    setTransportSeats(seats);
     toast.success(tg("common.saved"));
   };
 
