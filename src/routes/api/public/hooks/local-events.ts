@@ -1,7 +1,11 @@
 /**
- * GET /api/public/hooks/local-events?city_id=<uuid>&from=YYYY-MM-DD&to=YYYY-MM-DD
- * Public. Returns published local events overlapping the [from, to] window
- * for a given city. If from/to omitted, returns future events (date_end >= today).
+ * GET /api/public/hooks/local-events?city_id=<uuid>&kind=holiday|event&from=YYYY-MM-DD&to=YYYY-MM-DD
+ * Public. Returns published local events overlapping the [from, to] window.
+ * - No city_id  -> all published items (global holidays + city events)
+ * - city_id set -> that city's events PLUS global entries (city_id IS NULL)
+ * - kind=holiday -> only national holidays (global, city_id IS NULL)
+ * - kind=event   -> only city events (excludes global)
+ * If from/to omitted, returns future items (date_end >= today).
  */
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
@@ -22,6 +26,7 @@ export const Route = createFileRoute("/api/public/hooks/local-events")({
       GET: async ({ request }) => {
         const url = new URL(request.url);
         const cityId = url.searchParams.get("city_id");
+        const kind = url.searchParams.get("kind");
         const from = url.searchParams.get("from");
         const to = url.searchParams.get("to");
 
@@ -30,6 +35,9 @@ export const Route = createFileRoute("/api/public/hooks/local-events")({
         }
         if (to && !DATE_RE.test(to)) {
           return Response.json({ error: "Invalid 'to' (YYYY-MM-DD)" }, { status: 400, headers: cors });
+        }
+        if (kind && kind !== "holiday" && kind !== "event") {
+          return Response.json({ error: "Invalid 'kind' (holiday|event)" }, { status: 400, headers: cors });
         }
 
         const supabase = createClient(
@@ -43,8 +51,11 @@ export const Route = createFileRoute("/api/public/hooks/local-events")({
           .select("id, city_id, title, description, date_start, date_end, cover_url, source_url, sort_order, kind")
           .eq("is_published", true);
 
-        // City filter includes global entries (city_id IS NULL), e.g. national holidays
-        if (cityId) q = q.or(`city_id.eq.${cityId},city_id.is.null`);
+        if (kind) q = q.eq("kind", kind);
+
+        // City filter includes global entries (city_id IS NULL), e.g. national holidays.
+        // If kind=holiday requested, holidays are already global — no city filter needed.
+        if (cityId && kind !== "holiday") q = q.or(`city_id.eq.${cityId},city_id.is.null`);
 
         // Overlap: event.date_start <= to AND event.date_end >= from
         const today = new Date().toISOString().slice(0, 10);
