@@ -300,7 +300,6 @@ export const Route = createFileRoute("/api/public/hooks/guide-ai")({
                   ends_at: endsAt,
                   color: "destructive",
                   source: "ai",
-                  notes: `time_block:${block.id}`,
                 })
                 .select("id")
                 .single();
