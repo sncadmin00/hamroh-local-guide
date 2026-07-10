@@ -99,20 +99,6 @@ export function VerificationPanel() {
     setSavingId(false);
   };
 
-  const onSubmitVideo = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!videoFile) { toast.error(tg("verification.chooseVideo")); return; }
-    if (videoFile.size > 80 * 1024 * 1024) { toast.error(tg("verification.videoTooLarge")); return; }
-    setSavingVideo(true);
-    try {
-      const path = await uploadFile(videoFile, "guide-intro-videos", "intro");
-      await subVideo({ data: { video_path: path } });
-      toast.success(tg("verification.submitted"));
-      setVideoFile(null);
-      await load();
-    } catch (e) { toast.error((e as Error).message); }
-    setSavingVideo(false);
-  };
 
   return (
     <div className="space-y-6">
