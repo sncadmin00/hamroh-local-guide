@@ -30,6 +30,14 @@ export function ProfilePanel({ guideId }: { guideId: string }) {
   const [taxStatus, setTaxStatus] = useState<"none" | "self_employed" | "ip">("none");
   const [taxId, setTaxId] = useState("");
   const [taxSaving, setTaxSaving] = useState(false);
+  const [languages, setLanguages] = useState<string[]>([]);
+  const [specialties, setSpecialties] = useState<string[]>([]);
+  const [hasTransport, setHasTransport] = useState(false);
+  const [transportSeats, setTransportSeats] = useState<number | null>(null);
+  const [initialSkills, setInitialSkills] = useState({ languages: [] as string[], specialties: [] as string[], hasTransport: false, transportSeats: null as number | null });
+  const [savingSkills, setSavingSkills] = useState(false);
+  const [langInput, setLangInput] = useState("");
+  const [specInput, setSpecInput] = useState("");
   const coverInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
 
