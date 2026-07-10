@@ -88,6 +88,7 @@ import { Route as ApiPublicHooksCalendarRemindersRouteImport } from './routes/ap
 import { Route as ApiPublicHooksBookingReviewsRouteImport } from './routes/api/public/hooks/booking-reviews'
 import { Route as ApiPublicHooksBookingRemindersRouteImport } from './routes/api/public/hooks/booking-reminders'
 import { Route as ApiPublicToursTourIdSlotsRouteImport } from './routes/api/public/tours/$tourId/slots'
+import { Route as ApiPublicHooksNotificationsPushRouteImport } from './routes/api/public/hooks/notifications/push'
 import { Route as ApiPublicGuidesGuideIdSlotsRouteImport } from './routes/api/public/guides/$guideId/slots'
 import { Route as ApiPublicGuidesGuideIdBusyRouteImport } from './routes/api/public/guides/$guideId/busy'
 import { Route as ApiPublicBookingsIdPdfRouteImport } from './routes/api/public/bookings/$id/pdf'
@@ -518,6 +519,12 @@ const ApiPublicToursTourIdSlotsRoute =
     path: '/api/public/tours/$tourId/slots',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksNotificationsPushRoute =
+  ApiPublicHooksNotificationsPushRouteImport.update({
+    id: '/api/public/hooks/notifications/push',
+    path: '/api/public/hooks/notifications/push',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicGuidesGuideIdSlotsRoute =
   ApiPublicGuidesGuideIdSlotsRouteImport.update({
     id: '/api/public/guides/$guideId/slots',
@@ -618,6 +625,7 @@ export interface FileRoutesByFullPath {
   '/api/public/bookings/$id/pdf': typeof ApiPublicBookingsIdPdfRoute
   '/api/public/guides/$guideId/busy': typeof ApiPublicGuidesGuideIdBusyRoute
   '/api/public/guides/$guideId/slots': typeof ApiPublicGuidesGuideIdSlotsRoute
+  '/api/public/hooks/notifications/push': typeof ApiPublicHooksNotificationsPushRoute
   '/api/public/tours/$tourId/slots': typeof ApiPublicToursTourIdSlotsRoute
 }
 export interface FileRoutesByTo {
@@ -701,6 +709,7 @@ export interface FileRoutesByTo {
   '/api/public/bookings/$id/pdf': typeof ApiPublicBookingsIdPdfRoute
   '/api/public/guides/$guideId/busy': typeof ApiPublicGuidesGuideIdBusyRoute
   '/api/public/guides/$guideId/slots': typeof ApiPublicGuidesGuideIdSlotsRoute
+  '/api/public/hooks/notifications/push': typeof ApiPublicHooksNotificationsPushRoute
   '/api/public/tours/$tourId/slots': typeof ApiPublicToursTourIdSlotsRoute
 }
 export interface FileRoutesById {
@@ -786,6 +795,7 @@ export interface FileRoutesById {
   '/api/public/bookings/$id/pdf': typeof ApiPublicBookingsIdPdfRoute
   '/api/public/guides/$guideId/busy': typeof ApiPublicGuidesGuideIdBusyRoute
   '/api/public/guides/$guideId/slots': typeof ApiPublicGuidesGuideIdSlotsRoute
+  '/api/public/hooks/notifications/push': typeof ApiPublicHooksNotificationsPushRoute
   '/api/public/tours/$tourId/slots': typeof ApiPublicToursTourIdSlotsRoute
 }
 export interface FileRouteTypes {
@@ -872,6 +882,7 @@ export interface FileRouteTypes {
     | '/api/public/bookings/$id/pdf'
     | '/api/public/guides/$guideId/busy'
     | '/api/public/guides/$guideId/slots'
+    | '/api/public/hooks/notifications/push'
     | '/api/public/tours/$tourId/slots'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -955,6 +966,7 @@ export interface FileRouteTypes {
     | '/api/public/bookings/$id/pdf'
     | '/api/public/guides/$guideId/busy'
     | '/api/public/guides/$guideId/slots'
+    | '/api/public/hooks/notifications/push'
     | '/api/public/tours/$tourId/slots'
   id:
     | '__root__'
@@ -1039,6 +1051,7 @@ export interface FileRouteTypes {
     | '/api/public/bookings/$id/pdf'
     | '/api/public/guides/$guideId/busy'
     | '/api/public/guides/$guideId/slots'
+    | '/api/public/hooks/notifications/push'
     | '/api/public/tours/$tourId/slots'
   fileRoutesById: FileRoutesById
 }
@@ -1120,6 +1133,7 @@ export interface RootRouteChildren {
   ApiPublicBookingsIdPdfRoute: typeof ApiPublicBookingsIdPdfRoute
   ApiPublicGuidesGuideIdBusyRoute: typeof ApiPublicGuidesGuideIdBusyRoute
   ApiPublicGuidesGuideIdSlotsRoute: typeof ApiPublicGuidesGuideIdSlotsRoute
+  ApiPublicHooksNotificationsPushRoute: typeof ApiPublicHooksNotificationsPushRoute
   ApiPublicToursTourIdSlotsRoute: typeof ApiPublicToursTourIdSlotsRoute
 }
 
@@ -1678,6 +1692,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicToursTourIdSlotsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/notifications/push': {
+      id: '/api/public/hooks/notifications/push'
+      path: '/api/public/hooks/notifications/push'
+      fullPath: '/api/public/hooks/notifications/push'
+      preLoaderRoute: typeof ApiPublicHooksNotificationsPushRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/guides/$guideId/slots': {
       id: '/api/public/guides/$guideId/slots'
       path: '/api/public/guides/$guideId/slots'
@@ -1819,6 +1840,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicBookingsIdPdfRoute: ApiPublicBookingsIdPdfRoute,
   ApiPublicGuidesGuideIdBusyRoute: ApiPublicGuidesGuideIdBusyRoute,
   ApiPublicGuidesGuideIdSlotsRoute: ApiPublicGuidesGuideIdSlotsRoute,
+  ApiPublicHooksNotificationsPushRoute: ApiPublicHooksNotificationsPushRoute,
   ApiPublicToursTourIdSlotsRoute: ApiPublicToursTourIdSlotsRoute,
 }
 export const routeTree = rootRouteImport
