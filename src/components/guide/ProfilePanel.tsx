@@ -1,19 +1,23 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Check, X, Image as ImageIcon, Upload, Loader2, Camera, Plus, Car } from "lucide-react";
+import { Check, X, Image as ImageIcon, Upload, Loader2, Camera, Plus, Car, Video, CheckCircle2, Clock, AlertCircle } from "lucide-react";
 import { getMyTaxInfo, updateMyTaxInfo } from "@/lib/earnings.functions";
+import { getMyVerification, submitIntroVideo } from "@/lib/guide-verification.functions";
 import { useGuideI18n } from "@/lib/guide-i18n";
 
 type MediaItem = { url: string; label: string; source: "photo" | "tour" };
 
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024; // 8MB
+const MAX_VIDEO_BYTES = 80 * 1024 * 1024; // 80MB
 
 export function ProfilePanel({ guideId }: { guideId: string }) {
   const { tg } = useGuideI18n();
   const updateTaxFn = useServerFn(updateMyTaxInfo);
   const getTaxFn = useServerFn(getMyTaxInfo);
+  const getVerificationFn = useServerFn(getMyVerification);
+  const submitIntroVideoFn = useServerFn(submitIntroVideo);
   const [userId, setUserId] = useState<string | null>(null);
   const [currentCover, setCurrentCover] = useState<string | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
@@ -40,6 +44,31 @@ export function ProfilePanel({ guideId }: { guideId: string }) {
   const [specInput, setSpecInput] = useState("");
   const coverInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
+
+  const [introVideoUrl, setIntroVideoUrl] = useState<string | null>(null);
+  const [introVideoStatus, setIntroVideoStatus] = useState<{ verified: boolean; submittedAt: string | null; rejected: string | null }>({ verified: false, submittedAt: null, rejected: null });
+  const [videoPreviewUrl, setVideoPreviewUrl] = useState<string | null>(null);
+  const [uploadingVideo, setUploadingVideo] = useState(false);
+
+  const loadIntroVideo = useCallback(async () => {
+    try {
+      const v = await getVerificationFn();
+      setIntroVideoStatus({
+        verified: !!v?.intro_video_verified,
+        submittedAt: v?.intro_video_submitted_at ?? null,
+        rejected: v?.intro_video_rejected_reason ?? null,
+      });
+      const path = v?.intro_video_url ?? null;
+      setIntroVideoUrl(path);
+      if (path) {
+        const { data } = await supabase.storage.from("guide-intro-videos").createSignedUrl(path, 3600);
+        setVideoPreviewUrl(data?.signedUrl ?? null);
+      } else {
+        setVideoPreviewUrl(null);
+      }
+    } catch (e) { /* silent */ }
+  }, [getVerificationFn]);
 
   useEffect(() => {
     let alive = true;
@@ -78,6 +107,7 @@ export function ProfilePanel({ guideId }: { guideId: string }) {
       setTaxStatus(((tax as any)?.tax_status ?? "none") as any);
       setTaxId(((tax as any)?.tax_id ?? "") as string);
       setLoading(false);
+      loadIntroVideo();
     })();
     return () => { alive = false; };
   }, [guideId]);
@@ -149,6 +179,26 @@ export function ProfilePanel({ guideId }: { guideId: string }) {
     } catch (err: any) { toast.error(err.message); }
     setUploadingAvatar(false);
   };
+
+  const onPickIntroVideo = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]; if (!file) return;
+    e.target.value = "";
+    if (!file.type.startsWith("video/")) { toast.error("Please pick a video file"); return; }
+    if (file.size > MAX_VIDEO_BYTES) { toast.error("Video is larger than 80MB"); return; }
+    if (!userId) { toast.error("Not signed in"); return; }
+    setUploadingVideo(true);
+    try {
+      const ext = (file.name.split(".").pop() || "mp4").toLowerCase().replace(/[^a-z0-9]/g, "") || "mp4";
+      const path = `${guideId}/intro-${Date.now()}.${ext}`;
+      const { error } = await supabase.storage.from("guide-intro-videos").upload(path, file, { upsert: true, contentType: file.type });
+      if (error) throw error;
+      await submitIntroVideoFn({ data: { video_path: path } });
+      toast.success("Intro video submitted for review");
+      await loadIntroVideo();
+    } catch (err: any) { toast.error(err.message); }
+    setUploadingVideo(false);
+  };
+
 
   const dirtyProfile =
     name.trim() !== initialProfile.name ||
@@ -369,6 +419,48 @@ export function ProfilePanel({ guideId }: { guideId: string }) {
         </div>
       </div>
 
+      {/* Intro video (video postcard) */}
+      <div className="space-y-4 pt-6 border-t border-border">
+        <div>
+          <h2 className="font-display text-xl font-semibold flex items-center gap-2"><Video className="h-5 w-5" /> Intro video</h2>
+          <p className="mt-1 text-sm text-muted-foreground">A short video postcard (up to 60s, 80MB). Shown on your public profile and in the Reels row on the home screen after moderation.</p>
+        </div>
+
+        <div className="flex items-center gap-2 text-xs">
+          {introVideoStatus.verified ? (
+            <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary px-2.5 py-1 font-medium"><CheckCircle2 className="h-3.5 w-3.5" /> Verified</span>
+          ) : introVideoStatus.rejected ? (
+            <span className="inline-flex items-center gap-1 rounded-full bg-destructive/10 text-destructive px-2.5 py-1 font-medium"><AlertCircle className="h-3.5 w-3.5" /> Rejected: {introVideoStatus.rejected}</span>
+          ) : introVideoStatus.submittedAt ? (
+            <span className="inline-flex items-center gap-1 rounded-full bg-muted text-muted-foreground px-2.5 py-1 font-medium"><Clock className="h-3.5 w-3.5" /> Pending review</span>
+          ) : (
+            <span className="inline-flex items-center gap-1 rounded-full bg-muted text-muted-foreground px-2.5 py-1">Not submitted</span>
+          )}
+        </div>
+
+        <div className="overflow-hidden rounded-2xl ring-1 ring-border/60 bg-secondary max-w-sm">
+          {videoPreviewUrl ? (
+            <video src={videoPreviewUrl} controls playsInline className="aspect-[9/16] w-full object-cover bg-black" />
+          ) : (
+            <div className="aspect-[9/16] w-full grid place-items-center text-muted-foreground text-sm">
+              <div className="flex flex-col items-center gap-2"><Video className="h-8 w-8" /><span>No video yet</span></div>
+            </div>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => videoInputRef.current?.click()}
+            disabled={uploadingVideo || !userId}
+            className="inline-flex items-center gap-2 h-10 px-5 rounded-full bg-primary text-primary-foreground text-sm font-medium disabled:opacity-50"
+          >
+            {uploadingVideo ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+            {introVideoUrl ? "Replace video" : "Upload video"}
+          </button>
+          <input ref={videoInputRef} type="file" accept="video/*" className="hidden" onChange={onPickIntroVideo} />
+        </div>
+      </div>
 
 
       {/* Cover banner */}
