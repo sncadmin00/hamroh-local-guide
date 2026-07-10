@@ -190,10 +190,21 @@ async function completeLoginConfirmation(
     { onConflict: "telegram_user_id" },
   );
 
+  const ALLOWED_REDIRECT_PREFIXES = [
+    "https://hamrohim.com/",
+    "https://www.hamrohim.com/",
+    "https://hamroh-local-guide.lovable.app/",
+    "hamrohmobile://",
+  ];
+  const storedRedirect = (row as { redirect_to?: string | null }).redirect_to ?? null;
+  const redirectTo = storedRedirect && ALLOWED_REDIRECT_PREFIXES.some((p) => storedRedirect.startsWith(p))
+    ? storedRedirect
+    : "https://hamrohim.com/login";
+
   const { data: link, error: linkError } = await supabase.auth.admin.generateLink({
     type: "magiclink",
     email,
-    options: { redirectTo: "https://hamrohim.com/login" },
+    options: { redirectTo },
   });
   if (linkError || !link.properties?.action_link) {
     return `Sign-in failed: ${linkError?.message ?? "no action link"}`;
