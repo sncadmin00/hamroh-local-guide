@@ -45,7 +45,7 @@ export function VerificationPanel() {
   const { tg } = useGuideI18n();
   const fetchV = useServerFn(getMyVerification);
   const subIdentity = useServerFn(submitIdentity);
-  const subVideo = useServerFn(submitIntroVideo);
+  
   const [data, setData] = useState<V | null>(null);
   const [loading, setLoading] = useState(true);
 
