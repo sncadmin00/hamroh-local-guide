@@ -105,7 +105,7 @@ export const signInWithTelegram = createServerFn({ method: "POST" })
     const { data: link, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
       type: "magiclink",
       email,
-      options: { redirectTo: "https://hamrohim.com/login" },
+      options: { redirectTo: resolveRedirectTo(data.redirect_to) },
     });
     if (linkError) throw new Error(linkError.message);
 
