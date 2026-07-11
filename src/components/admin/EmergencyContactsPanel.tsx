@@ -8,7 +8,8 @@ type City = { id: string; name: string };
 type Contact = {
   id: string;
   city_id: string | null;
-  kind: "police" | "ambulance" | "fire" | "tourist_police" | "consulate" | "other";
+  kind: "police" | "ambulance" | "fire" | "tourist_police" | "consulate" | "embassy" | "representation" | "other";
+  category: "emergency" | "useful";
   label: string;
   phone: string;
   country_code: string | null;
@@ -17,11 +18,13 @@ type Contact = {
   is_published: boolean;
 };
 
-const KINDS: Contact["kind"][] = ["police", "ambulance", "fire", "tourist_police", "consulate", "other"];
+const KINDS: Contact["kind"][] = ["police", "ambulance", "fire", "tourist_police", "consulate", "embassy", "representation", "other"];
+const CATEGORIES: Contact["category"][] = ["emergency", "useful"];
 
 const EMPTY: Partial<Contact> = {
   city_id: null,
   kind: "other",
+  category: "emergency",
   label: "",
   phone: "",
   country_code: "UZ",
