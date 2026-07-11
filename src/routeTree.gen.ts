@@ -94,6 +94,7 @@ import { Route as ApiPublicHooksGenerateStatementsRouteImport } from './routes/a
 import { Route as ApiPublicHooksFeaturedReelsRouteImport } from './routes/api/public/hooks/featured-reels'
 import { Route as ApiPublicHooksExpireBookingsRouteImport } from './routes/api/public/hooks/expire-bookings'
 import { Route as ApiPublicHooksEmergencyContactsRouteImport } from './routes/api/public/hooks/emergency-contacts'
+import { Route as ApiPublicHooksDeleteAccountRouteImport } from './routes/api/public/hooks/delete-account'
 import { Route as ApiPublicHooksDailyBriefRouteImport } from './routes/api/public/hooks/daily-brief'
 import { Route as ApiPublicHooksCreateBookingRouteImport } from './routes/api/public/hooks/create-booking'
 import { Route as ApiPublicHooksClientAiRouteImport } from './routes/api/public/hooks/client-ai'
@@ -574,6 +575,12 @@ const ApiPublicHooksEmergencyContactsRoute =
     path: '/api/public/hooks/emergency-contacts',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksDeleteAccountRoute =
+  ApiPublicHooksDeleteAccountRouteImport.update({
+    id: '/api/public/hooks/delete-account',
+    path: '/api/public/hooks/delete-account',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksDailyBriefRoute =
   ApiPublicHooksDailyBriefRouteImport.update({
     id: '/api/public/hooks/daily-brief',
@@ -721,6 +728,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/client-ai': typeof ApiPublicHooksClientAiRoute
   '/api/public/hooks/create-booking': typeof ApiPublicHooksCreateBookingRoute
   '/api/public/hooks/daily-brief': typeof ApiPublicHooksDailyBriefRoute
+  '/api/public/hooks/delete-account': typeof ApiPublicHooksDeleteAccountRoute
   '/api/public/hooks/emergency-contacts': typeof ApiPublicHooksEmergencyContactsRoute
   '/api/public/hooks/expire-bookings': typeof ApiPublicHooksExpireBookingsRoute
   '/api/public/hooks/featured-reels': typeof ApiPublicHooksFeaturedReelsRoute
@@ -823,6 +831,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/client-ai': typeof ApiPublicHooksClientAiRoute
   '/api/public/hooks/create-booking': typeof ApiPublicHooksCreateBookingRoute
   '/api/public/hooks/daily-brief': typeof ApiPublicHooksDailyBriefRoute
+  '/api/public/hooks/delete-account': typeof ApiPublicHooksDeleteAccountRoute
   '/api/public/hooks/emergency-contacts': typeof ApiPublicHooksEmergencyContactsRoute
   '/api/public/hooks/expire-bookings': typeof ApiPublicHooksExpireBookingsRoute
   '/api/public/hooks/featured-reels': typeof ApiPublicHooksFeaturedReelsRoute
@@ -927,6 +936,7 @@ export interface FileRoutesById {
   '/api/public/hooks/client-ai': typeof ApiPublicHooksClientAiRoute
   '/api/public/hooks/create-booking': typeof ApiPublicHooksCreateBookingRoute
   '/api/public/hooks/daily-brief': typeof ApiPublicHooksDailyBriefRoute
+  '/api/public/hooks/delete-account': typeof ApiPublicHooksDeleteAccountRoute
   '/api/public/hooks/emergency-contacts': typeof ApiPublicHooksEmergencyContactsRoute
   '/api/public/hooks/expire-bookings': typeof ApiPublicHooksExpireBookingsRoute
   '/api/public/hooks/featured-reels': typeof ApiPublicHooksFeaturedReelsRoute
@@ -1032,6 +1042,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/client-ai'
     | '/api/public/hooks/create-booking'
     | '/api/public/hooks/daily-brief'
+    | '/api/public/hooks/delete-account'
     | '/api/public/hooks/emergency-contacts'
     | '/api/public/hooks/expire-bookings'
     | '/api/public/hooks/featured-reels'
@@ -1134,6 +1145,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/client-ai'
     | '/api/public/hooks/create-booking'
     | '/api/public/hooks/daily-brief'
+    | '/api/public/hooks/delete-account'
     | '/api/public/hooks/emergency-contacts'
     | '/api/public/hooks/expire-bookings'
     | '/api/public/hooks/featured-reels'
@@ -1237,6 +1249,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/client-ai'
     | '/api/public/hooks/create-booking'
     | '/api/public/hooks/daily-brief'
+    | '/api/public/hooks/delete-account'
     | '/api/public/hooks/emergency-contacts'
     | '/api/public/hooks/expire-bookings'
     | '/api/public/hooks/featured-reels'
@@ -1337,6 +1350,7 @@ export interface RootRouteChildren {
   ApiPublicHooksClientAiRoute: typeof ApiPublicHooksClientAiRoute
   ApiPublicHooksCreateBookingRoute: typeof ApiPublicHooksCreateBookingRoute
   ApiPublicHooksDailyBriefRoute: typeof ApiPublicHooksDailyBriefRoute
+  ApiPublicHooksDeleteAccountRoute: typeof ApiPublicHooksDeleteAccountRoute
   ApiPublicHooksEmergencyContactsRoute: typeof ApiPublicHooksEmergencyContactsRoute
   ApiPublicHooksExpireBookingsRoute: typeof ApiPublicHooksExpireBookingsRoute
   ApiPublicHooksFeaturedReelsRoute: typeof ApiPublicHooksFeaturedReelsRoute
@@ -1986,6 +2000,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksEmergencyContactsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/delete-account': {
+      id: '/api/public/hooks/delete-account'
+      path: '/api/public/hooks/delete-account'
+      fullPath: '/api/public/hooks/delete-account'
+      preLoaderRoute: typeof ApiPublicHooksDeleteAccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/daily-brief': {
       id: '/api/public/hooks/daily-brief'
       path: '/api/public/hooks/daily-brief'
@@ -2184,6 +2205,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksClientAiRoute: ApiPublicHooksClientAiRoute,
   ApiPublicHooksCreateBookingRoute: ApiPublicHooksCreateBookingRoute,
   ApiPublicHooksDailyBriefRoute: ApiPublicHooksDailyBriefRoute,
+  ApiPublicHooksDeleteAccountRoute: ApiPublicHooksDeleteAccountRoute,
   ApiPublicHooksEmergencyContactsRoute: ApiPublicHooksEmergencyContactsRoute,
   ApiPublicHooksExpireBookingsRoute: ApiPublicHooksExpireBookingsRoute,
   ApiPublicHooksFeaturedReelsRoute: ApiPublicHooksFeaturedReelsRoute,
@@ -2245,13 +2267,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
