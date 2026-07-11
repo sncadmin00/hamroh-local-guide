@@ -8,7 +8,8 @@ type City = { id: string; name: string };
 type Contact = {
   id: string;
   city_id: string | null;
-  kind: "police" | "ambulance" | "fire" | "tourist_police" | "consulate" | "other";
+  kind: "police" | "ambulance" | "fire" | "tourist_police" | "consulate" | "embassy" | "representation" | "other";
+  category: "emergency" | "useful";
   label: string;
   phone: string;
   country_code: string | null;
@@ -17,11 +18,13 @@ type Contact = {
   is_published: boolean;
 };
 
-const KINDS: Contact["kind"][] = ["police", "ambulance", "fire", "tourist_police", "consulate", "other"];
+const KINDS: Contact["kind"][] = ["police", "ambulance", "fire", "tourist_police", "consulate", "embassy", "representation", "other"];
+const CATEGORIES: Contact["category"][] = ["emergency", "useful"];
 
 const EMPTY: Partial<Contact> = {
   city_id: null,
   kind: "other",
+  category: "emergency",
   label: "",
   phone: "",
   country_code: "UZ",
@@ -72,6 +75,7 @@ export function EmergencyContactsPanel() {
     const payload = {
       city_id: editing.city_id || null,
       kind: editing.kind,
+      category: editing.category ?? "emergency",
       label: editing.label,
       phone: editing.phone,
       country_code: editing.country_code || null,
@@ -115,6 +119,16 @@ export function EmergencyContactsPanel() {
               >
                 <option value="">— Global —</option>
                 {cities.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+              </select>
+            </label>
+            <label className="block text-sm">
+              <span className="text-muted-foreground">Category</span>
+              <select
+                className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                value={editing.category ?? "emergency"}
+                onChange={(e) => setEditing({ ...editing, category: e.target.value as Contact["category"] })}
+              >
+                {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
               </select>
             </label>
             <label className="block text-sm">
@@ -202,7 +216,7 @@ export function EmergencyContactsPanel() {
                 {r.label} <span className="text-muted-foreground">· {r.phone}</span>
               </div>
               <div className="text-[11px] text-muted-foreground">
-                {cityName(r.city_id)} · {r.kind} · {r.country_code ?? "—"} · sort {r.sort_order} · {r.is_published ? "published" : "hidden"}
+                {cityName(r.city_id)} · {r.category} · {r.kind} · {r.country_code ?? "—"} · sort {r.sort_order} · {r.is_published ? "published" : "hidden"}
                 {r.notes ? ` · ${r.notes}` : ""}
               </div>
             </div>

@@ -30,7 +30,7 @@ export const Route = createFileRoute("/api/public/hooks/emergency-contacts")({
 
         let q = supabase
           .from("emergency_contacts")
-          .select("id, city_id, kind, label, phone, country_code, notes, sort_order")
+          .select("id, city_id, kind, category, label, phone, country_code, notes, sort_order")
           .eq("is_published", true);
 
         if (cityId) {
