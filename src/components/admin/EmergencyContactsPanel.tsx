@@ -122,6 +122,16 @@ export function EmergencyContactsPanel() {
               </select>
             </label>
             <label className="block text-sm">
+              <span className="text-muted-foreground">Category</span>
+              <select
+                className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                value={editing.category ?? "emergency"}
+                onChange={(e) => setEditing({ ...editing, category: e.target.value as Contact["category"] })}
+              >
+                {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </label>
+            <label className="block text-sm">
               <span className="text-muted-foreground">Kind</span>
               <select
                 className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
