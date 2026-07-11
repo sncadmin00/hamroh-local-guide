@@ -13,6 +13,7 @@ import { Route as WishlistRouteImport } from './routes/wishlist'
 import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as ToursRouteImport } from './routes/tours'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as SupportRouteImport } from './routes/support'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SearchRouteImport } from './routes/search'
@@ -94,6 +95,7 @@ import { Route as ApiPublicHooksGenerateStatementsRouteImport } from './routes/a
 import { Route as ApiPublicHooksFeaturedReelsRouteImport } from './routes/api/public/hooks/featured-reels'
 import { Route as ApiPublicHooksExpireBookingsRouteImport } from './routes/api/public/hooks/expire-bookings'
 import { Route as ApiPublicHooksEmergencyContactsRouteImport } from './routes/api/public/hooks/emergency-contacts'
+import { Route as ApiPublicHooksDeleteAccountRouteImport } from './routes/api/public/hooks/delete-account'
 import { Route as ApiPublicHooksDailyBriefRouteImport } from './routes/api/public/hooks/daily-brief'
 import { Route as ApiPublicHooksCreateBookingRouteImport } from './routes/api/public/hooks/create-booking'
 import { Route as ApiPublicHooksClientAiRouteImport } from './routes/api/public/hooks/client-ai'
@@ -129,6 +131,11 @@ const ToursRoute = ToursRouteImport.update({
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SupportRoute = SupportRouteImport.update({
+  id: '/support',
+  path: '/support',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -574,6 +581,12 @@ const ApiPublicHooksEmergencyContactsRoute =
     path: '/api/public/hooks/emergency-contacts',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksDeleteAccountRoute =
+  ApiPublicHooksDeleteAccountRouteImport.update({
+    id: '/api/public/hooks/delete-account',
+    path: '/api/public/hooks/delete-account',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksDailyBriefRoute =
   ApiPublicHooksDailyBriefRouteImport.update({
     id: '/api/public/hooks/daily-brief',
@@ -692,6 +705,7 @@ export interface FileRoutesByFullPath {
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/tours': typeof ToursRoute
   '/unsubscribe': typeof UnsubscribeRoute
@@ -721,6 +735,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/client-ai': typeof ApiPublicHooksClientAiRoute
   '/api/public/hooks/create-booking': typeof ApiPublicHooksCreateBookingRoute
   '/api/public/hooks/daily-brief': typeof ApiPublicHooksDailyBriefRoute
+  '/api/public/hooks/delete-account': typeof ApiPublicHooksDeleteAccountRoute
   '/api/public/hooks/emergency-contacts': typeof ApiPublicHooksEmergencyContactsRoute
   '/api/public/hooks/expire-bookings': typeof ApiPublicHooksExpireBookingsRoute
   '/api/public/hooks/featured-reels': typeof ApiPublicHooksFeaturedReelsRoute
@@ -794,6 +809,7 @@ export interface FileRoutesByTo {
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/tours': typeof ToursRoute
   '/unsubscribe': typeof UnsubscribeRoute
@@ -823,6 +839,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/client-ai': typeof ApiPublicHooksClientAiRoute
   '/api/public/hooks/create-booking': typeof ApiPublicHooksCreateBookingRoute
   '/api/public/hooks/daily-brief': typeof ApiPublicHooksDailyBriefRoute
+  '/api/public/hooks/delete-account': typeof ApiPublicHooksDeleteAccountRoute
   '/api/public/hooks/emergency-contacts': typeof ApiPublicHooksEmergencyContactsRoute
   '/api/public/hooks/expire-bookings': typeof ApiPublicHooksExpireBookingsRoute
   '/api/public/hooks/featured-reels': typeof ApiPublicHooksFeaturedReelsRoute
@@ -898,6 +915,7 @@ export interface FileRoutesById {
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/tours': typeof ToursRoute
   '/unsubscribe': typeof UnsubscribeRoute
@@ -927,6 +945,7 @@ export interface FileRoutesById {
   '/api/public/hooks/client-ai': typeof ApiPublicHooksClientAiRoute
   '/api/public/hooks/create-booking': typeof ApiPublicHooksCreateBookingRoute
   '/api/public/hooks/daily-brief': typeof ApiPublicHooksDailyBriefRoute
+  '/api/public/hooks/delete-account': typeof ApiPublicHooksDeleteAccountRoute
   '/api/public/hooks/emergency-contacts': typeof ApiPublicHooksEmergencyContactsRoute
   '/api/public/hooks/expire-bookings': typeof ApiPublicHooksExpireBookingsRoute
   '/api/public/hooks/featured-reels': typeof ApiPublicHooksFeaturedReelsRoute
@@ -1003,6 +1022,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/settings'
     | '/sitemap.xml'
+    | '/support'
     | '/terms'
     | '/tours'
     | '/unsubscribe'
@@ -1032,6 +1052,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/client-ai'
     | '/api/public/hooks/create-booking'
     | '/api/public/hooks/daily-brief'
+    | '/api/public/hooks/delete-account'
     | '/api/public/hooks/emergency-contacts'
     | '/api/public/hooks/expire-bookings'
     | '/api/public/hooks/featured-reels'
@@ -1105,6 +1126,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/settings'
     | '/sitemap.xml'
+    | '/support'
     | '/terms'
     | '/tours'
     | '/unsubscribe'
@@ -1134,6 +1156,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/client-ai'
     | '/api/public/hooks/create-booking'
     | '/api/public/hooks/daily-brief'
+    | '/api/public/hooks/delete-account'
     | '/api/public/hooks/emergency-contacts'
     | '/api/public/hooks/expire-bookings'
     | '/api/public/hooks/featured-reels'
@@ -1208,6 +1231,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/settings'
     | '/sitemap.xml'
+    | '/support'
     | '/terms'
     | '/tours'
     | '/unsubscribe'
@@ -1237,6 +1261,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/client-ai'
     | '/api/public/hooks/create-booking'
     | '/api/public/hooks/daily-brief'
+    | '/api/public/hooks/delete-account'
     | '/api/public/hooks/emergency-contacts'
     | '/api/public/hooks/expire-bookings'
     | '/api/public/hooks/featured-reels'
@@ -1312,6 +1337,7 @@ export interface RootRouteChildren {
   SearchRoute: typeof SearchRoute
   SettingsRoute: typeof SettingsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  SupportRoute: typeof SupportRoute
   TermsRoute: typeof TermsRoute
   ToursRoute: typeof ToursRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
@@ -1337,6 +1363,7 @@ export interface RootRouteChildren {
   ApiPublicHooksClientAiRoute: typeof ApiPublicHooksClientAiRoute
   ApiPublicHooksCreateBookingRoute: typeof ApiPublicHooksCreateBookingRoute
   ApiPublicHooksDailyBriefRoute: typeof ApiPublicHooksDailyBriefRoute
+  ApiPublicHooksDeleteAccountRoute: typeof ApiPublicHooksDeleteAccountRoute
   ApiPublicHooksEmergencyContactsRoute: typeof ApiPublicHooksEmergencyContactsRoute
   ApiPublicHooksExpireBookingsRoute: typeof ApiPublicHooksExpireBookingsRoute
   ApiPublicHooksFeaturedReelsRoute: typeof ApiPublicHooksFeaturedReelsRoute
@@ -1417,6 +1444,13 @@ declare module '@tanstack/react-router' {
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/support': {
+      id: '/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof SupportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -1986,6 +2020,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksEmergencyContactsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/delete-account': {
+      id: '/api/public/hooks/delete-account'
+      path: '/api/public/hooks/delete-account'
+      fullPath: '/api/public/hooks/delete-account'
+      preLoaderRoute: typeof ApiPublicHooksDeleteAccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/daily-brief': {
       id: '/api/public/hooks/daily-brief'
       path: '/api/public/hooks/daily-brief'
@@ -2159,6 +2200,7 @@ const rootRouteChildren: RootRouteChildren = {
   SearchRoute: SearchRoute,
   SettingsRoute: SettingsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  SupportRoute: SupportRoute,
   TermsRoute: TermsRoute,
   ToursRoute: ToursRoute,
   UnsubscribeRoute: UnsubscribeRoute,
@@ -2184,6 +2226,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksClientAiRoute: ApiPublicHooksClientAiRoute,
   ApiPublicHooksCreateBookingRoute: ApiPublicHooksCreateBookingRoute,
   ApiPublicHooksDailyBriefRoute: ApiPublicHooksDailyBriefRoute,
+  ApiPublicHooksDeleteAccountRoute: ApiPublicHooksDeleteAccountRoute,
   ApiPublicHooksEmergencyContactsRoute: ApiPublicHooksEmergencyContactsRoute,
   ApiPublicHooksExpireBookingsRoute: ApiPublicHooksExpireBookingsRoute,
   ApiPublicHooksFeaturedReelsRoute: ApiPublicHooksFeaturedReelsRoute,
