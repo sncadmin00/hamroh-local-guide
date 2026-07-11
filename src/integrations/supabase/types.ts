@@ -795,6 +795,7 @@ export type Database = {
       }
       emergency_contacts: {
         Row: {
+          category: string
           city_id: string | null
           country_code: string | null
           created_at: string
@@ -808,6 +809,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          category?: string
           city_id?: string | null
           country_code?: string | null
           created_at?: string
@@ -821,6 +823,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          category?: string
           city_id?: string | null
           country_code?: string | null
           created_at?: string
