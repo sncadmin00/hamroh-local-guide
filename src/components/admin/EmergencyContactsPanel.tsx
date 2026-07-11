@@ -216,7 +216,7 @@ export function EmergencyContactsPanel() {
                 {r.label} <span className="text-muted-foreground">· {r.phone}</span>
               </div>
               <div className="text-[11px] text-muted-foreground">
-                {cityName(r.city_id)} · {r.kind} · {r.country_code ?? "—"} · sort {r.sort_order} · {r.is_published ? "published" : "hidden"}
+                {cityName(r.city_id)} · {r.category} · {r.kind} · {r.country_code ?? "—"} · sort {r.sort_order} · {r.is_published ? "published" : "hidden"}
                 {r.notes ? ` · ${r.notes}` : ""}
               </div>
             </div>
