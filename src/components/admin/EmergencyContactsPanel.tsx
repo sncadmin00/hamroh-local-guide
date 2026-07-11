@@ -75,6 +75,7 @@ export function EmergencyContactsPanel() {
     const payload = {
       city_id: editing.city_id || null,
       kind: editing.kind,
+      category: editing.category ?? "emergency",
       label: editing.label,
       phone: editing.phone,
       country_code: editing.country_code || null,
