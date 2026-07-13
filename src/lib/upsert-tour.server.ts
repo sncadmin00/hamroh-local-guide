@@ -115,6 +115,7 @@ const TOUR_SELECT = `
   meeting_point, end_point,
   meeting_lat, meeting_lng, end_lat, end_lng, end_same_as_meeting,
   published, sort_order,
+  moderation_status, rejection_reason, submitted_at, moderated_at,
   rating, reviews_count,
   tour_categories(category_id)
 `;
