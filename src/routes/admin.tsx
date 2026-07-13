@@ -246,7 +246,7 @@ function AdminPage() {
   const { ta } = useAdminI18n();
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
-  const [tab, setTab] = useState<"bookings" | "applications" | "verifications" | "cities" | "guides" | "tours" | "spotlights" | "reels" | "categories" | "languages" | "places" | "suggestions" | "articles" | "social" | "users" | "invitations" | "statements" | "emergency">("bookings");
+  const [tab, setTab] = useState<"bookings" | "applications" | "verifications" | "cities" | "guides" | "tours" | "moderation" | "spotlights" | "reels" | "categories" | "languages" | "places" | "suggestions" | "articles" | "social" | "users" | "invitations" | "statements" | "emergency">("bookings");
   const [cities, setCities] = useState<City[]>([]);
   const [guides, setGuides] = useState<Guide[]>([]);
   const [articles, setArticles] = useState<Article[]>([]);
