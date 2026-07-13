@@ -361,6 +361,12 @@ function AdminPage() {
             {ta("tab.tours")}
           </button>
           <button
+            onClick={() => setTab("moderation")}
+            className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "moderation" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+          >
+            Moderation
+          </button>
+          <button
             onClick={() => setTab("spotlights")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "spotlights" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
