@@ -451,6 +451,7 @@ function AdminPage() {
         {tab === "cities" && <CitiesPanel cities={cities} reload={loadData} />}
         {tab === "guides" && <GuidesPanel guides={guides} cities={cities} categories={categories} guideCategories={guideCategories} languages={languages} reload={loadData} />}
         {tab === "tours" && <ToursPanel />}
+        {tab === "moderation" && <TourModerationPanel />}
         {tab === "spotlights" && <SpotlightsPanel />}
         {tab === "reels" && <AdminReelsPanel />}
         {tab === "categories" && <CategoriesPanel categories={categories} reload={loadData} />}
