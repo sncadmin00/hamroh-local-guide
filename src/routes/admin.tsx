@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { SpotlightsPanel } from "@/components/admin/SpotlightsPanel";
 import { AdminReelsPanel } from "@/components/admin/AdminReelsPanel";
 import { ToursPanel } from "@/components/admin/ToursPanel";
+import { TourModerationPanel } from "@/components/admin/TourModerationPanel";
 import { VerificationsPanel } from "@/components/admin/VerificationsPanel";
 import { GuideInvitationsPanel } from "@/components/admin/GuideInvitationsPanel";
 import { StatementsAdminPanel } from "@/components/admin/StatementsAdminPanel";
