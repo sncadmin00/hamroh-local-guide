@@ -67,6 +67,7 @@ import { Route as ApiPublicHooksTelegramSigninPollRouteImport } from './routes/a
 import { Route as ApiPublicHooksTelegramLinkCodeRouteImport } from './routes/api/public/hooks/telegram-link-code'
 import { Route as ApiPublicHooksSupportContactsRouteImport } from './routes/api/public/hooks/support-contacts'
 import { Route as ApiPublicHooksSuggestCityRouteImport } from './routes/api/public/hooks/suggest-city'
+import { Route as ApiPublicHooksSubmitTourForReviewRouteImport } from './routes/api/public/hooks/submit-tour-for-review'
 import { Route as ApiPublicHooksSubmitLicenseRouteImport } from './routes/api/public/hooks/submit-license'
 import { Route as ApiPublicHooksSubmitIntroVideoRouteImport } from './routes/api/public/hooks/submit-intro-video'
 import { Route as ApiPublicHooksSubmitIdentityRouteImport } from './routes/api/public/hooks/submit-identity'
@@ -413,6 +414,12 @@ const ApiPublicHooksSuggestCityRoute =
   ApiPublicHooksSuggestCityRouteImport.update({
     id: '/api/public/hooks/suggest-city',
     path: '/api/public/hooks/suggest-city',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksSubmitTourForReviewRoute =
+  ApiPublicHooksSubmitTourForReviewRouteImport.update({
+    id: '/api/public/hooks/submit-tour-for-review',
+    path: '/api/public/hooks/submit-tour-for-review',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicHooksSubmitLicenseRoute =
@@ -764,6 +771,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/submit-identity': typeof ApiPublicHooksSubmitIdentityRoute
   '/api/public/hooks/submit-intro-video': typeof ApiPublicHooksSubmitIntroVideoRoute
   '/api/public/hooks/submit-license': typeof ApiPublicHooksSubmitLicenseRoute
+  '/api/public/hooks/submit-tour-for-review': typeof ApiPublicHooksSubmitTourForReviewRoute
   '/api/public/hooks/suggest-city': typeof ApiPublicHooksSuggestCityRoute
   '/api/public/hooks/support-contacts': typeof ApiPublicHooksSupportContactsRoute
   '/api/public/hooks/telegram-link-code': typeof ApiPublicHooksTelegramLinkCodeRoute
@@ -868,6 +876,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/submit-identity': typeof ApiPublicHooksSubmitIdentityRoute
   '/api/public/hooks/submit-intro-video': typeof ApiPublicHooksSubmitIntroVideoRoute
   '/api/public/hooks/submit-license': typeof ApiPublicHooksSubmitLicenseRoute
+  '/api/public/hooks/submit-tour-for-review': typeof ApiPublicHooksSubmitTourForReviewRoute
   '/api/public/hooks/suggest-city': typeof ApiPublicHooksSuggestCityRoute
   '/api/public/hooks/support-contacts': typeof ApiPublicHooksSupportContactsRoute
   '/api/public/hooks/telegram-link-code': typeof ApiPublicHooksTelegramLinkCodeRoute
@@ -974,6 +983,7 @@ export interface FileRoutesById {
   '/api/public/hooks/submit-identity': typeof ApiPublicHooksSubmitIdentityRoute
   '/api/public/hooks/submit-intro-video': typeof ApiPublicHooksSubmitIntroVideoRoute
   '/api/public/hooks/submit-license': typeof ApiPublicHooksSubmitLicenseRoute
+  '/api/public/hooks/submit-tour-for-review': typeof ApiPublicHooksSubmitTourForReviewRoute
   '/api/public/hooks/suggest-city': typeof ApiPublicHooksSuggestCityRoute
   '/api/public/hooks/support-contacts': typeof ApiPublicHooksSupportContactsRoute
   '/api/public/hooks/telegram-link-code': typeof ApiPublicHooksTelegramLinkCodeRoute
@@ -1081,6 +1091,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/submit-identity'
     | '/api/public/hooks/submit-intro-video'
     | '/api/public/hooks/submit-license'
+    | '/api/public/hooks/submit-tour-for-review'
     | '/api/public/hooks/suggest-city'
     | '/api/public/hooks/support-contacts'
     | '/api/public/hooks/telegram-link-code'
@@ -1185,6 +1196,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/submit-identity'
     | '/api/public/hooks/submit-intro-video'
     | '/api/public/hooks/submit-license'
+    | '/api/public/hooks/submit-tour-for-review'
     | '/api/public/hooks/suggest-city'
     | '/api/public/hooks/support-contacts'
     | '/api/public/hooks/telegram-link-code'
@@ -1290,6 +1302,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/submit-identity'
     | '/api/public/hooks/submit-intro-video'
     | '/api/public/hooks/submit-license'
+    | '/api/public/hooks/submit-tour-for-review'
     | '/api/public/hooks/suggest-city'
     | '/api/public/hooks/support-contacts'
     | '/api/public/hooks/telegram-link-code'
@@ -1392,6 +1405,7 @@ export interface RootRouteChildren {
   ApiPublicHooksSubmitIdentityRoute: typeof ApiPublicHooksSubmitIdentityRoute
   ApiPublicHooksSubmitIntroVideoRoute: typeof ApiPublicHooksSubmitIntroVideoRoute
   ApiPublicHooksSubmitLicenseRoute: typeof ApiPublicHooksSubmitLicenseRoute
+  ApiPublicHooksSubmitTourForReviewRoute: typeof ApiPublicHooksSubmitTourForReviewRoute
   ApiPublicHooksSuggestCityRoute: typeof ApiPublicHooksSuggestCityRoute
   ApiPublicHooksSupportContactsRoute: typeof ApiPublicHooksSupportContactsRoute
   ApiPublicHooksTelegramLinkCodeRoute: typeof ApiPublicHooksTelegramLinkCodeRoute
@@ -1822,6 +1836,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/hooks/suggest-city'
       fullPath: '/api/public/hooks/suggest-city'
       preLoaderRoute: typeof ApiPublicHooksSuggestCityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/submit-tour-for-review': {
+      id: '/api/public/hooks/submit-tour-for-review'
+      path: '/api/public/hooks/submit-tour-for-review'
+      fullPath: '/api/public/hooks/submit-tour-for-review'
+      preLoaderRoute: typeof ApiPublicHooksSubmitTourForReviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/submit-license': {
@@ -2259,6 +2280,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksSubmitIdentityRoute: ApiPublicHooksSubmitIdentityRoute,
   ApiPublicHooksSubmitIntroVideoRoute: ApiPublicHooksSubmitIntroVideoRoute,
   ApiPublicHooksSubmitLicenseRoute: ApiPublicHooksSubmitLicenseRoute,
+  ApiPublicHooksSubmitTourForReviewRoute:
+    ApiPublicHooksSubmitTourForReviewRoute,
   ApiPublicHooksSuggestCityRoute: ApiPublicHooksSuggestCityRoute,
   ApiPublicHooksSupportContactsRoute: ApiPublicHooksSupportContactsRoute,
   ApiPublicHooksTelegramLinkCodeRoute: ApiPublicHooksTelegramLinkCodeRoute,
