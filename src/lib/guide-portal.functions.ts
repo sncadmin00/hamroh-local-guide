@@ -398,7 +398,7 @@ export const listMyTours = createServerFn({ method: "GET" })
       supabase.from("cities").select("id, name, lat, lng").in("id", cityIds),
       supabase
         .from("tours")
-        .select("id, slug, title, title_ru, title_en, title_uz, short_description, short_description_ru, short_description_en, short_description_uz, cover_url, city_id, duration_hours, price_from, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, pricing_modes, fixed_price, fixed_max_guests, per_person_price, group_tiers, max_guests, children_free_under, transport_included, languages, highlights, highlights_ru, highlights_en, highlights_uz, included, included_ru, included_en, included_uz, not_included, not_included_ru, not_included_en, not_included_uz, meeting_point, end_point, meeting_lat, meeting_lng, end_lat, end_lng, end_same_as_meeting, published, sort_order, tour_categories(category_id)")
+        .select("id, slug, title, title_ru, title_en, title_uz, short_description, short_description_ru, short_description_en, short_description_uz, cover_url, city_id, duration_hours, price_from, price_by_language, pricing_mode, base_language, language_multipliers, group_prices, pricing_modes, fixed_price, fixed_max_guests, per_person_price, group_tiers, max_guests, children_free_under, transport_included, languages, highlights, highlights_ru, highlights_en, highlights_uz, included, included_ru, included_en, included_uz, not_included, not_included_ru, not_included_en, not_included_uz, meeting_point, end_point, meeting_lat, meeting_lng, end_lat, end_lng, end_same_as_meeting, published, sort_order, moderation_status, rejection_reason, submitted_at, moderated_at, tour_categories(category_id)")
         .eq("guide_id", guide.id)
         .order("sort_order", { ascending: true }),
     ]);
@@ -438,3 +438,46 @@ export const deleteTour = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+// Guide submits a draft/rejected tour for admin review.
+export const submitTourForReview = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) => z.object({ id: z.string().uuid() }).parse(input))
+  .handler(async ({ context, data }) => {
+    const { supabase, userId } = context;
+    const { data: guide } = await supabase
+      .from("guides").select("id").eq("user_id", userId).maybeSingle();
+    if (!guide) throw new Error("You are not linked to a guide profile yet.");
+
+    const { data: tour, error: tErr } = await supabase
+      .from("tours")
+      .select("id, moderation_status, title, city_id, duration_hours, pricing_modes")
+      .eq("id", data.id)
+      .eq("guide_id", guide.id)
+      .maybeSingle();
+    if (tErr) throw new Error(tErr.message);
+    if (!tour) throw new Error("Tour not found or not owned by this guide.");
+
+    if (tour.moderation_status === "pending_review") {
+      return { ok: true, moderation_status: "pending_review" as const, already: true };
+    }
+    if (tour.moderation_status === "approved") {
+      throw new Error("Tour is already approved. Make edits to submit changes for review.");
+    }
+    if (!tour.title || !tour.city_id || !tour.duration_hours || !(tour.pricing_modes ?? []).length) {
+      throw new Error("Fill in title, city, duration and at least one pricing mode before submitting.");
+    }
+
+    const { error } = await (supabaseAdmin as any)
+      .from("tours")
+      .update({
+        moderation_status: "pending_review",
+        submitted_at: new Date().toISOString(),
+        rejection_reason: null,
+      })
+      .eq("id", tour.id);
+    if (error) throw new Error(error.message);
+
+    return { ok: true, moderation_status: "pending_review" as const };
+  });
+

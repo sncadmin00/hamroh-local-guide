@@ -57,3 +57,68 @@ export const inviteGuideToPortal = createServerFn({ method: "POST" })
 
     return { ok: true, existed: !!existing };
   });
+
+async function assertAdmin(userId: string) {
+  const { data: isAdmin } = await supabaseAdmin.rpc("has_role", {
+    _user_id: userId,
+    _role: "admin",
+  });
+  if (!isAdmin) throw new Error("Forbidden");
+}
+
+// ---------- Tour moderation ----------
+
+export const listPendingTours = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context.userId);
+    const { data, error } = await supabaseAdmin
+      .from("tours")
+      .select("id, slug, title, cover_url, price_from, submitted_at, moderation_status, rejection_reason, guides(name), cities(name)")
+      .in("moderation_status", ["pending_review", "rejected"])
+      .order("submitted_at", { ascending: false, nullsFirst: false });
+    if (error) throw new Error(error.message);
+    return data ?? [];
+  });
+
+export const approveTour = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) => z.object({ id: z.string().uuid() }).parse(input))
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context.userId);
+    const { error } = await (supabaseAdmin as any)
+      .from("tours")
+      .update({
+        moderation_status: "approved",
+        rejection_reason: null,
+        moderated_at: new Date().toISOString(),
+        moderated_by: context.userId,
+        published: true,
+      })
+      .eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const rejectTour = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) => z.object({
+    id: z.string().uuid(),
+    reason: z.string().trim().min(3).max(1000),
+  }).parse(input))
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context.userId);
+    const { error } = await (supabaseAdmin as any)
+      .from("tours")
+      .update({
+        moderation_status: "rejected",
+        rejection_reason: data.reason,
+        moderated_at: new Date().toISOString(),
+        moderated_by: context.userId,
+        published: false,
+      })
+      .eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+

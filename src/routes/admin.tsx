@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { SpotlightsPanel } from "@/components/admin/SpotlightsPanel";
 import { AdminReelsPanel } from "@/components/admin/AdminReelsPanel";
 import { ToursPanel } from "@/components/admin/ToursPanel";
+import { TourModerationPanel } from "@/components/admin/TourModerationPanel";
 import { VerificationsPanel } from "@/components/admin/VerificationsPanel";
 import { GuideInvitationsPanel } from "@/components/admin/GuideInvitationsPanel";
 import { StatementsAdminPanel } from "@/components/admin/StatementsAdminPanel";
@@ -245,7 +246,7 @@ function AdminPage() {
   const { ta } = useAdminI18n();
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
-  const [tab, setTab] = useState<"bookings" | "applications" | "verifications" | "cities" | "guides" | "tours" | "spotlights" | "reels" | "categories" | "languages" | "places" | "suggestions" | "articles" | "social" | "users" | "invitations" | "statements" | "emergency">("bookings");
+  const [tab, setTab] = useState<"bookings" | "applications" | "verifications" | "cities" | "guides" | "tours" | "moderation" | "spotlights" | "reels" | "categories" | "languages" | "places" | "suggestions" | "articles" | "social" | "users" | "invitations" | "statements" | "emergency">("bookings");
   const [cities, setCities] = useState<City[]>([]);
   const [guides, setGuides] = useState<Guide[]>([]);
   const [articles, setArticles] = useState<Article[]>([]);
@@ -360,6 +361,12 @@ function AdminPage() {
             {ta("tab.tours")}
           </button>
           <button
+            onClick={() => setTab("moderation")}
+            className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "moderation" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+          >
+            Moderation
+          </button>
+          <button
             onClick={() => setTab("spotlights")}
             className={`px-4 h-9 rounded-full text-sm font-medium ${tab === "spotlights" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
@@ -444,6 +451,7 @@ function AdminPage() {
         {tab === "cities" && <CitiesPanel cities={cities} reload={loadData} />}
         {tab === "guides" && <GuidesPanel guides={guides} cities={cities} categories={categories} guideCategories={guideCategories} languages={languages} reload={loadData} />}
         {tab === "tours" && <ToursPanel />}
+        {tab === "moderation" && <TourModerationPanel />}
         {tab === "spotlights" && <SpotlightsPanel />}
         {tab === "reels" && <AdminReelsPanel />}
         {tab === "categories" && <CategoriesPanel categories={categories} reload={loadData} />}
