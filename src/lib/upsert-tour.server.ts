@@ -461,7 +461,57 @@ export async function upsertTourCore(input: UpsertTourInput, userId: string) {
   }
 
 
+  // 8b. Moderation gate.
+  //
+  // On create: brand-new tours land as `draft`, never published.
+  // On update: sensitive edits to an already-approved tour force it back to
+  // `pending_review` (and hidden). Sensitive = city change, base language
+  // change, category set change, or price_from jump > 20%.
+  if (isCreate) {
+    payload.moderation_status = "draft";
+    payload.rejection_reason = null;
+    payload.submitted_at = null;
+    payload.moderated_at = null;
+    payload.moderated_by = null;
+  } else if (current) {
+    const currentStatus = String(current.moderation_status ?? "draft");
+    let sensitive = false;
+
+    if (input.city_id !== undefined && input.city_id !== current.city_id) sensitive = true;
+    if (input.base_language !== undefined && input.base_language !== current.base_language) sensitive = true;
+
+    if (shouldRecomputePrice) {
+      const oldFrom = Number(current.price_from ?? 0);
+      if (oldFrom > 0 && priceFrom > oldFrom * 1.2) sensitive = true;
+      if (oldFrom === 0 && priceFrom > 0) sensitive = true;
+    }
+
+    if (input.category_ids !== undefined) {
+      const { data: currentCats } = await supabaseAdmin
+        .from("tour_categories")
+        .select("category_id")
+        .eq("tour_id", current.id);
+      const currentSet = new Set((currentCats ?? []).map((r: any) => r.category_id));
+      const nextSet = new Set(input.category_ids);
+      const same =
+        currentSet.size === nextSet.size &&
+        [...currentSet].every((x) => nextSet.has(x));
+      if (!same) sensitive = true;
+    }
+
+    if (currentStatus === "approved" && sensitive) {
+      payload.moderation_status = "pending_review";
+      payload.rejection_reason = null;
+      payload.submitted_at = new Date().toISOString();
+      payload.published = false;
+    } else if (currentStatus !== "approved" && payload.published === true) {
+      // Guard: caller can't flip published=true unless approved.
+      payload.published = false;
+    }
+  }
+
   // 9. Persist
+
   let tourId: string;
   if (current) {
     const { error } = await (supabaseAdmin as any)
