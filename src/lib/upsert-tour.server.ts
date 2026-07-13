@@ -198,7 +198,9 @@ export async function upsertTourCore(input: UpsertTourInput, userId: string) {
     end_lat: pick(input.end_lat, current?.end_lat ?? null) as number | null,
     end_lng: pick(input.end_lng, current?.end_lng ?? null) as number | null,
     end_same_as_meeting: pick(input.end_same_as_meeting, !!current?.end_same_as_meeting),
-    published: pick(input.published, current?.published ?? (isCreate ? true : false)),
+    // published is gated by moderation_status='approved' (see step 8b). On create we always
+    // start hidden, regardless of what the caller sent.
+    published: isCreate ? false : pick(input.published, current?.published ?? false),
     sort_order: pick(input.sort_order, Number(current?.sort_order ?? 0)),
   };
 
