@@ -2733,6 +2733,9 @@ export type Database = {
           meeting_lat: number | null
           meeting_lng: number | null
           meeting_point: string
+          moderated_at: string | null
+          moderated_by: string | null
+          moderation_status: string
           not_included: string[]
           not_included_en: string[]
           not_included_ru: string[]
@@ -2745,6 +2748,7 @@ export type Database = {
           pricing_modes: string[]
           published: boolean
           rating: number
+          rejection_reason: string | null
           reviews_count: number
           short_description: string
           short_description_en: string
@@ -2752,6 +2756,7 @@ export type Database = {
           short_description_uz: string
           slug: string
           sort_order: number
+          submitted_at: string | null
           title: string
           title_en: string
           title_ru: string
@@ -2794,6 +2799,9 @@ export type Database = {
           meeting_lat?: number | null
           meeting_lng?: number | null
           meeting_point?: string
+          moderated_at?: string | null
+          moderated_by?: string | null
+          moderation_status?: string
           not_included?: string[]
           not_included_en?: string[]
           not_included_ru?: string[]
@@ -2806,6 +2814,7 @@ export type Database = {
           pricing_modes?: string[]
           published?: boolean
           rating?: number
+          rejection_reason?: string | null
           reviews_count?: number
           short_description?: string
           short_description_en?: string
@@ -2813,6 +2822,7 @@ export type Database = {
           short_description_uz?: string
           slug: string
           sort_order?: number
+          submitted_at?: string | null
           title: string
           title_en?: string
           title_ru?: string
@@ -2855,6 +2865,9 @@ export type Database = {
           meeting_lat?: number | null
           meeting_lng?: number | null
           meeting_point?: string
+          moderated_at?: string | null
+          moderated_by?: string | null
+          moderation_status?: string
           not_included?: string[]
           not_included_en?: string[]
           not_included_ru?: string[]
@@ -2867,6 +2880,7 @@ export type Database = {
           pricing_modes?: string[]
           published?: boolean
           rating?: number
+          rejection_reason?: string | null
           reviews_count?: number
           short_description?: string
           short_description_en?: string
@@ -2874,6 +2888,7 @@ export type Database = {
           short_description_uz?: string
           slug?: string
           sort_order?: number
+          submitted_at?: string | null
           title?: string
           title_en?: string
           title_ru?: string
