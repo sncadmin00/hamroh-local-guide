@@ -154,6 +154,8 @@ async function buildSystemPrompt(
   articleContext: Array<{ title: string; slug: string; content: string }>,
   lang: Lang,
   holidays: Holiday[],
+  weather: WeatherInfo | null,
+  city: CityCtx | null,
 ) {
 
   const [guidesRes, placesRes, toursRes] = await Promise.all([
