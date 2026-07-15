@@ -172,12 +172,13 @@ export const Route = createFileRoute("/api/public/hooks/seed-appreview")({
               date: new Date(Date.now() - 14 * 86400000).toISOString().slice(0, 10),
               start_time: "10:00",
               duration_minutes: 240,
-              group_size: 2,
+              guests: 2,
+              adults: 2,
+              children: 0,
               tour_price: 60,
               total: 63,
               status: "completed",
               payment_method: "cash",
-              currency: "USD",
             })
             .select("id")
             .single();
