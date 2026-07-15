@@ -71,7 +71,6 @@ import { Route as ApiPublicHooksSubmitTourForReviewRouteImport } from './routes/
 import { Route as ApiPublicHooksSubmitLicenseRouteImport } from './routes/api/public/hooks/submit-license'
 import { Route as ApiPublicHooksSubmitIntroVideoRouteImport } from './routes/api/public/hooks/submit-intro-video'
 import { Route as ApiPublicHooksSubmitIdentityRouteImport } from './routes/api/public/hooks/submit-identity'
-import { Route as ApiPublicHooksSeedAppreviewRouteImport } from './routes/api/public/hooks/seed-appreview'
 import { Route as ApiPublicHooksRetranslateTourRouteImport } from './routes/api/public/hooks/retranslate-tour'
 import { Route as ApiPublicHooksRequestPayoutRouteImport } from './routes/api/public/hooks/request-payout'
 import { Route as ApiPublicHooksPriceQuoteRouteImport } from './routes/api/public/hooks/price-quote'
@@ -441,12 +440,6 @@ const ApiPublicHooksSubmitIdentityRoute =
     path: '/api/public/hooks/submit-identity',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicHooksSeedAppreviewRoute =
-  ApiPublicHooksSeedAppreviewRouteImport.update({
-    id: '/api/public/hooks/seed-appreview',
-    path: '/api/public/hooks/seed-appreview',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const ApiPublicHooksRetranslateTourRoute =
   ApiPublicHooksRetranslateTourRouteImport.update({
     id: '/api/public/hooks/retranslate-tour',
@@ -775,7 +768,6 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/price-quote': typeof ApiPublicHooksPriceQuoteRoute
   '/api/public/hooks/request-payout': typeof ApiPublicHooksRequestPayoutRoute
   '/api/public/hooks/retranslate-tour': typeof ApiPublicHooksRetranslateTourRoute
-  '/api/public/hooks/seed-appreview': typeof ApiPublicHooksSeedAppreviewRoute
   '/api/public/hooks/submit-identity': typeof ApiPublicHooksSubmitIdentityRoute
   '/api/public/hooks/submit-intro-video': typeof ApiPublicHooksSubmitIntroVideoRoute
   '/api/public/hooks/submit-license': typeof ApiPublicHooksSubmitLicenseRoute
@@ -881,7 +873,6 @@ export interface FileRoutesByTo {
   '/api/public/hooks/price-quote': typeof ApiPublicHooksPriceQuoteRoute
   '/api/public/hooks/request-payout': typeof ApiPublicHooksRequestPayoutRoute
   '/api/public/hooks/retranslate-tour': typeof ApiPublicHooksRetranslateTourRoute
-  '/api/public/hooks/seed-appreview': typeof ApiPublicHooksSeedAppreviewRoute
   '/api/public/hooks/submit-identity': typeof ApiPublicHooksSubmitIdentityRoute
   '/api/public/hooks/submit-intro-video': typeof ApiPublicHooksSubmitIntroVideoRoute
   '/api/public/hooks/submit-license': typeof ApiPublicHooksSubmitLicenseRoute
@@ -989,7 +980,6 @@ export interface FileRoutesById {
   '/api/public/hooks/price-quote': typeof ApiPublicHooksPriceQuoteRoute
   '/api/public/hooks/request-payout': typeof ApiPublicHooksRequestPayoutRoute
   '/api/public/hooks/retranslate-tour': typeof ApiPublicHooksRetranslateTourRoute
-  '/api/public/hooks/seed-appreview': typeof ApiPublicHooksSeedAppreviewRoute
   '/api/public/hooks/submit-identity': typeof ApiPublicHooksSubmitIdentityRoute
   '/api/public/hooks/submit-intro-video': typeof ApiPublicHooksSubmitIntroVideoRoute
   '/api/public/hooks/submit-license': typeof ApiPublicHooksSubmitLicenseRoute
@@ -1098,7 +1088,6 @@ export interface FileRouteTypes {
     | '/api/public/hooks/price-quote'
     | '/api/public/hooks/request-payout'
     | '/api/public/hooks/retranslate-tour'
-    | '/api/public/hooks/seed-appreview'
     | '/api/public/hooks/submit-identity'
     | '/api/public/hooks/submit-intro-video'
     | '/api/public/hooks/submit-license'
@@ -1204,7 +1193,6 @@ export interface FileRouteTypes {
     | '/api/public/hooks/price-quote'
     | '/api/public/hooks/request-payout'
     | '/api/public/hooks/retranslate-tour'
-    | '/api/public/hooks/seed-appreview'
     | '/api/public/hooks/submit-identity'
     | '/api/public/hooks/submit-intro-video'
     | '/api/public/hooks/submit-license'
@@ -1311,7 +1299,6 @@ export interface FileRouteTypes {
     | '/api/public/hooks/price-quote'
     | '/api/public/hooks/request-payout'
     | '/api/public/hooks/retranslate-tour'
-    | '/api/public/hooks/seed-appreview'
     | '/api/public/hooks/submit-identity'
     | '/api/public/hooks/submit-intro-video'
     | '/api/public/hooks/submit-license'
@@ -1415,7 +1402,6 @@ export interface RootRouteChildren {
   ApiPublicHooksPriceQuoteRoute: typeof ApiPublicHooksPriceQuoteRoute
   ApiPublicHooksRequestPayoutRoute: typeof ApiPublicHooksRequestPayoutRoute
   ApiPublicHooksRetranslateTourRoute: typeof ApiPublicHooksRetranslateTourRoute
-  ApiPublicHooksSeedAppreviewRoute: typeof ApiPublicHooksSeedAppreviewRoute
   ApiPublicHooksSubmitIdentityRoute: typeof ApiPublicHooksSubmitIdentityRoute
   ApiPublicHooksSubmitIntroVideoRoute: typeof ApiPublicHooksSubmitIntroVideoRoute
   ApiPublicHooksSubmitLicenseRoute: typeof ApiPublicHooksSubmitLicenseRoute
@@ -1880,13 +1866,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksSubmitIdentityRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/hooks/seed-appreview': {
-      id: '/api/public/hooks/seed-appreview'
-      path: '/api/public/hooks/seed-appreview'
-      fullPath: '/api/public/hooks/seed-appreview'
-      preLoaderRoute: typeof ApiPublicHooksSeedAppreviewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/public/hooks/retranslate-tour': {
       id: '/api/public/hooks/retranslate-tour'
       path: '/api/public/hooks/retranslate-tour'
@@ -2298,7 +2277,6 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksPriceQuoteRoute: ApiPublicHooksPriceQuoteRoute,
   ApiPublicHooksRequestPayoutRoute: ApiPublicHooksRequestPayoutRoute,
   ApiPublicHooksRetranslateTourRoute: ApiPublicHooksRetranslateTourRoute,
-  ApiPublicHooksSeedAppreviewRoute: ApiPublicHooksSeedAppreviewRoute,
   ApiPublicHooksSubmitIdentityRoute: ApiPublicHooksSubmitIdentityRoute,
   ApiPublicHooksSubmitIntroVideoRoute: ApiPublicHooksSubmitIntroVideoRoute,
   ApiPublicHooksSubmitLicenseRoute: ApiPublicHooksSubmitLicenseRoute,
