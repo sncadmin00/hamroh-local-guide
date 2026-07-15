@@ -113,16 +113,73 @@ export const adminSetIdentity = createServerFn({ method: "POST" })
     reason: z.string().trim().max(500).optional(),
   }).parse(input))
   .handler(async ({ context, data }) => {
-    const { supabase, userId } = context;
+    const { userId } = context;
     await ensureAdmin(userId);
+
+    // Grab current passport path so we can purge the file after the decision.
+    const { data: guide } = await supabaseAdmin
+      .from("guides")
+      .select("identity_passport_url")
+      .eq("id", data.guide_id)
+      .maybeSingle();
+
     const { error } = await supabaseAdmin
       .from("guides")
       .update({
         identity_verified: data.approved,
         identity_rejected_reason: data.approved ? null : (data.reason ?? "Rejected"),
+        identity_passport_url: null,
       })
       .eq("id", data.guide_id);
     if (error) throw new Error(error.message);
+
+    // Data-minimization: remove the passport image from Storage once the
+    // decision (approve or reject) has been recorded. Best-effort; log & swallow.
+    const path = guide?.identity_passport_url;
+    if (path) {
+      const { error: rmErr } = await supabaseAdmin.storage.from("guide-identity").remove([path]);
+      if (rmErr) console.error("[adminSetIdentity] failed to remove passport file", path, rmErr.message);
+    }
+    return { ok: true };
+  });
+
+/**
+ * Admin decision on a guide's license document.
+ * Sets `licensed` and — regardless of approve/reject — deletes the license
+ * file from the `guide-identity` bucket and clears `license_url` so we
+ * don't retain personal documents longer than needed.
+ */
+export const adminSetLicense = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) => z.object({
+    guide_id: z.string().uuid(),
+    approved: z.boolean(),
+  }).parse(input))
+  .handler(async ({ context, data }) => {
+    const { userId } = context;
+    await ensureAdmin(userId);
+
+    const { data: guide } = await supabaseAdmin
+      .from("guides")
+      .select("license_url")
+      .eq("id", data.guide_id)
+      .maybeSingle();
+
+    const { error } = await supabaseAdmin
+      .from("guides")
+      .update({
+        licensed: data.approved,
+        licensed_at: data.approved ? new Date().toISOString() : null,
+        license_url: null,
+      })
+      .eq("id", data.guide_id);
+    if (error) throw new Error(error.message);
+
+    const path = guide?.license_url;
+    if (path && !/^https?:\/\//i.test(path)) {
+      const { error: rmErr } = await supabaseAdmin.storage.from("guide-identity").remove([path]);
+      if (rmErr) console.error("[adminSetLicense] failed to remove license file", path, rmErr.message);
+    }
     return { ok: true };
   });
 
