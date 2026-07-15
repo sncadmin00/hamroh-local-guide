@@ -49,7 +49,7 @@ export const LEGAL = {
       title: "Privacy Policy",
       updated: "Last updated: June 2026",
       sections: [
-        ["1. Data we collect", "Account info (name, email), bookings, messages with guides, optional profile photo."],
+        ["1. Data we collect", "Account info (name, email), bookings, messages with guides, optional profile photo. If you apply to become a guide and complete identity verification, we additionally collect a photo of your passport or another government ID and, where applicable, a guide license photo. These documents are used solely to verify identity and eligibility to operate as a guide, are stored securely, and are not shown to travelers."],
         ["2. How we use it", "To run the service: create bookings, send transactional emails, prevent abuse, and improve features."],
         ["3. Sharing", "We share booking details with the guide you book. We do not sell personal data."],
         ["4. Storage", "Data is stored on secure cloud infrastructure (EU/US). We use industry-standard encryption."],
@@ -63,7 +63,7 @@ export const LEGAL = {
       title: "Политика конфиденциальности",
       updated: "Обновлено: июнь 2026",
       sections: [
-        ["1. Какие данные собираем", "Имя, email, бронирования, переписку с гидами, опционально фото профиля."],
+        ["1. Какие данные собираем", "Имя, email, бронирования, переписку с гидами, опционально фото профиля. Если вы подаёте заявку на роль гида и проходите верификацию личности, мы дополнительно собираем фото паспорта или другого документа, удостоверяющего личность, а при необходимости — фото лицензии гида. Эти документы используются только для подтверждения личности и права работать в качестве гида, хранятся безопасно и не показываются путешественникам."],
         ["2. Как используем", "Для работы сервиса: бронирования, транзакционные письма, защита от злоупотреблений, улучшение функций."],
         ["3. Передача", "Делимся деталями бронирования с забронированным гидом. Не продаём персональные данные."],
         ["4. Хранение", "Данные хранятся в защищённой облачной инфраструктуре (ЕС/США) с современным шифрованием."],
@@ -77,7 +77,7 @@ export const LEGAL = {
       title: "Maxfiylik siyosati",
       updated: "Yangilangan: 2026 yil iyun",
       sections: [
-        ["1. Qaysi ma'lumotlarni yig'amiz", "Ism, email, bronlar, hamrohlar bilan yozishma, ixtiyoriy profil rasm."],
+        ["1. Qaysi ma'lumotlarni yig'amiz", "Ism, email, bronlar, hamrohlar bilan yozishma, ixtiyoriy profil rasm. Agar siz hamroh sifatida ro'yxatdan o'tish uchun ariza topshirsangiz va shaxsni tasdiqlashdan o'tsangiz, biz qo'shimcha ravishda pasport yoki boshqa shaxsni tasdiqlovchi hujjat rasmini, shuningdek, zarurat bo'lganda hamroh litsenziyasining rasmini yig'amiz. Ushbu hujjatlar faqat shaxsni va hamroh sifatida faoliyat yuritish huquqini tasdiqlash uchun ishlatiladi, xavfsiz saqlanadi va sayohatchilarga ko'rsatilmaydi."],
         ["2. Qanday foydalanamiz", "Xizmatni yuritish uchun: bronlash, xabarlar, suiiste'molning oldini olish."],
         ["3. Ulashish", "Bron tafsilotlarini siz tanlagan hamroh bilan ulashamiz. Shaxsiy ma'lumotlarni sotmaymiz."],
         ["4. Saqlash", "Ma'lumotlar zamonaviy shifrlash bilan himoyalangan bulutda saqlanadi."],
