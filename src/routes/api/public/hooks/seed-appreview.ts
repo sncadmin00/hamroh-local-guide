@@ -203,7 +203,6 @@ export const Route = createFileRoute("/api/public/hooks/seed-appreview")({
             booking_id: bookingId,
             rating: 5,
             comment: "Aziza was fantastic — deeply knowledgeable, warm and made Tashkent feel like home. Highly recommend for anyone visiting for the first time!",
-            author_name: "App Review Tourist",
           });
         }
 
