@@ -57,7 +57,57 @@ const MAX_QUERY_LEN = 300;
 type Turn = { role: "user" | "assistant"; content: string };
 type Lang = "en" | "ru" | "uz";
 type Holiday = { title: string; date_start: string; date_end?: string | null };
-type ClientContext = { upcomingHolidays?: Holiday[] };
+type CityCtx = { name?: string; lat?: number; lng?: number };
+type ClientContext = { upcomingHolidays?: Holiday[]; city?: CityCtx };
+type WeatherInfo = {
+  cityName: string;
+  currentTemp: number | null;
+  daily: Array<{ date: string; min: number; max: number }>;
+};
+
+function sanitizeCity(input: unknown): CityCtx | null {
+  if (!input || typeof input !== "object") return null;
+  const rec = input as Record<string, unknown>;
+  const name = typeof rec.name === "string" ? rec.name.trim().slice(0, 80) : "";
+  const lat = typeof rec.lat === "number" && Number.isFinite(rec.lat) ? rec.lat : undefined;
+  const lng = typeof rec.lng === "number" && Number.isFinite(rec.lng) ? rec.lng : undefined;
+  if (!name && lat === undefined && lng === undefined) return null;
+  return { name: name || undefined, lat, lng };
+}
+
+async function fetchWeather(city: CityCtx): Promise<WeatherInfo | null> {
+  if (typeof city.lat !== "number" || typeof city.lng !== "number") return null;
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lng}&daily=temperature_2m_max,temperature_2m_min&forecast_days=3&current_weather=true&timezone=auto`;
+    const r = await fetch(url);
+    if (!r.ok) return null;
+    const j: any = await r.json();
+    const currentTemp = typeof j?.current_weather?.temperature === "number" ? Math.round(j.current_weather.temperature) : null;
+    const dates: string[] = Array.isArray(j?.daily?.time) ? j.daily.time : [];
+    const maxes: number[] = Array.isArray(j?.daily?.temperature_2m_max) ? j.daily.temperature_2m_max : [];
+    const mins: number[] = Array.isArray(j?.daily?.temperature_2m_min) ? j.daily.temperature_2m_min : [];
+    const daily = dates.map((date, i) => ({
+      date,
+      min: Math.round(mins[i] ?? 0),
+      max: Math.round(maxes[i] ?? 0),
+    }));
+    return { cityName: city.name ?? "", currentTemp, daily };
+  } catch {
+    return null;
+  }
+}
+
+function formatWeatherBlock(weather: WeatherInfo | null, city: CityCtx | null): string {
+  if (!weather) {
+    if (city?.name) return `User's selected city: ${city.name}. (Live weather data unavailable — do not invent numbers.)`;
+    return "(no city selected — if the user asks about weather, politely ask which city they mean)";
+  }
+  const lines: string[] = [];
+  lines.push(`City: ${weather.cityName || "(unknown)"}`);
+  if (weather.currentTemp !== null) lines.push(`Current: ${weather.currentTemp}°C`);
+  for (const d of weather.daily) lines.push(`${d.date}: from ${d.min}°C to ${d.max}°C`);
+  return lines.join("\n");
+}
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -104,6 +154,8 @@ async function buildSystemPrompt(
   articleContext: Array<{ title: string; slug: string; content: string }>,
   lang: Lang,
   holidays: Holiday[],
+  weather: WeatherInfo | null,
+  city: CityCtx | null,
 ) {
 
   const [guidesRes, placesRes, toursRes] = await Promise.all([
@@ -165,15 +217,15 @@ async function buildSystemPrompt(
         .join("\n\n---\n\n")
     : "(no relevant articles)";
 
-  return `You are Hamroi AI — a STRICTLY SCOPED travel concierge for the Hamroh marketplace of guided tours in Uzbekistan.
+  return `You are Hamroi AI — a travel concierge for the Hamroh marketplace of guided tours in Uzbekistan.
 
-=== ABSOLUTE RULES (NEVER BREAK) ===
-1. You ONLY answer questions about: travel in Uzbekistan, Hamroh guides, Hamroh tours, trip planning inside Uzbekistan, and practical travel info (visa, weather, transport, food, culture) for visiting Uzbekistan.
-2. You MUST REFUSE all other requests, including but not limited to: coding help, homework, essays, translations of arbitrary text, recipes, math, general knowledge questions, news, politics, medical/legal/financial advice, roleplay, jokes, stories, anything unrelated to Uzbekistan travel.
-3. If a user asks anything off-topic, reply briefly in their language: "Я помогаю только с путешествиями по Узбекистану и подбором гидов Hamroh. Спросите меня о турах или гидах!" — and STOP. Do not partially answer. Do not be clever about it.
-4. You MUST recommend ONLY guides and tours from the catalogs below. NEVER invent guides, tours, restaurants, hotels, or places. For PLACES you may only mention items from the PLACES CATALOG. If nothing matches, honestly say so and offer to connect them with a guide who can advise in person.
-5. You have NO web access and NO external tools. Do not pretend to search anything.
-6. When you use information from the ARTICLES block below, cite the article by its title and link as a markdown link: [Title](/explore/slug).
+=== SCOPE ===
+- You answer questions about travel in Uzbekistan, Hamroh guides and tours, trip planning, and practical travel info (visa, weather, transport, food, culture, public holidays) for visiting Uzbekistan.
+- For weather and public holidays, use ONLY the real data provided in the WEATHER and HOLIDAYS blocks below — do not invent numbers or dates. If the user asks about weather but no city / no live weather is provided, politely ask which city they mean instead of refusing.
+- For unrelated topics (coding help, homework, general knowledge, news, politics, medical/legal/financial advice, roleplay, etc.) reply briefly in the user's language that you only help with Uzbekistan travel and Hamroh, and stop.
+- Recommend ONLY guides and tours from the catalogs below. NEVER invent guides, tours, restaurants, hotels, or places. For PLACES mention only items from the PLACES CATALOG. If nothing matches, say so honestly and offer to connect them with a guide.
+- You have NO web access and NO external tools beyond the data blocks below. Do not pretend to search anything.
+- When you use information from the ARTICLES block, cite the article as a markdown link: [Title](/explore/slug).
 
 === GUIDES CATALOG ===
 ${guidesCatalog || "(no guides yet)"}
@@ -187,11 +239,12 @@ ${placesCatalog || "(no places yet)"}
 === RELEVANT ARTICLES (use this knowledge first when relevant) ===
 ${articlesBlock}
 
+=== LIVE WEATHER (real data — use these exact numbers if the user asks about weather; do not invent) ===
+${formatWeatherBlock(weather, city)}
+
 === UPCOMING PUBLIC HOLIDAYS IN UZBEKISTAN (client-provided; use only if the user asks about travel dates, opening hours, or planning around specific days) ===
 ${formatHolidaysBlock(holidays)}
 - Warn the traveller that on these dates many shops, bazaars, museums, and offices may be closed or on reduced hours; transport can be busier and prices higher. Mention this only when it's relevant to the user's question — never as a random aside.
-
-
 
 === HOW TO ANSWER ===
 - ALWAYS reply in this language: ${lang === "ru" ? "Russian (русский)" : lang === "uz" ? "Uzbek (o'zbek tili, latin script)" : "English"}. This is the user's selected UI language — ignore the language of their query and respond ONLY in the selected language.
@@ -304,7 +357,9 @@ export const Route = createFileRoute("/api/public/hooks/client-ai")({
           console.error("client-ai: article retrieval failed", e);
         }
         const holidays = sanitizeHolidays(body.context?.upcomingHolidays);
-        const system = await buildSystemPrompt(userClient, articleContext, lang, holidays);
+        const city = sanitizeCity(body.context?.city);
+        const weather = city ? await fetchWeather(city) : null;
+        const system = await buildSystemPrompt(userClient, articleContext, lang, holidays, weather, city);
 
 
         const gateway = createLovableAiGatewayProvider(key);
