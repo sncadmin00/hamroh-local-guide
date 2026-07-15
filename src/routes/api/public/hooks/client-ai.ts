@@ -57,7 +57,57 @@ const MAX_QUERY_LEN = 300;
 type Turn = { role: "user" | "assistant"; content: string };
 type Lang = "en" | "ru" | "uz";
 type Holiday = { title: string; date_start: string; date_end?: string | null };
-type ClientContext = { upcomingHolidays?: Holiday[] };
+type CityCtx = { name?: string; lat?: number; lng?: number };
+type ClientContext = { upcomingHolidays?: Holiday[]; city?: CityCtx };
+type WeatherInfo = {
+  cityName: string;
+  currentTemp: number | null;
+  daily: Array<{ date: string; min: number; max: number }>;
+};
+
+function sanitizeCity(input: unknown): CityCtx | null {
+  if (!input || typeof input !== "object") return null;
+  const rec = input as Record<string, unknown>;
+  const name = typeof rec.name === "string" ? rec.name.trim().slice(0, 80) : "";
+  const lat = typeof rec.lat === "number" && Number.isFinite(rec.lat) ? rec.lat : undefined;
+  const lng = typeof rec.lng === "number" && Number.isFinite(rec.lng) ? rec.lng : undefined;
+  if (!name && lat === undefined && lng === undefined) return null;
+  return { name: name || undefined, lat, lng };
+}
+
+async function fetchWeather(city: CityCtx): Promise<WeatherInfo | null> {
+  if (typeof city.lat !== "number" || typeof city.lng !== "number") return null;
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lng}&daily=temperature_2m_max,temperature_2m_min&forecast_days=3&current_weather=true&timezone=auto`;
+    const r = await fetch(url);
+    if (!r.ok) return null;
+    const j: any = await r.json();
+    const currentTemp = typeof j?.current_weather?.temperature === "number" ? Math.round(j.current_weather.temperature) : null;
+    const dates: string[] = Array.isArray(j?.daily?.time) ? j.daily.time : [];
+    const maxes: number[] = Array.isArray(j?.daily?.temperature_2m_max) ? j.daily.temperature_2m_max : [];
+    const mins: number[] = Array.isArray(j?.daily?.temperature_2m_min) ? j.daily.temperature_2m_min : [];
+    const daily = dates.map((date, i) => ({
+      date,
+      min: Math.round(mins[i] ?? 0),
+      max: Math.round(maxes[i] ?? 0),
+    }));
+    return { cityName: city.name ?? "", currentTemp, daily };
+  } catch {
+    return null;
+  }
+}
+
+function formatWeatherBlock(weather: WeatherInfo | null, city: CityCtx | null): string {
+  if (!weather) {
+    if (city?.name) return `User's selected city: ${city.name}. (Live weather data unavailable — do not invent numbers.)`;
+    return "(no city selected — if the user asks about weather, politely ask which city they mean)";
+  }
+  const lines: string[] = [];
+  lines.push(`City: ${weather.cityName || "(unknown)"}`);
+  if (weather.currentTemp !== null) lines.push(`Current: ${weather.currentTemp}°C`);
+  for (const d of weather.daily) lines.push(`${d.date}: from ${d.min}°C to ${d.max}°C`);
+  return lines.join("\n");
+}
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
