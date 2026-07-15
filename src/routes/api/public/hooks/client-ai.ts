@@ -357,7 +357,9 @@ export const Route = createFileRoute("/api/public/hooks/client-ai")({
           console.error("client-ai: article retrieval failed", e);
         }
         const holidays = sanitizeHolidays(body.context?.upcomingHolidays);
-        const system = await buildSystemPrompt(userClient, articleContext, lang, holidays);
+        const city = sanitizeCity(body.context?.city);
+        const weather = city ? await fetchWeather(city) : null;
+        const system = await buildSystemPrompt(userClient, articleContext, lang, holidays, weather, city);
 
 
         const gateway = createLovableAiGatewayProvider(key);
