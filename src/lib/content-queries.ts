@@ -107,6 +107,7 @@ async function fetchGuides(): Promise<Guide[]> {
   const { data, error } = await supabase
     .from("guides")
     .select(GUIDE_SELECT)
+    .eq("published", true)
     .order("sort_order", { ascending: true });
   if (error) throw error;
   return ((data ?? []) as unknown as GuideRow[]).map(mapGuide);

@@ -32,7 +32,8 @@ export const Route = createFileRoute("/sitemap.xml")({
         try {
           const { data: guides } = await supabaseAdmin
             .from("guides")
-            .select("slug, updated_at");
+            .select("slug, updated_at")
+            .eq("published", true);
           for (const g of guides ?? []) {
             if (!g.slug) continue;
             entries.push({

@@ -53,6 +53,7 @@ export const getSpotlightById = createServerFn({ method: "GET" })
         .from("guides")
         .select("id, slug, name, photo_url, tagline, rating, reviews")
         .eq("id", spotlight.guide_id)
+        .eq("published", true)
         .maybeSingle();
       if (g) guide = g as SpotlightGuideRef;
     }

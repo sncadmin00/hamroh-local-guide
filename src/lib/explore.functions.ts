@@ -33,7 +33,7 @@ export const getExploreCards = createServerFn({ method: "GET" }).handler(async (
 
   const [tours, guides, places, articles, spotlights] = await Promise.all([
     supabasePublic.from("tours").select("id,title_en,title,cover_url,slug,rating").eq("published", true).limit(4),
-    supabasePublic.from("guides").select("id,name,photo_url,slug,rating").eq("verified", true).limit(4),
+    supabasePublic.from("guides").select("id,name,photo_url,slug,rating").eq("verified", true).eq("published", true).limit(4),
     supabasePublic.from("places").select("id,name,photo_url,slug").eq("published", true).limit(4),
     supabasePublic.from("articles").select("id,title,cover_url,slug").eq("published", true).limit(4),
     supabasePublic.from("spotlights").select("id,title_en,image_url,href").eq("is_active", true).limit(4),

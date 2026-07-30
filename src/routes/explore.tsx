@@ -79,6 +79,7 @@ function ExplorePage() {
         supabase
           .from("guides")
           .select("id,slug,name,city_id,photo_url,tagline,rating,reviews,verified,price_per_day")
+          .eq("published", true)
           .order("sort_order"),
       ]);
       if (a.data) setArticles(a.data as unknown as Article[]);
