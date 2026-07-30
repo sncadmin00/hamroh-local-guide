@@ -133,6 +133,7 @@ export const finalizeApprovedGuide = createServerFn({ method: "POST" })
         intro_video_verified: !!videoUrl,
         verified_languages: mergedLangs,
         verified: true,
+        published: true,
         licensed: isLicensed,
         license_url: isLicensed ? app.certificate_url ?? null : null,
         licensed_at: isLicensed ? new Date().toISOString() : null,
