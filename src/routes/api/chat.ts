@@ -20,6 +20,7 @@ async function buildSystemPrompt(
     client
       .from("guides")
       .select("slug, name, tagline, languages, specialties, price_per_day, rating, reviews, instant_book, cities(name)")
+      .eq("published", true)
       .order("sort_order", { ascending: true }),
     client
       .from("places")

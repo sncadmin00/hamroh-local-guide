@@ -1411,6 +1411,7 @@ export type Database = {
           payout_method: string | null
           photo_url: string | null
           price_per_day: number
+          published: boolean
           rating: number
           referral_code: string | null
           reviews: number
@@ -1459,6 +1460,7 @@ export type Database = {
           payout_method?: string | null
           photo_url?: string | null
           price_per_day?: number
+          published?: boolean
           rating?: number
           referral_code?: string | null
           reviews?: number
@@ -1507,6 +1509,7 @@ export type Database = {
           payout_method?: string | null
           photo_url?: string | null
           price_per_day?: number
+          published?: boolean
           rating?: number
           referral_code?: string | null
           reviews?: number

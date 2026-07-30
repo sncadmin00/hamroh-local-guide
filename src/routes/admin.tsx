@@ -57,6 +57,7 @@ type Guide = {
   languages: string[];
   verified_languages: Record<string, string> | null;
   user_id: string | null;
+  published: boolean;
 };
 
 
@@ -911,6 +912,23 @@ function GuidesPanel({
                     </p>
                   </div>
                   <div className="flex items-center gap-1">
+                    <button
+                      onClick={async () => {
+                        const { error } = await supabase
+                          .from("guides")
+                          .update({ published: !g.published })
+                          .eq("id", g.id);
+                        if (error) toast.error(error.message);
+                        else await reload();
+                      }}
+                      className={`px-3 h-8 rounded-full text-xs font-semibold ring-1 transition ${
+                        g.published
+                          ? "bg-emerald-500/10 text-emerald-600 ring-emerald-500/40"
+                          : "bg-card text-muted-foreground ring-border/60 hover:bg-secondary/60"
+                      }`}
+                    >
+                      {g.published ? "Published" : "Hidden"}
+                    </button>
                     <InvitePortalButton guide={g} reload={reload} />
                     <button
                       onClick={() => remove(g.id)}
