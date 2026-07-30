@@ -57,6 +57,7 @@ type Guide = {
   languages: string[];
   verified_languages: Record<string, string> | null;
   user_id: string | null;
+  published: boolean;
 };
 
 
