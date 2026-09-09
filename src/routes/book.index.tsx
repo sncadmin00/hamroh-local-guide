@@ -48,7 +48,7 @@ const COUNTRIES = [{ code: "uz", name: "Uzbekistan" }];
 
 function BookPage() {
   const { t, tCategory } = useI18n();
-  const navigate = useNavigate({ from: "/book" });
+  const navigate = useNavigate({ from: "/book/" });
   const search = Route.useSearch();
 
   const { data: cities = [] } = useCities();
