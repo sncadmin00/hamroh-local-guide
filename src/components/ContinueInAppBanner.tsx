@@ -24,7 +24,9 @@ export function ContinueInAppBanner() {
           </span>
         </div>
         <a
-          href="#"
+          href="https://apps.apple.com/app/id6791028497"
+          target="_blank"
+          rel="noopener noreferrer"
           className="text-xs font-semibold px-3 py-1.5 rounded-full shrink-0"
           style={{ background: "#C9A84C", color: "#0B1430" }}
         >

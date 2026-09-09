@@ -33,7 +33,9 @@ export function DownloadAppBanner() {
 
             <div className="mt-6 flex flex-wrap gap-3">
               <a
-                href="#"
+                href="https://apps.apple.com/app/id6791028497"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center gap-3 rounded-xl px-5 py-3 bg-black/40 hover:bg-black/60 transition-colors ring-1 ring-white/15"
               >
                 <Apple className="h-6 w-6" />
@@ -45,7 +47,9 @@ export function DownloadAppBanner() {
                 </span>
               </a>
               <a
-                href="#"
+                href="https://play.google.com/store/apps/details?id=com.arklabs.hamroh"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center gap-3 rounded-xl px-5 py-3 bg-black/40 hover:bg-black/60 transition-colors ring-1 ring-white/15"
               >
                 <Smartphone className="h-6 w-6" />

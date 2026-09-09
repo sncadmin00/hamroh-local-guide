@@ -13,7 +13,7 @@ import { TelegramLoginButton } from "@/components/TelegramLoginButton";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Sign in — Hamroh" }] }),
-  validateSearch: (search) => ({
+  validateSearch: (search): { redirect?: string } => ({
     redirect: typeof search.redirect === "string" ? search.redirect : undefined,
   }),
   component: LoginPage,
