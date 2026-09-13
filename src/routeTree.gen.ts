@@ -105,6 +105,7 @@ import { Route as ApiPublicHooksCalendarRemindersRouteImport } from './routes/ap
 import { Route as ApiPublicHooksBookingReviewsRouteImport } from './routes/api/public/hooks/booking-reviews'
 import { Route as ApiPublicHooksBookingRemindersRouteImport } from './routes/api/public/hooks/booking-reminders'
 import { Route as ApiPublicHooksApplyReferralRouteImport } from './routes/api/public/hooks/apply-referral'
+import { Route as ApiPublicHooksAllReelsRouteImport } from './routes/api/public/hooks/all-reels'
 import { Route as ApiPublicToursTourIdSlotsRouteImport } from './routes/api/public/tours/$tourId/slots'
 import { Route as ApiPublicHooksPayoutStepUpVerifyRouteImport } from './routes/api/public/hooks/payout-step-up/verify'
 import { Route as ApiPublicHooksPayoutStepUpStartRouteImport } from './routes/api/public/hooks/payout-step-up/start'
@@ -641,6 +642,11 @@ const ApiPublicHooksApplyReferralRoute =
     path: '/api/public/hooks/apply-referral',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksAllReelsRoute = ApiPublicHooksAllReelsRouteImport.update({
+  id: '/api/public/hooks/all-reels',
+  path: '/api/public/hooks/all-reels',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicToursTourIdSlotsRoute =
   ApiPublicToursTourIdSlotsRouteImport.update({
     id: '/api/public/tours/$tourId/slots',
@@ -734,6 +740,7 @@ export interface FileRoutesByFullPath {
   '/api/earnings/report': typeof ApiEarningsReportRoute
   '/api/public/site-languages': typeof ApiPublicSiteLanguagesRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/api/public/hooks/all-reels': typeof ApiPublicHooksAllReelsRoute
   '/api/public/hooks/apply-referral': typeof ApiPublicHooksApplyReferralRoute
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
   '/api/public/hooks/booking-reviews': typeof ApiPublicHooksBookingReviewsRoute
@@ -839,6 +846,7 @@ export interface FileRoutesByTo {
   '/api/earnings/report': typeof ApiEarningsReportRoute
   '/api/public/site-languages': typeof ApiPublicSiteLanguagesRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/api/public/hooks/all-reels': typeof ApiPublicHooksAllReelsRoute
   '/api/public/hooks/apply-referral': typeof ApiPublicHooksApplyReferralRoute
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
   '/api/public/hooks/booking-reviews': typeof ApiPublicHooksBookingReviewsRoute
@@ -946,6 +954,7 @@ export interface FileRoutesById {
   '/api/earnings/report': typeof ApiEarningsReportRoute
   '/api/public/site-languages': typeof ApiPublicSiteLanguagesRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/api/public/hooks/all-reels': typeof ApiPublicHooksAllReelsRoute
   '/api/public/hooks/apply-referral': typeof ApiPublicHooksApplyReferralRoute
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
   '/api/public/hooks/booking-reviews': typeof ApiPublicHooksBookingReviewsRoute
@@ -1054,6 +1063,7 @@ export interface FileRouteTypes {
     | '/api/earnings/report'
     | '/api/public/site-languages'
     | '/lovable/email/suppression'
+    | '/api/public/hooks/all-reels'
     | '/api/public/hooks/apply-referral'
     | '/api/public/hooks/booking-reminders'
     | '/api/public/hooks/booking-reviews'
@@ -1159,6 +1169,7 @@ export interface FileRouteTypes {
     | '/api/earnings/report'
     | '/api/public/site-languages'
     | '/lovable/email/suppression'
+    | '/api/public/hooks/all-reels'
     | '/api/public/hooks/apply-referral'
     | '/api/public/hooks/booking-reminders'
     | '/api/public/hooks/booking-reviews'
@@ -1265,6 +1276,7 @@ export interface FileRouteTypes {
     | '/api/earnings/report'
     | '/api/public/site-languages'
     | '/lovable/email/suppression'
+    | '/api/public/hooks/all-reels'
     | '/api/public/hooks/apply-referral'
     | '/api/public/hooks/booking-reminders'
     | '/api/public/hooks/booking-reviews'
@@ -1368,6 +1380,7 @@ export interface RootRouteChildren {
   ApiEarningsReportRoute: typeof ApiEarningsReportRoute
   ApiPublicSiteLanguagesRoute: typeof ApiPublicSiteLanguagesRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
+  ApiPublicHooksAllReelsRoute: typeof ApiPublicHooksAllReelsRoute
   ApiPublicHooksApplyReferralRoute: typeof ApiPublicHooksApplyReferralRoute
   ApiPublicHooksBookingRemindersRoute: typeof ApiPublicHooksBookingRemindersRoute
   ApiPublicHooksBookingReviewsRoute: typeof ApiPublicHooksBookingReviewsRoute
@@ -2104,6 +2117,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksApplyReferralRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/all-reels': {
+      id: '/api/public/hooks/all-reels'
+      path: '/api/public/hooks/all-reels'
+      fullPath: '/api/public/hooks/all-reels'
+      preLoaderRoute: typeof ApiPublicHooksAllReelsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/tours/$tourId/slots': {
       id: '/api/public/tours/$tourId/slots'
       path: '/api/public/tours/$tourId/slots'
@@ -2239,6 +2259,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiEarningsReportRoute: ApiEarningsReportRoute,
   ApiPublicSiteLanguagesRoute: ApiPublicSiteLanguagesRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
+  ApiPublicHooksAllReelsRoute: ApiPublicHooksAllReelsRoute,
   ApiPublicHooksApplyReferralRoute: ApiPublicHooksApplyReferralRoute,
   ApiPublicHooksBookingRemindersRoute: ApiPublicHooksBookingRemindersRoute,
   ApiPublicHooksBookingReviewsRoute: ApiPublicHooksBookingReviewsRoute,

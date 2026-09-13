@@ -50,7 +50,11 @@ export const Route = createFileRoute("/api/public/hooks/featured-reels")({
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const rows = (data ?? []) as any[];
-        const paths = rows.map((r) => r.video_path).filter((p): p is string => !!p);
+        const isStoragePath = (p: unknown): p is string => typeof p === "string" && !!p && !/^https?:\/\//i.test(p);
+        const paths = [
+          ...rows.map((r) => r.video_path).filter((p): p is string => !!p),
+          ...rows.map((r) => r.thumbnail_url).filter(isStoragePath),
+        ];
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const { data: signed } = await (supabaseAdmin as any).storage.from(BUCKET).createSignedUrls(paths, SIGN_TTL);
         const signedMap = new Map<string, string>();
@@ -65,7 +69,9 @@ export const Route = createFileRoute("/api/public/hooks/featured-reels")({
           guide_slug: r.guides?.slug ?? null,
           guide_name: r.guides?.name ?? null,
           video_url: r.video_path ? signedMap.get(r.video_path) ?? null : null,
-          thumbnail_url: r.thumbnail_url ?? null,
+          thumbnail_url: r.thumbnail_url
+            ? signedMap.get(r.thumbnail_url) ?? r.thumbnail_url
+            : null,
           caption: r.caption ?? "",
           duration_seconds: r.duration_seconds ?? null,
           created_at: r.created_at,
