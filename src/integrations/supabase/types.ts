@@ -3287,7 +3287,14 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      review_authors: {
+        Row: {
+          avatar_url: string | null
+          first_name: string | null
+          review_id: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       delete_email: {
