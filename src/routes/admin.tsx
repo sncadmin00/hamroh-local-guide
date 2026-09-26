@@ -264,7 +264,7 @@ function AdminPage() {
   const loadData = useCallback(async () => {
     const [c, g, a, e, b, ap, cat, gc, p, pg, ps, lg] = await Promise.all([
       supabase.from("cities").select("*").order("sort_order"),
-      supabase.from("guides").select("*").order("sort_order"),
+      supabase.from("guides").select("id, slug, name, city_id, photo_url, tagline, bio, languages, specialties, price_per_day, rating, reviews, verified, instant_book, sort_order, created_at, updated_at, user_id, locale, referral_code, extra_city_ids, verified_languages, identity_verified, identity_submitted_at, intro_video_url, intro_video_verified, intro_video_submitted_at, completed_tours_count, avg_response_minutes, has_transport, transport_seats, cover_url, licensed, licensed_at, buffer_minutes, published").order("sort_order"),
       supabase.from("articles").select("*").order("sort_order").order("created_at", { ascending: false }),
       supabase.from("social_embeds").select("*").order("sort_order"),
       supabase.from("bookings").select("*, guides(name, slug)").order("created_at", { ascending: false }),

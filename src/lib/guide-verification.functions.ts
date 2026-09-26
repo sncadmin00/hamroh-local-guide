@@ -58,8 +58,8 @@ export const submitIntroVideo = createServerFn({ method: "POST" })
 export const getMyVerification = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { supabase, userId } = context;
-    const { data, error } = await supabase
+    const { userId } = context;
+    const { data, error } = await supabaseAdmin
       .from("guides")
       .select("id, identity_verified, identity_phone, identity_passport_url, identity_submitted_at, identity_rejected_reason, intro_video_url, intro_video_verified, intro_video_submitted_at, intro_video_rejected_reason, completed_tours_count, avg_response_minutes, verified_languages")
       .eq("user_id", userId)

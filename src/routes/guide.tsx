@@ -2240,7 +2240,7 @@ function InlineLanguageTest({
         },
       });
       setResult({ level: r.level as CefrLevel, feedback: r.feedback });
-      await record({ data: { language, level: r.level as CefrLevel } });
+      await record({ data: { language, level: r.level as CefrLevel, proof: r.proof } });
       if (["B1", "B2", "C1", "C2"].includes(r.level)) {
         toast.success(tg("languageTest.verified", { level: r.level }));
       } else {

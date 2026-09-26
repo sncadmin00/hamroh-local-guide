@@ -271,7 +271,8 @@ export const adminListGuideEarnings = createServerFn({ method: "GET" })
     if (!(await isAdmin(supabase, userId))) throw new Error("Forbidden");
     const rate = await getCommissionRate(supabase);
 
-    const { data: guides, error } = await supabase
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: guides, error } = await supabaseAdmin
       .from("guides")
       .select("id, name, slug, tax_status, tax_id, photo_url")
       .order("name");
