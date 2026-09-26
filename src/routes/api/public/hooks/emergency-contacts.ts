@@ -4,7 +4,7 @@
  * to a city (with global entries — city_id IS NULL — always included).
  * Sorted by sort_order, then label.
  * Optional ?lang=ru|uz|en: `label` / `notes` are returned in that language
- * (falls back to ru, then the original text). Raw label_*/notes_* are included too.
+ * (falls back to ru, then the original text). Raw label_xx and notes_xx columns are included too.
  */
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
