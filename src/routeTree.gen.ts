@@ -17,6 +17,7 @@ import { Route as SupportRouteImport } from './routes/support'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RefundPolicyRouteImport } from './routes/refund-policy'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as OfferRouteImport } from './routes/offer'
@@ -153,6 +154,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RefundPolicyRoute = RefundPolicyRouteImport.update({
@@ -715,6 +721,7 @@ export interface FileRoutesByFullPath {
   '/offer': typeof OfferRoute
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -821,6 +828,7 @@ export interface FileRoutesByTo {
   '/offer': typeof OfferRoute
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -929,6 +937,7 @@ export interface FileRoutesById {
   '/offer': typeof OfferRoute
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -1038,6 +1047,7 @@ export interface FileRouteTypes {
     | '/offer'
     | '/privacy'
     | '/refund-policy'
+    | '/reset-password'
     | '/search'
     | '/settings'
     | '/sitemap.xml'
@@ -1144,6 +1154,7 @@ export interface FileRouteTypes {
     | '/offer'
     | '/privacy'
     | '/refund-policy'
+    | '/reset-password'
     | '/search'
     | '/settings'
     | '/sitemap.xml'
@@ -1251,6 +1262,7 @@ export interface FileRouteTypes {
     | '/offer'
     | '/privacy'
     | '/refund-policy'
+    | '/reset-password'
     | '/search'
     | '/settings'
     | '/sitemap.xml'
@@ -1359,6 +1371,7 @@ export interface RootRouteChildren {
   OfferRoute: typeof OfferRoute
   PrivacyRoute: typeof PrivacyRoute
   RefundPolicyRoute: typeof RefundPolicyRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SearchRoute: typeof SearchRoute
   SettingsRoute: typeof SettingsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -1499,6 +1512,13 @@ declare module '@tanstack/react-router' {
       path: '/search'
       fullPath: '/search'
       preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/refund-policy': {
@@ -2238,6 +2258,7 @@ const rootRouteChildren: RootRouteChildren = {
   OfferRoute: OfferRoute,
   PrivacyRoute: PrivacyRoute,
   RefundPolicyRoute: RefundPolicyRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SearchRoute: SearchRoute,
   SettingsRoute: SettingsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
