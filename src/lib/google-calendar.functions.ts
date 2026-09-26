@@ -15,11 +15,12 @@ export const getGoogleCalendarStatus = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     const guideId = await getGuideId(supabase, userId);
     if (!guideId) return { connected: false, email: null };
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("guide_google_calendar")
-      .select("google_email, connected_at, updated_at")
+      .select("google_email")
       .eq("guide_id", guideId)
       .maybeSingle();
+    if (error) throw new Error(`Failed to load Google Calendar status: ${error.message}`);
     if (!data) return { connected: false, email: null };
     const row = data as unknown as { google_email: string | null };
     return { connected: true, email: row.google_email };
