@@ -14,6 +14,8 @@ type Contact = {
   phone: string;
   country_code: string | null;
   notes: string | null;
+  label_ru?: string | null; label_uz?: string | null; label_en?: string | null;
+  notes_ru?: string | null; notes_uz?: string | null; notes_en?: string | null;
   sort_order: number;
   is_published: boolean;
 };
@@ -80,6 +82,12 @@ export function EmergencyContactsPanel() {
       phone: editing.phone,
       country_code: editing.country_code || null,
       notes: editing.notes || null,
+      label_ru: editing.label_ru || editing.label,
+      label_uz: editing.label_uz || null,
+      label_en: editing.label_en || null,
+      notes_ru: editing.notes_ru || editing.notes || null,
+      notes_uz: editing.notes_uz || null,
+      notes_en: editing.notes_en || null,
       sort_order: editing.sort_order ?? 0,
       is_published: editing.is_published ?? true,
     };
@@ -186,6 +194,30 @@ export function EmergencyContactsPanel() {
               onChange={(e) => setEditing({ ...editing, notes: e.target.value })}
             />
           </label>
+
+          <div className="grid md:grid-cols-3 gap-3">
+            {(["ru", "uz", "en"] as const).map((l) => (
+              <div key={l} className="space-y-2">
+                <label className="block text-sm">
+                  <span className="text-muted-foreground">Label ({l.toUpperCase()})</span>
+                  <input
+                    className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    value={(editing as any)[`label_${l}`] ?? ""}
+                    onChange={(e) => setEditing({ ...editing, [`label_${l}`]: e.target.value })}
+                  />
+                </label>
+                <label className="block text-sm">
+                  <span className="text-muted-foreground">Notes ({l.toUpperCase()})</span>
+                  <textarea
+                    rows={2}
+                    className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    value={(editing as any)[`notes_${l}`] ?? ""}
+                    onChange={(e) => setEditing({ ...editing, [`notes_${l}`]: e.target.value })}
+                  />
+                </label>
+              </div>
+            ))}
+          </div>
 
           <label className="inline-flex items-center gap-2 text-sm">
             <input
