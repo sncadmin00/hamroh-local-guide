@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { callTelegramApi, verifyTelegramLoginPayload } from "@/lib/telegram-notifications.server";
+import { callTelegramApi, syncTelegramProfile, verifyTelegramLoginPayload } from "@/lib/telegram-notifications.server";
 
 const TELEGRAM_EMAIL_DOMAIN = "telegram.hamrohim.com";
 
@@ -101,6 +101,7 @@ export const signInWithTelegram = createServerFn({ method: "POST" })
       },
       { onConflict: "telegram_user_id" },
     );
+    if (userId) await syncTelegramProfile(supabaseAdmin, userId, data);
 
     const { data: link, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
       type: "magiclink",

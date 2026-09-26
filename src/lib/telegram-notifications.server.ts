@@ -108,3 +108,61 @@ export function bookingDetailsText(parts: {
   ];
   return lines.filter(Boolean).join("\n");
 }
+type TelegramProfileInput = {
+  first_name?: string | null;
+  last_name?: string | null;
+  username?: string | null;
+  photo_url?: string | null;
+};
+
+type AdminLike = {
+  auth: { admin: { getUserById: (id: string) => Promise<any>; updateUserById: (id: string, attrs: any) => Promise<any> } };
+  from: (table: string) => any;
+};
+
+/**
+ * Copies the real Telegram name/photo into the user's metadata (full_name,
+ * name, avatar_url — the same keys Google/Apple fill) and into
+ * public.profiles. Only fills blanks or placeholder values, never overwrites
+ * a name the user already set.
+ */
+export async function syncTelegramProfile(
+  supabase: AdminLike,
+  userId: string,
+  tg: TelegramProfileInput,
+): Promise<void> {
+  const fullName =
+    [tg.first_name, tg.last_name].map((s) => (s ?? "").trim()).filter(Boolean).join(" ") ||
+    (tg.username ? `@${tg.username}` : "");
+  if (!fullName && !tg.photo_url) return;
+
+  const isPlaceholder = (v: unknown) =>
+    typeof v !== "string" || !v.trim() || v.includes("@telegram.hamrohim.com");
+
+  try {
+    const { data } = await supabase.auth.admin.getUserById(userId);
+    const meta = (data?.user?.user_metadata ?? {}) as Record<string, unknown>;
+    const patch: Record<string, unknown> = {};
+    if (fullName && isPlaceholder(meta.full_name)) patch.full_name = fullName;
+    if (fullName && isPlaceholder(meta.name)) patch.name = fullName;
+    if (tg.photo_url && isPlaceholder(meta.avatar_url)) patch.avatar_url = tg.photo_url;
+    if (tg.username) patch.telegram_username = tg.username;
+    if (Object.keys(patch).length) {
+      await supabase.auth.admin.updateUserById(userId, { user_metadata: { ...meta, ...patch } });
+    }
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("full_name, avatar_url")
+      .eq("id", userId)
+      .maybeSingle();
+    const row: Record<string, unknown> = { id: userId };
+    if (fullName && isPlaceholder(profile?.full_name)) row.full_name = fullName;
+    if (tg.photo_url && !profile?.avatar_url) row.avatar_url = tg.photo_url;
+    if (Object.keys(row).length > 1) {
+      await supabase.from("profiles").upsert(row, { onConflict: "id" });
+    }
+  } catch (error) {
+    console.error("syncTelegramProfile failed", error);
+  }
+}

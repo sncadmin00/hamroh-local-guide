@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import {
   callTelegramApi,
   deriveTelegramWebhookSecret,
+  syncTelegramProfile,
   safeEqual,
   sendTelegramMessage,
 } from "@/lib/telegram-notifications.server";
@@ -189,6 +190,7 @@ async function completeLoginConfirmation(
     },
     { onConflict: "telegram_user_id" },
   );
+  if (userId) await syncTelegramProfile(supabase, userId, from);
 
   const ALLOWED_REDIRECT_PREFIXES = [
     "https://hamrohim.com/",
