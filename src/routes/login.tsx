@@ -19,6 +19,12 @@ export const Route = createFileRoute("/login")({
   component: LoginPage,
 });
 
+const FORGOT_TXT = {
+  en: { link: "Forgot password?", needEmail: "Enter your email above first.", sent: "Check your inbox — we sent a link to reset your password." },
+  ru: { link: "Забыли пароль?", needEmail: "Сначала введите email выше.", sent: "Проверьте почту — мы отправили ссылку для сброса пароля." },
+  uz: { link: "Parolni unutdingizmi?", needEmail: "Avval yuqorida emailingizni kiriting.", sent: "Pochtangizni tekshiring — parolni tiklash havolasini yubordik." },
+};
+
 function LoginPage() {
   const navigate = useNavigate();
   const { redirect } = Route.useSearch();
@@ -30,6 +36,7 @@ function LoginPage() {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [newsletterOptIn, setNewsletterOptIn] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -144,6 +151,23 @@ function LoginPage() {
     }
   };
 
+  const forgot = async () => {
+    const tx = FORGOT_TXT[lang as "en" | "ru" | "uz"] ?? FORGOT_TXT.en;
+    setError(null);
+    setInfo(null);
+    if (!email) {
+      setError(tx.needEmail);
+      return;
+    }
+    setLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setLoading(false);
+    if (error) setError(error.message);
+    else setInfo(tx.sent);
+  };
+
   const google = async () => {
     setError(null);
     if (redirect) sessionStorage.setItem("authRedirect", redirect);
@@ -235,6 +259,14 @@ function LoginPage() {
                   </span>
                 </label>
               )}
+              {mode === "signin" && (
+                <div className="text-right">
+                  <button type="button" onClick={forgot} className="text-xs text-primary hover:underline">
+                    {FORGOT_TXT[lang as "en" | "ru" | "uz"]?.link ?? FORGOT_TXT.en.link}
+                  </button>
+                </div>
+              )}
+              {info && <p className="text-sm text-primary">{info}</p>}
               {error && <p className="text-sm text-destructive">{error}</p>}
 
               <button
