@@ -253,47 +253,6 @@ export function EditorialHero() {
 
           {/* Right: sidecar (weather + welcome) */}
           <aside className="lg:col-span-4 flex flex-col gap-5">
-            {/* Weather glass card */}
-            <div
-              className="rounded-3xl p-6 flex items-center justify-between"
-              style={{
-                background: "rgba(255,255,255,0.05)",
-                border: "1px solid rgba(255,255,255,0.10)",
-                backdropFilter: "blur(20px)",
-              }}
-            >
-              <div className="flex items-center gap-4 min-w-0">
-                <div
-                  className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
-                  style={{
-                    background: "color-mix(in srgb, var(--gold) 18%, transparent)",
-                    color: "var(--gold)",
-                  }}
-                >
-                  <Sun className="h-6 w-6" />
-                </div>
-                <div className="min-w-0">
-                  <p
-                    className="text-[0.65rem] uppercase truncate"
-                    style={{ color: "var(--muted-foreground)", letterSpacing: "0.18em" }}
-                  >
-                    {cityName}
-
-                  </p>
-                  <p className="text-xl font-medium truncate" style={{ color: "var(--foreground)" }}>
-                    {weather ? `${weather.temp}°C · ${weatherLabel(weather.code)}` : `— · ${t("weather.sunny")}`}
-                  </p>
-                </div>
-              </div>
-              <div className="text-right shrink-0">
-                <p className="text-[0.65rem]" style={{ color: "var(--muted-foreground)" }}>
-                  {t("weather.humidity")}
-                </p>
-                <p className="text-sm" style={{ color: "var(--foreground)" }}>
-                  {weather ? `${weather.humidity}%` : "—"}
-                </p>
-              </div>
-            </div>
 
             {/* Welcome / personal card */}
             <div
