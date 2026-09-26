@@ -803,7 +803,13 @@ export type Database = {
           is_published: boolean
           kind: string
           label: string
+          label_en: string | null
+          label_ru: string | null
+          label_uz: string | null
           notes: string | null
+          notes_en: string | null
+          notes_ru: string | null
+          notes_uz: string | null
           phone: string
           sort_order: number
           updated_at: string
@@ -817,7 +823,13 @@ export type Database = {
           is_published?: boolean
           kind: string
           label: string
+          label_en?: string | null
+          label_ru?: string | null
+          label_uz?: string | null
           notes?: string | null
+          notes_en?: string | null
+          notes_ru?: string | null
+          notes_uz?: string | null
           phone: string
           sort_order?: number
           updated_at?: string
@@ -831,7 +843,13 @@ export type Database = {
           is_published?: boolean
           kind?: string
           label?: string
+          label_en?: string | null
+          label_ru?: string | null
+          label_uz?: string | null
           notes?: string | null
+          notes_en?: string | null
+          notes_ru?: string | null
+          notes_uz?: string | null
           phone?: string
           sort_order?: number
           updated_at?: string
