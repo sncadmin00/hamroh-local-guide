@@ -88,7 +88,9 @@ Return ONLY valid JSON, no markdown, no commentary, matching exactly:
       ? (parsed.level as (typeof CEFR)[number])
       : "N/A";
 
+    const { signLanguageProof } = await import("./language-proof.server");
     return {
+      proof: signLanguageProof(data.language, level),
       language: data.language,
       transcript: (parsed.transcript ?? "").slice(0, 4000),
       level,

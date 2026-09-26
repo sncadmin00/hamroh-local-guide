@@ -39,9 +39,13 @@ export const recordMyLanguageTest = createServerFn({ method: "POST" })
   .inputValidator((input) => z.object({
     language: z.string().trim().min(1).max(80),
     level: z.enum(["A1", "A2", "B1", "B2", "C1", "C2", "N/A"]),
+    proof: z.string().min(10).max(1000),
   }).parse(input))
   .handler(async ({ context, data }) => {
-    const { supabase, userId } = context;
+    const { userId } = context;
+    const { verifyLanguageProof } = await import("./language-proof.server");
+    if (!verifyLanguageProof(data.proof, data.language, data.level)) throw new Error("Invalid test result");
+    const { supabaseAdmin: supabase } = await import("@/integrations/supabase/client.server");
     const { data: guide, error: gErr } = await supabase
       .from("guides")
       .select("id, verified_languages")
