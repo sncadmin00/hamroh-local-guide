@@ -19,6 +19,12 @@ export const Route = createFileRoute("/login")({
   component: LoginPage,
 });
 
+const FORGOT_TXT = {
+  en: { link: "Forgot password?", needEmail: "Enter your email above first.", sent: "Check your inbox — we sent a link to reset your password." },
+  ru: { link: "Забыли пароль?", needEmail: "Сначала введите email выше.", sent: "Проверьте почту — мы отправили ссылку для сброса пароля." },
+  uz: { link: "Parolni unutdingizmi?", needEmail: "Avval yuqorida emailingizni kiriting.", sent: "Pochtangizni tekshiring — parolni tiklash havolasini yubordik." },
+};
+
 function LoginPage() {
   const navigate = useNavigate();
   const { redirect } = Route.useSearch();
