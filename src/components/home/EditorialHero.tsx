@@ -254,6 +254,36 @@ export function EditorialHero() {
           {/* Right: sidecar (weather + welcome) */}
           <aside className="lg:col-span-4 flex flex-col gap-5">
 
+            {/* Weather card */}
+            {weather && (
+              <div
+                className="rounded-3xl p-6 flex items-center gap-4"
+                style={{
+                  background: "rgba(255,255,255,0.04)",
+                  border: "1px solid rgba(255,255,255,0.10)",
+                  backdropFilter: "blur(20px) saturate(140%)",
+                }}
+              >
+                <div
+                  className="w-14 h-14 rounded-full flex items-center justify-center shrink-0"
+                  style={{
+                    background: "color-mix(in srgb, var(--gold) 16%, transparent)",
+                    border: "1px solid color-mix(in srgb, var(--gold) 24%, transparent)",
+                  }}
+                >
+                  <Sun className="h-7 w-7" style={{ color: "var(--gold)" }} />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="font-bold text-2xl leading-none" style={{ color: "var(--foreground)" }}>
+                    {Math.round(weather.temp)}°
+                  </p>
+                  <p className="text-sm mt-1" style={{ color: "var(--muted-foreground)" }}>
+                    {weatherLabel(weather.code)} · {cityName}
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* Welcome / personal card */}
             <div
               className="rounded-3xl p-6 flex items-center gap-4"
