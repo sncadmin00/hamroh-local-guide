@@ -190,6 +190,12 @@ export const translations: Dict = {
   "hero.welcome.guest": { en: "Welcome, traveler", uz: "Xush kelibsiz, sayohatchi", ru: "Добро пожаловать, путешественник" },
   "hero.welcome.sub": { en: "Your Silk Road begins here", uz: "Sizning Ipak yo'lingiz shu yerda boshlanadi", ru: "Ваш Шёлковый путь начинается здесь" },
   "weather.sunny": { en: "Sunny", uz: "Quyoshli", ru: "Солнечно" },
+  "weather.cloudy": { en: "Cloudy", uz: "Bulutli", ru: "Облачно" },
+  "weather.fog": { en: "Fog", uz: "Tuman", ru: "Туман" },
+  "weather.rain": { en: "Rain", uz: "Yomg'ir", ru: "Дождь" },
+  "weather.snow": { en: "Snow", uz: "Qor", ru: "Снег" },
+  "weather.showers": { en: "Showers", uz: "Yomg'irli", ru: "Ливень" },
+  "weather.storm": { en: "Storm", uz: "Momoqaldiroq", ru: "Гроза" },
   "weather.humidity": { en: "Humidity", uz: "Namlik", ru: "Влажность" },
 
 
