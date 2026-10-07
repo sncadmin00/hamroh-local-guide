@@ -198,7 +198,7 @@ function SpotlightNotFound() {
   );
 }
 
-function SpotlightError({ error, reset }: { error: Error; reset: () => void }) {
+function SpotlightError({ error, reset }: { error: unknown; reset: () => void }) {
   const router = useRouter();
   return (
     <div className="min-h-screen bg-[var(--background)]">

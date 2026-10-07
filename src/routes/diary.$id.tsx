@@ -75,7 +75,7 @@ function DiaryNotFound() {
   );
 }
 
-function DiaryError({ reset }: { error: Error; reset: () => void }) {
+function DiaryError({ reset }: { error: unknown; reset: () => void }) {
   const router = useRouter();
   return (
     <DiaryShell>
