@@ -1,58 +1,38 @@
-import * as React from 'react'
-
 import {
-  Body,
-  Container,
-  Head,
-  Heading,
-  Html,
-  Preview,
-  Text,
+  Body, Img, Container, Head, Heading, Html, Preview, Text,
 } from '@react-email/components'
+import { styles, BRAND } from './_brand'
+import { normalizeLocale, pick, type Locale } from './_i18n'
 
 interface ReauthenticationEmailProps {
   token: string
+  locale?: Locale | string
 }
 
-export const ReauthenticationEmail = ({ token }: ReauthenticationEmailProps) => (
-  <Html lang="en" dir="ltr">
-    <Head />
-    <Preview>Your verification code</Preview>
-    <Body style={main}>
-      <Container style={container}>
-        <Heading style={h1}>Confirm reauthentication</Heading>
-        <Text style={text}>Use the code below to confirm your identity:</Text>
-        <Text style={codeStyle}>{token}</Text>
-        <Text style={footer}>
-          This code will expire shortly. If you didn't request this, you can
-          safely ignore this email.
-        </Text>
-      </Container>
-    </Body>
-  </Html>
-)
+const T = {
+  preview: { ru: 'Ваш код подтверждения', uz: 'Tasdiqlash kodingiz', en: 'Your verification code' },
+  heading: { ru: 'Подтверждение входа', uz: 'Kirishni tasdiqlash', en: 'Confirm sign-in' },
+  body: { ru: 'Используйте код ниже, чтобы подтвердить вашу личность:', uz: 'Shaxsingizni tasdiqlash uchun quyidagi koddan foydalaning:', en: 'Use the code below to verify your identity:' },
+  footer: { ru: 'Код действует ограниченное время. Если вы не запрашивали — проигнорируйте письмо.', uz: 'Kod cheklangan vaqt amal qiladi. Agar siz so‘ramagan bo‘lsangiz — xatni e’tiborsiz qoldiring.', en: "The code is valid for a limited time. If you didn't request it, ignore this email." },
+}
+
+export const ReauthenticationEmail = ({ token, locale }: ReauthenticationEmailProps) => {
+  const L = normalizeLocale(locale)
+  return (
+    <Html lang={L} dir="ltr">
+      <Head />
+      <Preview>{pick(T.preview, L)}</Preview>
+      <Body style={styles.main}>
+        <Container style={styles.container}>
+          <Img src={BRAND.logoUrl} alt="Hamroh" style={styles.logo} />
+          <Heading style={styles.h1}>{pick(T.heading, L)}</Heading>
+          <Text style={styles.text}>{pick(T.body, L)}</Text>
+          <Text style={styles.code}>{token}</Text>
+          <Text style={styles.footer}>{pick(T.footer, L)}</Text>
+        </Container>
+      </Body>
+    </Html>
+  )
+}
 
 export default ReauthenticationEmail
-
-const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
-const container = { padding: '20px 25px' }
-const h1 = {
-  fontSize: '22px',
-  fontWeight: 'bold' as const,
-  color: '#000000',
-  margin: '0 0 20px',
-}
-const text = {
-  fontSize: '14px',
-  color: '#55575d',
-  lineHeight: '1.5',
-  margin: '0 0 25px',
-}
-const codeStyle = {
-  fontFamily: 'Courier, monospace',
-  fontSize: '22px',
-  fontWeight: 'bold' as const,
-  color: '#000000',
-  margin: '0 0 30px',
-}
-const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }

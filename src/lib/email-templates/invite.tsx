@@ -1,88 +1,50 @@
-import * as React from 'react'
-
 import {
-  Body,
-  Button,
-  Container,
-  Head,
-  Heading,
-  Html,
-  Link,
-  Preview,
-  Text,
+  Body, Img, Container, Head, Heading, Html, Link, Preview, Text,
 } from '@react-email/components'
+import { styles, BRAND } from './_brand'
+import { normalizeLocale, pick, type Locale } from './_i18n'
 
 interface InviteEmailProps {
   siteName: string
   siteUrl: string
   confirmationUrl: string
+  locale?: Locale | string
 }
 
-export const InviteEmail = ({
-  siteName,
-  siteUrl,
-  confirmationUrl,
-}: InviteEmailProps) => (
-  <Html lang="en" dir="ltr">
-    <Head>
-      <style>{darkModeCss}</style>
-    </Head>
-    <Preview>You've been invited to join {siteName}</Preview>
-    <Body style={main}>
-      <Container style={container}>
-        <Heading style={h1}>You've been invited</Heading>
-        <Text style={text}>
-          You've been invited to join{' '}
-          <Link href={siteUrl} style={link}>
-            <strong>{siteName}</strong>
-          </Link>
-          . Click the button below to accept the invitation and create your
-          account.
-        </Text>
-        <Button className="dm-btn" style={button} href={confirmationUrl}>
-          Accept Invitation
-        </Button>
-        <Text style={footer}>
-          If you weren't expecting this invitation, you can safely ignore this
-          email.
-        </Text>
-      </Container>
-    </Body>
-  </Html>
-)
+const T = {
+  preview: { ru: (s: string) => `Вас приглашают присоединиться к ${s}`, uz: (s: string) => `Sizni ${s} ga taklif qilishyapti`, en: (s: string) => `You're invited to join ${s}` },
+  heading: { ru: 'Вас пригласили', uz: 'Sizni taklif qilishdi', en: "You're invited" },
+  body: {
+    ru: 'Вас приглашают присоединиться к',
+    uz: 'Sizni quyidagiga qo‘shilishga taklif qilishyapti:',
+    en: "You're invited to join",
+  },
+  body2: { ru: '. Нажмите кнопку ниже, чтобы принять приглашение и создать аккаунт.', uz: '. Taklifni qabul qilish va hisob yaratish uchun quyidagi tugmani bosing.', en: '. Click the button below to accept the invitation and create an account.' },
+  cta: { ru: 'Принять приглашение', uz: 'Taklifni qabul qilish', en: 'Accept invitation' },
+  footer: { ru: 'Если вы не ожидали этого приглашения — можете проигнорировать письмо.', uz: 'Agar siz bu taklifni kutmagan bo‘lsangiz — xatni e’tiborsiz qoldirishingiz mumkin.', en: "If you weren't expecting this invitation, you can ignore this email." },
+}
+
+export const InviteEmail = ({ siteName, siteUrl, confirmationUrl, locale }: InviteEmailProps) => {
+  const L = normalizeLocale(locale)
+  return (
+    <Html lang={L} dir="ltr">
+      <Head />
+      <Preview>{pick(T.preview, L)(siteName)}</Preview>
+      <Body style={styles.main}>
+        <Container style={styles.container}>
+          <Img src={BRAND.logoUrl} alt="Hamroh" style={styles.logo} />
+          <Heading style={styles.h1}>{pick(T.heading, L)}</Heading>
+          <Text style={styles.text}>
+            {pick(T.body, L)}{' '}
+            <Link href={siteUrl} style={styles.link}><strong>{siteName}</strong></Link>
+            {pick(T.body2, L)}
+          </Text>
+          <Link href={confirmationUrl} style={styles.button}>{pick(T.cta, L)}</Link>
+          <Text style={styles.footer}>{pick(T.footer, L)}</Text>
+        </Container>
+      </Body>
+    </Html>
+  )
+}
 
 export default InviteEmail
-
-const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
-const container = { padding: '20px 25px' }
-const h1 = {
-  fontSize: '22px',
-  fontWeight: 'bold' as const,
-  color: '#000000',
-  margin: '0 0 20px',
-}
-const text = {
-  fontSize: '14px',
-  color: '#55575d',
-  lineHeight: '1.5',
-  margin: '0 0 25px',
-}
-const link = { color: 'inherit', textDecoration: 'underline' }
-const button = {
-  backgroundColor: '#000000',
-  color: '#ffffff',
-  fontSize: '14px',
-  border: '1px solid #000000',
-  borderRadius: '8px',
-  padding: '12px 20px',
-  textDecoration: 'none',
-}
-const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
-// Rendered as a text child, which React may HTML-escape: keep this CSS free of >, &, and quotes.
-const darkModeCss = `
-  @media (prefers-color-scheme: dark) {
-    .dm-btn { background-color: #ffffff !important; color: #000000 !important; }
-  }
-  [data-ogsc] .dm-btn { background-color: #ffffff !important; color: #000000 !important; }
-  [data-ogsb] .dm-btn { background-color: #ffffff !important; color: #000000 !important; }
-`
