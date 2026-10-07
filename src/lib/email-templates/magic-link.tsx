@@ -1,44 +1,79 @@
+import * as React from 'react'
+
 import {
-  Body, Img, Container, Head, Heading, Html, Link, Preview, Text,
+  Body,
+  Button,
+  Container,
+  Head,
+  Heading,
+  Html,
+  Preview,
+  Text,
 } from '@react-email/components'
-import { styles, BRAND } from './_brand'
-import { normalizeLocale, pick, type Locale } from './_i18n'
 
 interface MagicLinkEmailProps {
   siteName: string
   confirmationUrl: string
-  locale?: Locale | string
 }
 
-const T = {
-  preview: { ru: (s: string) => `Ссылка для входа в ${s}`, uz: (s: string) => `${s} ga kirish havolasi`, en: (s: string) => `Sign-in link for ${s}` },
-  heading: { ru: 'Ссылка для входа', uz: 'Kirish havolasi', en: 'Sign-in link' },
-  body: {
-    ru: (s: string) => `Нажмите кнопку ниже, чтобы войти в ${s}. Ссылка действует ограниченное время.`,
-    uz: (s: string) => `${s} ga kirish uchun quyidagi tugmani bosing. Havola cheklangan vaqt ichida amal qiladi.`,
-    en: (s: string) => `Click the button below to sign in to ${s}. The link is valid for a limited time.`,
-  },
-  cta: { ru: 'Войти', uz: 'Kirish', en: 'Sign in' },
-  footer: { ru: 'Если вы не запрашивали вход — просто проигнорируйте это письмо.', uz: 'Agar siz kirishni so‘ramagan bo‘lsangiz — bu xatni e’tiborsiz qoldiring.', en: "If you didn't request a sign-in — just ignore this email." },
-}
-
-export const MagicLinkEmail = ({ siteName, confirmationUrl, locale }: MagicLinkEmailProps) => {
-  const L = normalizeLocale(locale)
-  return (
-    <Html lang={L} dir="ltr">
-      <Head />
-      <Preview>{pick(T.preview, L)(siteName)}</Preview>
-      <Body style={styles.main}>
-        <Container style={styles.container}>
-          <Img src={BRAND.logoUrl} alt="Hamroh" style={styles.logo} />
-          <Heading style={styles.h1}>{pick(T.heading, L)}</Heading>
-          <Text style={styles.text}>{pick(T.body, L)(siteName)}</Text>
-          <Link href={confirmationUrl} style={styles.button}>{pick(T.cta, L)}</Link>
-          <Text style={styles.footer}>{pick(T.footer, L)}</Text>
-        </Container>
-      </Body>
-    </Html>
-  )
-}
+export const MagicLinkEmail = ({
+  siteName,
+  confirmationUrl,
+}: MagicLinkEmailProps) => (
+  <Html lang="en" dir="ltr">
+    <Head>
+      <style>{darkModeCss}</style>
+    </Head>
+    <Preview>Your login link for {siteName}</Preview>
+    <Body style={main}>
+      <Container style={container}>
+        <Heading style={h1}>Your login link</Heading>
+        <Text style={text}>
+          Click the button below to log in to {siteName}. This link will expire
+          shortly.
+        </Text>
+        <Button className="dm-btn" style={button} href={confirmationUrl}>
+          Log In
+        </Button>
+        <Text style={footer}>
+          If you didn't request this link, you can safely ignore this email.
+        </Text>
+      </Container>
+    </Body>
+  </Html>
+)
 
 export default MagicLinkEmail
+
+const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
+const container = { padding: '20px 25px' }
+const h1 = {
+  fontSize: '22px',
+  fontWeight: 'bold' as const,
+  color: '#000000',
+  margin: '0 0 20px',
+}
+const text = {
+  fontSize: '14px',
+  color: '#55575d',
+  lineHeight: '1.5',
+  margin: '0 0 25px',
+}
+const button = {
+  backgroundColor: '#000000',
+  color: '#ffffff',
+  fontSize: '14px',
+  border: '1px solid #000000',
+  borderRadius: '8px',
+  padding: '12px 20px',
+  textDecoration: 'none',
+}
+const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
+// Rendered as a text child, which React may HTML-escape: keep this CSS free of >, &, and quotes.
+const darkModeCss = `
+  @media (prefers-color-scheme: dark) {
+    .dm-btn { background-color: #ffffff !important; color: #000000 !important; }
+  }
+  [data-ogsc] .dm-btn { background-color: #ffffff !important; color: #000000 !important; }
+  [data-ogsb] .dm-btn { background-color: #ffffff !important; color: #000000 !important; }
+`
