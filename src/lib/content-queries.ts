@@ -50,7 +50,7 @@ type GuideRow = {
   sort_order: number;
   identity_verified: boolean | null;
   licensed: boolean | null;
-  license_url: string | null;
+  license_url?: string | null;
   intro_video_verified: boolean | null;
   completed_tours_count: number | null;
   avg_response_minutes: number | null;
