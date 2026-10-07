@@ -28,10 +28,10 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Hamroh — Verified local guides & tours across Uzbekistan" },
       { name: "twitter:description", content: "AI-matched local guides and tours in Uzbekistan." },
-      { property: "og:image", content: "https://hamrohim.com/__l5e/assets-v1/a337a84e-eca2-4d49-8214-4c5f2865e974/og-home.jpg" },
+      { property: "og:image", content: "https://hamrohim.com/__l5e/assets-v1/631a49f9-a9c3-4c97-92a1-d5de188ec08a/og-home-screen.jpg" },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
-      { name: "twitter:image", content: "https://hamrohim.com/__l5e/assets-v1/a337a84e-eca2-4d49-8214-4c5f2865e974/og-home.jpg" },
+      { name: "twitter:image", content: "https://hamrohim.com/__l5e/assets-v1/631a49f9-a9c3-4c97-92a1-d5de188ec08a/og-home-screen.jpg" },
     ],
     links: [{ rel: "canonical", href: "https://hamrohim.com/" }],
     scripts: [
