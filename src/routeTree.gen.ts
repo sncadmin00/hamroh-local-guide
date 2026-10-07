@@ -9,242 +9,117 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AboutRouteImport } from './routes/about'
-import { Route as AccountRouteImport } from './routes/account'
-import { Route as AdminRouteImport } from './routes/admin'
-import { Route as AiRouteImport } from './routes/ai'
-import { Route as BecomeAGuideRouteImport } from './routes/become-a-guide'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as ExploreRouteImport } from './routes/explore'
-import { Route as FaqRouteImport } from './routes/faq'
-import { Route as GuideRouteImport } from './routes/guide'
-import { Route as GuidesRouteImport } from './routes/guides'
-import { Route as HowItWorksRouteImport } from './routes/how-it-works'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as MessagesRouteImport } from './routes/messages'
-import { Route as MyBookingsRouteImport } from './routes/my-bookings'
-import { Route as NotificationsRouteImport } from './routes/notifications'
-import { Route as OfferRouteImport } from './routes/offer'
-import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as RefundPolicyRouteImport } from './routes/refund-policy'
-import { Route as ResetPasswordRouteImport } from './routes/reset-password'
-import { Route as SearchRouteImport } from './routes/search'
-import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as SupportRouteImport } from './routes/support'
-import { Route as TermsRouteImport } from './routes/terms'
-import { Route as ToursRouteImport } from './routes/tours'
-import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as WishlistRouteImport } from './routes/wishlist'
-import { Route as AiThreadIdRouteImport } from './routes/ai.$threadId'
-import { Route as ApiChatRouteImport } from './routes/api/chat'
-import { Route as ApiGuideAiRouteImport } from './routes/api/guide-ai'
-import { Route as BookIndexRouteImport } from './routes/book.index'
-import { Route as BookSlugRouteImport } from './routes/book.$slug'
-import { Route as DiaryIdRouteImport } from './routes/diary.$id'
-import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
-import { Route as ExploreSlugRouteImport } from './routes/explore.$slug'
-import { Route as GuidesGuideIdRouteImport } from './routes/guides_.$guideId'
-import { Route as InviteTokenRouteImport } from './routes/invite.$token'
+import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
+import { Route as ToursRouteImport } from './routes/tours'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as SupportRouteImport } from './routes/support'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as SearchRouteImport } from './routes/search'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as RefundPolicyRouteImport } from './routes/refund-policy'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as OfferRouteImport } from './routes/offer'
+import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as MyBookingsRouteImport } from './routes/my-bookings'
+import { Route as MessagesRouteImport } from './routes/messages'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as HowItWorksRouteImport } from './routes/how-it-works'
+import { Route as GuidesRouteImport } from './routes/guides'
+import { Route as GuideRouteImport } from './routes/guide'
+import { Route as FaqRouteImport } from './routes/faq'
+import { Route as ExploreRouteImport } from './routes/explore'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as BecomeAGuideRouteImport } from './routes/become-a-guide'
+import { Route as AiRouteImport } from './routes/ai'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AccountRouteImport } from './routes/account'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as MessagesIndexRouteImport } from './routes/messages.index'
-import { Route as MessagesBookingIdRouteImport } from './routes/messages.$bookingId'
-import { Route as SpotlightIdRouteImport } from './routes/spotlight.$id'
+import { Route as BookIndexRouteImport } from './routes/book.index'
 import { Route as ToursSlugRouteImport } from './routes/tours_.$slug'
-import { Route as ApiEarningsReportRouteImport } from './routes/api/earnings/report'
-import { Route as ApiPublicSiteLanguagesRouteImport } from './routes/api/public/site-languages'
-import { Route as LovableEmailEventsRouteImport } from './routes/lovable/email/events'
+import { Route as SpotlightIdRouteImport } from './routes/spotlight.$id'
+import { Route as MessagesBookingIdRouteImport } from './routes/messages.$bookingId'
+import { Route as InviteTokenRouteImport } from './routes/invite.$token'
+import { Route as GuidesGuideIdRouteImport } from './routes/guides_.$guideId'
+import { Route as ExploreSlugRouteImport } from './routes/explore.$slug'
+import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
+import { Route as DiaryIdRouteImport } from './routes/diary.$id'
+import { Route as BookSlugRouteImport } from './routes/book.$slug'
+import { Route as ApiGuideAiRouteImport } from './routes/api/guide-ai'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as AiThreadIdRouteImport } from './routes/ai.$threadId'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
-import { Route as ApiPublicHooksAllReelsRouteImport } from './routes/api/public/hooks/all-reels'
-import { Route as ApiPublicHooksApplyReferralRouteImport } from './routes/api/public/hooks/apply-referral'
-import { Route as ApiPublicHooksBookingRemindersRouteImport } from './routes/api/public/hooks/booking-reminders'
-import { Route as ApiPublicHooksBookingReviewsRouteImport } from './routes/api/public/hooks/booking-reviews'
-import { Route as ApiPublicHooksCalendarRemindersRouteImport } from './routes/api/public/hooks/calendar-reminders'
-import { Route as ApiPublicHooksChatNotificationsRouteImport } from './routes/api/public/hooks/chat-notifications'
-import { Route as ApiPublicHooksClientAiRouteImport } from './routes/api/public/hooks/client-ai'
-import { Route as ApiPublicHooksCreateBookingRouteImport } from './routes/api/public/hooks/create-booking'
-import { Route as ApiPublicHooksDailyBriefRouteImport } from './routes/api/public/hooks/daily-brief'
-import { Route as ApiPublicHooksDeleteAccountRouteImport } from './routes/api/public/hooks/delete-account'
-import { Route as ApiPublicHooksEmergencyContactsRouteImport } from './routes/api/public/hooks/emergency-contacts'
-import { Route as ApiPublicHooksExpireBookingsRouteImport } from './routes/api/public/hooks/expire-bookings'
-import { Route as ApiPublicHooksFeaturedReelsRouteImport } from './routes/api/public/hooks/featured-reels'
-import { Route as ApiPublicHooksGenerateStatementsRouteImport } from './routes/api/public/hooks/generate-statements'
-import { Route as ApiPublicHooksGenerateTourDescriptionRouteImport } from './routes/api/public/hooks/generate-tour-description'
-import { Route as ApiPublicHooksGoogleOauthCallbackRouteImport } from './routes/api/public/hooks/google-oauth-callback'
-import { Route as ApiPublicHooksGuideAiRouteImport } from './routes/api/public/hooks/guide-ai'
-import { Route as ApiPublicHooksGuideReelsRouteImport } from './routes/api/public/hooks/guide-reels'
-import { Route as ApiPublicHooksLocalEventsRouteImport } from './routes/api/public/hooks/local-events'
-import { Route as ApiPublicHooksMyEarningsSummaryRouteImport } from './routes/api/public/hooks/my-earnings-summary'
-import { Route as ApiPublicHooksMyGuidePostSignedUrlsRouteImport } from './routes/api/public/hooks/my-guide-post-signed-urls'
-import { Route as ApiPublicHooksMyGuidePostsRouteImport } from './routes/api/public/hooks/my-guide-posts'
-import { Route as ApiPublicHooksMyInvoiceUrlRouteImport } from './routes/api/public/hooks/my-invoice-url'
-import { Route as ApiPublicHooksMyNotificationEmailRouteImport } from './routes/api/public/hooks/my-notification-email'
-import { Route as ApiPublicHooksMyPayoutDetailsRouteImport } from './routes/api/public/hooks/my-payout-details'
-import { Route as ApiPublicHooksMyPayoutsRouteImport } from './routes/api/public/hooks/my-payouts'
-import { Route as ApiPublicHooksMyPromoCodesRouteImport } from './routes/api/public/hooks/my-promo-codes'
-import { Route as ApiPublicHooksMyReferralCodeRouteImport } from './routes/api/public/hooks/my-referral-code'
-import { Route as ApiPublicHooksMyReportUrlRouteImport } from './routes/api/public/hooks/my-report-url'
-import { Route as ApiPublicHooksMyStatementsRouteImport } from './routes/api/public/hooks/my-statements'
-import { Route as ApiPublicHooksMyTransactionsRouteImport } from './routes/api/public/hooks/my-transactions'
-import { Route as ApiPublicHooksMyVerificationRouteImport } from './routes/api/public/hooks/my-verification'
-import { Route as ApiPublicHooksPriceQuoteRouteImport } from './routes/api/public/hooks/price-quote'
-import { Route as ApiPublicHooksRequestPayoutRouteImport } from './routes/api/public/hooks/request-payout'
-import { Route as ApiPublicHooksRetranslateTourRouteImport } from './routes/api/public/hooks/retranslate-tour'
-import { Route as ApiPublicHooksSubmitIdentityRouteImport } from './routes/api/public/hooks/submit-identity'
-import { Route as ApiPublicHooksSubmitIntroVideoRouteImport } from './routes/api/public/hooks/submit-intro-video'
-import { Route as ApiPublicHooksSubmitLicenseRouteImport } from './routes/api/public/hooks/submit-license'
-import { Route as ApiPublicHooksSubmitTourForReviewRouteImport } from './routes/api/public/hooks/submit-tour-for-review'
-import { Route as ApiPublicHooksSuggestCityRouteImport } from './routes/api/public/hooks/suggest-city'
-import { Route as ApiPublicHooksSupportContactsRouteImport } from './routes/api/public/hooks/support-contacts'
-import { Route as ApiPublicHooksTelegramLinkCodeRouteImport } from './routes/api/public/hooks/telegram-link-code'
-import { Route as ApiPublicHooksTelegramSigninPollRouteImport } from './routes/api/public/hooks/telegram-signin-poll'
-import { Route as ApiPublicHooksTelegramSigninStartRouteImport } from './routes/api/public/hooks/telegram-signin-start'
-import { Route as ApiPublicHooksUpdateMyLanguagesRouteImport } from './routes/api/public/hooks/update-my-languages'
-import { Route as ApiPublicHooksUpdatePayoutDetailsRouteImport } from './routes/api/public/hooks/update-payout-details'
-import { Route as ApiPublicHooksUpsertTourRouteImport } from './routes/api/public/hooks/upsert-tour'
-import { Route as ApiPublicTelegramWebhookRouteImport } from './routes/api/public/telegram/webhook'
-import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
-import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
-import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
-import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
+import { Route as LovableEmailEventsRouteImport } from './routes/lovable/email/events'
+import { Route as ApiPublicSiteLanguagesRouteImport } from './routes/api/public/site-languages'
+import { Route as ApiEarningsReportRouteImport } from './routes/api/earnings/report'
 import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
-import { Route as ApiPublicBookingsIdPdfRouteImport } from './routes/api/public/bookings/$id/pdf'
-import { Route as ApiPublicGuidesGuideIdBusyRouteImport } from './routes/api/public/guides/$guideId/busy'
-import { Route as ApiPublicGuidesGuideIdSlotsRouteImport } from './routes/api/public/guides/$guideId/slots'
-import { Route as ApiPublicHooksCronSyncPublicHolidaysRouteImport } from './routes/api/public/hooks/cron/sync-public-holidays'
-import { Route as ApiPublicHooksNotificationsPushRouteImport } from './routes/api/public/hooks/notifications/push'
-import { Route as ApiPublicHooksPayoutStepUpStartRouteImport } from './routes/api/public/hooks/payout-step-up/start'
-import { Route as ApiPublicHooksPayoutStepUpVerifyRouteImport } from './routes/api/public/hooks/payout-step-up/verify'
+import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
+import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
+import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
+import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
+import { Route as ApiPublicTelegramWebhookRouteImport } from './routes/api/public/telegram/webhook'
+import { Route as ApiPublicHooksUpsertTourRouteImport } from './routes/api/public/hooks/upsert-tour'
+import { Route as ApiPublicHooksUpdatePayoutDetailsRouteImport } from './routes/api/public/hooks/update-payout-details'
+import { Route as ApiPublicHooksUpdateMyLanguagesRouteImport } from './routes/api/public/hooks/update-my-languages'
+import { Route as ApiPublicHooksTelegramSigninStartRouteImport } from './routes/api/public/hooks/telegram-signin-start'
+import { Route as ApiPublicHooksTelegramSigninPollRouteImport } from './routes/api/public/hooks/telegram-signin-poll'
+import { Route as ApiPublicHooksTelegramLinkCodeRouteImport } from './routes/api/public/hooks/telegram-link-code'
+import { Route as ApiPublicHooksSupportContactsRouteImport } from './routes/api/public/hooks/support-contacts'
+import { Route as ApiPublicHooksSuggestCityRouteImport } from './routes/api/public/hooks/suggest-city'
+import { Route as ApiPublicHooksSubmitTourForReviewRouteImport } from './routes/api/public/hooks/submit-tour-for-review'
+import { Route as ApiPublicHooksSubmitLicenseRouteImport } from './routes/api/public/hooks/submit-license'
+import { Route as ApiPublicHooksSubmitIntroVideoRouteImport } from './routes/api/public/hooks/submit-intro-video'
+import { Route as ApiPublicHooksSubmitIdentityRouteImport } from './routes/api/public/hooks/submit-identity'
+import { Route as ApiPublicHooksRetranslateTourRouteImport } from './routes/api/public/hooks/retranslate-tour'
+import { Route as ApiPublicHooksRequestPayoutRouteImport } from './routes/api/public/hooks/request-payout'
+import { Route as ApiPublicHooksPriceQuoteRouteImport } from './routes/api/public/hooks/price-quote'
+import { Route as ApiPublicHooksMyVerificationRouteImport } from './routes/api/public/hooks/my-verification'
+import { Route as ApiPublicHooksMyTransactionsRouteImport } from './routes/api/public/hooks/my-transactions'
+import { Route as ApiPublicHooksMyStatementsRouteImport } from './routes/api/public/hooks/my-statements'
+import { Route as ApiPublicHooksMyReportUrlRouteImport } from './routes/api/public/hooks/my-report-url'
+import { Route as ApiPublicHooksMyReferralCodeRouteImport } from './routes/api/public/hooks/my-referral-code'
+import { Route as ApiPublicHooksMyPromoCodesRouteImport } from './routes/api/public/hooks/my-promo-codes'
+import { Route as ApiPublicHooksMyPayoutsRouteImport } from './routes/api/public/hooks/my-payouts'
+import { Route as ApiPublicHooksMyPayoutDetailsRouteImport } from './routes/api/public/hooks/my-payout-details'
+import { Route as ApiPublicHooksMyNotificationEmailRouteImport } from './routes/api/public/hooks/my-notification-email'
+import { Route as ApiPublicHooksMyInvoiceUrlRouteImport } from './routes/api/public/hooks/my-invoice-url'
+import { Route as ApiPublicHooksMyGuidePostsRouteImport } from './routes/api/public/hooks/my-guide-posts'
+import { Route as ApiPublicHooksMyGuidePostSignedUrlsRouteImport } from './routes/api/public/hooks/my-guide-post-signed-urls'
+import { Route as ApiPublicHooksMyEarningsSummaryRouteImport } from './routes/api/public/hooks/my-earnings-summary'
+import { Route as ApiPublicHooksLocalEventsRouteImport } from './routes/api/public/hooks/local-events'
+import { Route as ApiPublicHooksGuideReelsRouteImport } from './routes/api/public/hooks/guide-reels'
+import { Route as ApiPublicHooksGuideAiRouteImport } from './routes/api/public/hooks/guide-ai'
+import { Route as ApiPublicHooksGoogleOauthCallbackRouteImport } from './routes/api/public/hooks/google-oauth-callback'
+import { Route as ApiPublicHooksGenerateTourDescriptionRouteImport } from './routes/api/public/hooks/generate-tour-description'
+import { Route as ApiPublicHooksGenerateStatementsRouteImport } from './routes/api/public/hooks/generate-statements'
+import { Route as ApiPublicHooksFeaturedReelsRouteImport } from './routes/api/public/hooks/featured-reels'
+import { Route as ApiPublicHooksExpireBookingsRouteImport } from './routes/api/public/hooks/expire-bookings'
+import { Route as ApiPublicHooksEmergencyContactsRouteImport } from './routes/api/public/hooks/emergency-contacts'
+import { Route as ApiPublicHooksDeleteAccountRouteImport } from './routes/api/public/hooks/delete-account'
+import { Route as ApiPublicHooksDailyBriefRouteImport } from './routes/api/public/hooks/daily-brief'
+import { Route as ApiPublicHooksCreateBookingRouteImport } from './routes/api/public/hooks/create-booking'
+import { Route as ApiPublicHooksClientAiRouteImport } from './routes/api/public/hooks/client-ai'
+import { Route as ApiPublicHooksChatNotificationsRouteImport } from './routes/api/public/hooks/chat-notifications'
+import { Route as ApiPublicHooksCalendarRemindersRouteImport } from './routes/api/public/hooks/calendar-reminders'
+import { Route as ApiPublicHooksBookingReviewsRouteImport } from './routes/api/public/hooks/booking-reviews'
+import { Route as ApiPublicHooksBookingRemindersRouteImport } from './routes/api/public/hooks/booking-reminders'
+import { Route as ApiPublicHooksApplyReferralRouteImport } from './routes/api/public/hooks/apply-referral'
+import { Route as ApiPublicHooksAllReelsRouteImport } from './routes/api/public/hooks/all-reels'
 import { Route as ApiPublicToursTourIdSlotsRouteImport } from './routes/api/public/tours/$tourId/slots'
+import { Route as ApiPublicHooksPayoutStepUpVerifyRouteImport } from './routes/api/public/hooks/payout-step-up/verify'
+import { Route as ApiPublicHooksPayoutStepUpStartRouteImport } from './routes/api/public/hooks/payout-step-up/start'
+import { Route as ApiPublicHooksNotificationsPushRouteImport } from './routes/api/public/hooks/notifications/push'
+import { Route as ApiPublicHooksCronSyncPublicHolidaysRouteImport } from './routes/api/public/hooks/cron/sync-public-holidays'
+import { Route as ApiPublicGuidesGuideIdSlotsRouteImport } from './routes/api/public/guides/$guideId/slots'
+import { Route as ApiPublicGuidesGuideIdBusyRouteImport } from './routes/api/public/guides/$guideId/busy'
+import { Route as ApiPublicBookingsIdPdfRouteImport } from './routes/api/public/bookings/$id/pdf'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AccountRoute = AccountRouteImport.update({
-  id: '/account',
-  path: '/account',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AiRoute = AiRouteImport.update({
-  id: '/ai',
-  path: '/ai',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BecomeAGuideRoute = BecomeAGuideRouteImport.update({
-  id: '/become-a-guide',
-  path: '/become-a-guide',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ExploreRoute = ExploreRouteImport.update({
-  id: '/explore',
-  path: '/explore',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FaqRoute = FaqRouteImport.update({
-  id: '/faq',
-  path: '/faq',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GuideRoute = GuideRouteImport.update({
-  id: '/guide',
-  path: '/guide',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GuidesRoute = GuidesRouteImport.update({
-  id: '/guides',
-  path: '/guides',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HowItWorksRoute = HowItWorksRouteImport.update({
-  id: '/how-it-works',
-  path: '/how-it-works',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MessagesRoute = MessagesRouteImport.update({
-  id: '/messages',
-  path: '/messages',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MyBookingsRoute = MyBookingsRouteImport.update({
-  id: '/my-bookings',
-  path: '/my-bookings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NotificationsRoute = NotificationsRouteImport.update({
-  id: '/notifications',
-  path: '/notifications',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OfferRoute = OfferRouteImport.update({
-  id: '/offer',
-  path: '/offer',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RefundPolicyRoute = RefundPolicyRouteImport.update({
-  id: '/refund-policy',
-  path: '/refund-policy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ResetPasswordRoute = ResetPasswordRouteImport.update({
-  id: '/reset-password',
-  path: '/reset-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SearchRoute = SearchRouteImport.update({
-  id: '/search',
-  path: '/search',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SupportRoute = SupportRouteImport.update({
-  id: '/support',
-  path: '/support',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TermsRoute = TermsRouteImport.update({
-  id: '/terms',
-  path: '/terms',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ToursRoute = ToursRouteImport.update({
-  id: '/tours',
-  path: '/tours',
+const WishlistRoute = WishlistRouteImport.update({
+  id: '/wishlist',
+  path: '/wishlist',
   getParentRoute: () => rootRouteImport,
 } as any)
 const UnsubscribeRoute = UnsubscribeRouteImport.update({
@@ -252,59 +127,134 @@ const UnsubscribeRoute = UnsubscribeRouteImport.update({
   path: '/unsubscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
-const WishlistRoute = WishlistRouteImport.update({
-  id: '/wishlist',
-  path: '/wishlist',
+const ToursRoute = ToursRouteImport.update({
+  id: '/tours',
+  path: '/tours',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AiThreadIdRoute = AiThreadIdRouteImport.update({
-  id: '/$threadId',
-  path: '/$threadId',
-  getParentRoute: () => AiRoute,
-} as any)
-const ApiChatRoute = ApiChatRouteImport.update({
-  id: '/api/chat',
-  path: '/api/chat',
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiGuideAiRoute = ApiGuideAiRouteImport.update({
-  id: '/api/guide-ai',
-  path: '/api/guide-ai',
+const SupportRoute = SupportRouteImport.update({
+  id: '/support',
+  path: '/support',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BookIndexRoute = BookIndexRouteImport.update({
-  id: '/book/',
-  path: '/book/',
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BookSlugRoute = BookSlugRouteImport.update({
-  id: '/book/$slug',
-  path: '/book/$slug',
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DiaryIdRoute = DiaryIdRouteImport.update({
-  id: '/diary/$id',
-  path: '/diary/$id',
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
-  id: '/email/unsubscribe',
-  path: '/email/unsubscribe',
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ExploreSlugRoute = ExploreSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => ExploreRoute,
-} as any)
-const GuidesGuideIdRoute = GuidesGuideIdRouteImport.update({
-  id: '/guides_/$guideId',
-  path: '/guides/$guideId',
+const RefundPolicyRoute = RefundPolicyRouteImport.update({
+  id: '/refund-policy',
+  path: '/refund-policy',
   getParentRoute: () => rootRouteImport,
 } as any)
-const InviteTokenRoute = InviteTokenRouteImport.update({
-  id: '/invite/$token',
-  path: '/invite/$token',
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OfferRoute = OfferRouteImport.update({
+  id: '/offer',
+  path: '/offer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyBookingsRoute = MyBookingsRouteImport.update({
+  id: '/my-bookings',
+  path: '/my-bookings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MessagesRoute = MessagesRouteImport.update({
+  id: '/messages',
+  path: '/messages',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HowItWorksRoute = HowItWorksRouteImport.update({
+  id: '/how-it-works',
+  path: '/how-it-works',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuidesRoute = GuidesRouteImport.update({
+  id: '/guides',
+  path: '/guides',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuideRoute = GuideRouteImport.update({
+  id: '/guide',
+  path: '/guide',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExploreRoute = ExploreRouteImport.update({
+  id: '/explore',
+  path: '/explore',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BecomeAGuideRoute = BecomeAGuideRouteImport.update({
+  id: '/become-a-guide',
+  path: '/become-a-guide',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AiRoute = AiRouteImport.update({
+  id: '/ai',
+  path: '/ai',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountRoute = AccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MessagesIndexRoute = MessagesIndexRouteImport.update({
@@ -312,14 +262,9 @@ const MessagesIndexRoute = MessagesIndexRouteImport.update({
   path: '/',
   getParentRoute: () => MessagesRoute,
 } as any)
-const MessagesBookingIdRoute = MessagesBookingIdRouteImport.update({
-  id: '/$bookingId',
-  path: '/$bookingId',
-  getParentRoute: () => MessagesRoute,
-} as any)
-const SpotlightIdRoute = SpotlightIdRouteImport.update({
-  id: '/spotlight/$id',
-  path: '/spotlight/$id',
+const BookIndexRoute = BookIndexRouteImport.update({
+  id: '/book/',
+  path: '/book/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ToursSlugRoute = ToursSlugRouteImport.update({
@@ -327,14 +272,64 @@ const ToursSlugRoute = ToursSlugRouteImport.update({
   path: '/tours/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiEarningsReportRoute = ApiEarningsReportRouteImport.update({
-  id: '/api/earnings/report',
-  path: '/api/earnings/report',
+const SpotlightIdRoute = SpotlightIdRouteImport.update({
+  id: '/spotlight/$id',
+  path: '/spotlight/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicSiteLanguagesRoute = ApiPublicSiteLanguagesRouteImport.update({
-  id: '/api/public/site-languages',
-  path: '/api/public/site-languages',
+const MessagesBookingIdRoute = MessagesBookingIdRouteImport.update({
+  id: '/$bookingId',
+  path: '/$bookingId',
+  getParentRoute: () => MessagesRoute,
+} as any)
+const InviteTokenRoute = InviteTokenRouteImport.update({
+  id: '/invite/$token',
+  path: '/invite/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuidesGuideIdRoute = GuidesGuideIdRouteImport.update({
+  id: '/guides_/$guideId',
+  path: '/guides/$guideId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExploreSlugRoute = ExploreSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
+  id: '/email/unsubscribe',
+  path: '/email/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DiaryIdRoute = DiaryIdRouteImport.update({
+  id: '/diary/$id',
+  path: '/diary/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookSlugRoute = BookSlugRouteImport.update({
+  id: '/book/$slug',
+  path: '/book/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGuideAiRoute = ApiGuideAiRouteImport.update({
+  id: '/api/guide-ai',
+  path: '/api/guide-ai',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AiThreadIdRoute = AiThreadIdRouteImport.update({
+  id: '/$threadId',
+  path: '/$threadId',
+  getParentRoute: () => AiRoute,
+} as any)
+const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
+  id: '/lovable/email/suppression',
+  path: '/lovable/email/suppression',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LovableEmailEventsRoute = LovableEmailEventsRouteImport.update({
@@ -342,309 +337,20 @@ const LovableEmailEventsRoute = LovableEmailEventsRouteImport.update({
   path: '/lovable/email/events',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
-  id: '/lovable/email/suppression',
-  path: '/lovable/email/suppression',
+const ApiPublicSiteLanguagesRoute = ApiPublicSiteLanguagesRouteImport.update({
+  id: '/api/public/site-languages',
+  path: '/api/public/site-languages',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicHooksAllReelsRoute = ApiPublicHooksAllReelsRouteImport.update({
-  id: '/api/public/hooks/all-reels',
-  path: '/api/public/hooks/all-reels',
+const ApiEarningsReportRoute = ApiEarningsReportRouteImport.update({
+  id: '/api/earnings/report',
+  path: '/api/earnings/report',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicHooksApplyReferralRoute =
-  ApiPublicHooksApplyReferralRouteImport.update({
-    id: '/api/public/hooks/apply-referral',
-    path: '/api/public/hooks/apply-referral',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksBookingRemindersRoute =
-  ApiPublicHooksBookingRemindersRouteImport.update({
-    id: '/api/public/hooks/booking-reminders',
-    path: '/api/public/hooks/booking-reminders',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksBookingReviewsRoute =
-  ApiPublicHooksBookingReviewsRouteImport.update({
-    id: '/api/public/hooks/booking-reviews',
-    path: '/api/public/hooks/booking-reviews',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksCalendarRemindersRoute =
-  ApiPublicHooksCalendarRemindersRouteImport.update({
-    id: '/api/public/hooks/calendar-reminders',
-    path: '/api/public/hooks/calendar-reminders',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksChatNotificationsRoute =
-  ApiPublicHooksChatNotificationsRouteImport.update({
-    id: '/api/public/hooks/chat-notifications',
-    path: '/api/public/hooks/chat-notifications',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksClientAiRoute = ApiPublicHooksClientAiRouteImport.update({
-  id: '/api/public/hooks/client-ai',
-  path: '/api/public/hooks/client-ai',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicHooksCreateBookingRoute =
-  ApiPublicHooksCreateBookingRouteImport.update({
-    id: '/api/public/hooks/create-booking',
-    path: '/api/public/hooks/create-booking',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksDailyBriefRoute =
-  ApiPublicHooksDailyBriefRouteImport.update({
-    id: '/api/public/hooks/daily-brief',
-    path: '/api/public/hooks/daily-brief',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksDeleteAccountRoute =
-  ApiPublicHooksDeleteAccountRouteImport.update({
-    id: '/api/public/hooks/delete-account',
-    path: '/api/public/hooks/delete-account',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksEmergencyContactsRoute =
-  ApiPublicHooksEmergencyContactsRouteImport.update({
-    id: '/api/public/hooks/emergency-contacts',
-    path: '/api/public/hooks/emergency-contacts',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksExpireBookingsRoute =
-  ApiPublicHooksExpireBookingsRouteImport.update({
-    id: '/api/public/hooks/expire-bookings',
-    path: '/api/public/hooks/expire-bookings',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksFeaturedReelsRoute =
-  ApiPublicHooksFeaturedReelsRouteImport.update({
-    id: '/api/public/hooks/featured-reels',
-    path: '/api/public/hooks/featured-reels',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksGenerateStatementsRoute =
-  ApiPublicHooksGenerateStatementsRouteImport.update({
-    id: '/api/public/hooks/generate-statements',
-    path: '/api/public/hooks/generate-statements',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksGenerateTourDescriptionRoute =
-  ApiPublicHooksGenerateTourDescriptionRouteImport.update({
-    id: '/api/public/hooks/generate-tour-description',
-    path: '/api/public/hooks/generate-tour-description',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksGoogleOauthCallbackRoute =
-  ApiPublicHooksGoogleOauthCallbackRouteImport.update({
-    id: '/api/public/hooks/google-oauth-callback',
-    path: '/api/public/hooks/google-oauth-callback',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksGuideAiRoute = ApiPublicHooksGuideAiRouteImport.update({
-  id: '/api/public/hooks/guide-ai',
-  path: '/api/public/hooks/guide-ai',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicHooksGuideReelsRoute =
-  ApiPublicHooksGuideReelsRouteImport.update({
-    id: '/api/public/hooks/guide-reels',
-    path: '/api/public/hooks/guide-reels',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksLocalEventsRoute =
-  ApiPublicHooksLocalEventsRouteImport.update({
-    id: '/api/public/hooks/local-events',
-    path: '/api/public/hooks/local-events',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksMyEarningsSummaryRoute =
-  ApiPublicHooksMyEarningsSummaryRouteImport.update({
-    id: '/api/public/hooks/my-earnings-summary',
-    path: '/api/public/hooks/my-earnings-summary',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksMyGuidePostSignedUrlsRoute =
-  ApiPublicHooksMyGuidePostSignedUrlsRouteImport.update({
-    id: '/api/public/hooks/my-guide-post-signed-urls',
-    path: '/api/public/hooks/my-guide-post-signed-urls',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksMyGuidePostsRoute =
-  ApiPublicHooksMyGuidePostsRouteImport.update({
-    id: '/api/public/hooks/my-guide-posts',
-    path: '/api/public/hooks/my-guide-posts',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksMyInvoiceUrlRoute =
-  ApiPublicHooksMyInvoiceUrlRouteImport.update({
-    id: '/api/public/hooks/my-invoice-url',
-    path: '/api/public/hooks/my-invoice-url',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksMyNotificationEmailRoute =
-  ApiPublicHooksMyNotificationEmailRouteImport.update({
-    id: '/api/public/hooks/my-notification-email',
-    path: '/api/public/hooks/my-notification-email',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksMyPayoutDetailsRoute =
-  ApiPublicHooksMyPayoutDetailsRouteImport.update({
-    id: '/api/public/hooks/my-payout-details',
-    path: '/api/public/hooks/my-payout-details',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksMyPayoutsRoute = ApiPublicHooksMyPayoutsRouteImport.update({
-  id: '/api/public/hooks/my-payouts',
-  path: '/api/public/hooks/my-payouts',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicHooksMyPromoCodesRoute =
-  ApiPublicHooksMyPromoCodesRouteImport.update({
-    id: '/api/public/hooks/my-promo-codes',
-    path: '/api/public/hooks/my-promo-codes',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksMyReferralCodeRoute =
-  ApiPublicHooksMyReferralCodeRouteImport.update({
-    id: '/api/public/hooks/my-referral-code',
-    path: '/api/public/hooks/my-referral-code',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksMyReportUrlRoute =
-  ApiPublicHooksMyReportUrlRouteImport.update({
-    id: '/api/public/hooks/my-report-url',
-    path: '/api/public/hooks/my-report-url',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksMyStatementsRoute =
-  ApiPublicHooksMyStatementsRouteImport.update({
-    id: '/api/public/hooks/my-statements',
-    path: '/api/public/hooks/my-statements',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksMyTransactionsRoute =
-  ApiPublicHooksMyTransactionsRouteImport.update({
-    id: '/api/public/hooks/my-transactions',
-    path: '/api/public/hooks/my-transactions',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksMyVerificationRoute =
-  ApiPublicHooksMyVerificationRouteImport.update({
-    id: '/api/public/hooks/my-verification',
-    path: '/api/public/hooks/my-verification',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksPriceQuoteRoute =
-  ApiPublicHooksPriceQuoteRouteImport.update({
-    id: '/api/public/hooks/price-quote',
-    path: '/api/public/hooks/price-quote',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksRequestPayoutRoute =
-  ApiPublicHooksRequestPayoutRouteImport.update({
-    id: '/api/public/hooks/request-payout',
-    path: '/api/public/hooks/request-payout',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksRetranslateTourRoute =
-  ApiPublicHooksRetranslateTourRouteImport.update({
-    id: '/api/public/hooks/retranslate-tour',
-    path: '/api/public/hooks/retranslate-tour',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksSubmitIdentityRoute =
-  ApiPublicHooksSubmitIdentityRouteImport.update({
-    id: '/api/public/hooks/submit-identity',
-    path: '/api/public/hooks/submit-identity',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksSubmitIntroVideoRoute =
-  ApiPublicHooksSubmitIntroVideoRouteImport.update({
-    id: '/api/public/hooks/submit-intro-video',
-    path: '/api/public/hooks/submit-intro-video',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksSubmitLicenseRoute =
-  ApiPublicHooksSubmitLicenseRouteImport.update({
-    id: '/api/public/hooks/submit-license',
-    path: '/api/public/hooks/submit-license',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksSubmitTourForReviewRoute =
-  ApiPublicHooksSubmitTourForReviewRouteImport.update({
-    id: '/api/public/hooks/submit-tour-for-review',
-    path: '/api/public/hooks/submit-tour-for-review',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksSuggestCityRoute =
-  ApiPublicHooksSuggestCityRouteImport.update({
-    id: '/api/public/hooks/suggest-city',
-    path: '/api/public/hooks/suggest-city',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksSupportContactsRoute =
-  ApiPublicHooksSupportContactsRouteImport.update({
-    id: '/api/public/hooks/support-contacts',
-    path: '/api/public/hooks/support-contacts',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksTelegramLinkCodeRoute =
-  ApiPublicHooksTelegramLinkCodeRouteImport.update({
-    id: '/api/public/hooks/telegram-link-code',
-    path: '/api/public/hooks/telegram-link-code',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksTelegramSigninPollRoute =
-  ApiPublicHooksTelegramSigninPollRouteImport.update({
-    id: '/api/public/hooks/telegram-signin-poll',
-    path: '/api/public/hooks/telegram-signin-poll',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksTelegramSigninStartRoute =
-  ApiPublicHooksTelegramSigninStartRouteImport.update({
-    id: '/api/public/hooks/telegram-signin-start',
-    path: '/api/public/hooks/telegram-signin-start',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksUpdateMyLanguagesRoute =
-  ApiPublicHooksUpdateMyLanguagesRouteImport.update({
-    id: '/api/public/hooks/update-my-languages',
-    path: '/api/public/hooks/update-my-languages',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksUpdatePayoutDetailsRoute =
-  ApiPublicHooksUpdatePayoutDetailsRouteImport.update({
-    id: '/api/public/hooks/update-payout-details',
-    path: '/api/public/hooks/update-payout-details',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksUpsertTourRoute =
-  ApiPublicHooksUpsertTourRouteImport.update({
-    id: '/api/public/hooks/upsert-tour',
-    path: '/api/public/hooks/upsert-tour',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicTelegramWebhookRoute =
-  ApiPublicTelegramWebhookRouteImport.update({
-    id: '/api/public/telegram/webhook',
-    path: '/api/public/telegram/webhook',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
-  id: '/lovable/email/auth/preview',
-  path: '/lovable/email/auth/preview',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
-  id: '/lovable/email/auth/webhook',
-  path: '/lovable/email/auth/webhook',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LovableEmailQueueProcessRoute =
-  LovableEmailQueueProcessRouteImport.update({
-    id: '/lovable/email/queue/process',
-    path: '/lovable/email/queue/process',
+const LovableEmailTransactionalSendRoute =
+  LovableEmailTransactionalSendRouteImport.update({
+    id: '/lovable/email/transactional/send',
+    path: '/lovable/email/transactional/send',
     getParentRoute: () => rootRouteImport,
   } as any)
 const LovableEmailTransactionalPreviewRoute =
@@ -653,45 +359,310 @@ const LovableEmailTransactionalPreviewRoute =
     path: '/lovable/email/transactional/preview',
     getParentRoute: () => rootRouteImport,
   } as any)
-const LovableEmailTransactionalSendRoute =
-  LovableEmailTransactionalSendRouteImport.update({
-    id: '/lovable/email/transactional/send',
-    path: '/lovable/email/transactional/send',
+const LovableEmailQueueProcessRoute =
+  LovableEmailQueueProcessRouteImport.update({
+    id: '/lovable/email/queue/process',
+    path: '/lovable/email/queue/process',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicBookingsIdPdfRoute = ApiPublicBookingsIdPdfRouteImport.update({
-  id: '/api/public/bookings/$id/pdf',
-  path: '/api/public/bookings/$id/pdf',
+const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
+  id: '/lovable/email/auth/webhook',
+  path: '/lovable/email/auth/webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicGuidesGuideIdBusyRoute =
-  ApiPublicGuidesGuideIdBusyRouteImport.update({
-    id: '/api/public/guides/$guideId/busy',
-    path: '/api/public/guides/$guideId/busy',
+const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
+  id: '/lovable/email/auth/preview',
+  path: '/lovable/email/auth/preview',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicTelegramWebhookRoute =
+  ApiPublicTelegramWebhookRouteImport.update({
+    id: '/api/public/telegram/webhook',
+    path: '/api/public/telegram/webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicGuidesGuideIdSlotsRoute =
-  ApiPublicGuidesGuideIdSlotsRouteImport.update({
-    id: '/api/public/guides/$guideId/slots',
-    path: '/api/public/guides/$guideId/slots',
+const ApiPublicHooksUpsertTourRoute =
+  ApiPublicHooksUpsertTourRouteImport.update({
+    id: '/api/public/hooks/upsert-tour',
+    path: '/api/public/hooks/upsert-tour',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicHooksCronSyncPublicHolidaysRoute =
-  ApiPublicHooksCronSyncPublicHolidaysRouteImport.update({
-    id: '/api/public/hooks/cron/sync-public-holidays',
-    path: '/api/public/hooks/cron/sync-public-holidays',
+const ApiPublicHooksUpdatePayoutDetailsRoute =
+  ApiPublicHooksUpdatePayoutDetailsRouteImport.update({
+    id: '/api/public/hooks/update-payout-details',
+    path: '/api/public/hooks/update-payout-details',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicHooksNotificationsPushRoute =
-  ApiPublicHooksNotificationsPushRouteImport.update({
-    id: '/api/public/hooks/notifications/push',
-    path: '/api/public/hooks/notifications/push',
+const ApiPublicHooksUpdateMyLanguagesRoute =
+  ApiPublicHooksUpdateMyLanguagesRouteImport.update({
+    id: '/api/public/hooks/update-my-languages',
+    path: '/api/public/hooks/update-my-languages',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicHooksPayoutStepUpStartRoute =
-  ApiPublicHooksPayoutStepUpStartRouteImport.update({
-    id: '/api/public/hooks/payout-step-up/start',
-    path: '/api/public/hooks/payout-step-up/start',
+const ApiPublicHooksTelegramSigninStartRoute =
+  ApiPublicHooksTelegramSigninStartRouteImport.update({
+    id: '/api/public/hooks/telegram-signin-start',
+    path: '/api/public/hooks/telegram-signin-start',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksTelegramSigninPollRoute =
+  ApiPublicHooksTelegramSigninPollRouteImport.update({
+    id: '/api/public/hooks/telegram-signin-poll',
+    path: '/api/public/hooks/telegram-signin-poll',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksTelegramLinkCodeRoute =
+  ApiPublicHooksTelegramLinkCodeRouteImport.update({
+    id: '/api/public/hooks/telegram-link-code',
+    path: '/api/public/hooks/telegram-link-code',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksSupportContactsRoute =
+  ApiPublicHooksSupportContactsRouteImport.update({
+    id: '/api/public/hooks/support-contacts',
+    path: '/api/public/hooks/support-contacts',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksSuggestCityRoute =
+  ApiPublicHooksSuggestCityRouteImport.update({
+    id: '/api/public/hooks/suggest-city',
+    path: '/api/public/hooks/suggest-city',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksSubmitTourForReviewRoute =
+  ApiPublicHooksSubmitTourForReviewRouteImport.update({
+    id: '/api/public/hooks/submit-tour-for-review',
+    path: '/api/public/hooks/submit-tour-for-review',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksSubmitLicenseRoute =
+  ApiPublicHooksSubmitLicenseRouteImport.update({
+    id: '/api/public/hooks/submit-license',
+    path: '/api/public/hooks/submit-license',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksSubmitIntroVideoRoute =
+  ApiPublicHooksSubmitIntroVideoRouteImport.update({
+    id: '/api/public/hooks/submit-intro-video',
+    path: '/api/public/hooks/submit-intro-video',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksSubmitIdentityRoute =
+  ApiPublicHooksSubmitIdentityRouteImport.update({
+    id: '/api/public/hooks/submit-identity',
+    path: '/api/public/hooks/submit-identity',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksRetranslateTourRoute =
+  ApiPublicHooksRetranslateTourRouteImport.update({
+    id: '/api/public/hooks/retranslate-tour',
+    path: '/api/public/hooks/retranslate-tour',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksRequestPayoutRoute =
+  ApiPublicHooksRequestPayoutRouteImport.update({
+    id: '/api/public/hooks/request-payout',
+    path: '/api/public/hooks/request-payout',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksPriceQuoteRoute =
+  ApiPublicHooksPriceQuoteRouteImport.update({
+    id: '/api/public/hooks/price-quote',
+    path: '/api/public/hooks/price-quote',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksMyVerificationRoute =
+  ApiPublicHooksMyVerificationRouteImport.update({
+    id: '/api/public/hooks/my-verification',
+    path: '/api/public/hooks/my-verification',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksMyTransactionsRoute =
+  ApiPublicHooksMyTransactionsRouteImport.update({
+    id: '/api/public/hooks/my-transactions',
+    path: '/api/public/hooks/my-transactions',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksMyStatementsRoute =
+  ApiPublicHooksMyStatementsRouteImport.update({
+    id: '/api/public/hooks/my-statements',
+    path: '/api/public/hooks/my-statements',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksMyReportUrlRoute =
+  ApiPublicHooksMyReportUrlRouteImport.update({
+    id: '/api/public/hooks/my-report-url',
+    path: '/api/public/hooks/my-report-url',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksMyReferralCodeRoute =
+  ApiPublicHooksMyReferralCodeRouteImport.update({
+    id: '/api/public/hooks/my-referral-code',
+    path: '/api/public/hooks/my-referral-code',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksMyPromoCodesRoute =
+  ApiPublicHooksMyPromoCodesRouteImport.update({
+    id: '/api/public/hooks/my-promo-codes',
+    path: '/api/public/hooks/my-promo-codes',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksMyPayoutsRoute = ApiPublicHooksMyPayoutsRouteImport.update({
+  id: '/api/public/hooks/my-payouts',
+  path: '/api/public/hooks/my-payouts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicHooksMyPayoutDetailsRoute =
+  ApiPublicHooksMyPayoutDetailsRouteImport.update({
+    id: '/api/public/hooks/my-payout-details',
+    path: '/api/public/hooks/my-payout-details',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksMyNotificationEmailRoute =
+  ApiPublicHooksMyNotificationEmailRouteImport.update({
+    id: '/api/public/hooks/my-notification-email',
+    path: '/api/public/hooks/my-notification-email',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksMyInvoiceUrlRoute =
+  ApiPublicHooksMyInvoiceUrlRouteImport.update({
+    id: '/api/public/hooks/my-invoice-url',
+    path: '/api/public/hooks/my-invoice-url',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksMyGuidePostsRoute =
+  ApiPublicHooksMyGuidePostsRouteImport.update({
+    id: '/api/public/hooks/my-guide-posts',
+    path: '/api/public/hooks/my-guide-posts',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksMyGuidePostSignedUrlsRoute =
+  ApiPublicHooksMyGuidePostSignedUrlsRouteImport.update({
+    id: '/api/public/hooks/my-guide-post-signed-urls',
+    path: '/api/public/hooks/my-guide-post-signed-urls',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksMyEarningsSummaryRoute =
+  ApiPublicHooksMyEarningsSummaryRouteImport.update({
+    id: '/api/public/hooks/my-earnings-summary',
+    path: '/api/public/hooks/my-earnings-summary',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksLocalEventsRoute =
+  ApiPublicHooksLocalEventsRouteImport.update({
+    id: '/api/public/hooks/local-events',
+    path: '/api/public/hooks/local-events',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksGuideReelsRoute =
+  ApiPublicHooksGuideReelsRouteImport.update({
+    id: '/api/public/hooks/guide-reels',
+    path: '/api/public/hooks/guide-reels',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksGuideAiRoute = ApiPublicHooksGuideAiRouteImport.update({
+  id: '/api/public/hooks/guide-ai',
+  path: '/api/public/hooks/guide-ai',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicHooksGoogleOauthCallbackRoute =
+  ApiPublicHooksGoogleOauthCallbackRouteImport.update({
+    id: '/api/public/hooks/google-oauth-callback',
+    path: '/api/public/hooks/google-oauth-callback',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksGenerateTourDescriptionRoute =
+  ApiPublicHooksGenerateTourDescriptionRouteImport.update({
+    id: '/api/public/hooks/generate-tour-description',
+    path: '/api/public/hooks/generate-tour-description',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksGenerateStatementsRoute =
+  ApiPublicHooksGenerateStatementsRouteImport.update({
+    id: '/api/public/hooks/generate-statements',
+    path: '/api/public/hooks/generate-statements',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksFeaturedReelsRoute =
+  ApiPublicHooksFeaturedReelsRouteImport.update({
+    id: '/api/public/hooks/featured-reels',
+    path: '/api/public/hooks/featured-reels',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksExpireBookingsRoute =
+  ApiPublicHooksExpireBookingsRouteImport.update({
+    id: '/api/public/hooks/expire-bookings',
+    path: '/api/public/hooks/expire-bookings',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksEmergencyContactsRoute =
+  ApiPublicHooksEmergencyContactsRouteImport.update({
+    id: '/api/public/hooks/emergency-contacts',
+    path: '/api/public/hooks/emergency-contacts',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksDeleteAccountRoute =
+  ApiPublicHooksDeleteAccountRouteImport.update({
+    id: '/api/public/hooks/delete-account',
+    path: '/api/public/hooks/delete-account',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksDailyBriefRoute =
+  ApiPublicHooksDailyBriefRouteImport.update({
+    id: '/api/public/hooks/daily-brief',
+    path: '/api/public/hooks/daily-brief',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksCreateBookingRoute =
+  ApiPublicHooksCreateBookingRouteImport.update({
+    id: '/api/public/hooks/create-booking',
+    path: '/api/public/hooks/create-booking',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksClientAiRoute = ApiPublicHooksClientAiRouteImport.update({
+  id: '/api/public/hooks/client-ai',
+  path: '/api/public/hooks/client-ai',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicHooksChatNotificationsRoute =
+  ApiPublicHooksChatNotificationsRouteImport.update({
+    id: '/api/public/hooks/chat-notifications',
+    path: '/api/public/hooks/chat-notifications',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksCalendarRemindersRoute =
+  ApiPublicHooksCalendarRemindersRouteImport.update({
+    id: '/api/public/hooks/calendar-reminders',
+    path: '/api/public/hooks/calendar-reminders',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksBookingReviewsRoute =
+  ApiPublicHooksBookingReviewsRouteImport.update({
+    id: '/api/public/hooks/booking-reviews',
+    path: '/api/public/hooks/booking-reviews',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksBookingRemindersRoute =
+  ApiPublicHooksBookingRemindersRouteImport.update({
+    id: '/api/public/hooks/booking-reminders',
+    path: '/api/public/hooks/booking-reminders',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksApplyReferralRoute =
+  ApiPublicHooksApplyReferralRouteImport.update({
+    id: '/api/public/hooks/apply-referral',
+    path: '/api/public/hooks/apply-referral',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksAllReelsRoute = ApiPublicHooksAllReelsRouteImport.update({
+  id: '/api/public/hooks/all-reels',
+  path: '/api/public/hooks/all-reels',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicToursTourIdSlotsRoute =
+  ApiPublicToursTourIdSlotsRouteImport.update({
+    id: '/api/public/tours/$tourId/slots',
+    path: '/api/public/tours/$tourId/slots',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicHooksPayoutStepUpVerifyRoute =
@@ -700,12 +671,41 @@ const ApiPublicHooksPayoutStepUpVerifyRoute =
     path: '/api/public/hooks/payout-step-up/verify',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicToursTourIdSlotsRoute =
-  ApiPublicToursTourIdSlotsRouteImport.update({
-    id: '/api/public/tours/$tourId/slots',
-    path: '/api/public/tours/$tourId/slots',
+const ApiPublicHooksPayoutStepUpStartRoute =
+  ApiPublicHooksPayoutStepUpStartRouteImport.update({
+    id: '/api/public/hooks/payout-step-up/start',
+    path: '/api/public/hooks/payout-step-up/start',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksNotificationsPushRoute =
+  ApiPublicHooksNotificationsPushRouteImport.update({
+    id: '/api/public/hooks/notifications/push',
+    path: '/api/public/hooks/notifications/push',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksCronSyncPublicHolidaysRoute =
+  ApiPublicHooksCronSyncPublicHolidaysRouteImport.update({
+    id: '/api/public/hooks/cron/sync-public-holidays',
+    path: '/api/public/hooks/cron/sync-public-holidays',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicGuidesGuideIdSlotsRoute =
+  ApiPublicGuidesGuideIdSlotsRouteImport.update({
+    id: '/api/public/guides/$guideId/slots',
+    path: '/api/public/guides/$guideId/slots',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicGuidesGuideIdBusyRoute =
+  ApiPublicGuidesGuideIdBusyRouteImport.update({
+    id: '/api/public/guides/$guideId/busy',
+    path: '/api/public/guides/$guideId/busy',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicBookingsIdPdfRoute = ApiPublicBookingsIdPdfRouteImport.update({
+  id: '/api/public/bookings/$id/pdf',
+  path: '/api/public/bookings/$id/pdf',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -1471,186 +1471,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/account': {
-      id: '/account'
-      path: '/account'
-      fullPath: '/account'
-      preLoaderRoute: typeof AccountRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/ai': {
-      id: '/ai'
-      path: '/ai'
-      fullPath: '/ai'
-      preLoaderRoute: typeof AiRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/become-a-guide': {
-      id: '/become-a-guide'
-      path: '/become-a-guide'
-      fullPath: '/become-a-guide'
-      preLoaderRoute: typeof BecomeAGuideRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/explore': {
-      id: '/explore'
-      path: '/explore'
-      fullPath: '/explore'
-      preLoaderRoute: typeof ExploreRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/faq': {
-      id: '/faq'
-      path: '/faq'
-      fullPath: '/faq'
-      preLoaderRoute: typeof FaqRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/guide': {
-      id: '/guide'
-      path: '/guide'
-      fullPath: '/guide'
-      preLoaderRoute: typeof GuideRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/guides': {
-      id: '/guides'
-      path: '/guides'
-      fullPath: '/guides'
-      preLoaderRoute: typeof GuidesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/how-it-works': {
-      id: '/how-it-works'
-      path: '/how-it-works'
-      fullPath: '/how-it-works'
-      preLoaderRoute: typeof HowItWorksRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/messages': {
-      id: '/messages'
-      path: '/messages'
-      fullPath: '/messages'
-      preLoaderRoute: typeof MessagesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/my-bookings': {
-      id: '/my-bookings'
-      path: '/my-bookings'
-      fullPath: '/my-bookings'
-      preLoaderRoute: typeof MyBookingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/notifications': {
-      id: '/notifications'
-      path: '/notifications'
-      fullPath: '/notifications'
-      preLoaderRoute: typeof NotificationsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/offer': {
-      id: '/offer'
-      path: '/offer'
-      fullPath: '/offer'
-      preLoaderRoute: typeof OfferRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/refund-policy': {
-      id: '/refund-policy'
-      path: '/refund-policy'
-      fullPath: '/refund-policy'
-      preLoaderRoute: typeof RefundPolicyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/reset-password': {
-      id: '/reset-password'
-      path: '/reset-password'
-      fullPath: '/reset-password'
-      preLoaderRoute: typeof ResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/search': {
-      id: '/search'
-      path: '/search'
-      fullPath: '/search'
-      preLoaderRoute: typeof SearchRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/support': {
-      id: '/support'
-      path: '/support'
-      fullPath: '/support'
-      preLoaderRoute: typeof SupportRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/terms': {
-      id: '/terms'
-      path: '/terms'
-      fullPath: '/terms'
-      preLoaderRoute: typeof TermsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/tours': {
-      id: '/tours'
-      path: '/tours'
-      fullPath: '/tours'
-      preLoaderRoute: typeof ToursRouteImport
+    '/wishlist': {
+      id: '/wishlist'
+      path: '/wishlist'
+      fullPath: '/wishlist'
+      preLoaderRoute: typeof WishlistRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/unsubscribe': {
@@ -1660,81 +1485,186 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UnsubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/wishlist': {
-      id: '/wishlist'
-      path: '/wishlist'
-      fullPath: '/wishlist'
-      preLoaderRoute: typeof WishlistRouteImport
+    '/tours': {
+      id: '/tours'
+      path: '/tours'
+      fullPath: '/tours'
+      preLoaderRoute: typeof ToursRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/ai/$threadId': {
-      id: '/ai/$threadId'
-      path: '/$threadId'
-      fullPath: '/ai/$threadId'
-      preLoaderRoute: typeof AiThreadIdRouteImport
-      parentRoute: typeof AiRoute
-    }
-    '/api/chat': {
-      id: '/api/chat'
-      path: '/api/chat'
-      fullPath: '/api/chat'
-      preLoaderRoute: typeof ApiChatRouteImport
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/guide-ai': {
-      id: '/api/guide-ai'
-      path: '/api/guide-ai'
-      fullPath: '/api/guide-ai'
-      preLoaderRoute: typeof ApiGuideAiRouteImport
+    '/support': {
+      id: '/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof SupportRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/book/': {
-      id: '/book/'
-      path: '/book'
-      fullPath: '/book/'
-      preLoaderRoute: typeof BookIndexRouteImport
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/book/$slug': {
-      id: '/book/$slug'
-      path: '/book/$slug'
-      fullPath: '/book/$slug'
-      preLoaderRoute: typeof BookSlugRouteImport
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/diary/$id': {
-      id: '/diary/$id'
-      path: '/diary/$id'
-      fullPath: '/diary/$id'
-      preLoaderRoute: typeof DiaryIdRouteImport
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/email/unsubscribe': {
-      id: '/email/unsubscribe'
-      path: '/email/unsubscribe'
-      fullPath: '/email/unsubscribe'
-      preLoaderRoute: typeof EmailUnsubscribeRouteImport
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/explore/$slug': {
-      id: '/explore/$slug'
-      path: '/$slug'
-      fullPath: '/explore/$slug'
-      preLoaderRoute: typeof ExploreSlugRouteImport
-      parentRoute: typeof ExploreRoute
-    }
-    '/guides_/$guideId': {
-      id: '/guides_/$guideId'
-      path: '/guides/$guideId'
-      fullPath: '/guides/$guideId'
-      preLoaderRoute: typeof GuidesGuideIdRouteImport
+    '/refund-policy': {
+      id: '/refund-policy'
+      path: '/refund-policy'
+      fullPath: '/refund-policy'
+      preLoaderRoute: typeof RefundPolicyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/invite/$token': {
-      id: '/invite/$token'
-      path: '/invite/$token'
-      fullPath: '/invite/$token'
-      preLoaderRoute: typeof InviteTokenRouteImport
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/offer': {
+      id: '/offer'
+      path: '/offer'
+      fullPath: '/offer'
+      preLoaderRoute: typeof OfferRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my-bookings': {
+      id: '/my-bookings'
+      path: '/my-bookings'
+      fullPath: '/my-bookings'
+      preLoaderRoute: typeof MyBookingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/messages': {
+      id: '/messages'
+      path: '/messages'
+      fullPath: '/messages'
+      preLoaderRoute: typeof MessagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/how-it-works': {
+      id: '/how-it-works'
+      path: '/how-it-works'
+      fullPath: '/how-it-works'
+      preLoaderRoute: typeof HowItWorksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guides': {
+      id: '/guides'
+      path: '/guides'
+      fullPath: '/guides'
+      preLoaderRoute: typeof GuidesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guide': {
+      id: '/guide'
+      path: '/guide'
+      fullPath: '/guide'
+      preLoaderRoute: typeof GuideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/explore': {
+      id: '/explore'
+      path: '/explore'
+      fullPath: '/explore'
+      preLoaderRoute: typeof ExploreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/become-a-guide': {
+      id: '/become-a-guide'
+      path: '/become-a-guide'
+      fullPath: '/become-a-guide'
+      preLoaderRoute: typeof BecomeAGuideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai': {
+      id: '/ai'
+      path: '/ai'
+      fullPath: '/ai'
+      preLoaderRoute: typeof AiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/messages/': {
@@ -1744,18 +1674,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MessagesIndexRouteImport
       parentRoute: typeof MessagesRoute
     }
-    '/messages/$bookingId': {
-      id: '/messages/$bookingId'
-      path: '/$bookingId'
-      fullPath: '/messages/$bookingId'
-      preLoaderRoute: typeof MessagesBookingIdRouteImport
-      parentRoute: typeof MessagesRoute
-    }
-    '/spotlight/$id': {
-      id: '/spotlight/$id'
-      path: '/spotlight/$id'
-      fullPath: '/spotlight/$id'
-      preLoaderRoute: typeof SpotlightIdRouteImport
+    '/book/': {
+      id: '/book/'
+      path: '/book'
+      fullPath: '/book/'
+      preLoaderRoute: typeof BookIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tours_/$slug': {
@@ -1765,18 +1688,88 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ToursSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/earnings/report': {
-      id: '/api/earnings/report'
-      path: '/api/earnings/report'
-      fullPath: '/api/earnings/report'
-      preLoaderRoute: typeof ApiEarningsReportRouteImport
+    '/spotlight/$id': {
+      id: '/spotlight/$id'
+      path: '/spotlight/$id'
+      fullPath: '/spotlight/$id'
+      preLoaderRoute: typeof SpotlightIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/site-languages': {
-      id: '/api/public/site-languages'
-      path: '/api/public/site-languages'
-      fullPath: '/api/public/site-languages'
-      preLoaderRoute: typeof ApiPublicSiteLanguagesRouteImport
+    '/messages/$bookingId': {
+      id: '/messages/$bookingId'
+      path: '/$bookingId'
+      fullPath: '/messages/$bookingId'
+      preLoaderRoute: typeof MessagesBookingIdRouteImport
+      parentRoute: typeof MessagesRoute
+    }
+    '/invite/$token': {
+      id: '/invite/$token'
+      path: '/invite/$token'
+      fullPath: '/invite/$token'
+      preLoaderRoute: typeof InviteTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guides_/$guideId': {
+      id: '/guides_/$guideId'
+      path: '/guides/$guideId'
+      fullPath: '/guides/$guideId'
+      preLoaderRoute: typeof GuidesGuideIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/explore/$slug': {
+      id: '/explore/$slug'
+      path: '/$slug'
+      fullPath: '/explore/$slug'
+      preLoaderRoute: typeof ExploreSlugRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/email/unsubscribe': {
+      id: '/email/unsubscribe'
+      path: '/email/unsubscribe'
+      fullPath: '/email/unsubscribe'
+      preLoaderRoute: typeof EmailUnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/diary/$id': {
+      id: '/diary/$id'
+      path: '/diary/$id'
+      fullPath: '/diary/$id'
+      preLoaderRoute: typeof DiaryIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/book/$slug': {
+      id: '/book/$slug'
+      path: '/book/$slug'
+      fullPath: '/book/$slug'
+      preLoaderRoute: typeof BookSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/guide-ai': {
+      id: '/api/guide-ai'
+      path: '/api/guide-ai'
+      fullPath: '/api/guide-ai'
+      preLoaderRoute: typeof ApiGuideAiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai/$threadId': {
+      id: '/ai/$threadId'
+      path: '/$threadId'
+      fullPath: '/ai/$threadId'
+      preLoaderRoute: typeof AiThreadIdRouteImport
+      parentRoute: typeof AiRoute
+    }
+    '/lovable/email/suppression': {
+      id: '/lovable/email/suppression'
+      path: '/lovable/email/suppression'
+      fullPath: '/lovable/email/suppression'
+      preLoaderRoute: typeof LovableEmailSuppressionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/lovable/email/events': {
@@ -1786,375 +1779,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailEventsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/lovable/email/suppression': {
-      id: '/lovable/email/suppression'
-      path: '/lovable/email/suppression'
-      fullPath: '/lovable/email/suppression'
-      preLoaderRoute: typeof LovableEmailSuppressionRouteImport
+    '/api/public/site-languages': {
+      id: '/api/public/site-languages'
+      path: '/api/public/site-languages'
+      fullPath: '/api/public/site-languages'
+      preLoaderRoute: typeof ApiPublicSiteLanguagesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/hooks/all-reels': {
-      id: '/api/public/hooks/all-reels'
-      path: '/api/public/hooks/all-reels'
-      fullPath: '/api/public/hooks/all-reels'
-      preLoaderRoute: typeof ApiPublicHooksAllReelsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/apply-referral': {
-      id: '/api/public/hooks/apply-referral'
-      path: '/api/public/hooks/apply-referral'
-      fullPath: '/api/public/hooks/apply-referral'
-      preLoaderRoute: typeof ApiPublicHooksApplyReferralRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/booking-reminders': {
-      id: '/api/public/hooks/booking-reminders'
-      path: '/api/public/hooks/booking-reminders'
-      fullPath: '/api/public/hooks/booking-reminders'
-      preLoaderRoute: typeof ApiPublicHooksBookingRemindersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/booking-reviews': {
-      id: '/api/public/hooks/booking-reviews'
-      path: '/api/public/hooks/booking-reviews'
-      fullPath: '/api/public/hooks/booking-reviews'
-      preLoaderRoute: typeof ApiPublicHooksBookingReviewsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/calendar-reminders': {
-      id: '/api/public/hooks/calendar-reminders'
-      path: '/api/public/hooks/calendar-reminders'
-      fullPath: '/api/public/hooks/calendar-reminders'
-      preLoaderRoute: typeof ApiPublicHooksCalendarRemindersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/chat-notifications': {
-      id: '/api/public/hooks/chat-notifications'
-      path: '/api/public/hooks/chat-notifications'
-      fullPath: '/api/public/hooks/chat-notifications'
-      preLoaderRoute: typeof ApiPublicHooksChatNotificationsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/client-ai': {
-      id: '/api/public/hooks/client-ai'
-      path: '/api/public/hooks/client-ai'
-      fullPath: '/api/public/hooks/client-ai'
-      preLoaderRoute: typeof ApiPublicHooksClientAiRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/create-booking': {
-      id: '/api/public/hooks/create-booking'
-      path: '/api/public/hooks/create-booking'
-      fullPath: '/api/public/hooks/create-booking'
-      preLoaderRoute: typeof ApiPublicHooksCreateBookingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/daily-brief': {
-      id: '/api/public/hooks/daily-brief'
-      path: '/api/public/hooks/daily-brief'
-      fullPath: '/api/public/hooks/daily-brief'
-      preLoaderRoute: typeof ApiPublicHooksDailyBriefRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/delete-account': {
-      id: '/api/public/hooks/delete-account'
-      path: '/api/public/hooks/delete-account'
-      fullPath: '/api/public/hooks/delete-account'
-      preLoaderRoute: typeof ApiPublicHooksDeleteAccountRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/emergency-contacts': {
-      id: '/api/public/hooks/emergency-contacts'
-      path: '/api/public/hooks/emergency-contacts'
-      fullPath: '/api/public/hooks/emergency-contacts'
-      preLoaderRoute: typeof ApiPublicHooksEmergencyContactsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/expire-bookings': {
-      id: '/api/public/hooks/expire-bookings'
-      path: '/api/public/hooks/expire-bookings'
-      fullPath: '/api/public/hooks/expire-bookings'
-      preLoaderRoute: typeof ApiPublicHooksExpireBookingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/featured-reels': {
-      id: '/api/public/hooks/featured-reels'
-      path: '/api/public/hooks/featured-reels'
-      fullPath: '/api/public/hooks/featured-reels'
-      preLoaderRoute: typeof ApiPublicHooksFeaturedReelsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/generate-statements': {
-      id: '/api/public/hooks/generate-statements'
-      path: '/api/public/hooks/generate-statements'
-      fullPath: '/api/public/hooks/generate-statements'
-      preLoaderRoute: typeof ApiPublicHooksGenerateStatementsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/generate-tour-description': {
-      id: '/api/public/hooks/generate-tour-description'
-      path: '/api/public/hooks/generate-tour-description'
-      fullPath: '/api/public/hooks/generate-tour-description'
-      preLoaderRoute: typeof ApiPublicHooksGenerateTourDescriptionRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/google-oauth-callback': {
-      id: '/api/public/hooks/google-oauth-callback'
-      path: '/api/public/hooks/google-oauth-callback'
-      fullPath: '/api/public/hooks/google-oauth-callback'
-      preLoaderRoute: typeof ApiPublicHooksGoogleOauthCallbackRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/guide-ai': {
-      id: '/api/public/hooks/guide-ai'
-      path: '/api/public/hooks/guide-ai'
-      fullPath: '/api/public/hooks/guide-ai'
-      preLoaderRoute: typeof ApiPublicHooksGuideAiRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/guide-reels': {
-      id: '/api/public/hooks/guide-reels'
-      path: '/api/public/hooks/guide-reels'
-      fullPath: '/api/public/hooks/guide-reels'
-      preLoaderRoute: typeof ApiPublicHooksGuideReelsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/local-events': {
-      id: '/api/public/hooks/local-events'
-      path: '/api/public/hooks/local-events'
-      fullPath: '/api/public/hooks/local-events'
-      preLoaderRoute: typeof ApiPublicHooksLocalEventsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/my-earnings-summary': {
-      id: '/api/public/hooks/my-earnings-summary'
-      path: '/api/public/hooks/my-earnings-summary'
-      fullPath: '/api/public/hooks/my-earnings-summary'
-      preLoaderRoute: typeof ApiPublicHooksMyEarningsSummaryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/my-guide-post-signed-urls': {
-      id: '/api/public/hooks/my-guide-post-signed-urls'
-      path: '/api/public/hooks/my-guide-post-signed-urls'
-      fullPath: '/api/public/hooks/my-guide-post-signed-urls'
-      preLoaderRoute: typeof ApiPublicHooksMyGuidePostSignedUrlsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/my-guide-posts': {
-      id: '/api/public/hooks/my-guide-posts'
-      path: '/api/public/hooks/my-guide-posts'
-      fullPath: '/api/public/hooks/my-guide-posts'
-      preLoaderRoute: typeof ApiPublicHooksMyGuidePostsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/my-invoice-url': {
-      id: '/api/public/hooks/my-invoice-url'
-      path: '/api/public/hooks/my-invoice-url'
-      fullPath: '/api/public/hooks/my-invoice-url'
-      preLoaderRoute: typeof ApiPublicHooksMyInvoiceUrlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/my-notification-email': {
-      id: '/api/public/hooks/my-notification-email'
-      path: '/api/public/hooks/my-notification-email'
-      fullPath: '/api/public/hooks/my-notification-email'
-      preLoaderRoute: typeof ApiPublicHooksMyNotificationEmailRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/my-payout-details': {
-      id: '/api/public/hooks/my-payout-details'
-      path: '/api/public/hooks/my-payout-details'
-      fullPath: '/api/public/hooks/my-payout-details'
-      preLoaderRoute: typeof ApiPublicHooksMyPayoutDetailsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/my-payouts': {
-      id: '/api/public/hooks/my-payouts'
-      path: '/api/public/hooks/my-payouts'
-      fullPath: '/api/public/hooks/my-payouts'
-      preLoaderRoute: typeof ApiPublicHooksMyPayoutsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/my-promo-codes': {
-      id: '/api/public/hooks/my-promo-codes'
-      path: '/api/public/hooks/my-promo-codes'
-      fullPath: '/api/public/hooks/my-promo-codes'
-      preLoaderRoute: typeof ApiPublicHooksMyPromoCodesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/my-referral-code': {
-      id: '/api/public/hooks/my-referral-code'
-      path: '/api/public/hooks/my-referral-code'
-      fullPath: '/api/public/hooks/my-referral-code'
-      preLoaderRoute: typeof ApiPublicHooksMyReferralCodeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/my-report-url': {
-      id: '/api/public/hooks/my-report-url'
-      path: '/api/public/hooks/my-report-url'
-      fullPath: '/api/public/hooks/my-report-url'
-      preLoaderRoute: typeof ApiPublicHooksMyReportUrlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/my-statements': {
-      id: '/api/public/hooks/my-statements'
-      path: '/api/public/hooks/my-statements'
-      fullPath: '/api/public/hooks/my-statements'
-      preLoaderRoute: typeof ApiPublicHooksMyStatementsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/my-transactions': {
-      id: '/api/public/hooks/my-transactions'
-      path: '/api/public/hooks/my-transactions'
-      fullPath: '/api/public/hooks/my-transactions'
-      preLoaderRoute: typeof ApiPublicHooksMyTransactionsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/my-verification': {
-      id: '/api/public/hooks/my-verification'
-      path: '/api/public/hooks/my-verification'
-      fullPath: '/api/public/hooks/my-verification'
-      preLoaderRoute: typeof ApiPublicHooksMyVerificationRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/price-quote': {
-      id: '/api/public/hooks/price-quote'
-      path: '/api/public/hooks/price-quote'
-      fullPath: '/api/public/hooks/price-quote'
-      preLoaderRoute: typeof ApiPublicHooksPriceQuoteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/request-payout': {
-      id: '/api/public/hooks/request-payout'
-      path: '/api/public/hooks/request-payout'
-      fullPath: '/api/public/hooks/request-payout'
-      preLoaderRoute: typeof ApiPublicHooksRequestPayoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/retranslate-tour': {
-      id: '/api/public/hooks/retranslate-tour'
-      path: '/api/public/hooks/retranslate-tour'
-      fullPath: '/api/public/hooks/retranslate-tour'
-      preLoaderRoute: typeof ApiPublicHooksRetranslateTourRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/submit-identity': {
-      id: '/api/public/hooks/submit-identity'
-      path: '/api/public/hooks/submit-identity'
-      fullPath: '/api/public/hooks/submit-identity'
-      preLoaderRoute: typeof ApiPublicHooksSubmitIdentityRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/submit-intro-video': {
-      id: '/api/public/hooks/submit-intro-video'
-      path: '/api/public/hooks/submit-intro-video'
-      fullPath: '/api/public/hooks/submit-intro-video'
-      preLoaderRoute: typeof ApiPublicHooksSubmitIntroVideoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/submit-license': {
-      id: '/api/public/hooks/submit-license'
-      path: '/api/public/hooks/submit-license'
-      fullPath: '/api/public/hooks/submit-license'
-      preLoaderRoute: typeof ApiPublicHooksSubmitLicenseRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/submit-tour-for-review': {
-      id: '/api/public/hooks/submit-tour-for-review'
-      path: '/api/public/hooks/submit-tour-for-review'
-      fullPath: '/api/public/hooks/submit-tour-for-review'
-      preLoaderRoute: typeof ApiPublicHooksSubmitTourForReviewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/suggest-city': {
-      id: '/api/public/hooks/suggest-city'
-      path: '/api/public/hooks/suggest-city'
-      fullPath: '/api/public/hooks/suggest-city'
-      preLoaderRoute: typeof ApiPublicHooksSuggestCityRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/support-contacts': {
-      id: '/api/public/hooks/support-contacts'
-      path: '/api/public/hooks/support-contacts'
-      fullPath: '/api/public/hooks/support-contacts'
-      preLoaderRoute: typeof ApiPublicHooksSupportContactsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/telegram-link-code': {
-      id: '/api/public/hooks/telegram-link-code'
-      path: '/api/public/hooks/telegram-link-code'
-      fullPath: '/api/public/hooks/telegram-link-code'
-      preLoaderRoute: typeof ApiPublicHooksTelegramLinkCodeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/telegram-signin-poll': {
-      id: '/api/public/hooks/telegram-signin-poll'
-      path: '/api/public/hooks/telegram-signin-poll'
-      fullPath: '/api/public/hooks/telegram-signin-poll'
-      preLoaderRoute: typeof ApiPublicHooksTelegramSigninPollRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/telegram-signin-start': {
-      id: '/api/public/hooks/telegram-signin-start'
-      path: '/api/public/hooks/telegram-signin-start'
-      fullPath: '/api/public/hooks/telegram-signin-start'
-      preLoaderRoute: typeof ApiPublicHooksTelegramSigninStartRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/update-my-languages': {
-      id: '/api/public/hooks/update-my-languages'
-      path: '/api/public/hooks/update-my-languages'
-      fullPath: '/api/public/hooks/update-my-languages'
-      preLoaderRoute: typeof ApiPublicHooksUpdateMyLanguagesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/update-payout-details': {
-      id: '/api/public/hooks/update-payout-details'
-      path: '/api/public/hooks/update-payout-details'
-      fullPath: '/api/public/hooks/update-payout-details'
-      preLoaderRoute: typeof ApiPublicHooksUpdatePayoutDetailsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/upsert-tour': {
-      id: '/api/public/hooks/upsert-tour'
-      path: '/api/public/hooks/upsert-tour'
-      fullPath: '/api/public/hooks/upsert-tour'
-      preLoaderRoute: typeof ApiPublicHooksUpsertTourRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/telegram/webhook': {
-      id: '/api/public/telegram/webhook'
-      path: '/api/public/telegram/webhook'
-      fullPath: '/api/public/telegram/webhook'
-      preLoaderRoute: typeof ApiPublicTelegramWebhookRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lovable/email/auth/preview': {
-      id: '/lovable/email/auth/preview'
-      path: '/lovable/email/auth/preview'
-      fullPath: '/lovable/email/auth/preview'
-      preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lovable/email/auth/webhook': {
-      id: '/lovable/email/auth/webhook'
-      path: '/lovable/email/auth/webhook'
-      fullPath: '/lovable/email/auth/webhook'
-      preLoaderRoute: typeof LovableEmailAuthWebhookRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lovable/email/queue/process': {
-      id: '/lovable/email/queue/process'
-      path: '/lovable/email/queue/process'
-      fullPath: '/lovable/email/queue/process'
-      preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lovable/email/transactional/preview': {
-      id: '/lovable/email/transactional/preview'
-      path: '/lovable/email/transactional/preview'
-      fullPath: '/lovable/email/transactional/preview'
-      preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
+    '/api/earnings/report': {
+      id: '/api/earnings/report'
+      path: '/api/earnings/report'
+      fullPath: '/api/earnings/report'
+      preLoaderRoute: typeof ApiEarningsReportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/lovable/email/transactional/send': {
@@ -2164,46 +1800,375 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailTransactionalSendRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/bookings/$id/pdf': {
-      id: '/api/public/bookings/$id/pdf'
-      path: '/api/public/bookings/$id/pdf'
-      fullPath: '/api/public/bookings/$id/pdf'
-      preLoaderRoute: typeof ApiPublicBookingsIdPdfRouteImport
+    '/lovable/email/transactional/preview': {
+      id: '/lovable/email/transactional/preview'
+      path: '/lovable/email/transactional/preview'
+      fullPath: '/lovable/email/transactional/preview'
+      preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/guides/$guideId/busy': {
-      id: '/api/public/guides/$guideId/busy'
-      path: '/api/public/guides/$guideId/busy'
-      fullPath: '/api/public/guides/$guideId/busy'
-      preLoaderRoute: typeof ApiPublicGuidesGuideIdBusyRouteImport
+    '/lovable/email/queue/process': {
+      id: '/lovable/email/queue/process'
+      path: '/lovable/email/queue/process'
+      fullPath: '/lovable/email/queue/process'
+      preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/guides/$guideId/slots': {
-      id: '/api/public/guides/$guideId/slots'
-      path: '/api/public/guides/$guideId/slots'
-      fullPath: '/api/public/guides/$guideId/slots'
-      preLoaderRoute: typeof ApiPublicGuidesGuideIdSlotsRouteImport
+    '/lovable/email/auth/webhook': {
+      id: '/lovable/email/auth/webhook'
+      path: '/lovable/email/auth/webhook'
+      fullPath: '/lovable/email/auth/webhook'
+      preLoaderRoute: typeof LovableEmailAuthWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/hooks/cron/sync-public-holidays': {
-      id: '/api/public/hooks/cron/sync-public-holidays'
-      path: '/api/public/hooks/cron/sync-public-holidays'
-      fullPath: '/api/public/hooks/cron/sync-public-holidays'
-      preLoaderRoute: typeof ApiPublicHooksCronSyncPublicHolidaysRouteImport
+    '/lovable/email/auth/preview': {
+      id: '/lovable/email/auth/preview'
+      path: '/lovable/email/auth/preview'
+      fullPath: '/lovable/email/auth/preview'
+      preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/hooks/notifications/push': {
-      id: '/api/public/hooks/notifications/push'
-      path: '/api/public/hooks/notifications/push'
-      fullPath: '/api/public/hooks/notifications/push'
-      preLoaderRoute: typeof ApiPublicHooksNotificationsPushRouteImport
+    '/api/public/telegram/webhook': {
+      id: '/api/public/telegram/webhook'
+      path: '/api/public/telegram/webhook'
+      fullPath: '/api/public/telegram/webhook'
+      preLoaderRoute: typeof ApiPublicTelegramWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/hooks/payout-step-up/start': {
-      id: '/api/public/hooks/payout-step-up/start'
-      path: '/api/public/hooks/payout-step-up/start'
-      fullPath: '/api/public/hooks/payout-step-up/start'
-      preLoaderRoute: typeof ApiPublicHooksPayoutStepUpStartRouteImport
+    '/api/public/hooks/upsert-tour': {
+      id: '/api/public/hooks/upsert-tour'
+      path: '/api/public/hooks/upsert-tour'
+      fullPath: '/api/public/hooks/upsert-tour'
+      preLoaderRoute: typeof ApiPublicHooksUpsertTourRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/update-payout-details': {
+      id: '/api/public/hooks/update-payout-details'
+      path: '/api/public/hooks/update-payout-details'
+      fullPath: '/api/public/hooks/update-payout-details'
+      preLoaderRoute: typeof ApiPublicHooksUpdatePayoutDetailsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/update-my-languages': {
+      id: '/api/public/hooks/update-my-languages'
+      path: '/api/public/hooks/update-my-languages'
+      fullPath: '/api/public/hooks/update-my-languages'
+      preLoaderRoute: typeof ApiPublicHooksUpdateMyLanguagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/telegram-signin-start': {
+      id: '/api/public/hooks/telegram-signin-start'
+      path: '/api/public/hooks/telegram-signin-start'
+      fullPath: '/api/public/hooks/telegram-signin-start'
+      preLoaderRoute: typeof ApiPublicHooksTelegramSigninStartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/telegram-signin-poll': {
+      id: '/api/public/hooks/telegram-signin-poll'
+      path: '/api/public/hooks/telegram-signin-poll'
+      fullPath: '/api/public/hooks/telegram-signin-poll'
+      preLoaderRoute: typeof ApiPublicHooksTelegramSigninPollRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/telegram-link-code': {
+      id: '/api/public/hooks/telegram-link-code'
+      path: '/api/public/hooks/telegram-link-code'
+      fullPath: '/api/public/hooks/telegram-link-code'
+      preLoaderRoute: typeof ApiPublicHooksTelegramLinkCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/support-contacts': {
+      id: '/api/public/hooks/support-contacts'
+      path: '/api/public/hooks/support-contacts'
+      fullPath: '/api/public/hooks/support-contacts'
+      preLoaderRoute: typeof ApiPublicHooksSupportContactsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/suggest-city': {
+      id: '/api/public/hooks/suggest-city'
+      path: '/api/public/hooks/suggest-city'
+      fullPath: '/api/public/hooks/suggest-city'
+      preLoaderRoute: typeof ApiPublicHooksSuggestCityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/submit-tour-for-review': {
+      id: '/api/public/hooks/submit-tour-for-review'
+      path: '/api/public/hooks/submit-tour-for-review'
+      fullPath: '/api/public/hooks/submit-tour-for-review'
+      preLoaderRoute: typeof ApiPublicHooksSubmitTourForReviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/submit-license': {
+      id: '/api/public/hooks/submit-license'
+      path: '/api/public/hooks/submit-license'
+      fullPath: '/api/public/hooks/submit-license'
+      preLoaderRoute: typeof ApiPublicHooksSubmitLicenseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/submit-intro-video': {
+      id: '/api/public/hooks/submit-intro-video'
+      path: '/api/public/hooks/submit-intro-video'
+      fullPath: '/api/public/hooks/submit-intro-video'
+      preLoaderRoute: typeof ApiPublicHooksSubmitIntroVideoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/submit-identity': {
+      id: '/api/public/hooks/submit-identity'
+      path: '/api/public/hooks/submit-identity'
+      fullPath: '/api/public/hooks/submit-identity'
+      preLoaderRoute: typeof ApiPublicHooksSubmitIdentityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/retranslate-tour': {
+      id: '/api/public/hooks/retranslate-tour'
+      path: '/api/public/hooks/retranslate-tour'
+      fullPath: '/api/public/hooks/retranslate-tour'
+      preLoaderRoute: typeof ApiPublicHooksRetranslateTourRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/request-payout': {
+      id: '/api/public/hooks/request-payout'
+      path: '/api/public/hooks/request-payout'
+      fullPath: '/api/public/hooks/request-payout'
+      preLoaderRoute: typeof ApiPublicHooksRequestPayoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/price-quote': {
+      id: '/api/public/hooks/price-quote'
+      path: '/api/public/hooks/price-quote'
+      fullPath: '/api/public/hooks/price-quote'
+      preLoaderRoute: typeof ApiPublicHooksPriceQuoteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/my-verification': {
+      id: '/api/public/hooks/my-verification'
+      path: '/api/public/hooks/my-verification'
+      fullPath: '/api/public/hooks/my-verification'
+      preLoaderRoute: typeof ApiPublicHooksMyVerificationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/my-transactions': {
+      id: '/api/public/hooks/my-transactions'
+      path: '/api/public/hooks/my-transactions'
+      fullPath: '/api/public/hooks/my-transactions'
+      preLoaderRoute: typeof ApiPublicHooksMyTransactionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/my-statements': {
+      id: '/api/public/hooks/my-statements'
+      path: '/api/public/hooks/my-statements'
+      fullPath: '/api/public/hooks/my-statements'
+      preLoaderRoute: typeof ApiPublicHooksMyStatementsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/my-report-url': {
+      id: '/api/public/hooks/my-report-url'
+      path: '/api/public/hooks/my-report-url'
+      fullPath: '/api/public/hooks/my-report-url'
+      preLoaderRoute: typeof ApiPublicHooksMyReportUrlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/my-referral-code': {
+      id: '/api/public/hooks/my-referral-code'
+      path: '/api/public/hooks/my-referral-code'
+      fullPath: '/api/public/hooks/my-referral-code'
+      preLoaderRoute: typeof ApiPublicHooksMyReferralCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/my-promo-codes': {
+      id: '/api/public/hooks/my-promo-codes'
+      path: '/api/public/hooks/my-promo-codes'
+      fullPath: '/api/public/hooks/my-promo-codes'
+      preLoaderRoute: typeof ApiPublicHooksMyPromoCodesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/my-payouts': {
+      id: '/api/public/hooks/my-payouts'
+      path: '/api/public/hooks/my-payouts'
+      fullPath: '/api/public/hooks/my-payouts'
+      preLoaderRoute: typeof ApiPublicHooksMyPayoutsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/my-payout-details': {
+      id: '/api/public/hooks/my-payout-details'
+      path: '/api/public/hooks/my-payout-details'
+      fullPath: '/api/public/hooks/my-payout-details'
+      preLoaderRoute: typeof ApiPublicHooksMyPayoutDetailsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/my-notification-email': {
+      id: '/api/public/hooks/my-notification-email'
+      path: '/api/public/hooks/my-notification-email'
+      fullPath: '/api/public/hooks/my-notification-email'
+      preLoaderRoute: typeof ApiPublicHooksMyNotificationEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/my-invoice-url': {
+      id: '/api/public/hooks/my-invoice-url'
+      path: '/api/public/hooks/my-invoice-url'
+      fullPath: '/api/public/hooks/my-invoice-url'
+      preLoaderRoute: typeof ApiPublicHooksMyInvoiceUrlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/my-guide-posts': {
+      id: '/api/public/hooks/my-guide-posts'
+      path: '/api/public/hooks/my-guide-posts'
+      fullPath: '/api/public/hooks/my-guide-posts'
+      preLoaderRoute: typeof ApiPublicHooksMyGuidePostsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/my-guide-post-signed-urls': {
+      id: '/api/public/hooks/my-guide-post-signed-urls'
+      path: '/api/public/hooks/my-guide-post-signed-urls'
+      fullPath: '/api/public/hooks/my-guide-post-signed-urls'
+      preLoaderRoute: typeof ApiPublicHooksMyGuidePostSignedUrlsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/my-earnings-summary': {
+      id: '/api/public/hooks/my-earnings-summary'
+      path: '/api/public/hooks/my-earnings-summary'
+      fullPath: '/api/public/hooks/my-earnings-summary'
+      preLoaderRoute: typeof ApiPublicHooksMyEarningsSummaryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/local-events': {
+      id: '/api/public/hooks/local-events'
+      path: '/api/public/hooks/local-events'
+      fullPath: '/api/public/hooks/local-events'
+      preLoaderRoute: typeof ApiPublicHooksLocalEventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/guide-reels': {
+      id: '/api/public/hooks/guide-reels'
+      path: '/api/public/hooks/guide-reels'
+      fullPath: '/api/public/hooks/guide-reels'
+      preLoaderRoute: typeof ApiPublicHooksGuideReelsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/guide-ai': {
+      id: '/api/public/hooks/guide-ai'
+      path: '/api/public/hooks/guide-ai'
+      fullPath: '/api/public/hooks/guide-ai'
+      preLoaderRoute: typeof ApiPublicHooksGuideAiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/google-oauth-callback': {
+      id: '/api/public/hooks/google-oauth-callback'
+      path: '/api/public/hooks/google-oauth-callback'
+      fullPath: '/api/public/hooks/google-oauth-callback'
+      preLoaderRoute: typeof ApiPublicHooksGoogleOauthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/generate-tour-description': {
+      id: '/api/public/hooks/generate-tour-description'
+      path: '/api/public/hooks/generate-tour-description'
+      fullPath: '/api/public/hooks/generate-tour-description'
+      preLoaderRoute: typeof ApiPublicHooksGenerateTourDescriptionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/generate-statements': {
+      id: '/api/public/hooks/generate-statements'
+      path: '/api/public/hooks/generate-statements'
+      fullPath: '/api/public/hooks/generate-statements'
+      preLoaderRoute: typeof ApiPublicHooksGenerateStatementsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/featured-reels': {
+      id: '/api/public/hooks/featured-reels'
+      path: '/api/public/hooks/featured-reels'
+      fullPath: '/api/public/hooks/featured-reels'
+      preLoaderRoute: typeof ApiPublicHooksFeaturedReelsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/expire-bookings': {
+      id: '/api/public/hooks/expire-bookings'
+      path: '/api/public/hooks/expire-bookings'
+      fullPath: '/api/public/hooks/expire-bookings'
+      preLoaderRoute: typeof ApiPublicHooksExpireBookingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/emergency-contacts': {
+      id: '/api/public/hooks/emergency-contacts'
+      path: '/api/public/hooks/emergency-contacts'
+      fullPath: '/api/public/hooks/emergency-contacts'
+      preLoaderRoute: typeof ApiPublicHooksEmergencyContactsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/delete-account': {
+      id: '/api/public/hooks/delete-account'
+      path: '/api/public/hooks/delete-account'
+      fullPath: '/api/public/hooks/delete-account'
+      preLoaderRoute: typeof ApiPublicHooksDeleteAccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/daily-brief': {
+      id: '/api/public/hooks/daily-brief'
+      path: '/api/public/hooks/daily-brief'
+      fullPath: '/api/public/hooks/daily-brief'
+      preLoaderRoute: typeof ApiPublicHooksDailyBriefRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/create-booking': {
+      id: '/api/public/hooks/create-booking'
+      path: '/api/public/hooks/create-booking'
+      fullPath: '/api/public/hooks/create-booking'
+      preLoaderRoute: typeof ApiPublicHooksCreateBookingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/client-ai': {
+      id: '/api/public/hooks/client-ai'
+      path: '/api/public/hooks/client-ai'
+      fullPath: '/api/public/hooks/client-ai'
+      preLoaderRoute: typeof ApiPublicHooksClientAiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/chat-notifications': {
+      id: '/api/public/hooks/chat-notifications'
+      path: '/api/public/hooks/chat-notifications'
+      fullPath: '/api/public/hooks/chat-notifications'
+      preLoaderRoute: typeof ApiPublicHooksChatNotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/calendar-reminders': {
+      id: '/api/public/hooks/calendar-reminders'
+      path: '/api/public/hooks/calendar-reminders'
+      fullPath: '/api/public/hooks/calendar-reminders'
+      preLoaderRoute: typeof ApiPublicHooksCalendarRemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/booking-reviews': {
+      id: '/api/public/hooks/booking-reviews'
+      path: '/api/public/hooks/booking-reviews'
+      fullPath: '/api/public/hooks/booking-reviews'
+      preLoaderRoute: typeof ApiPublicHooksBookingReviewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/booking-reminders': {
+      id: '/api/public/hooks/booking-reminders'
+      path: '/api/public/hooks/booking-reminders'
+      fullPath: '/api/public/hooks/booking-reminders'
+      preLoaderRoute: typeof ApiPublicHooksBookingRemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/apply-referral': {
+      id: '/api/public/hooks/apply-referral'
+      path: '/api/public/hooks/apply-referral'
+      fullPath: '/api/public/hooks/apply-referral'
+      preLoaderRoute: typeof ApiPublicHooksApplyReferralRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/all-reels': {
+      id: '/api/public/hooks/all-reels'
+      path: '/api/public/hooks/all-reels'
+      fullPath: '/api/public/hooks/all-reels'
+      preLoaderRoute: typeof ApiPublicHooksAllReelsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/tours/$tourId/slots': {
+      id: '/api/public/tours/$tourId/slots'
+      path: '/api/public/tours/$tourId/slots'
+      fullPath: '/api/public/tours/$tourId/slots'
+      preLoaderRoute: typeof ApiPublicToursTourIdSlotsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/payout-step-up/verify': {
@@ -2213,11 +2178,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksPayoutStepUpVerifyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/tours/$tourId/slots': {
-      id: '/api/public/tours/$tourId/slots'
-      path: '/api/public/tours/$tourId/slots'
-      fullPath: '/api/public/tours/$tourId/slots'
-      preLoaderRoute: typeof ApiPublicToursTourIdSlotsRouteImport
+    '/api/public/hooks/payout-step-up/start': {
+      id: '/api/public/hooks/payout-step-up/start'
+      path: '/api/public/hooks/payout-step-up/start'
+      fullPath: '/api/public/hooks/payout-step-up/start'
+      preLoaderRoute: typeof ApiPublicHooksPayoutStepUpStartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/notifications/push': {
+      id: '/api/public/hooks/notifications/push'
+      path: '/api/public/hooks/notifications/push'
+      fullPath: '/api/public/hooks/notifications/push'
+      preLoaderRoute: typeof ApiPublicHooksNotificationsPushRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/cron/sync-public-holidays': {
+      id: '/api/public/hooks/cron/sync-public-holidays'
+      path: '/api/public/hooks/cron/sync-public-holidays'
+      fullPath: '/api/public/hooks/cron/sync-public-holidays'
+      preLoaderRoute: typeof ApiPublicHooksCronSyncPublicHolidaysRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/guides/$guideId/slots': {
+      id: '/api/public/guides/$guideId/slots'
+      path: '/api/public/guides/$guideId/slots'
+      fullPath: '/api/public/guides/$guideId/slots'
+      preLoaderRoute: typeof ApiPublicGuidesGuideIdSlotsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/guides/$guideId/busy': {
+      id: '/api/public/guides/$guideId/busy'
+      path: '/api/public/guides/$guideId/busy'
+      fullPath: '/api/public/guides/$guideId/busy'
+      preLoaderRoute: typeof ApiPublicGuidesGuideIdBusyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/bookings/$id/pdf': {
+      id: '/api/public/bookings/$id/pdf'
+      path: '/api/public/bookings/$id/pdf'
+      fullPath: '/api/public/bookings/$id/pdf'
+      preLoaderRoute: typeof ApiPublicBookingsIdPdfRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
