@@ -50,7 +50,7 @@ type GuideRow = {
   sort_order: number;
   identity_verified: boolean | null;
   licensed: boolean | null;
-  license_url: string | null;
+  license_url?: string | null;
   intro_video_verified: boolean | null;
   completed_tours_count: number | null;
   avg_response_minutes: number | null;
@@ -86,7 +86,7 @@ function mapGuide(row: GuideRow): Guide {
     instantBook: row.instant_book,
     identityVerified: !!row.identity_verified,
     licensed: !!row.licensed,
-    licenseUrl: row.license_url ?? null,
+    licenseUrl: null,
     introVideoVerified: !!row.intro_video_verified,
     completedToursCount: Number(row.completed_tours_count ?? 0),
     avgResponseMinutes: row.avg_response_minutes === null || row.avg_response_minutes === undefined
@@ -101,7 +101,7 @@ function mapGuide(row: GuideRow): Guide {
 }
 
 const GUIDE_SELECT =
-  "id, slug, name, city_id, extra_city_ids, photo_url, cover_url, intro_video_url, tagline, bio, languages, verified_languages, specialties, price_per_day, rating, reviews, verified, instant_book, sort_order, identity_verified, licensed, license_url, intro_video_verified, completed_tours_count, avg_response_minutes, has_transport, transport_seats, cities(name), guide_categories(categories(slug, name, icon))";
+  "id, slug, name, city_id, extra_city_ids, photo_url, cover_url, intro_video_url, tagline, bio, languages, verified_languages, specialties, price_per_day, rating, reviews, verified, instant_book, sort_order, identity_verified, licensed, intro_video_verified, completed_tours_count, avg_response_minutes, has_transport, transport_seats, cities(name), guide_categories(categories(slug, name, icon))";
 
 async function fetchGuides(): Promise<Guide[]> {
   const { data, error } = await supabase
