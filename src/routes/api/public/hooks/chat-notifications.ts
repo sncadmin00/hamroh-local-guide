@@ -1,50 +1,10 @@
-import * as React from 'react'
-import { render } from '@react-email/components'
 import { createClient } from '@supabase/supabase-js'
 import { createFileRoute } from '@tanstack/react-router'
 import { TEMPLATES } from '@/lib/email-templates/registry'
+import { enqueueTransactionalEmail } from '@/lib/email/enqueue.server'
 
-const SITE_NAME = 'Hamroh'
-const SENDER_DOMAIN = 'notify.hamrohim.com'
-const FROM_DOMAIN = 'hamrohim.com'
 const APP_BASE_URL = 'https://hamrohim.com'
 const TEMPLATE_NAME = 'unread-chat-message'
-
-function generateToken(): string {
-  const bytes = new Uint8Array(32)
-  crypto.getRandomValues(bytes)
-  return Array.from(bytes)
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('')
-}
-
-async function getOrCreateUnsubToken(
-  supabase: any,
-  email: string,
-): Promise<string | null> {
-  const normalized = email.toLowerCase()
-  const { data: existing } = await supabase
-    .from('email_unsubscribe_tokens')
-    .select('token, used_at')
-    .eq('email', normalized)
-    .maybeSingle()
-
-  if (existing && !existing.used_at) return existing.token as string
-  if (existing && existing.used_at) return null
-
-  const token = generateToken()
-  await supabase
-    .from('email_unsubscribe_tokens')
-    .upsert({ token, email: normalized }, { onConflict: 'email', ignoreDuplicates: true })
-
-  const { data: stored } = await supabase
-    .from('email_unsubscribe_tokens')
-    .select('token')
-    .eq('email', normalized)
-    .maybeSingle()
-  return (stored?.token as string) ?? token
-}
-
 
 export const Route = createFileRoute('/api/public/hooks/chat-notifications')({
   server: {
@@ -185,31 +145,6 @@ export const Route = createFileRoute('/api/public/hooks/chat-notifications')({
               continue
             }
 
-            // Suppression check
-            const { data: suppressed } = await supabase
-              .from('suppressed_emails')
-              .select('id')
-              .eq('email', recipientEmail.toLowerCase())
-              .maybeSingle()
-
-            if (suppressed) {
-              await supabase
-                .from('booking_messages')
-                .update({ notification_sent_at: new Date().toISOString() })
-                .eq('id', msg.id)
-              skipped++
-              continue
-            }
-
-            const unsubscribeToken = await getOrCreateUnsubToken(supabase, recipientEmail)
-            if (!unsubscribeToken) {
-              await supabase
-                .from('booking_messages')
-                .update({ notification_sent_at: new Date().toISOString() })
-                .eq('id', msg.id)
-              skipped++
-              continue
-            }
 
             const preview =
               (msg.body as string).length > 180
@@ -225,42 +160,20 @@ export const Route = createFileRoute('/api/public/hooks/chat-notifications')({
               locale: recipientLocale,
             }
 
-            const element = React.createElement(tpl.component, templateData)
-            const html = await render(element)
-            const plainText = await render(element, { plainText: true })
-
-            const subject =
-              typeof tpl.subject === 'function' ? tpl.subject(templateData) : tpl.subject
-
-            const messageId = crypto.randomUUID()
-
-            await supabase.from('email_send_log').insert({
-              message_id: messageId,
-              template_name: TEMPLATE_NAME,
-              recipient_email: recipientEmail,
-              status: 'pending',
+            const ok = await enqueueTransactionalEmail({
+              supabase,
+              templateName: TEMPLATE_NAME,
+              recipientEmail,
+              templateData,
+              idempotencyKey: `chat-msg-${msg.id}`,
             })
 
-            const { error: enqueueError } = await supabase.rpc('enqueue_email', {
-              queue_name: 'transactional_emails',
-              payload: {
-                message_id: messageId,
-                to: recipientEmail,
-                from: `${SITE_NAME} <noreply@${FROM_DOMAIN}>`,
-                sender_domain: SENDER_DOMAIN,
-                subject,
-                html,
-                text: plainText,
-                purpose: 'transactional',
-                label: TEMPLATE_NAME,
-                idempotency_key: `chat-msg-${msg.id}`,
-                unsubscribe_token: unsubscribeToken,
-                queued_at: new Date().toISOString(),
-              },
-            })
-
-            if (enqueueError) {
-              console.error('Failed to enqueue chat notification', enqueueError)
+            if (!ok) {
+              await supabase
+                .from('booking_messages')
+                .update({ notification_sent_at: new Date().toISOString() })
+                .eq('id', msg.id)
+              skipped++
               continue
             }
 
