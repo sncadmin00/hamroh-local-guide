@@ -51,7 +51,7 @@ export const Route = createFileRoute("/")({
     await context.queryClient.ensureQueryData(spotlightsQueryOptions);
   },
   component: Home,
-  errorComponent: ({ error }) => <div className="p-8 text-sm text-destructive">{error.message}</div>,
+  errorComponent: ({ error }) => <div className="p-8 text-sm text-destructive">{error instanceof Error ? error.message : String(error)}</div>,
   notFoundComponent: () => <div className="p-8 text-sm">Not found.</div>,
 });
 

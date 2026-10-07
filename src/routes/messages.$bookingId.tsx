@@ -10,7 +10,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/messages/$bookingId")({
   component: ChatPage,
   errorComponent: ({ error }) => (
-    <div className="flex-1 flex items-center justify-center p-6 text-sm text-destructive text-center">{error.message}</div>
+    <div className="flex-1 flex items-center justify-center p-6 text-sm text-destructive text-center">{error instanceof Error ? error.message : String(error)}</div>
   ),
   notFoundComponent: () => <div>Not found</div>,
 });

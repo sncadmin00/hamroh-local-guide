@@ -73,7 +73,7 @@ export const Route = createFileRoute("/explore/$slug")({
     <div className="min-h-screen flex items-center justify-center px-4 text-center">
       <div>
         <h1 className="font-display text-2xl font-semibold">Couldn't load article</h1>
-        <p className="mt-2 text-sm text-muted-foreground">{error.message}</p>
+        <p className="mt-2 text-sm text-muted-foreground">{error instanceof Error ? error.message : String(error)}</p>
         <Link to="/explore" className="mt-4 inline-block text-primary hover:underline">Back to Explore</Link>
       </div>
     </div>
