@@ -23,7 +23,7 @@ export const Route = createFileRoute("/account")({
   component: AccountPage,
   errorComponent: ({ error }) => (
     <div className="min-h-screen flex items-center justify-center text-sm text-destructive">
-      {error.message}
+      {error instanceof Error ? error.message : String(error)}
     </div>
   ),
   notFoundComponent: () => <div>Not found</div>,

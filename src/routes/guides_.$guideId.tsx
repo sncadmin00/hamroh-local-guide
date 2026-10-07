@@ -72,7 +72,7 @@ export const Route = createFileRoute("/guides_/$guideId")({
   component: GuidePage,
   errorComponent: ({ error }) => (
     <div className="min-h-screen flex items-center justify-center text-sm text-muted-foreground">
-      Couldn't load the guide: {error.message}
+      Couldn't load the guide: {error instanceof Error ? error.message : String(error)}
     </div>
   ),
   notFoundComponent: () => (

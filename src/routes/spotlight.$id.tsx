@@ -28,7 +28,11 @@ const BADGE_KEY: Record<SpotlightBadge, "spot.badge.new" | "spot.badge.featured"
 
 export const Route = createFileRoute("/spotlight/$id")({
   loader: async ({ params }) => {
-    const res = await getSpotlightById({ data: { id: params.id } });
+    const res = (await getSpotlightById({ data: { id: params.id } })) as {
+      spotlight: SpotlightRow | null;
+      guide: SpotlightGuideRef | null;
+      tour: SpotlightTourRef | null;
+    };
     if (!res.spotlight) throw notFound();
     return { spotlight: res.spotlight, guide: res.guide, tour: res.tour };
   },
@@ -198,14 +202,14 @@ function SpotlightNotFound() {
   );
 }
 
-function SpotlightError({ error, reset }: { error: Error; reset: () => void }) {
+function SpotlightError({ error, reset }: { error: unknown; reset: () => void }) {
   const router = useRouter();
   return (
     <div className="min-h-screen bg-[var(--background)]">
       <SiteHeader />
       <div className="mx-auto max-w-2xl px-6 py-24 text-center">
         <h1 className="font-serif text-3xl text-[var(--foreground)]">Something went wrong</h1>
-        <p className="mt-3 text-sm text-[var(--muted-foreground)]">{error.message}</p>
+        <p className="mt-3 text-sm text-[var(--muted-foreground)]">{error instanceof Error ? error.message : String(error)}</p>
         <button
           onClick={() => {
             reset();

@@ -50,9 +50,9 @@ export function SpotlightBanner() {
                 <div className="mb-1 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gold">
                   <span>{t(KIND_LABEL_KEY[s.kind])}</span>
                   <span className="text-slate-400">·</span>
-                  <span className="text-slate-500">{t("spot.whatsNew")}</span>
+                  <span className="text-muted-foreground">{t("spot.whatsNew")}</span>
                 </div>
-                <h3 className="truncate font-serif text-base sm:text-lg leading-tight text-slate-900">
+                <h3 className="truncate font-serif text-base sm:text-lg leading-tight text-foreground">
                   {title}
                 </h3>
               </div>
