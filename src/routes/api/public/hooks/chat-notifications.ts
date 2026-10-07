@@ -145,61 +145,6 @@ export const Route = createFileRoute('/api/public/hooks/chat-notifications')({
               continue
             }
 
-            const preview = (msg.body as string).length > 140
-                ? (msg.body as string).slice(0, 140) + '…'
-                : (msg.body as string)
-              try {
-                await supabase.from('notifications').insert({
-                  user_id: recipientUserId,
-                  type: 'chat_message',
-                  entity_id: booking.id,
-                  entity_type: 'booking',
-                  title: senderName ? `New message from ${senderName}` : 'New message',
-                  body: preview,
-                  icon: '💬',
-                  link: `/messages/${booking.id}`,
-                  category: 'bookings',
-                })
-              } catch (e) {
-                console.error('chat_message notification insert failed', e)
-              }
-            }
-
-
-            if (!recipientEmail) {
-              await supabase
-                .from('booking_messages')
-                .update({ notification_sent_at: new Date().toISOString() })
-                .eq('id', msg.id)
-              skipped++
-              continue
-            }
-
-            // Suppression check
-            const { data: suppressed } = await supabase
-              .from('suppressed_emails')
-              .select('id')
-              .eq('email', recipientEmail.toLowerCase())
-              .maybeSingle()
-
-            if (suppressed) {
-              await supabase
-                .from('booking_messages')
-                .update({ notification_sent_at: new Date().toISOString() })
-                .eq('id', msg.id)
-              skipped++
-              continue
-            }
-
-            const unsubscribeToken = await getOrCreateUnsubToken(supabase, recipientEmail)
-            if (!unsubscribeToken) {
-              await supabase
-                .from('booking_messages')
-                .update({ notification_sent_at: new Date().toISOString() })
-                .eq('id', msg.id)
-              skipped++
-              continue
-            }
 
             const preview =
               (msg.body as string).length > 180
