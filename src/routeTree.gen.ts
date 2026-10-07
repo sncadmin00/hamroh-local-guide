@@ -45,19 +45,15 @@ import { Route as MessagesBookingIdRouteImport } from './routes/messages.$bookin
 import { Route as InviteTokenRouteImport } from './routes/invite.$token'
 import { Route as GuidesGuideIdRouteImport } from './routes/guides_.$guideId'
 import { Route as ExploreSlugRouteImport } from './routes/explore.$slug'
-import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as DiaryIdRouteImport } from './routes/diary.$id'
 import { Route as BookSlugRouteImport } from './routes/book.$slug'
 import { Route as ApiGuideAiRouteImport } from './routes/api/guide-ai'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AiThreadIdRouteImport } from './routes/ai.$threadId'
-import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
 import { Route as LovableEmailEventsRouteImport } from './routes/lovable/email/events'
 import { Route as ApiPublicSiteLanguagesRouteImport } from './routes/api/public/site-languages'
 import { Route as ApiEarningsReportRouteImport } from './routes/api/earnings/report'
-import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
-import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as ApiPublicTelegramWebhookRouteImport } from './routes/api/public/telegram/webhook'
@@ -297,11 +293,6 @@ const ExploreSlugRoute = ExploreSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => ExploreRoute,
 } as any)
-const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
-  id: '/email/unsubscribe',
-  path: '/email/unsubscribe',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const DiaryIdRoute = DiaryIdRouteImport.update({
   id: '/diary/$id',
   path: '/diary/$id',
@@ -327,11 +318,6 @@ const AiThreadIdRoute = AiThreadIdRouteImport.update({
   path: '/$threadId',
   getParentRoute: () => AiRoute,
 } as any)
-const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
-  id: '/lovable/email/suppression',
-  path: '/lovable/email/suppression',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const LovableEmailEventsRoute = LovableEmailEventsRouteImport.update({
   id: '/lovable/email/events',
   path: '/lovable/email/events',
@@ -347,22 +333,10 @@ const ApiEarningsReportRoute = ApiEarningsReportRouteImport.update({
   path: '/api/earnings/report',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LovableEmailTransactionalSendRoute =
-  LovableEmailTransactionalSendRouteImport.update({
-    id: '/lovable/email/transactional/send',
-    path: '/lovable/email/transactional/send',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const LovableEmailTransactionalPreviewRoute =
   LovableEmailTransactionalPreviewRouteImport.update({
     id: '/lovable/email/transactional/preview',
     path: '/lovable/email/transactional/preview',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const LovableEmailQueueProcessRoute =
-  LovableEmailQueueProcessRouteImport.update({
-    id: '/lovable/email/queue/process',
-    path: '/lovable/email/queue/process',
     getParentRoute: () => rootRouteImport,
   } as any)
 const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
@@ -741,7 +715,6 @@ export interface FileRoutesByFullPath {
   '/api/guide-ai': typeof ApiGuideAiRoute
   '/book/$slug': typeof BookSlugRoute
   '/diary/$id': typeof DiaryIdRoute
-  '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/explore/$slug': typeof ExploreSlugRoute
   '/guides/$guideId': typeof GuidesGuideIdRoute
   '/invite/$token': typeof InviteTokenRoute
@@ -753,7 +726,6 @@ export interface FileRoutesByFullPath {
   '/api/earnings/report': typeof ApiEarningsReportRoute
   '/api/public/site-languages': typeof ApiPublicSiteLanguagesRoute
   '/lovable/email/events': typeof LovableEmailEventsRoute
-  '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/api/public/hooks/all-reels': typeof ApiPublicHooksAllReelsRoute
   '/api/public/hooks/apply-referral': typeof ApiPublicHooksApplyReferralRoute
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
@@ -804,9 +776,7 @@ export interface FileRoutesByFullPath {
   '/api/public/telegram/webhook': typeof ApiPublicTelegramWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
-  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
-  '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/api/public/bookings/$id/pdf': typeof ApiPublicBookingsIdPdfRoute
   '/api/public/guides/$guideId/busy': typeof ApiPublicGuidesGuideIdBusyRoute
   '/api/public/guides/$guideId/slots': typeof ApiPublicGuidesGuideIdSlotsRoute
@@ -849,7 +819,6 @@ export interface FileRoutesByTo {
   '/api/guide-ai': typeof ApiGuideAiRoute
   '/book/$slug': typeof BookSlugRoute
   '/diary/$id': typeof DiaryIdRoute
-  '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/explore/$slug': typeof ExploreSlugRoute
   '/guides/$guideId': typeof GuidesGuideIdRoute
   '/invite/$token': typeof InviteTokenRoute
@@ -861,7 +830,6 @@ export interface FileRoutesByTo {
   '/api/earnings/report': typeof ApiEarningsReportRoute
   '/api/public/site-languages': typeof ApiPublicSiteLanguagesRoute
   '/lovable/email/events': typeof LovableEmailEventsRoute
-  '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/api/public/hooks/all-reels': typeof ApiPublicHooksAllReelsRoute
   '/api/public/hooks/apply-referral': typeof ApiPublicHooksApplyReferralRoute
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
@@ -912,9 +880,7 @@ export interface FileRoutesByTo {
   '/api/public/telegram/webhook': typeof ApiPublicTelegramWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
-  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
-  '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/api/public/bookings/$id/pdf': typeof ApiPublicBookingsIdPdfRoute
   '/api/public/guides/$guideId/busy': typeof ApiPublicGuidesGuideIdBusyRoute
   '/api/public/guides/$guideId/slots': typeof ApiPublicGuidesGuideIdSlotsRoute
@@ -959,7 +925,6 @@ export interface FileRoutesById {
   '/api/guide-ai': typeof ApiGuideAiRoute
   '/book/$slug': typeof BookSlugRoute
   '/diary/$id': typeof DiaryIdRoute
-  '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/explore/$slug': typeof ExploreSlugRoute
   '/guides_/$guideId': typeof GuidesGuideIdRoute
   '/invite/$token': typeof InviteTokenRoute
@@ -971,7 +936,6 @@ export interface FileRoutesById {
   '/api/earnings/report': typeof ApiEarningsReportRoute
   '/api/public/site-languages': typeof ApiPublicSiteLanguagesRoute
   '/lovable/email/events': typeof LovableEmailEventsRoute
-  '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/api/public/hooks/all-reels': typeof ApiPublicHooksAllReelsRoute
   '/api/public/hooks/apply-referral': typeof ApiPublicHooksApplyReferralRoute
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
@@ -1022,9 +986,7 @@ export interface FileRoutesById {
   '/api/public/telegram/webhook': typeof ApiPublicTelegramWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
-  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
-  '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/api/public/bookings/$id/pdf': typeof ApiPublicBookingsIdPdfRoute
   '/api/public/guides/$guideId/busy': typeof ApiPublicGuidesGuideIdBusyRoute
   '/api/public/guides/$guideId/slots': typeof ApiPublicGuidesGuideIdSlotsRoute
@@ -1070,7 +1032,6 @@ export interface FileRouteTypes {
     | '/api/guide-ai'
     | '/book/$slug'
     | '/diary/$id'
-    | '/email/unsubscribe'
     | '/explore/$slug'
     | '/guides/$guideId'
     | '/invite/$token'
@@ -1082,7 +1043,6 @@ export interface FileRouteTypes {
     | '/api/earnings/report'
     | '/api/public/site-languages'
     | '/lovable/email/events'
-    | '/lovable/email/suppression'
     | '/api/public/hooks/all-reels'
     | '/api/public/hooks/apply-referral'
     | '/api/public/hooks/booking-reminders'
@@ -1133,9 +1093,7 @@ export interface FileRouteTypes {
     | '/api/public/telegram/webhook'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
-    | '/lovable/email/queue/process'
     | '/lovable/email/transactional/preview'
-    | '/lovable/email/transactional/send'
     | '/api/public/bookings/$id/pdf'
     | '/api/public/guides/$guideId/busy'
     | '/api/public/guides/$guideId/slots'
@@ -1178,7 +1136,6 @@ export interface FileRouteTypes {
     | '/api/guide-ai'
     | '/book/$slug'
     | '/diary/$id'
-    | '/email/unsubscribe'
     | '/explore/$slug'
     | '/guides/$guideId'
     | '/invite/$token'
@@ -1190,7 +1147,6 @@ export interface FileRouteTypes {
     | '/api/earnings/report'
     | '/api/public/site-languages'
     | '/lovable/email/events'
-    | '/lovable/email/suppression'
     | '/api/public/hooks/all-reels'
     | '/api/public/hooks/apply-referral'
     | '/api/public/hooks/booking-reminders'
@@ -1241,9 +1197,7 @@ export interface FileRouteTypes {
     | '/api/public/telegram/webhook'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
-    | '/lovable/email/queue/process'
     | '/lovable/email/transactional/preview'
-    | '/lovable/email/transactional/send'
     | '/api/public/bookings/$id/pdf'
     | '/api/public/guides/$guideId/busy'
     | '/api/public/guides/$guideId/slots'
@@ -1287,7 +1241,6 @@ export interface FileRouteTypes {
     | '/api/guide-ai'
     | '/book/$slug'
     | '/diary/$id'
-    | '/email/unsubscribe'
     | '/explore/$slug'
     | '/guides_/$guideId'
     | '/invite/$token'
@@ -1299,7 +1252,6 @@ export interface FileRouteTypes {
     | '/api/earnings/report'
     | '/api/public/site-languages'
     | '/lovable/email/events'
-    | '/lovable/email/suppression'
     | '/api/public/hooks/all-reels'
     | '/api/public/hooks/apply-referral'
     | '/api/public/hooks/booking-reminders'
@@ -1350,9 +1302,7 @@ export interface FileRouteTypes {
     | '/api/public/telegram/webhook'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
-    | '/lovable/email/queue/process'
     | '/lovable/email/transactional/preview'
-    | '/lovable/email/transactional/send'
     | '/api/public/bookings/$id/pdf'
     | '/api/public/guides/$guideId/busy'
     | '/api/public/guides/$guideId/slots'
@@ -1396,7 +1346,6 @@ export interface RootRouteChildren {
   ApiGuideAiRoute: typeof ApiGuideAiRoute
   BookSlugRoute: typeof BookSlugRoute
   DiaryIdRoute: typeof DiaryIdRoute
-  EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   GuidesGuideIdRoute: typeof GuidesGuideIdRoute
   InviteTokenRoute: typeof InviteTokenRoute
   SpotlightIdRoute: typeof SpotlightIdRoute
@@ -1405,7 +1354,6 @@ export interface RootRouteChildren {
   ApiEarningsReportRoute: typeof ApiEarningsReportRoute
   ApiPublicSiteLanguagesRoute: typeof ApiPublicSiteLanguagesRoute
   LovableEmailEventsRoute: typeof LovableEmailEventsRoute
-  LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   ApiPublicHooksAllReelsRoute: typeof ApiPublicHooksAllReelsRoute
   ApiPublicHooksApplyReferralRoute: typeof ApiPublicHooksApplyReferralRoute
   ApiPublicHooksBookingRemindersRoute: typeof ApiPublicHooksBookingRemindersRoute
@@ -1456,9 +1404,7 @@ export interface RootRouteChildren {
   ApiPublicTelegramWebhookRoute: typeof ApiPublicTelegramWebhookRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
-  LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
-  LovableEmailTransactionalSendRoute: typeof LovableEmailTransactionalSendRoute
   ApiPublicBookingsIdPdfRoute: typeof ApiPublicBookingsIdPdfRoute
   ApiPublicGuidesGuideIdBusyRoute: typeof ApiPublicGuidesGuideIdBusyRoute
   ApiPublicGuidesGuideIdSlotsRoute: typeof ApiPublicGuidesGuideIdSlotsRoute
@@ -1723,13 +1669,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExploreSlugRouteImport
       parentRoute: typeof ExploreRoute
     }
-    '/email/unsubscribe': {
-      id: '/email/unsubscribe'
-      path: '/email/unsubscribe'
-      fullPath: '/email/unsubscribe'
-      preLoaderRoute: typeof EmailUnsubscribeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/diary/$id': {
       id: '/diary/$id'
       path: '/diary/$id'
@@ -1765,13 +1704,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AiThreadIdRouteImport
       parentRoute: typeof AiRoute
     }
-    '/lovable/email/suppression': {
-      id: '/lovable/email/suppression'
-      path: '/lovable/email/suppression'
-      fullPath: '/lovable/email/suppression'
-      preLoaderRoute: typeof LovableEmailSuppressionRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/lovable/email/events': {
       id: '/lovable/email/events'
       path: '/lovable/email/events'
@@ -1793,25 +1725,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiEarningsReportRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/lovable/email/transactional/send': {
-      id: '/lovable/email/transactional/send'
-      path: '/lovable/email/transactional/send'
-      fullPath: '/lovable/email/transactional/send'
-      preLoaderRoute: typeof LovableEmailTransactionalSendRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/lovable/email/transactional/preview': {
       id: '/lovable/email/transactional/preview'
       path: '/lovable/email/transactional/preview'
       fullPath: '/lovable/email/transactional/preview'
       preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lovable/email/queue/process': {
-      id: '/lovable/email/queue/process'
-      path: '/lovable/email/queue/process'
-      fullPath: '/lovable/email/queue/process'
-      preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/lovable/email/auth/webhook': {
@@ -2291,7 +2209,6 @@ const rootRouteChildren: RootRouteChildren = {
   ApiGuideAiRoute: ApiGuideAiRoute,
   BookSlugRoute: BookSlugRoute,
   DiaryIdRoute: DiaryIdRoute,
-  EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   GuidesGuideIdRoute: GuidesGuideIdRoute,
   InviteTokenRoute: InviteTokenRoute,
   SpotlightIdRoute: SpotlightIdRoute,
@@ -2300,7 +2217,6 @@ const rootRouteChildren: RootRouteChildren = {
   ApiEarningsReportRoute: ApiEarningsReportRoute,
   ApiPublicSiteLanguagesRoute: ApiPublicSiteLanguagesRoute,
   LovableEmailEventsRoute: LovableEmailEventsRoute,
-  LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   ApiPublicHooksAllReelsRoute: ApiPublicHooksAllReelsRoute,
   ApiPublicHooksApplyReferralRoute: ApiPublicHooksApplyReferralRoute,
   ApiPublicHooksBookingRemindersRoute: ApiPublicHooksBookingRemindersRoute,
@@ -2358,9 +2274,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicTelegramWebhookRoute: ApiPublicTelegramWebhookRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
-  LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
-  LovableEmailTransactionalSendRoute: LovableEmailTransactionalSendRoute,
   ApiPublicBookingsIdPdfRoute: ApiPublicBookingsIdPdfRoute,
   ApiPublicGuidesGuideIdBusyRoute: ApiPublicGuidesGuideIdBusyRoute,
   ApiPublicGuidesGuideIdSlotsRoute: ApiPublicGuidesGuideIdSlotsRoute,
