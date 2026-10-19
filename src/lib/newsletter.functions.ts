@@ -45,34 +45,31 @@ export const notifyAdminsOfGuideApplication = createServerFn({ method: "POST" })
     });
 
 
+    // Email goes to the company inbox, not to admins' personal addresses.
+    const ADMIN_NOTIFY_EMAIL = "hello@hamrohim.com";
     let sent = 0;
-    for (const uid of adminUserIds) {
-      const { data: u } = await supabaseAdmin.auth.admin.getUserById(uid);
-      const email = u?.user?.email;
-      if (!email) continue;
-      try {
-        const ok = await enqueueTransactionalEmail({
-          supabase: supabaseAdmin,
-          templateName: "guide-application-admin",
-          recipientEmail: email,
-          templateData: {
-            fullName: app.full_name,
-            email: app.email,
-            phone: app.phone,
-            telegram: app.telegram,
-            city: app.city,
-            languages: app.languages,
-            specialization: app.specialization,
-            experienceYears: app.experience_years,
-            about: app.about,
-            reviewUrl: `${APP_BASE_URL}/admin`,
-          },
-          idempotencyKey: `guide-app-${app.id}-${uid}`,
-        });
-        if (ok) sent++;
-      } catch (e) {
-        console.error("Admin notify failed", e);
-      }
+    try {
+      const ok = await enqueueTransactionalEmail({
+        supabase: supabaseAdmin,
+        templateName: "guide-application-admin",
+        recipientEmail: ADMIN_NOTIFY_EMAIL,
+        templateData: {
+          fullName: app.full_name,
+          email: app.email,
+          phone: app.phone,
+          telegram: app.telegram,
+          city: app.city,
+          languages: app.languages,
+          specialization: app.specialization,
+          experienceYears: app.experience_years,
+          about: app.about,
+          reviewUrl: `${APP_BASE_URL}/admin`,
+        },
+        idempotencyKey: `guide-app-${app.id}`,
+      });
+      if (ok) sent = 1;
+    } catch (e) {
+      console.error("Admin notify failed", e);
     }
     return { ok: true, sent };
   });
