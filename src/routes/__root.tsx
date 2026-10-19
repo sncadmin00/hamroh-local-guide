@@ -17,7 +17,7 @@ import { useCaptureReferral } from "@/hooks/useCaptureReferral";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/hooks/use-theme";
 
-const SITE_URL = "https://hamroh-local-guide.lovable.app";
+const SITE_URL = "https://hamrohim.com";
 const OG_IMAGE = `${SITE_URL}${ogDefault}`;
 
 function NotFoundComponent() {
@@ -82,8 +82,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:image", content: OG_IMAGE },
       { name: "twitter:title", content: "Hamroh — Explore places with locals" },
       { name: "twitter:description", content: "Book verified local guides in cities around the world. Authentic experiences, multiple languages, instant booking." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/43b121e8-819d-416f-b67f-6e3584753257/id-preview-c71dad3b--6fe4ded5-fad3-4138-b141-63c14b76e50f.lovable.app-1780379370290.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/43b121e8-819d-416f-b67f-6e3584753257/id-preview-c71dad3b--6fe4ded5-fad3-4138-b141-63c14b76e50f.lovable.app-1780379370290.png" },
     ],
     links: [
       { rel: "icon", type: "image/png", href: favicon.url },
